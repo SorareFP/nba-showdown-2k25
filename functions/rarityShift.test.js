@@ -66,17 +66,23 @@ vi.mock('./shared/src/game/modes/seasonPack.js', () => import('../src/game/modes
 vi.mock('./shared/src/game/rarityShift.js', () => import('../src/game/rarityShift.js'));
 
 const { settleRarityShift } = await import('./index.js');
-const { RARITY_SHIFT } = await import('../src/game/rarityShift.js');
+const { RARITY_SHIFTS } = await import('../src/game/rarityShift.js');
 
+// Two tables since 2026-09-30 (evening): the one that went live that afternoon
+// and the real-log rebuild's. Each is settled once, on its own receipt.
+const FIRST = RARITY_SHIFTS[0];
+const NEWEST = RARITY_SHIFTS.at(-1);
 const UID = 'u1';
 const call = data => settleRarityShift({ auth: { uid: UID }, data: data ?? {} });
 const coins = () => docs.get(`users/${UID}`)?.currency ?? 0;
-const receipt = () => docs.get(`users/${UID}/claims/${RARITY_SHIFT.id}`);
-const entries = Object.entries(RARITY_SHIFT.shifts);
-const [downKey, down] = entries.find(([, m]) => m.coins > 0);
-const [upKey, up] = entries.find(([, m]) => m.coins < 0);
-const before = Date.parse(RARITY_SHIFT.cutoff) - 60_000;
-const after = Date.parse(RARITY_SHIFT.cutoff) + 60_000;
+const receipt = id => docs.get(`users/${UID}/claims/${id}`);
+// Keys that moved in one table only, so each test knows exactly what is owed.
+const only = (t, other, sign) => Object.entries(t.shifts).find(([k, m]) => Math.sign(m.coins) === sign && !(k in other.shifts));
+const [downKey, down] = only(NEWEST, FIRST, 1);
+const [upKey, up] = only(NEWEST, FIRST, -1);
+const [firstKey, firstMove] = only(FIRST, NEWEST, 1);
+const before = Date.parse(FIRST.cutoff) - 60_000;
+const after = Date.parse(NEWEST.cutoff) + 60_000;
 let n = 0;
 const give = (cardKey, fields) => docs.set(`users/${UID}/copies/c${n += 1}`, { cardKey, state: 'spare', ...fields });
 
@@ -94,13 +100,35 @@ describe('settleRarityShift', () => {
     give(upKey, { mintedAt: before });
     const owed = 2 * down.coins + up.coins;
     const first = await call();
-    expect(first).toMatchObject({ id: RARITY_SHIFT.id, coins: Math.max(0, owed), net: owed, cards: 2 });
+    expect(first).toMatchObject({ id: NEWEST.id, coins: Math.max(0, owed), net: owed, cards: 2 });
     expect(coins()).toBe(100 + Math.max(0, owed));
-    expect(receipt()).toMatchObject({ coins: Math.max(0, owed), net: owed, cards: 2, shift: RARITY_SHIFT.id, label: 'Rarity changes' });
+    expect(receipt(NEWEST.id)).toMatchObject({ coins: Math.max(0, owed), net: owed, cards: 2, shift: NEWEST.id, label: 'Rarity changes' });
+    // Nothing of theirs moved in the first table, and its receipt is written all the same.
+    expect(receipt(FIRST.id)).toMatchObject({ coins: 0, cards: 0, shift: FIRST.id });
 
     const again = await call();
     expect(again).toMatchObject({ already: true, coins: first.coins, cards: 2 });
     expect(coins()).toBe(100 + Math.max(0, owed));
+  });
+
+  it('settles both tables for an account that had not signed in between them', async () => {
+    give(firstKey, { mintedAt: before });
+    give(downKey, { mintedAt: before });
+    const r = await call();
+    expect(r.coins).toBe(firstMove.coins + down.coins);
+    expect(receipt(FIRST.id)).toMatchObject({ coins: firstMove.coins, cards: 1 });
+    expect(receipt(NEWEST.id)).toMatchObject({ coins: down.coins, cards: 1 });
+    expect(coins()).toBe(100 + firstMove.coins + down.coins);
+  });
+
+  it('settles only the newer table for an account that already claimed the first', async () => {
+    docs.set(`users/${UID}/claims/${FIRST.id}`, { coins: 7, net: 7, cards: 1, lines: [] });
+    give(firstKey, { mintedAt: before });
+    give(downKey, { mintedAt: before });
+    const r = await call();
+    expect(r).toMatchObject({ id: NEWEST.id, coins: down.coins, cards: 1 });
+    expect(receipt(FIRST.id)).toMatchObject({ coins: 7 });
+    expect(coins()).toBe(100 + down.coins);
   });
 
   it('never charges a collection that came out ahead, and still writes the receipt', async () => {
@@ -108,7 +136,7 @@ describe('settleRarityShift', () => {
     const r = await call();
     expect(r).toMatchObject({ coins: 0, net: up.coins, cards: 1 });
     expect(coins()).toBe(100);
-    expect(receipt()).toMatchObject({ coins: 0 });
+    expect(receipt(NEWEST.id)).toMatchObject({ coins: 0 });
   });
 
   it('pays nothing and records nothing to settle for an account that holds no moved card', async () => {
@@ -116,7 +144,7 @@ describe('settleRarityShift', () => {
     const r = await call();
     expect(r).toMatchObject({ coins: 0, net: 0, cards: 0, lines: [] });
     expect(coins()).toBe(100);
-    expect(receipt()).toMatchObject({ coins: 0, cards: 0 });
+    expect(receipt(NEWEST.id)).toMatchObject({ coins: 0, cards: 0 });
   });
 
   it('ignores anything the caller sends: the ledger names the price', async () => {

@@ -113,8 +113,8 @@ for (const file of fs.readdirSync(dataDir)) {
     && file !== 'dynasty-contracts.json'
     // dormant-throwbacks.json: cardSets.js keeps those cards out of packs.
     && file !== 'dormant-throwbacks.json'
-    // rarity-shift.json: settleRarityShift prices a rarity change from it.
-    && file !== 'rarity-shift.json') continue;
+    // rarity-shift.json, rarity-shift-2.json…: settleRarityShift prices each rarity change from its table.
+    && !/^rarity-shift(-\d+)?\.json$/.test(file)) continue;
   copyFile(path.join(DATA_DIR, file));
   data += 1;
 }

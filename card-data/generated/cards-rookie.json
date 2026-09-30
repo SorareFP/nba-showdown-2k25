@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T22:40:19.726Z",
+ "generatedAt": "2026-09-30T22:55:23.461Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -2179,6 +2179,78 @@
    "provisional": false
   },
   {
+   "id": "Antawn_Jamison",
+   "name": "Antawn Jamison",
+   "team": "GSW98",
+   "pos": "SF",
+   "speed": 8,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 3,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 560,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 1999,
+   "seasonLabel": "1998-99",
+   "age": 22,
+   "games": 47,
+   "mpg": 22.5,
+   "bbrefId": "jamisan01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0,
+    "vorp": 0.5,
+    "ws": 2.3,
+    "ws48": 0.105,
+    "per": 16.6
+   },
+   "provisional": false
+  },
+  {
    "id": "Anthony_Black",
    "name": "Anthony Black",
    "team": "ORL",
@@ -2630,6 +2702,71 @@
     "ws": 4.2,
     "ws48": 0.148,
     "per": 15.7
+   },
+   "provisional": false
+  },
+  {
+   "id": "Baron_Davis",
+   "name": "Baron Davis",
+   "team": "CHH",
+   "pos": "PG",
+   "speed": 10,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 420,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2000,
+   "seasonLabel": "1999-00",
+   "age": 20,
+   "games": 82,
+   "mpg": 18.6,
+   "bbrefId": "davisba01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.8,
+    "vorp": 0.5,
+    "ws": 2.1,
+    "ws48": 0.065,
+    "per": 12.9
    },
    "provisional": false
   },
@@ -4791,6 +4928,71 @@
     "ws": 2.3,
     "ws48": 0.061,
     "per": 10.9
+   },
+   "provisional": false
+  },
+  {
+   "id": "Corey_Maggette",
+   "name": "Corey Maggette",
+   "team": "ORL89",
+   "pos": "SF",
+   "speed": 7,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -4,
+   "defBoost": -1,
+   "salary": 380,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 6,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2000,
+   "seasonLabel": "1999-00",
+   "age": 20,
+   "games": 77,
+   "mpg": 17.8,
+   "bbrefId": "maggeco01",
+   "traded": false,
+   "metrics": {
+    "bpm": -2.5,
+    "vorp": -0.2,
+    "ws": 2.6,
+    "ws48": 0.091,
+    "per": 14.1
    },
    "provisional": false
   },
@@ -7390,7 +7592,7 @@
    "speed": 7,
    "power": 9,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": -2,
    "salary": 540,
@@ -16778,6 +16980,71 @@
     "ws": 4.2,
     "ws48": 0.11,
     "per": 14
+   },
+   "provisional": false
+  },
+  {
+   "id": "Ricky_Rubio",
+   "name": "Ricky Rubio",
+   "team": "MIN97",
+   "pos": "PG",
+   "speed": 14,
+   "power": 8,
+   "shotLine": 18,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 1,
+   "salary": 480,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2012,
+   "seasonLabel": "2011-12",
+   "age": 21,
+   "games": 41,
+   "mpg": 34.2,
+   "bbrefId": "rubiori01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1,
+    "vorp": 1.1,
+    "ws": 2,
+    "ws48": 0.07,
+    "per": 14.6
    },
    "provisional": false
   },

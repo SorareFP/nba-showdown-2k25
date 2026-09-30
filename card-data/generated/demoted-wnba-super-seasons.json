@@ -1,6 +1,6 @@
 {
  "set": "wnba-throwbacks",
- "generatedAt": "2026-09-30T22:43:01.088Z",
+ "generatedAt": "2026-09-30T22:58:09.334Z",
  "note": "WNBA Super Seasons that are no longer a Super Season, as WNBA Throwbacks (the value pick, 2026-09-24; card-data/wnba-super-season-retired.json). generateCuratedCards.js writes them into cards-wnba-throwbacks.json.",
  "cards": [
   {

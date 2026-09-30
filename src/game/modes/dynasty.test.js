@@ -113,10 +113,18 @@ function cheaply(x, teamId, n) {
   return y;
 }
 
-function exactly(x, teamId, n) {
+function exactly(x, teamId, n, { cheapest = false } = {}) {
   const contracts = { ...x.contracts };
-  for (const k of rosterKeys(x, teamId).slice(n)) delete contracts[k];
+  // `cheapest` keeps the n cheapest cards (2026-09-30): a test of the DP
+  // apron door must not be decided by the AI's card-salary ceiling, and which
+  // n a plain trim keeps depends on the card prices of the day.
+  const keys = cheapest
+    ? [...rosterKeys(x, teamId)].sort((a, b) => (getCardByKey(a)?.salary ?? 0) - (getCardByKey(b)?.salary ?? 0))
+    : rosterKeys(x, teamId);
+  for (const k of keys.slice(n)) delete contracts[k];
   const spare = x.draftPool.filter(k => !(x.draft?.pool ?? []).includes(k) && getCardByKey(k));
+  // ...and tops a short roster up with the cheapest spare cards, for the same reason.
+  if (cheapest) spare.sort((a, b) => (getCardByKey(a)?.salary ?? 0) - (getCardByKey(b)?.salary ?? 0));
   const filled = spare.slice(0, Math.max(0, n - rosterKeys({ contracts }, teamId).length));
   for (const k of filled) contracts[k] = { teamId, dp: 1, years: 2, since: x.year, how: 'fill' };
   const y = { ...x, contracts, league: [...x.league, ...filled], draftPool: x.draftPool.filter(k => !filled.includes(k)) };
@@ -132,6 +140,11 @@ function exactly(x, teamId, n) {
  * of something else that needs an AI roster to stay put spends the budget.
  */
 const noAiTrades = x => ({ ...x, aiDeals: { year: x.year, n: AI_TRADES_PER_OFFSEASON } });
+
+/** The AI team with the most card-salary room, among those `ok` allows. */
+const roomiest = (x, ok = () => true) => x.teams
+  .filter(t => !t.human && ok(t))
+  .sort((a, b) => aiSalaryOf(x, a.id) - aiSalaryOf(x, b.id))[0].id;
 
 /** Every offseason decision the human could make, made the lazy way. */
 function autoYear(d, rng) {
@@ -1056,10 +1069,14 @@ describe('the AI budgets for its picks (2026-09-18)', () => {
     expect(base.draft.picks).toHaveLength(0);
     // An AI team that also holds one of its own picks in this draft, so pick 1
     // and that one take it from six to the floor of eight.
-    const ai = base.teams.find(t => !t.human && base.draft.order.slice(1).includes(t.id)).id;
+    // The AI team with the most card-salary room (2026-09-30): this is the DP
+    // door's test, and which AI team comes first depends on the seeded season,
+    // which moved with the card prices of the day — the first one that day was
+    // $5,270 of a $5,500 card ceiling, and no pick fit it.
+    const ai = roomiest(base, t => base.draft.order.slice(1).includes(t.id));
     // EXACTLY SIX (2026-09-18): trimmed, or topped up from outside the draft —
     // the seeded year left this team five when one card changed team.
-    const sixed = exactly(base, ai, 6);
+    const sixed = exactly(base, ai, 6, { cheapest: true });
     const six = { ...sixed, draft: { ...sixed.draft, order: sixed.draft.order.map((t, i) => (i === 0 ? ai : t)) } };
     expect(rosterKeys(six, ai)).toHaveLength(6);
     const gap = aiApronDp(six) - payroll(six, ai);
@@ -1088,10 +1105,10 @@ describe('the AI budgets for its picks (2026-09-18)', () => {
   it('opens that door only for an AI team that cannot fill the floor on minimum deals, and never for a human', () => {
     const rng = seeded(16);
     const base = drawLottery(closeResign(endSeason(finishSeason(startSeason(ownDynasty({ size: 8 }), { rng })), { rng }), { rng }), { rng });
-    const ai = base.teams.find(t => !t.human).id;
+    const ai = roomiest(base);
     // Exactly n, not at most n (2026-09-18): a trim alone left fewer when the
     // seeded year did, and the case under test changed with the pool.
-    const trimmed = (x, teamId, n) => exactly(x, teamId, n);
+    const trimmed = (x, teamId, n) => exactly(x, teamId, n, { cheapest: true });
     const withRoom = (x, teamId, room, apron) => ({ ...x, dead: [...x.dead, { teamId, key: `x-${teamId}`, dp: apron - payroll(x, teamId) - room, through: x.year }] });
     const onFirst = x => ({ ...x, draft: { ...x.draft, order: x.draft.order.map((t, i) => (i === 0 ? ai : t)) } });
     // Seven players and 7 DP of room: an eighth on a 1-DP deal keeps it under

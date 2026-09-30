@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'charts-from-real-games', date: '2026-09-30', title: 'More cards built from real games',
+    body: "45 cards, most of them rookie cards, had been built from a fallback model because their game logs were missing. They now use their real games, and nearly all came down: Tim Duncan's rookie card went from $1,830 to $990. Five Super Seasons that those rookie cards had pushed out are back: Duncan 2001-02, David Robinson 1990-91, Yao 2008-09, Kirilenko 2004-05 and Marion 2006-07. Seasons over 36 minutes a game no longer lose scoring, so Jordan's 1987-88 rose from $1,560 to $2,030. Six Super Seasons moved to a more valuable season (Jordan 1988-89, Luka 2023-24, Kobe 2005-06, Tatum 2022-23, Pierce 2001-02, Wilkins 1987-88); if you hold one, you still have it. Short playoff runs like Daniel Gibson's 2007 now use their own games too. Jordan's 1984-85 rookie card is the Rookie set reward again. Cards that dropped a rarity pay the difference once, the same as this afternoon.",
+    to: 'collection', cta: 'Collection',
+  },
+  {
     id: 'seven-new-cards', date: '2026-09-30', title: 'Jamison, Bynum, Webber, Rubio, Baron Davis, Maggette and Cousins',
     body: "Seven players get new cards. Super Seasons: Antawn Jamison's 2007-08 Wizards, Andrew Bynum's 2011-12 Lakers, Chris Webber's 1999-2000 Kings and Ricky Rubio's 2015-16 Timberwolves. Throwbacks: Baron Davis's 2006-07 We Believe Warriors, Corey Maggette's 2007-08 Clippers and DeMarcus Cousins' 2015-16 Kings. Jamison, Rubio, Baron Davis and Maggette also get rookie cards. The Super Season collection grows by four, so it's open again if you had finished it.",
     to: 'collection', cta: 'Collection',

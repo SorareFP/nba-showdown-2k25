@@ -60,7 +60,7 @@ import { getCardByKey } from '../game/cardSets.js';
 import { burnValueFor, listingFloor, checkListingPrice } from '../game/marketRules.js';
 import { settleGameReward, todayKey, sanitizeBox, payFactorOf } from '../game/coinRewards.js';
 import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from '../game/modes/prizes.js';
-import { rarityShiftPayout, RARITY_SHIFT } from '../game/rarityShift.js';
+import { settleShifts, RARITY_SHIFTS } from '../game/rarityShift.js';
 
 /**
  * FLIP THIS AFTER `firebase deploy --only functions`.
@@ -235,24 +235,24 @@ const direct = {
    * same ledger, under the same `claims/<id>` receipt.
    */
   async settleRarityShift(uid) {
-    const id = RARITY_SHIFT?.id;
-    if (!id || id.includes('/')) return { id: null, coins: 0, net: 0, lines: [] };
-    const claimRef = doc(db, 'users', uid, 'claims', id);
+    const shifts = RARITY_SHIFTS.filter(s => s?.id && !s.id.includes('/'));
+    if (!shifts.length) return { id: null, coins: 0, net: 0, lines: [] };
+    const refs = shifts.map(s => doc(db, 'users', uid, 'claims', s.id));
     const copies = await getDocs(collection(db, 'users', uid, 'copies'));
     return runTransaction(db, async tx => {
-      const claim = await tx.get(claimRef);
-      if (claim.exists()) {
-        const r = claim.data() ?? {};
-        return { id, coins: r.coins ?? 0, net: r.net ?? 0, cards: r.cards ?? (r.lines ?? []).length, lines: r.lines ?? [], already: true };
+      const claims = await Promise.all(refs.map(r => tx.get(r)));
+      const open = shifts.filter((_, i) => !claims[i].exists());
+      if (!open.length) {
+        const r = claims.at(-1).data() ?? {};
+        return { id: shifts.at(-1).id, coins: r.coins ?? 0, net: r.net ?? 0, cards: r.cards ?? (r.lines ?? []).length, lines: r.lines ?? [], already: true };
       }
-      const pay = rarityShiftPayout(copies.docs.map(d => d.data()));
-      const lines = pay.lines.slice(0, 50);
-      tx.set(claimRef, {
-        claimedAt: serverTimestamp(), coins: pay.coins, net: pay.net, cards: pay.lines.length, reward: null,
-        label: 'Rarity changes', shift: id, lines,
-      });
+      const pay = settleShifts(copies.docs.map(d => d.data()), open);
+      pay.receipts.forEach((r, i) => tx.set(doc(db, 'users', uid, 'claims', open[i].id), {
+        claimedAt: serverTimestamp(), coins: r.coins, net: r.net, cards: r.lines.length, reward: null,
+        label: 'Rarity changes', shift: open[i].id, lines: r.lines.slice(0, 50),
+      }));
       if (pay.coins > 0) tx.set(doc(db, 'users', uid), { currency: increment(pay.coins) }, { merge: true });
-      return { id, coins: pay.coins, net: pay.net, cards: pay.lines.length, lines };
+      return { id: pay.id, coins: pay.coins, net: pay.net, cards: pay.cards, lines: pay.lines.slice(0, 50) };
     });
   },
 

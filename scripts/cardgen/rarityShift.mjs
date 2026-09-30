@@ -3,7 +3,7 @@
 // copy of each is owed. src/game/rarityShift.js explains the payout rule; this
 // only writes card-data/generated/rarity-shift.json.
 //
-//   node scripts/cardgen/rarityShift.mjs [--from <ref>] [--id <receipt id>] [--cutoff <ISO time>]
+//   node scripts/cardgen/rarityShift.mjs [--from <ref>] [--id <receipt id>] [--cutoff <ISO time>] [--out <file>]
 //
 //   --from     the shipped cards. Default: the tag cut before the 2026-09-29
 //              chart rebuild, cards-before-conditional-rows.
@@ -32,7 +32,9 @@ import * as now from '../../src/game/cardSets.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
-const OUT = path.join(ROOT, 'card-data', 'generated', 'rarity-shift.json');
+// `--out rarity-shift-2.json`: a deployed table is never rewritten; the next
+// change is cut into the next file (src/game/rarityShift.js imports each).
+const OUT = path.join(ROOT, 'card-data', 'generated', process.argv.includes('--out') ? process.argv[process.argv.indexOf('--out') + 1] : 'rarity-shift.json');
 
 const arg = name => {
   const i = process.argv.indexOf(`--${name}`);

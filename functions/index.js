@@ -63,7 +63,7 @@ import {
 import { DPHASE } from './shared/src/game/modes/dynasty.js';
 import { createFriendsDynasty, friendsAct, bidProblem, FRIEND_MOVES } from './shared/src/game/modes/dynastyFriends.js';
 import { packDynasty, unpackDynasty } from './shared/src/game/modes/seasonPack.js';
-import { rarityShiftPayout, RARITY_SHIFT } from './shared/src/game/rarityShift.js';
+import { settleShifts, RARITY_SHIFTS } from './shared/src/game/rarityShift.js';
 
 initializeApp();
 const db = getFirestore();
@@ -1257,28 +1257,33 @@ export const claimSeasonReward = onCall({ region: 'us-central1' }, async request
  * receipt `claims/<table id>` is written whatever the total, inside the same
  * transaction as the coins, so the second call pays nothing and answers with
  * the first one's receipt. The client calls this once per account on sign-in.
+ *
+ * EVERY TABLE THE ACCOUNT HAS NOT CLAIMED (2026-09-30, evening): a second
+ * rarity change arrived hours after the first went live, so each table keeps
+ * its own receipt and an account settles whichever of them it has not yet —
+ * both, for one that had not signed in between.
  */
 export const settleRarityShift = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
-  const id = RARITY_SHIFT?.id;
-  if (!id || id.includes('/')) return { id: null, coins: 0, net: 0, lines: [] };
-  const claimRef = db.doc(`users/${uid}/claims/${id}`);
+  const shifts = RARITY_SHIFTS.filter(s => s?.id && !s.id.includes('/'));
+  if (!shifts.length) return { id: null, coins: 0, net: 0, lines: [] };
+  const refs = shifts.map(s => db.doc(`users/${uid}/claims/${s.id}`));
   return db.runTransaction(async tx => {
-    const claim = await tx.get(claimRef);
-    if (claim.exists) {
-      const r = claim.data() ?? {};
-      return { id, coins: r.coins ?? 0, net: r.net ?? 0, cards: r.cards ?? (r.lines ?? []).length, lines: r.lines ?? [], already: true };
+    const claims = await Promise.all(refs.map(r => tx.get(r)));
+    const open = shifts.filter((_, i) => !claims[i].exists);
+    if (!open.length) {
+      const r = claims.at(-1).data() ?? {};
+      return { id: shifts.at(-1).id, coins: r.coins ?? 0, net: r.net ?? 0, cards: r.cards ?? (r.lines ?? []).length, lines: r.lines ?? [], already: true };
     }
     const copies = await tx.get(db.collection(`users/${uid}/copies`));
-    const pay = rarityShiftPayout(copies.docs.map(d => d.data()));
+    const pay = settleShifts(copies.docs.map(d => d.data()), open);
     // A receipt stays small: the fifty biggest lines are what a player would read.
-    const lines = pay.lines.slice(0, 50);
-    tx.set(claimRef, {
-      claimedAt: FieldValue.serverTimestamp(), coins: pay.coins, net: pay.net, cards: pay.lines.length, reward: null,
-      label: 'Rarity changes', shift: id, lines,
-    });
+    pay.receipts.forEach((r, i) => tx.set(db.doc(`users/${uid}/claims/${open[i].id}`), {
+      claimedAt: FieldValue.serverTimestamp(), coins: r.coins, net: r.net, cards: r.lines.length, reward: null,
+      label: 'Rarity changes', shift: open[i].id, lines: r.lines.slice(0, 50),
+    }));
     if (pay.coins > 0) tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(pay.coins) }, { merge: true });
-    return { id, coins: pay.coins, net: pay.net, cards: pay.lines.length, lines };
+    return { id: pay.id, coins: pay.coins, net: pay.net, cards: pay.cards, lines: pay.lines.slice(0, 50) };
   });
 });
 

@@ -457,7 +457,10 @@ describe('the committed file', () => {
     // be the Lakers reward. 91 with the stray-photo Super Seasons: Jamison
     // 2007-08, Bynum 2011-12 and Webber 1999-2000 were All-Stars (Rubio's
     // 2015-16 was not).
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(91);
+    // 94 after the real-log rebuild that evening: five Super Seasons back from
+    // Throwbacks once real games priced their rookie cards (Duncan's 2001-02 MVP
+    // among them), and six moved to a more valuable season.
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(94);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     //
@@ -513,8 +516,8 @@ describe('the committed file', () => {
     // 11 on 2026-09-24 (the value pick): the three 2024-25 Thunder rings left
     // for Throwbacks (Jalen Williams, Dort, Kenrich Williams); Derrick White
     // 2023-24, Kobe 2008-09, Draymond Green 2014-15 and Zeke Nnaji 2022-23 came.
-    // 12 on 2026-09-30, the reward re-pick.
-    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(12);
+    // 12 on 2026-09-30, the reward re-pick. 11 after the real-log rebuild: Kobe's 2008-09 ring left with his Super Season (2005-06 now).
+    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(11);
     // …against what admitting All-NBA and All-Defensive as well would mark.
     // Still a step up on every set, which is the case for stopping here.
     // (Unchanged by the ring: ifSelectionsCounted asks about the awards column,
@@ -523,7 +526,7 @@ describe('the committed file', () => {
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(45);
     // 85 on 2026-09-07 with the awards file regenerated against the current
     // Super Season roster — the capstone legends it had gone stale against.
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(96) /* 96 with the stray-photo Super Seasons (Jamison, Bynum, Webber); 93 later on 2026-09-30: Magic 1989-90 moved out to be the Lakers reward; 94 on 2026-09-30, the reward re-pick: the new legends and the Super Seasons home from the rewards;  87 on 2026-09-29: the conditional-rows rebuild moved five cards across the beaten-by-base and rookie rules (Camara and Watford out, Hartenstein, M. Robinson and T. Martin back), one marked season fewer; 88 later on 2026-09-24: Wilkins, Parker and Deron Williams joined as legends (81 marked); 85 on 2026-09-24: the value pick (78 marked, the selection-only seasons it moved were a wash less two); 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(100) /* 100 after the real-log rebuild (five Super Seasons back, six moved); 96 with the stray-photo Super Seasons (Jamison, Bynum, Webber); 93 later on 2026-09-30: Magic 1989-90 moved out to be the Lakers reward; 94 on 2026-09-30, the reward re-pick: the new legends and the Super Seasons home from the rewards;  87 on 2026-09-29: the conditional-rows rebuild moved five cards across the beaten-by-base and rookie rules (Camara and Watford out, Hartenstein, M. Robinson and T. Martin back), one marked season fewer; 88 later on 2026-09-24: Wilkins, Parker and Deron Williams joined as legends (81 marked); 85 on 2026-09-24: the value pick (78 marked, the selection-only seasons it moved were a wash less two); 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
     // 21, not 25: the rookie playing-time bar, same four bench rings.
     // 24, and equal to `marked`: a rookie card's only trophies are ROY and a
     // ring, neither of which the selection suffix distinguishes.
@@ -577,7 +580,6 @@ describe('the committed file', () => {
       'set-rewards Giannis Antetokounmpo 2020 MVP+DPOY+AS',
       'summer-standouts Dwyane Wade 2006 FMVP+CHAMP+AS',
       'summer-standouts Kawhi Leonard 2019 FMVP+CHAMP+AS',
-      'super-season Kobe Bryant 2009 FMVP+CHAMP+AS',
       'super-season Shai Gilgeous-Alexander 2025 MVP+FMVP+CHAMP+AS',
       "super-season Shaquille O'Neal 2000 MVP+FMVP+CHAMP+AS",
       'team-rewards Dirk Nowitzki 2011 FMVP+CHAMP+AS',
@@ -588,6 +590,9 @@ describe('the committed file', () => {
       'team-rewards Tim Duncan 2005 FMVP+CHAMP+AS',
       // Jordan's 1987-88: MVP and DPOY in the same year, a Throwback since the
       // value pick gave his Super Season to 1989-90.
+      // Kobe's 2008-09 title year, a Throwback since the real-log rebuild made
+      // 2005-06 his Super Season.
+      'throwbacks Kobe Bryant 2009 FMVP+CHAMP+AS',
       'throwbacks Michael Jordan 1988 MVP+DPOY+AS',
     ]);
   });
@@ -619,7 +624,9 @@ describe('the committed file', () => {
     // Dirk 2010-11, LeBron 2015-16, Duncan 2004-05 beside it.
     expect(AWARDS.counts['team-rewards'].byCode.FMVP).toBe(5);
     // Three since the value pick made Kobe's 2008-09 his Super Season.
-    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.FMVP).toBe(3);
+    // Two since the real-log rebuild (2026-09-30) moved Kobe's Super Season to
+    // 2005-06: his 2008-09 Finals MVP is a Throwback now.
+    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.FMVP).toBe(2);
     // ZERO IN THE ROOKIE SET, and that is a fact about the award rather than a
     // miss: no rookie has won a Finals MVP in the 2004..2026 range, and only
     // Magic Johnson ever has.

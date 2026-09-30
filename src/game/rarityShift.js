@@ -27,10 +27,21 @@
 // last shipped (a git ref) against the cards as they are now, and the per-copy
 // coins are written into it, so this module reads data only and the server and
 // the browser cannot disagree about a price.
-import table from '../../card-data/generated/rarity-shift.json' with { type: 'json' };
+//
+// MORE THAN ONE TABLE (2026-09-30, evening). The first table went live that
+// afternoon; hours later the real-log rebuild moved rarities again. Replacing
+// the first table would have dropped it for every account that had not signed
+// in since, so each change keeps its own table, cut from the cards as the
+// previous one shipped, and an account settles every table it has not claimed
+// yet, each once, each on its own receipt and its own floor at zero.
+import first from '../../card-data/generated/rarity-shift.json' with { type: 'json' };
+import second from '../../card-data/generated/rarity-shift-2.json' with { type: 'json' };
 
-/** The current table: `{ id, cutoff, shifts: { cardKey: { from, to, coins } } }`. */
-export const RARITY_SHIFT = table;
+/** Every table, oldest first: `{ id, cutoff, shifts: { cardKey: { from, to, coins } } }`. */
+export const RARITY_SHIFTS = [first, second].filter(t => t?.id);
+
+/** The newest table: its id is what the client remembers as settled, its cutoff who can be owed. */
+export const RARITY_SHIFT = RARITY_SHIFTS.at(-1) ?? null;
 
 /** A timestamp in milliseconds from a Firestore Timestamp, a Date, a number or an ISO string; null if none. */
 export function timeOf(t) {
@@ -78,6 +89,26 @@ export function rarityShiftPayout(copies, shift = RARITY_SHIFT) {
   const lines = [...byKey.values()].sort((a, b) => b.coins - a.coins || a.key.localeCompare(b.key));
   const net = lines.reduce((sum, l) => sum + l.coins, 0);
   return { id: shift?.id ?? null, coins: Math.max(0, net), net, lines };
+}
+
+/**
+ * Settle every table in `shifts` against one ledger. Each table pays on its own
+ * terms (its own cutoff, its own floor at zero): the tables are separate
+ * events, and an upgrade in one must not offset a downgrade in another. The
+ * caller passes only the tables this account has not claimed, and writes one
+ * receipt per entry of `receipts`.
+ */
+export function settleShifts(copies, shifts = RARITY_SHIFTS) {
+  const receipts = shifts.map(s => rarityShiftPayout(copies, s));
+  const lines = receipts.flatMap(r => r.lines).sort((a, b) => b.coins - a.coins || a.key.localeCompare(b.key));
+  return {
+    id: shifts.at(-1)?.id ?? null,
+    receipts,
+    coins: receipts.reduce((n, r) => n + r.coins, 0),
+    net: receipts.reduce((n, r) => n + r.net, 0),
+    cards: lines.length,
+    lines,
+  };
 }
 
 /**

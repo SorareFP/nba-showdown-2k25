@@ -181,7 +181,7 @@ export const KEY_ALIASES = Object.freeze({
   // franchise reward migrates from; each reward keeps its own season by
   // migrating from that season's retired Throwback, and changes id with it
   // (syncRewardsToSuperSeasons.py) — the Robinson precedent, three times.
-  'team-rewards:Kobe_Bryant': 'throwbacks:Kobe_Bryant_2006',
+  'team-rewards:Kobe_Bryant': 'super-season:Kobe_Bryant', // 2005-06, his Super Season since the real-log rebuild (2026-09-30)
   'team-rewards:Myles_Turner': 'throwbacks:Myles_Turner_2019',
   'team-rewards:John_Stockton': 'throwbacks:John_Stockton_2002',
   // (Those four point past the reward set since 2026-09-30: each reward went
@@ -210,7 +210,7 @@ export const KEY_ALIASES = Object.freeze({
   'team-rewards:Chris_Paul': 'rookie:Chris_Paul',
   'team-rewards:Jason_Kidd': 'rookie:Jason_Kidd',
   'team-rewards:David_Robinson_1994': 'throwbacks:David_Robinson_1994',
-  'team-rewards:Kobe_Bryant_2006': 'throwbacks:Kobe_Bryant_2006',
+  'team-rewards:Kobe_Bryant_2006': 'super-season:Kobe_Bryant',
   'team-rewards:Myles_Turner_2019': 'throwbacks:Myles_Turner_2019',
   'team-rewards:John_Stockton_2002': 'throwbacks:John_Stockton_2002',
   // …franchise rewards built for the goal, kept as the card they are
@@ -228,7 +228,10 @@ export const KEY_ALIASES = Object.freeze({
   // …and the special-set rewards that went back into their sets when each
   // set's own top card became its reward.
   'set-rewards:Russell_Westbrook_2017': 'super-season:Russell_Westbrook',
-  'set-rewards:Michael_Jordan': 'rookie:Michael_Jordan',
+  // The Rookie set reward went back to Jordan's 1984-85 on 2026-09-30 (real
+  // game logs dropped David Robinson's rookie card to third in the set), so the
+  // key Robinson's reward was earned under that day resolves to his rookie card.
+  'set-rewards:David_Robinson': 'rookie:David_Robinson',
   'set-rewards:Dwyane_Wade': 'summer-standouts:Dwyane_Wade',
   'wnba-set-rewards:Jonquel_Jones': 'wnba-super-season:Jonquel_Jones',
   'wnba-set-rewards:Candice_Wiggins': 'wnba-rookie:Candice_Wiggins',

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T22:43:05.188Z",
+ "generatedAt": "2026-09-30T23:00:25.185Z",
  "set": "set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
@@ -72,17 +72,17 @@
    "rewardGoal": "set-super-season"
   },
   {
-   "id": "David_Robinson",
-   "name": "David Robinson",
-   "team": "SAS90",
-   "pos": "C",
-   "speed": 10,
-   "power": 19,
-   "shotLine": 15,
-   "paintBoost": 2,
-   "threePtBoost": -5,
-   "defBoost": 3,
-   "salary": 1440,
+   "id": "Michael_Jordan",
+   "name": "Michael Jordan",
+   "team": "CHI",
+   "pos": "SG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "salary": 1580,
    "chart": [
     {
      "lo": 1,
@@ -95,44 +95,37 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
-     "lo": 15,
-     "hi": 21,
+     "lo": 7,
+     "hi": 13,
      "pts": 3,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
-     "lo": 22,
+     "lo": 14,
      "hi": 99,
      "pts": 3,
-     "reb": 2,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     }
    ],
-   "season": 1990,
-   "seasonLabel": "1989-90",
-   "age": 24,
+   "season": 1985,
+   "seasonLabel": "1984-85",
+   "age": 21,
    "games": 82,
-   "mpg": 36.6,
-   "bbrefId": "robinda01",
+   "mpg": 38.3,
+   "bbrefId": "jordami01",
    "traded": false,
    "metrics": {
-    "bpm": 6.9,
-    "vorp": 6.8,
-    "ws": 15.1,
-    "ws48": 0.241,
-    "per": 26.3
+    "bpm": 7.3,
+    "vorp": 7.4,
+    "ws": 14,
+    "ws48": 0.213,
+    "per": 25.8
    },
    "provisional": false,
    "set": "set-rewards",
@@ -142,7 +135,7 @@
    "wears": "rookie",
    "migratedFrom": {
     "set": "rookie",
-    "id": "David_Robinson"
+    "id": "Michael_Jordan"
    },
    "rewardGoal": "set-rookie"
   },

@@ -80,7 +80,7 @@ const WEARS = {
   'wnba-team-rewards:Sophia_Witherspoon': 'wnba-throwbacks',
   // ── set rewards (7): the special sets, the conferences and the whole set ─
   'set-rewards:Giannis_Antetokounmpo': 'super-season',
-  'set-rewards:David_Robinson': 'rookie',
+  'set-rewards:Michael_Jordan': 'rookie', // his 1984-85 again since the real-log rebuild (2026-09-30)
   'set-rewards:Anthony_Davis': 'summer-standouts',
   'set-rewards:Russell_Westbrook_2020': 'dissonance',
   'set-rewards:Joel_Embiid': 'super-season',

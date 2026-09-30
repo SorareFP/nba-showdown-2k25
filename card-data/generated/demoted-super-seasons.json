@@ -1,6 +1,6 @@
 {
  "set": "throwbacks",
- "generatedAt": "2026-09-30T22:40:18.431Z",
+ "generatedAt": "2026-09-30T22:55:22.073Z",
  "note": "Super Seasons that are no longer a Super Season, as Throwbacks (generateSpecialSets.js): out-priced by the same player's Rookie card (2026-09-22), or by another of his seasons, the base card, or any later rule (the value pick, 2026-09-24; card-data/super-season-retired.json). generateCuratedCards.js folds them into cards-throwbacks.json.",
  "cards": [
   {

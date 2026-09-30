@@ -509,7 +509,10 @@ describe('the base set\'s badges', () => {
     // 218 later on 2026-09-30: Jamison 2007-08, Bynum 2011-12, Webber
     // 1999-2000 and Rubio 2015-16, for photos left in the team-rewards folder
     // by the first reward picks (the user: "Yeah go for it").
-    expect(SUPER.cards.length).toBe(218);
+    // 223 after the real-log rebuild: Duncan 2001-02, David Robinson 1990-91,
+    // Yao 2008-09, Kirilenko 2004-05 and Marion 2006-07 back from Throwbacks,
+    // once real games priced the rookie cards that had beaten them.
+    expect(SUPER.cards.length).toBe(223);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM

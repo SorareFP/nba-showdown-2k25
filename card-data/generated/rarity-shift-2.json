@@ -1,0 +1,517 @@
+{
+ "note": "RARITY SHIFT — card keys whose rarity moved between the cards as shipped (`from`) and now; each copy held before `cutoff` is owed `coins` (negative for a card that moved up), the total floored at zero, once per account under claims/<id>. Written by scripts/cardgen/rarityShift.mjs; read by src/game/rarityShift.js.",
+ "id": "rarity-shift:2026-09-30-2",
+ "from": "dd1b1a2a",
+ "fromCommit": "dd1b1a2af1646f5b0eff2b84d357d2bb85687199",
+ "cutoff": "2026-09-30T23:00:57.642Z",
+ "rates": {
+  "common": 2,
+  "uncommon": 5,
+  "rare": 45,
+  "super-rare": 100,
+  "legendary": 250
+ },
+ "summary": {
+  "keys": 44,
+  "down": 30,
+  "up": 14,
+  "moves": {
+   "rare -> uncommon": 8,
+   "uncommon -> common": 5,
+   "super-rare -> uncommon": 5,
+   "super-rare -> rare": 6,
+   "rare -> common": 4,
+   "common -> uncommon": 1,
+   "legendary -> super-rare": 1,
+   "legendary -> rare": 1,
+   "super-rare -> legendary": 12,
+   "rare -> super-rare": 1
+  }
+ },
+ "shifts": {
+  "Isaiah_Joe": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "Isaiah Joe",
+   "season": null,
+   "salary": [
+    700,
+    690
+   ]
+  },
+  "Justin_Champagnie": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Justin Champagnie",
+   "season": null,
+   "salary": [
+    420,
+    410
+   ]
+  },
+  "rookie:Allen_Iverson": {
+   "from": "super-rare",
+   "to": "uncommon",
+   "coins": 95,
+   "name": "Allen Iverson",
+   "season": "1996-97",
+   "salary": [
+    1140,
+    660
+   ]
+  },
+  "rookie:Andrei_Kirilenko": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Andrei Kirilenko",
+   "season": "2001-02",
+   "salary": [
+    1140,
+    870
+   ]
+  },
+  "rookie:Bradley_Beal": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "Bradley Beal",
+   "season": "2012-13",
+   "salary": [
+    850,
+    440
+   ]
+  },
+  "rookie:Brandon_Roy": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Brandon Roy",
+   "season": "2006-07",
+   "salary": [
+    1000,
+    700
+   ]
+  },
+  "rookie:Charles_Barkley": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Charles Barkley",
+   "season": "1984-85",
+   "salary": [
+    1210,
+    900
+   ]
+  },
+  "rookie:Dirk_Nowitzki": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Dirk Nowitzki",
+   "season": "1998-99",
+   "salary": [
+    540,
+    360
+   ]
+  },
+  "rookie:Gary_Payton": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Gary Payton",
+   "season": "1990-91",
+   "salary": [
+    530,
+    410
+   ]
+  },
+  "rookie:Grant_Hill": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Grant Hill",
+   "season": "1994-95",
+   "salary": [
+    1170,
+    840
+   ]
+  },
+  "rookie:Isaiah_Thomas": {
+   "from": "super-rare",
+   "to": "uncommon",
+   "coins": 95,
+   "name": "Isaiah Thomas",
+   "season": "2011-12",
+   "salary": [
+    1050,
+    660
+   ]
+  },
+  "rookie:Josh_Smith": {
+   "from": "rare",
+   "to": "common",
+   "coins": 43,
+   "name": "Josh Smith",
+   "season": "2004-05",
+   "salary": [
+    720,
+    390
+   ]
+  },
+  "rookie:Karl_Malone": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "Karl Malone",
+   "season": "1985-86",
+   "salary": [
+    800,
+    660
+   ]
+  },
+  "rookie:Kobe_Bryant": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "Kobe Bryant",
+   "season": "1996-97",
+   "salary": [
+    840,
+    640
+   ]
+  },
+  "rookie:LaMarcus_Aldridge": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "LaMarcus Aldridge",
+   "season": "2006-07",
+   "salary": [
+    840,
+    500
+   ]
+  },
+  "rookie:Luol_Deng": {
+   "from": "super-rare",
+   "to": "uncommon",
+   "coins": 95,
+   "name": "Luol Deng",
+   "season": "2004-05",
+   "salary": [
+    970,
+    530
+   ]
+  },
+  "rookie:Marc_Gasol": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "Marc Gasol",
+   "season": "2008-09",
+   "salary": [
+    860,
+    650
+   ]
+  },
+  "rookie:Michael_Finley": {
+   "from": "common",
+   "to": "uncommon",
+   "coins": -3,
+   "name": "Michael Finley",
+   "season": "1995-96",
+   "salary": [
+    320,
+    450
+   ]
+  },
+  "rookie:Patrick_Ewing": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Patrick Ewing",
+   "season": "1985-86",
+   "salary": [
+    1060,
+    760
+   ]
+  },
+  "rookie:Paul_Millsap": {
+   "from": "super-rare",
+   "to": "uncommon",
+   "coins": 95,
+   "name": "Paul Millsap",
+   "season": "2006-07",
+   "salary": [
+    930,
+    650
+   ]
+  },
+  "rookie:Peja_Stojakovic": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Peja Stojaković",
+   "season": "1998-99",
+   "salary": [
+    650,
+    410
+   ]
+  },
+  "rookie:Rajon_Rondo": {
+   "from": "rare",
+   "to": "common",
+   "coins": 43,
+   "name": "Rajon Rondo",
+   "season": "2006-07",
+   "salary": [
+    770,
+    350
+   ]
+  },
+  "rookie:Reggie_Miller": {
+   "from": "super-rare",
+   "to": "uncommon",
+   "coins": 95,
+   "name": "Reggie Miller",
+   "season": "1987-88",
+   "salary": [
+    980,
+    620
+   ]
+  },
+  "rookie:Shawn_Marion": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Shawn Marion",
+   "season": "1999-00",
+   "salary": [
+    1060,
+    730
+   ]
+  },
+  "rookie:Tim_Duncan": {
+   "from": "legendary",
+   "to": "super-rare",
+   "coins": 150,
+   "name": "Tim Duncan",
+   "season": "1997-98",
+   "salary": [
+    1830,
+    990
+   ]
+  },
+  "rookie:Tracy_McGrady": {
+   "from": "rare",
+   "to": "common",
+   "coins": 43,
+   "name": "Tracy McGrady",
+   "season": "1997-98",
+   "salary": [
+    800,
+    370
+   ]
+  },
+  "rookie:Wesley_Matthews": {
+   "from": "rare",
+   "to": "common",
+   "coins": 43,
+   "name": "Wesley Matthews",
+   "season": "2009-10",
+   "salary": [
+    750,
+    360
+   ]
+  },
+  "rookie:Yao_Ming": {
+   "from": "legendary",
+   "to": "rare",
+   "coins": 205,
+   "name": "Yao Ming",
+   "season": "2002-03",
+   "salary": [
+    1430,
+    900
+   ]
+  },
+  "summer-standouts:Boris_Diaw": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Boris Diaw",
+   "season": "2011-12",
+   "salary": [
+    510,
+    390
+   ]
+  },
+  "summer-standouts:Daniel_Gibson": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "Daniel Gibson",
+   "season": "2006-07",
+   "salary": [
+    710,
+    590
+   ]
+  },
+  "summer-standouts:Jared_Dudley": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "Jared Dudley",
+   "season": "2009-10",
+   "salary": [
+    700,
+    660
+   ]
+  },
+  "summer-standouts:Kyrie_Irving": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Kyrie Irving",
+   "season": "2015-16",
+   "salary": [
+    1320,
+    1340
+   ]
+  },
+  "summer-standouts:Paul_George": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Paul George",
+   "season": "2013-14",
+   "salary": [
+    1180,
+    1430
+   ]
+  },
+  "super-season:Elton_Brand": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Elton Brand",
+   "season": "2005-06",
+   "salary": [
+    1090,
+    1420
+   ]
+  },
+  "super-season:Paul_Pierce": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Paul Pierce",
+   "season": "2001-02",
+   "salary": [
+    1320,
+    1410
+   ]
+  },
+  "super-season:Scottie_Pippen": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Scottie Pippen",
+   "season": "1993-94",
+   "salary": [
+    1210,
+    1620
+   ]
+  },
+  "super-season:Tim_Duncan": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Tim Duncan",
+   "season": "2001-02",
+   "salary": [
+    1150,
+    1550
+   ]
+  },
+  "team-rewards:Kyrie_Irving": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Kyrie Irving",
+   "season": "2015-16",
+   "salary": [
+    1320,
+    1340
+   ]
+  },
+  "throwbacks:Charles_Barkley_1990": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Charles Barkley",
+   "season": "1989-90",
+   "salary": [
+    1220,
+    1570
+   ]
+  },
+  "throwbacks:Elton_Brand_2006": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Elton Brand",
+   "season": "2005-06",
+   "salary": [
+    1090,
+    1420
+   ]
+  },
+  "throwbacks:Paul_Pierce_2002": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Paul Pierce",
+   "season": "2001-02",
+   "salary": [
+    1080,
+    1410
+   ]
+  },
+  "throwbacks:Scottie_Pippen_1994": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Scottie Pippen",
+   "season": "1993-94",
+   "salary": [
+    1210,
+    1620
+   ]
+  },
+  "throwbacks:Tim_Duncan_2002": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Tim Duncan",
+   "season": "2001-02",
+   "salary": [
+    1150,
+    1550
+   ]
+  },
+  "wnba-super-season:Katie_Smith": {
+   "from": "rare",
+   "to": "super-rare",
+   "coins": -55,
+   "name": "Katie Smith",
+   "season": "2001",
+   "salary": [
+    830,
+    1090
+   ]
+  }
+ }
+}

@@ -1,7 +1,7 @@
 // THE RARITY-CHANGE SETTLEMENT (2026-09-30). The user: "Change the cards,
 // deploy net coins for total collection change, with a floor of zero."
 import { describe, it, expect } from 'vitest';
-import { RARITY_SHIFT, rarityShiftPayout, heldBefore, timeOf, mayBeOwed, settlementMessage } from './rarityShift.js';
+import { RARITY_SHIFT, RARITY_SHIFTS, rarityShiftPayout, settleShifts, heldBefore, timeOf, mayBeOwed, settlementMessage } from './rarityShift.js';
 import { getCardByKey } from './cardSets.js';
 import { getPlayerRarity, BURN_VALUES } from './rarity.js';
 
@@ -73,6 +73,40 @@ describe('rarityShiftPayout', () => {
   });
 });
 
+describe('settleShifts: more than one table', () => {
+  const later = {
+    id: 'rarity-shift:test-2',
+    cutoff: '2026-09-30T20:00:00.000Z',
+    shifts: {
+      Down_Rare: { from: 'uncommon', to: 'common', coins: 3 },
+      Up_Late: { from: 'rare', to: 'super-rare', coins: -55 },
+    },
+  };
+  const between = Date.parse(CUT) + 60_000; // after the first cut, before the second
+
+  it('pays each table on its own terms and sums them', () => {
+    const r = settleShifts([{ cardKey: 'Down_Rare', mintedAt: before }], [table, later]);
+    expect(r.receipts.map(x => x.coins)).toEqual([40, 3]);
+    expect(r).toMatchObject({ id: 'rarity-shift:test-2', coins: 43, net: 43, cards: 2 });
+  });
+
+  it('floors each table at zero on its own: a later upgrade never takes back an earlier payment', () => {
+    const r = settleShifts([{ cardKey: 'Down_Rare', mintedAt: before }, { cardKey: 'Up_Late', mintedAt: before }], [table, later]);
+    expect(r.receipts.map(x => [x.coins, x.net])).toEqual([[40, 40], [0, -52]]);
+    expect(r.coins).toBe(40);
+  });
+
+  it("uses each table's own cutoff", () => {
+    const r = settleShifts([{ cardKey: 'Down_Rare', mintedAt: between }], [table, later]);
+    expect(r.receipts.map(x => x.coins)).toEqual([0, 3]);
+  });
+
+  it('settles only the tables it is handed, which is how a claimed one is skipped', () => {
+    const r = settleShifts([{ cardKey: 'Down_Rare', mintedAt: before }], [later]);
+    expect(r).toMatchObject({ id: 'rarity-shift:test-2', coins: 3, receipts: [{ id: 'rarity-shift:test-2' }] });
+  });
+});
+
 describe('the time helpers', () => {
   it('reads Firestore timestamps, dates, numbers, strings and bare seconds', () => {
     const ms = Date.parse(CUT);
@@ -113,21 +147,43 @@ describe('settlementMessage', () => {
 // (node scripts/cardgen/rarityShift.mjs). Already deployed (accounts hold
 // receipts under this id): cut a NEW table with a new --id, --from the ref
 // that was deployed.
-describe('the committed table', () => {
-  it('has an id, a cutoff and the burn values it priced with', () => {
-    expect(RARITY_SHIFT.id).toMatch(/^rarity-shift:\d{4}-\d{2}-\d{2}$/);
-    expect(Number.isFinite(timeOf(RARITY_SHIFT.cutoff))).toBe(true);
-    expect(RARITY_SHIFT.rates).toEqual(BURN_VALUES);
+describe('the committed tables', () => {
+  it('each has its own id, a cutoff and the burn values it priced with, oldest first', () => {
+    expect(RARITY_SHIFTS.length).toBeGreaterThanOrEqual(2);
+    for (const t of RARITY_SHIFTS) {
+      expect(t.id).toMatch(/^rarity-shift:\d{4}-\d{2}-\d{2}(-\d+)?$/);
+      expect(Number.isFinite(timeOf(t.cutoff))).toBe(true);
+      expect(t.rates).toEqual(BURN_VALUES);
+    }
+    expect(new Set(RARITY_SHIFTS.map(t => t.id)).size).toBe(RARITY_SHIFTS.length);
+    const cutoffs = RARITY_SHIFTS.map(t => timeOf(t.cutoff));
+    expect(cutoffs).toEqual([...cutoffs].sort((a, b) => a - b));
+    expect(RARITY_SHIFT).toBe(RARITY_SHIFTS.at(-1));
   });
 
-  it('every entry lands on the rarity its card has now, at the burn difference', () => {
+  it('every entry is priced at the burn difference of a real move', () => {
     const wrong = [];
-    for (const [key, move] of Object.entries(RARITY_SHIFT.shifts)) {
+    for (const t of RARITY_SHIFTS) {
+      for (const [key, move] of Object.entries(t.shifts)) {
+        if (move.coins !== BURN_VALUES[move.from] - BURN_VALUES[move.to] || move.from === move.to) wrong.push(`${t.id} ${key}`);
+      }
+    }
+    expect(wrong).toEqual([]);
+  });
+
+  it('the tables chain: a key lands where the next table picks it up, and the last one on the card as it is now', () => {
+    const wrong = [];
+    const keys = new Set(RARITY_SHIFTS.flatMap(t => Object.keys(t.shifts)));
+    for (const key of keys) {
+      const moves = RARITY_SHIFTS.map(t => t.shifts[key]).filter(Boolean);
+      for (let i = 1; i < moves.length; i += 1) {
+        if (moves[i].from !== moves[i - 1].to) wrong.push(`${key}: ${moves[i - 1].to} then from ${moves[i].from}`);
+      }
       const card = getCardByKey(key);
       const now = card && getPlayerRarity(card);
-      if (now !== move.to || move.coins !== BURN_VALUES[move.from] - BURN_VALUES[move.to] || move.from === move.to) {
-        wrong.push(`${key}: table ${move.from} -> ${move.to} (${move.coins}), card is ${now ?? 'missing'}`);
-      }
+      // A key only the older table moved: the card must still be where it landed
+      // unless a later table moved it again (then the check above covers it).
+      if (now !== moves.at(-1).to) wrong.push(`${key}: last table says ${moves.at(-1).to}, card is ${now ?? 'missing'}`);
     }
     expect(wrong).toEqual([]);
   });

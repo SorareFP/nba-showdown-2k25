@@ -32,7 +32,9 @@ describe('the free-agent price', () => {
     // 3090 since the 2026-09-30 never-worse rows.
     // 230/990/3210/7380 since the 2026-09-30 re-pick (eight new rookie cards,
     // the three-line reprice).
-    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 230, 990, 3210, 7380]);
+    // 970/2880/6900 since the real-log rebuild that evening: 34 rookie cards
+    // built from their own games at last, nearly all of them cheaper.
+    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 230, 970, 2880, 6900]);
   });
 
   it('sits between the table and the pack-odds cost, and climbs with rarity', () => {

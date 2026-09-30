@@ -71,12 +71,7 @@
         0.1253,
         0.7257
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "2026-27/Jabari_Smith_Jr": {
       "name": [
@@ -285,12 +280,7 @@
         0.1253,
         0.5549
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "2026-27/Alperen_Sengun": {
       "name": [
@@ -696,12 +686,7 @@
         0.1187,
         0.7272
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "2026-27/Jaren_Jackson_Jr": {
       "name": [
@@ -1591,12 +1576,7 @@
         0.1253,
         0.6984
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "2026-27/Egor_Demin": {
       "name": [
@@ -3631,7 +3611,12 @@
         0.1253,
         0.6763
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Corey_Kispert": {
       "name": [
@@ -3816,12 +3801,7 @@
         0.1253,
         0.6941
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "super-season/Dirk_Nowitzki": {
       "name": [
@@ -3872,7 +3852,12 @@
         0.1044,
         0.705
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Draymond_Green": {
       "name": [
@@ -4393,12 +4378,7 @@
         0.1253,
         0.5886
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "super-season/Josh_Hart": {
       "name": [
@@ -4550,7 +4530,12 @@
         0.1253,
         0.6897
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Khris_Middleton": {
       "name": [
@@ -5049,12 +5034,7 @@
         0.1253,
         0.5276
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "super-season/Rob_Dillingham": {
       "name": [
@@ -5566,7 +5546,12 @@
         0.1187,
         0.7366
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "wnba-super-season/Elena_Delle_Donne": {
       "name": [
@@ -5727,12 +5712,7 @@
         0.1253,
         0.4128
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "wnba-super-season/Suzie_McConnell_Serio": {
       "name": [
@@ -9224,12 +9204,7 @@
         0.1174,
         0.732
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "team-rewards/Alonzo_Mourning": {
       "name": [
@@ -9265,12 +9240,7 @@
         0.1253,
         0.5698
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "team-rewards/Steve_Nash": {
       "name": [
@@ -12554,8 +12524,4092 @@
         0.7212
       ],
       "badge": null
+    },
+    "live/Amen_Thompson": {
+      "name": [
+        0.0258,
+        0.1086,
+        0.124,
+        0.7446
+      ],
+      "badge": null
+    },
+    "live/Kevin_Durant": {
+      "name": [
+        0.0252,
+        0.1609,
+        0.1253,
+        0.6401
+      ],
+      "badge": null
+    },
+    "live/Luka_Doncic": {
+      "name": [
+        0.0252,
+        0.193,
+        0.1253,
+        0.5759
+      ],
+      "badge": null
+    },
+    "live/Trey_Murphy_III": {
+      "name": [
+        0.0323,
+        0.1572,
+        0.1109,
+        0.6475
+      ],
+      "badge": null
+    },
+    "live/Jamal_Murray": {
+      "name": [
+        0.0252,
+        0.1409,
+        0.1253,
+        0.6801
+      ],
+      "badge": null
+    },
+    "live/Jalen_Johnson": {
+      "name": [
+        0.0252,
+        0.1181,
+        0.1253,
+        0.7257
+      ],
+      "badge": null
+    },
+    "live/Jabari_Smith_Jr": {
+      "name": [
+        0.0356,
+        0.1532,
+        0.1044,
+        0.6555
+      ],
+      "badge": null
+    },
+    "live/Anthony_Edwards": {
+      "name": [
+        0.033,
+        0.1023,
+        0.1096,
+        0.7574
+      ],
+      "badge": null
+    },
+    "live/Jalen_Brunson": {
+      "name": [
+        0.0252,
+        0.1154,
+        0.1253,
+        0.731
+      ],
+      "badge": null
+    },
+    "live/VJ_Edgecombe": {
+      "name": [
+        0.0252,
+        0.147,
+        0.1253,
+        0.6679
+      ],
+      "badge": null
+    },
+    "live/Nikola_Jokic": {
+      "name": [
+        0.0252,
+        0.1785,
+        0.1253,
+        0.6049
+      ],
+      "badge": null
+    },
+    "live/James_Harden": {
+      "name": [
+        0.0252,
+        0.1409,
+        0.1253,
+        0.6801
+      ],
+      "badge": null
+    },
+    "live/Paolo_Banchero": {
+      "name": [
+        0.0284,
+        0.1124,
+        0.1187,
+        0.7371
+      ],
+      "badge": null
+    },
+    "live/Austin_Reaves": {
+      "name": [
+        0.0252,
+        0.1375,
+        0.1253,
+        0.6869
+      ],
+      "badge": null
+    },
+    "live/Keegan_Murray": {
+      "name": [
+        0.0252,
+        0.1115,
+        0.1253,
+        0.7389
+      ],
+      "badge": null
+    },
+    "live/Jaylen_Brown": {
+      "name": [
+        0.0252,
+        0.1425,
+        0.1253,
+        0.677
+      ],
+      "badge": null
+    },
+    "live/Lauri_Markkanen": {
+      "name": [
+        0.0323,
+        0.1122,
+        0.1109,
+        0.7376
+      ],
+      "badge": null
+    },
+    "live/Derrick_White": {
+      "name": [
+        0.0252,
+        0.1387,
+        0.1253,
+        0.6844
+      ],
+      "badge": null
+    },
+    "live/Cade_Cunningham": {
+      "name": [
+        0.0323,
+        0.1051,
+        0.1109,
+        0.7518
+      ],
+      "badge": null
+    },
+    "live/Brandon_Ingram": {
+      "name": [
+        0.0284,
+        0.1016,
+        0.1187,
+        0.7587
+      ],
+      "badge": null
+    },
+    "live/Desmond_Bane": {
+      "name": [
+        0.0252,
+        0.1378,
+        0.1253,
+        0.6862
+      ],
+      "badge": null
+    },
+    "live/Donovan_Mitchell": {
+      "name": [
+        0.0356,
+        0.1198,
+        0.1044,
+        0.7222
+      ],
+      "badge": null
+    },
+    "live/Devin_Booker": {
+      "name": [
+        0.0252,
+        0.159,
+        0.1253,
+        0.644
+      ],
+      "badge": null
+    },
+    "live/Cooper_Flagg": {
+      "name": [
+        0.0252,
+        0.149,
+        0.1253,
+        0.6639
+      ],
+      "badge": null
+    },
+    "live/Scottie_Barnes": {
+      "name": [
+        0.0284,
+        0.1309,
+        0.1187,
+        0.7001
+      ],
+      "badge": null
+    },
+    "live/Nickeil_Alexander_Walker": {
+      "name": [
+        0.0532,
+        0.1256,
+        0.0692,
+        0.7107
+      ],
+      "badge": null
+    },
+    "live/Deni_Avdija": {
+      "name": [
+        0.0252,
+        0.2035,
+        0.1253,
+        0.5549
+      ],
+      "badge": null
+    },
+    "live/Alperen_Sengun": {
+      "name": [
+        0.0284,
+        0.1081,
+        0.1187,
+        0.7457
+      ],
+      "badge": null
+    },
+    "live/Toumani_Camara": {
+      "name": [
+        0.0291,
+        0.1118,
+        0.1174,
+        0.7382
+      ],
+      "badge": null
+    },
+    "live/Shai_Gilgeous_Alexander": {
+      "name": [
+        0.0519,
+        0.123,
+        0.0718,
+        0.7159
+      ],
+      "badge": null
+    },
+    "live/Pascal_Siakam": {
+      "name": [
+        0.0252,
+        0.1348,
+        0.1253,
+        0.6923
+      ],
+      "badge": null
+    },
+    "live/LeBron_James": {
+      "name": [
+        0.0252,
+        0.1464,
+        0.1253,
+        0.6692
+      ],
+      "badge": null
+    },
+    "live/OG_Anunoby": {
+      "name": [
+        0.0252,
+        0.197,
+        0.1253,
+        0.568
+      ],
+      "badge": null
+    },
+    "live/Dyson_Daniels": {
+      "name": [
+        0.0252,
+        0.1355,
+        0.1253,
+        0.6909
+      ],
+      "badge": null
+    },
+    "live/Keyonte_George": {
+      "name": [
+        0.0284,
+        0.1125,
+        0.1187,
+        0.7369
+      ],
+      "badge": null
+    },
+    "live/Julius_Randle": {
+      "name": [
+        0.0252,
+        0.1355,
+        0.1253,
+        0.6909
+      ],
+      "badge": null
+    },
+    "live/Mikal_Bridges": {
+      "name": [
+        0.0252,
+        0.1377,
+        0.1253,
+        0.6865
+      ],
+      "badge": null
+    },
+    "live/Jayson_Tatum": {
+      "name": [
+        0.0252,
+        0.158,
+        0.1253,
+        0.6459
+      ],
+      "badge": null
+    },
+    "live/Michael_Porter_Jr": {
+      "name": [
+        0.0415,
+        0.1448,
+        0.0926,
+        0.6724
+      ],
+      "badge": null
+    },
+    "live/Bam_Adebayo": {
+      "name": [
+        0.0252,
+        0.1738,
+        0.1253,
+        0.6143
+      ],
+      "badge": null
+    },
+    "live/Payton_Pritchard": {
+      "name": [
+        0.0356,
+        0.1264,
+        0.1044,
+        0.7091
+      ],
+      "badge": null
+    },
+    "live/Kawhi_Leonard": {
+      "name": [
+        0.0252,
+        0.1201,
+        0.1253,
+        0.7218
+      ],
+      "badge": null
+    },
+    "live/Ryan_Rollins": {
+      "name": [
+        0.0252,
+        0.1669,
+        0.1253,
+        0.628
+      ],
+      "badge": null
+    },
+    "live/Josh_Giddey": {
+      "name": [
+        0.0252,
+        0.1866,
+        0.1253,
+        0.5886
+      ],
+      "badge": null
+    },
+    "live/Evan_Mobley": {
+      "name": [
+        0.0252,
+        0.1788,
+        0.1253,
+        0.6044
+      ],
+      "badge": null
+    },
+    "live/Immanuel_Quickley": {
+      "name": [
+        0.0389,
+        0.1226,
+        0.0979,
+        0.7167
+      ],
+      "badge": null
+    },
+    "live/Christian_Braun": {
+      "name": [
+        0.0323,
+        0.1272,
+        0.1109,
+        0.7076
+      ],
+      "badge": null
+    },
+    "live/Jaden_McDaniels": {
+      "name": [
+        0.0323,
+        0.1188,
+        0.1109,
+        0.7243
+      ],
+      "badge": null
+    },
+    "live/Joel_Embiid": {
+      "name": [
+        0.0252,
+        0.2018,
+        0.1253,
+        0.5582
+      ],
+      "badge": null
+    },
+    "live/Kon_Knueppel": {
+      "name": [
+        0.0252,
+        0.155,
+        0.1253,
+        0.6518
+      ],
+      "badge": null
+    },
+    "live/Kelly_Oubre_Jr": {
+      "name": [
+        0.0323,
+        0.1548,
+        0.1109,
+        0.6522
+      ],
+      "badge": null
+    },
+    "live/Zach_LaVine": {
+      "name": [
+        0.0252,
+        0.1984,
+        0.1253,
+        0.565
+      ],
+      "badge": null
+    },
+    "live/Tyler_Herro": {
+      "name": [
+        0.0252,
+        0.1859,
+        0.1253,
+        0.5901
+      ],
+      "badge": null
+    },
+    "live/Anthony_Davis": {
+      "name": [
+        0.0252,
+        0.1325,
+        0.1253,
+        0.6969
+      ],
+      "badge": null
+    },
+    "live/Andrew_Nembhard": {
+      "name": [
+        0.0343,
+        0.0994,
+        0.107,
+        0.763
+      ],
+      "badge": null
+    },
+    "live/Rudy_Gobert": {
+      "name": [
+        0.0252,
+        0.1773,
+        0.1253,
+        0.6073
+      ],
+      "badge": null
+    },
+    "live/DeMar_DeRozan": {
+      "name": [
+        0.0252,
+        0.1106,
+        0.1253,
+        0.7408
+      ],
+      "badge": null
+    },
+    "live/Saddiq_Bey": {
+      "name": [
+        0.0252,
+        0.2179,
+        0.1253,
+        0.526
+      ],
+      "badge": null
+    },
+    "live/Jimmy_Butler": {
+      "name": [
+        0.0252,
+        0.1574,
+        0.1253,
+        0.6471
+      ],
+      "badge": null
+    },
+    "live/Karl_Anthony_Towns": {
+      "name": [
+        0.0415,
+        0.1079,
+        0.0926,
+        0.7461
+      ],
+      "badge": null
+    },
+    "live/De_Aaron_Fox": {
+      "name": [
+        0.0252,
+        0.1659,
+        0.1253,
+        0.6301
+      ],
+      "badge": null
+    },
+    "live/Miles_Bridges": {
+      "name": [
+        0.0252,
+        0.1395,
+        0.1253,
+        0.683
+      ],
+      "badge": null
+    },
+    "live/Onyeka_Okongwu": {
+      "name": [
+        0.0291,
+        0.0961,
+        0.1174,
+        0.7698
+      ],
+      "badge": null
+    },
+    "live/P_J_Washington": {
+      "name": [
+        0.0323,
+        0.1371,
+        0.1109,
+        0.6878
+      ],
+      "badge": null
+    },
+    "live/Stephen_Curry": {
+      "name": [
+        0.0252,
+        0.126,
+        0.1253,
+        0.7099
+      ],
+      "badge": null
+    },
+    "live/Paul_George": {
+      "name": [
+        0.0252,
+        0.1766,
+        0.1253,
+        0.6088
+      ],
+      "badge": null
+    },
+    "live/Devin_Vassell": {
+      "name": [
+        0.0252,
+        0.1455,
+        0.1253,
+        0.6709
+      ],
+      "badge": null
+    },
+    "live/Cameron_Johnson": {
+      "name": [
+        0.0323,
+        0.0964,
+        0.1109,
+        0.7692
+      ],
+      "badge": null
+    },
+    "live/Dillon_Brooks": {
+      "name": [
+        0.0252,
+        0.1339,
+        0.1253,
+        0.6941
+      ],
+      "badge": null
+    },
+    "live/Donte_DiVincenzo": {
+      "name": [
+        0.0356,
+        0.1285,
+        0.1044,
+        0.705
+      ],
+      "badge": null
+    },
+    "live/Brandon_Miller": {
+      "name": [
+        0.0284,
+        0.1174,
+        0.1187,
+        0.7272
+      ],
+      "badge": null
+    },
+    "live/Jaren_Jackson_Jr": {
+      "name": [
+        0.0388,
+        0.1375,
+        0.0979,
+        0.6869
+      ],
+      "badge": null
+    },
+    "live/RJ_Barrett": {
+      "name": [
+        0.0252,
+        0.2172,
+        0.1253,
+        0.5276
+      ],
+      "badge": null
+    },
+    "live/Andrew_Wiggins": {
+      "name": [
+        0.0284,
+        0.0996,
+        0.1187,
+        0.7627
+      ],
+      "badge": null
+    },
+    "live/Josh_Hart": {
+      "name": [
+        0.0252,
+        0.2376,
+        0.1253,
+        0.4867
+      ],
+      "badge": null
+    },
+    "live/Ivica_Zubac": {
+      "name": [
+        0.0252,
+        0.2051,
+        0.1253,
+        0.5518
+      ],
+      "badge": null
+    },
+    "live/Franz_Wagner": {
+      "name": [
+        0.0252,
+        0.1348,
+        0.1253,
+        0.6923
+      ],
+      "badge": null
+    },
+    "live/Bennedict_Mathurin": {
+      "name": [
+        0.0415,
+        0.1217,
+        0.0926,
+        0.7185
+      ],
+      "badge": null
+    },
+    "live/Stephon_Castle": {
+      "name": [
+        0.0284,
+        0.1268,
+        0.1187,
+        0.7083
+      ],
+      "badge": null
+    },
+    "live/Darius_Garland": {
+      "name": [
+        0.0284,
+        0.1134,
+        0.1187,
+        0.735
+      ],
+      "badge": null
+    },
+    "live/CJ_McCollum": {
+      "name": [
+        0.0252,
+        0.1778,
+        0.1253,
+        0.6062
+      ],
+      "badge": null
+    },
+    "live/Anthony_Black": {
+      "name": [
+        0.0252,
+        0.1238,
+        0.1253,
+        0.7142
+      ],
+      "badge": null
+    },
+    "live/Zion_Williamson": {
+      "name": [
+        0.0323,
+        0.1283,
+        0.1109,
+        0.7053
+      ],
+      "badge": null
+    },
+    "live/Jerami_Grant": {
+      "name": [
+        0.0252,
+        0.1542,
+        0.1253,
+        0.6535
+      ],
+      "badge": null
+    },
+    "live/Domantas_Sabonis": {
+      "name": [
+        0.0356,
+        0.1099,
+        0.1044,
+        0.7421
+      ],
+      "badge": null
+    },
+    "live/Aaron_Nesmith": {
+      "name": [
+        0.0252,
+        0.1229,
+        0.1253,
+        0.7161
+      ],
+      "badge": null
+    },
+    "live/Norman_Powell": {
+      "name": [
+        0.0258,
+        0.1094,
+        0.124,
+        0.743
+      ],
+      "badge": null
+    },
+    "live/Peyton_Watson": {
+      "name": [
+        0.0252,
+        0.1189,
+        0.1253,
+        0.7242
+      ],
+      "badge": null
+    },
+    "live/Naji_Marshall": {
+      "name": [
+        0.0252,
+        0.1296,
+        0.1253,
+        0.7026
+      ],
+      "badge": null
+    },
+    "live/Shaedon_Sharpe": {
+      "name": [
+        0.0284,
+        0.1054,
+        0.1187,
+        0.751
+      ],
+      "badge": null
+    },
+    "live/Jrue_Holiday": {
+      "name": [
+        0.0252,
+        0.1666,
+        0.1253,
+        0.6287
+      ],
+      "badge": null
+    },
+    "live/Quentin_Grimes": {
+      "name": [
+        0.0284,
+        0.1239,
+        0.1187,
+        0.7141
+      ],
+      "badge": null
+    },
+    "live/Wendell_Carter_Jr": {
+      "name": [
+        0.0415,
+        0.1358,
+        0.0926,
+        0.6902
+      ],
+      "badge": null
+    },
+    "live/Victor_Wembanyama": {
+      "name": [
+        0.0402,
+        0.1119,
+        0.0953,
+        0.7382
+      ],
+      "badge": null
+    },
+    "live/Matas_Buzelis": {
+      "name": [
+        0.0252,
+        0.1398,
+        0.1253,
+        0.6823
+      ],
+      "badge": null
+    },
+    "live/Max_Christie": {
+      "name": [
+        0.0252,
+        0.1719,
+        0.1253,
+        0.618
+      ],
+      "badge": null
+    },
+    "live/A_J_Green": {
+      "name": [
+        0.0252,
+        0.2384,
+        0.1253,
+        0.485
+      ],
+      "badge": null
+    },
+    "live/Kyshawn_George": {
+      "name": [
+        0.0291,
+        0.0975,
+        0.1174,
+        0.7669
+      ],
+      "badge": null
+    },
+    "live/Giannis_Antetokounmpo": {
+      "name": [
+        0.048,
+        0.1105,
+        0.0796,
+        0.7408
+      ],
+      "badge": null
+    },
+    "live/Chet_Holmgren": {
+      "name": [
+        0.0252,
+        0.1156,
+        0.1253,
+        0.7308
+      ],
+      "badge": null
+    },
+    "live/Grayson_Allen": {
+      "name": [
+        0.0252,
+        0.1252,
+        0.1253,
+        0.7116
+      ],
+      "badge": null
+    },
+    "live/Davion_Mitchell": {
+      "name": [
+        0.0323,
+        0.1374,
+        0.1109,
+        0.6871
+      ],
+      "badge": null
+    },
+    "live/Ja_Morant": {
+      "name": [
+        0.0252,
+        0.2312,
+        0.1253,
+        0.4994
+      ],
+      "badge": null
+    },
+    "live/Brandin_Podziemski": {
+      "name": [
+        0.0415,
+        0.1256,
+        0.0926,
+        0.7106
+      ],
+      "badge": null
+    },
+    "live/Collin_Gillespie": {
+      "name": [
+        0.0356,
+        0.1521,
+        0.1044,
+        0.6576
+      ],
+      "badge": null
+    },
+    "live/Marcus_Smart": {
+      "name": [
+        0.0252,
+        0.1375,
+        0.1253,
+        0.6869
+      ],
+      "badge": null
+    },
+    "live/Jalen_Williams": {
+      "name": [
+        0.0284,
+        0.1291,
+        0.1187,
+        0.7037
+      ],
+      "badge": null
+    },
+    "live/Nikola_Vucevic": {
+      "name": [
+        0.0284,
+        0.1397,
+        0.1187,
+        0.6825
+      ],
+      "badge": null
+    },
+    "live/Royce_O_Neale": {
+      "name": [
+        0.0252,
+        0.1479,
+        0.1253,
+        0.6661
+      ],
+      "badge": null
+    },
+    "live/Herbert_Jones": {
+      "name": [
+        0.0252,
+        0.1243,
+        0.1253,
+        0.7133
+      ],
+      "badge": null
+    },
+    "live/Jaime_Jaquez_Jr": {
+      "name": [
+        0.0356,
+        0.1449,
+        0.1044,
+        0.6722
+      ],
+      "badge": null
+    },
+    "live/Rui_Hachimura": {
+      "name": [
+        0.0252,
+        0.129,
+        0.1253,
+        0.7039
+      ],
+      "badge": null
+    },
+    "live/Jalen_Duren": {
+      "name": [
+        0.0252,
+        0.179,
+        0.1253,
+        0.6038
+      ],
+      "badge": null
+    },
+    "live/LaMelo_Ball": {
+      "name": [
+        0.0252,
+        0.1869,
+        0.1253,
+        0.5881
+      ],
+      "badge": null
+    },
+    "live/Aaron_Gordon": {
+      "name": [
+        0.0252,
+        0.1331,
+        0.1253,
+        0.6957
+      ],
+      "badge": null
+    },
+    "live/Santi_Aldama": {
+      "name": [
+        0.0252,
+        0.1589,
+        0.1253,
+        0.6441
+      ],
+      "badge": null
+    },
+    "live/Dejounte_Murray": {
+      "name": [
+        0.0323,
+        0.1064,
+        0.1109,
+        0.7492
+      ],
+      "badge": null
+    },
+    "live/Nic_Claxton": {
+      "name": [
+        0.0252,
+        0.196,
+        0.1253,
+        0.5698
+      ],
+      "badge": null
+    },
+    "live/Tobias_Harris": {
+      "name": [
+        0.0252,
+        0.142,
+        0.1253,
+        0.6779
+      ],
+      "badge": null
+    },
+    "live/Bub_Carrington": {
+      "name": [
+        0.0284,
+        0.1134,
+        0.1187,
+        0.7351
+      ],
+      "badge": null
+    },
+    "live/Ace_Bailey": {
+      "name": [
+        0.0252,
+        0.2297,
+        0.1253,
+        0.5024
+      ],
+      "badge": null
+    },
+    "live/Jalen_Suggs": {
+      "name": [
+        0.0252,
+        0.173,
+        0.1253,
+        0.6158
+      ],
+      "badge": null
+    },
+    "live/Julian_Champagnie": {
+      "name": [
+        0.0388,
+        0.1212,
+        0.0979,
+        0.7195
+      ],
+      "badge": null
+    },
+    "live/Draymond_Green": {
+      "name": [
+        0.0291,
+        0.104,
+        0.1174,
+        0.7539
+      ],
+      "badge": null
+    },
+    "live/Duncan_Robinson": {
+      "name": [
+        0.0323,
+        0.1075,
+        0.1109,
+        0.7468
+      ],
+      "badge": null
+    },
+    "live/Ayo_Dosunmu": {
+      "name": [
+        0.0252,
+        0.1673,
+        0.1253,
+        0.6274
+      ],
+      "badge": null
+    },
+    "live/Alex_Sarr": {
+      "name": [
+        0.0252,
+        0.2405,
+        0.1253,
+        0.4809
+      ],
+      "badge": null
+    },
+    "live/Deandre_Ayton": {
+      "name": [
+        0.0252,
+        0.1227,
+        0.1253,
+        0.7166
+      ],
+      "badge": null
+    },
+    "live/Donovan_Clingan": {
+      "name": [
+        0.0323,
+        0.1139,
+        0.1109,
+        0.7341
+      ],
+      "badge": null
+    },
+    "live/Kris_Dunn": {
+      "name": [
+        0.0252,
+        0.2422,
+        0.1253,
+        0.4776
+      ],
+      "badge": null
+    },
+    "live/Jarrett_Allen": {
+      "name": [
+        0.0252,
+        0.1372,
+        0.1253,
+        0.6875
+      ],
+      "badge": null
+    },
+    "live/John_Collins": {
+      "name": [
+        0.0252,
+        0.1654,
+        0.1253,
+        0.6311
+      ],
+      "badge": null
+    },
+    "live/Tre_Jones": {
+      "name": [
+        0.0252,
+        0.2427,
+        0.1253,
+        0.4766
+      ],
+      "badge": null
+    },
+    "live/Noah_Clowney": {
+      "name": [
+        0.0252,
+        0.139,
+        0.1253,
+        0.6839
+      ],
+      "badge": null
+    },
+    "live/Derrick_Jones_Jr": {
+      "name": [
+        0.0388,
+        0.1475,
+        0.0979,
+        0.6668
+      ],
+      "badge": null
+    },
+    "live/Jaylon_Tyson": {
+      "name": [
+        0.0252,
+        0.1594,
+        0.1253,
+        0.6432
+      ],
+      "badge": null
+    },
+    "live/Myles_Turner": {
+      "name": [
+        0.0252,
+        0.1509,
+        0.1253,
+        0.6601
+      ],
+      "badge": null
+    },
+    "live/Isaac_Okoro": {
+      "name": [
+        0.0252,
+        0.1886,
+        0.1253,
+        0.5847
+      ],
+      "badge": null
+    },
+    "live/Luguentz_Dort": {
+      "name": [
+        0.0252,
+        0.1268,
+        0.1253,
+        0.7083
+      ],
+      "badge": null
+    },
+    "live/Tim_Hardaway_Jr": {
+      "name": [
+        0.0356,
+        0.1374,
+        0.1044,
+        0.687
+      ],
+      "badge": null
+    },
+    "live/Cason_Wallace": {
+      "name": [
+        0.0252,
+        0.1187,
+        0.1253,
+        0.7245
+      ],
+      "badge": null
+    },
+    "live/Sam_Merrill": {
+      "name": [
+        0.0252,
+        0.1851,
+        0.1253,
+        0.5916
+      ],
+      "badge": null
+    },
+    "live/Maxime_Raynaud": {
+      "name": [
+        0.0291,
+        0.1124,
+        0.1174,
+        0.7372
+      ],
+      "badge": null
+    },
+    "live/Jaylen_Wells": {
+      "name": [
+        0.0252,
+        0.1577,
+        0.1253,
+        0.6464
+      ],
+      "badge": null
+    },
+    "live/Pelle_Larsson": {
+      "name": [
+        0.0252,
+        0.1332,
+        0.1253,
+        0.6955
+      ],
+      "badge": null
+    },
+    "live/Jusuf_Nurkic": {
+      "name": [
+        0.0252,
+        0.1595,
+        0.1253,
+        0.6429
+      ],
+      "badge": null
+    },
+    "live/Miles_McBride": {
+      "name": [
+        0.0252,
+        0.1382,
+        0.1253,
+        0.6856
+      ],
+      "badge": null
+    },
+    "live/Reed_Sheppard": {
+      "name": [
+        0.0252,
+        0.1234,
+        0.1253,
+        0.7152
+      ],
+      "badge": null
+    },
+    "live/Kyle_Kuzma": {
+      "name": [
+        0.0252,
+        0.2096,
+        0.1253,
+        0.5427
+      ],
+      "badge": null
+    },
+    "live/Bilal_Coulibaly": {
+      "name": [
+        0.0323,
+        0.1481,
+        0.1109,
+        0.6657
+      ],
+      "badge": null
+    },
+    "live/De_Andre_Hunter": {
+      "name": [
+        0.0323,
+        0.1232,
+        0.1109,
+        0.7155
+      ],
+      "badge": null
+    },
+    "live/Naz_Reid": {
+      "name": [
+        0.0252,
+        0.2776,
+        0.1253,
+        0.4067
+      ],
+      "badge": null
+    },
+    "live/Ausar_Thompson": {
+      "name": [
+        0.0291,
+        0.1036,
+        0.1174,
+        0.7547
+      ],
+      "badge": null
+    },
+    "live/Moussa_Diabate": {
+      "name": [
+        0.0284,
+        0.1186,
+        0.1187,
+        0.7246
+      ],
+      "badge": null
+    },
+    "live/Jalen_Green": {
+      "name": [
+        0.0252,
+        0.18,
+        0.1253,
+        0.6019
+      ],
+      "badge": null
+    },
+    "live/Jeremiah_Fears": {
+      "name": [
+        0.0284,
+        0.121,
+        0.1187,
+        0.7199
+      ],
+      "badge": null
+    },
+    "live/Cedric_Coward": {
+      "name": [
+        0.0252,
+        0.1235,
+        0.1253,
+        0.7149
+      ],
+      "badge": null
+    },
+    "live/Zach_Edey": {
+      "name": [
+        0.0252,
+        0.2433,
+        0.1253,
+        0.4752
+      ],
+      "badge": null
+    },
+    "live/Ajay_Mitchell": {
+      "name": [
+        0.0252,
+        0.1457,
+        0.1253,
+        0.6705
+      ],
+      "badge": null
+    },
+    "live/Tari_Eason": {
+      "name": [
+        0.0252,
+        0.2244,
+        0.1253,
+        0.5131
+      ],
+      "badge": null
+    },
+    "live/Harrison_Barnes": {
+      "name": [
+        0.0323,
+        0.1118,
+        0.1109,
+        0.7383
+      ],
+      "badge": null
+    },
+    "live/Moses_Moody": {
+      "name": [
+        0.0252,
+        0.1659,
+        0.1253,
+        0.6301
+      ],
+      "badge": null
+    },
+    "live/Isaiah_Collier": {
+      "name": [
+        0.0284,
+        0.1523,
+        0.1187,
+        0.6573
+      ],
+      "badge": null
+    },
+    "live/Jarace_Walker": {
+      "name": [
+        0.0252,
+        0.1185,
+        0.1253,
+        0.7248
+      ],
+      "badge": null
+    },
+    "live/Trae_Young": {
+      "name": [
+        0.0252,
+        0.2061,
+        0.1253,
+        0.5497
+      ],
+      "badge": null
+    },
+    "live/Neemias_Queta": {
+      "name": [
+        0.0252,
+        0.1317,
+        0.1253,
+        0.6984
+      ],
+      "badge": null
+    },
+    "live/Egor_Demin": {
+      "name": [
+        0.0252,
+        0.2072,
+        0.1253,
+        0.5475
+      ],
+      "badge": null
+    },
+    "live/Nique_Clifford": {
+      "name": [
+        0.0284,
+        0.1396,
+        0.1187,
+        0.6828
+      ],
+      "badge": null
+    },
+    "live/Jake_LaRavia": {
+      "name": [
+        0.0252,
+        0.1688,
+        0.1253,
+        0.6242
+      ],
+      "badge": null
+    },
+    "live/Coby_White": {
+      "name": [
+        0.0252,
+        0.2158,
+        0.1253,
+        0.5303
+      ],
+      "badge": null
+    },
+    "live/Derik_Queen": {
+      "name": [
+        0.0252,
+        0.1891,
+        0.1253,
+        0.5837
+      ],
+      "badge": null
+    },
+    "live/Jakob_Poeltl": {
+      "name": [
+        0.0252,
+        0.1693,
+        0.1253,
+        0.6233
+      ],
+      "badge": null
+    },
+    "live/Anfernee_Simons": {
+      "name": [
+        0.0323,
+        0.1137,
+        0.1109,
+        0.7344
+      ],
+      "badge": null
+    },
+    "live/Sam_Hauser": {
+      "name": [
+        0.0252,
+        0.196,
+        0.1253,
+        0.5699
+      ],
+      "badge": null
+    },
+    "live/Tristan_Da_Silva": {
+      "name": [
+        0.0356,
+        0.1597,
+        0.1044,
+        0.6426
+      ],
+      "badge": null
+    },
+    "live/Bruce_Brown": {
+      "name": [
+        0.0252,
+        0.1611,
+        0.1253,
+        0.6397
+      ],
+      "badge": null
+    },
+    "live/Cody_Williams": {
+      "name": [
+        0.0252,
+        0.1371,
+        0.1253,
+        0.6878
+      ],
+      "badge": null
+    },
+    "live/Terance_Mann": {
+      "name": [
+        0.0252,
+        0.1448,
+        0.1253,
+        0.6723
+      ],
+      "badge": null
+    },
+    "live/Bobby_Portis": {
+      "name": [
+        0.0252,
+        0.1653,
+        0.1253,
+        0.6314
+      ],
+      "badge": null
+    },
+    "live/Dennis_Schroder": {
+      "name": [
+        0.0323,
+        0.1152,
+        0.1109,
+        0.7315
+      ],
+      "badge": null
+    },
+    "live/Isaiah_Hartenstein": {
+      "name": [
+        0.0415,
+        0.1354,
+        0.0926,
+        0.6911
+      ],
+      "badge": null
+    },
+    "live/Tre_Johnson": {
+      "name": [
+        0.0252,
+        0.1767,
+        0.1253,
+        0.6084
+      ],
+      "badge": null
+    },
+    "live/Precious_Achiuwa": {
+      "name": [
+        0.0356,
+        0.1158,
+        0.1044,
+        0.7303
+      ],
+      "badge": null
+    },
+    "live/Cam_Spencer": {
+      "name": [
+        0.0252,
+        0.1767,
+        0.1253,
+        0.6085
+      ],
+      "badge": null
+    },
+    "live/Dominick_Barlow": {
+      "name": [
+        0.0323,
+        0.1148,
+        0.1109,
+        0.7323
+      ],
+      "badge": null
+    },
+    "live/Collin_Sexton": {
+      "name": [
+        0.0252,
+        0.1428,
+        0.1253,
+        0.6763
+      ],
+      "badge": null
+    },
+    "live/Mark_Williams": {
+      "name": [
+        0.0252,
+        0.1268,
+        0.1253,
+        0.7083
+      ],
+      "badge": null
+    },
+    "live/Brice_Sensabaugh": {
+      "name": [
+        0.0356,
+        0.1096,
+        0.1044,
+        0.7426
+      ],
+      "badge": null
+    },
+    "live/Kyle_Filipowski": {
+      "name": [
+        0.0323,
+        0.1477,
+        0.1109,
+        0.6665
+      ],
+      "badge": null
+    },
+    "live/Kris_Murray": {
+      "name": [
+        0.0252,
+        0.1845,
+        0.1253,
+        0.5929
+      ],
+      "badge": null
+    },
+    "live/Keldon_Johnson": {
+      "name": [
+        0.0284,
+        0.1072,
+        0.1187,
+        0.7474
+      ],
+      "badge": null
+    },
+    "live/Svi_Mykhailiuk": {
+      "name": [
+        0.0284,
+        0.1439,
+        0.1187,
+        0.6742
+      ],
+      "badge": null
+    },
+    "live/De_Anthony_Melton": {
+      "name": [
+        0.0388,
+        0.1255,
+        0.0979,
+        0.7109
+      ],
+      "badge": null
+    },
+    "live/Landry_Shamet": {
+      "name": [
+        0.0252,
+        0.118,
+        0.1253,
+        0.7259
+      ],
+      "badge": null
+    },
+    "live/Ziaire_Williams": {
+      "name": [
+        0.0323,
+        0.1449,
+        0.1109,
+        0.672
+      ],
+      "badge": null
+    },
+    "live/Khris_Middleton": {
+      "name": [
+        0.0323,
+        0.1283,
+        0.1109,
+        0.7053
+      ],
+      "badge": null
+    },
+    "live/Isaiah_Stewart": {
+      "name": [
+        0.0284,
+        0.1309,
+        0.1187,
+        0.7002
+      ],
+      "badge": null
+    },
+    "live/Ty_Jerome": {
+      "name": [
+        0.0252,
+        0.2385,
+        0.1253,
+        0.485
+      ],
+      "badge": null
+    },
+    "live/Dylan_Harper": {
+      "name": [
+        0.0252,
+        0.1512,
+        0.1253,
+        0.6594
+      ],
+      "badge": null
+    },
+    "live/Jamal_Shead": {
+      "name": [
+        0.0252,
+        0.1745,
+        0.1253,
+        0.613
+      ],
+      "badge": null
+    },
+    "live/Jordan_Goodwin": {
+      "name": [
+        0.0284,
+        0.0997,
+        0.1187,
+        0.7625
+      ],
+      "badge": null
+    },
+    "live/Sion_James": {
+      "name": [
+        0.0252,
+        0.2129,
+        0.1253,
+        0.5361
+      ],
+      "badge": null
+    },
+    "live/Kevin_Huerter": {
+      "name": [
+        0.0252,
+        0.1361,
+        0.1253,
+        0.6897
+      ],
+      "badge": null
+    },
+    "live/Zaccharie_Risacher": {
+      "name": [
+        0.0415,
+        0.1269,
+        0.0926,
+        0.7081
+      ],
+      "badge": null
+    },
+    "live/Dean_Wade": {
+      "name": [
+        0.0252,
+        0.2241,
+        0.1253,
+        0.5137
+      ],
+      "badge": null
+    },
+    "live/Brandon_Williams": {
+      "name": [
+        0.0356,
+        0.1117,
+        0.1044,
+        0.7386
+      ],
+      "badge": null
+    },
+    "live/Nolan_Traore": {
+      "name": [
+        0.0252,
+        0.1501,
+        0.1253,
+        0.6618
+      ],
+      "badge": null
+    },
+    "live/Kel_el_Ware": {
+      "name": [
+        0.0252,
+        0.1994,
+        0.1253,
+        0.5632
+      ],
+      "badge": null
+    },
+    "live/Jock_Landale": {
+      "name": [
+        0.0252,
+        0.1588,
+        0.1253,
+        0.6442
+      ],
+      "badge": null
+    },
+    "live/Will_Riley": {
+      "name": [
+        0.0252,
+        0.236,
+        0.1253,
+        0.4898
+      ],
+      "badge": null
+    },
+    "live/Jordan_Miller": {
+      "name": [
+        0.0252,
+        0.1317,
+        0.1253,
+        0.6986
+      ],
+      "badge": null
+    },
+    "live/Spencer_Jones": {
+      "name": [
+        0.0252,
+        0.1241,
+        0.1253,
+        0.7138
+      ],
+      "badge": null
+    },
+    "live/Malik_Monk": {
+      "name": [
+        0.0252,
+        0.2092,
+        0.1253,
+        0.5435
+      ],
+      "badge": null
+    },
+    "live/Oso_Ighodaro": {
+      "name": [
+        0.0252,
+        0.1486,
+        0.1253,
+        0.6646
+      ],
+      "badge": null
+    },
+    "live/Sandro_Mamukelashvili": {
+      "name": [
+        0.048,
+        0.1102,
+        0.0796,
+        0.7415
+      ],
+      "badge": null
+    },
+    "live/Collin_Murray_Boyles": {
+      "name": [
+        0.046,
+        0.125,
+        0.0835,
+        0.712
+      ],
+      "badge": null
+    },
+    "live/Aaron_Wiggins": {
+      "name": [
+        0.0252,
+        0.117,
+        0.1253,
+        0.7279
+      ],
+      "badge": null
+    },
+    "live/Brook_Lopez": {
+      "name": [
+        0.0252,
+        0.1823,
+        0.1253,
+        0.5973
+      ],
+      "badge": null
+    },
+    "live/Klay_Thompson": {
+      "name": [
+        0.0252,
+        0.1212,
+        0.1253,
+        0.7195
+      ],
+      "badge": null
+    },
+    "live/Daniel_Gafford": {
+      "name": [
+        0.0284,
+        0.1245,
+        0.1187,
+        0.7129
+      ],
+      "badge": null
+    },
+    "live/Luke_Kennard": {
+      "name": [
+        0.0252,
+        0.1505,
+        0.1253,
+        0.6609
+      ],
+      "badge": null
+    },
+    "live/Al_Horford": {
+      "name": [
+        0.0252,
+        0.2073,
+        0.1253,
+        0.5472
+      ],
+      "badge": null
+    },
+    "live/GG_Jackson_II": {
+      "name": [
+        0.0252,
+        0.1576,
+        0.1253,
+        0.6467
+      ],
+      "badge": null
+    },
+    "live/Vit_Krejci": {
+      "name": [
+        0.0252,
+        0.2425,
+        0.1253,
+        0.477
+      ],
+      "badge": null
+    },
+    "live/Ryan_Kalkbrenner": {
+      "name": [
+        0.0363,
+        0.1145,
+        0.1031,
+        0.7328
+      ],
+      "badge": null
+    },
+    "live/Ben_Sheppard": {
+      "name": [
+        0.0252,
+        0.1499,
+        0.1253,
+        0.6621
+      ],
+      "badge": null
+    },
+    "live/Kentavious_Caldwell_Pope": {
+      "name": [
+        0.0532,
+        0.1241,
+        0.0692,
+        0.7137
+      ],
+      "badge": null
+    },
+    "live/Isaiah_Joe": {
+      "name": [
+        0.0252,
+        0.2306,
+        0.1253,
+        0.5007
+      ],
+      "badge": null
+    },
+    "live/Gary_Trent_Jr": {
+      "name": [
+        0.0284,
+        0.1499,
+        0.1187,
+        0.6621
+      ],
+      "badge": null
+    },
+    "live/Jay_Huff": {
+      "name": [
+        0.0252,
+        0.2743,
+        0.1253,
+        0.4133
+      ],
+      "badge": null
+    },
+    "live/Bryce_McGowens": {
+      "name": [
+        0.0304,
+        0.1079,
+        0.1148,
+        0.7461
+      ],
+      "badge": null
+    },
+    "live/Luke_Kornet": {
+      "name": [
+        0.0252,
+        0.1873,
+        0.1253,
+        0.5874
+      ],
+      "badge": null
+    },
+    "live/Drake_Powell": {
+      "name": [
+        0.0252,
+        0.1488,
+        0.1253,
+        0.6642
+      ],
+      "badge": null
+    },
+    "live/Danny_Wolf": {
+      "name": [
+        0.0252,
+        0.1999,
+        0.1253,
+        0.5622
+      ],
+      "badge": null
+    },
+    "live/Ben_Saraf": {
+      "name": [
+        0.0252,
+        0.237,
+        0.1253,
+        0.488
+      ],
+      "badge": null
+    },
+    "live/Caleb_Love": {
+      "name": [
+        0.0252,
+        0.2194,
+        0.1253,
+        0.5231
+      ],
+      "badge": null
+    },
+    "live/Jalen_Smith": {
+      "name": [
+        0.0252,
+        0.1916,
+        0.1253,
+        0.5788
+      ],
+      "badge": null
+    },
+    "live/Jamir_Watkins": {
+      "name": [
+        0.0252,
+        0.1328,
+        0.1253,
+        0.6963
+      ],
+      "badge": null
+    },
+    "live/Dylan_Cardwell": {
+      "name": [
+        0.0291,
+        0.1173,
+        0.1174,
+        0.7272
+      ],
+      "badge": null
+    },
+    "live/Gui_Santos": {
+      "name": [
+        0.0252,
+        0.2144,
+        0.1253,
+        0.5332
+      ],
+      "badge": null
+    },
+    "live/Ja_Kobe_Walter": {
+      "name": [
+        0.0284,
+        0.1332,
+        0.1187,
+        0.6954
+      ],
+      "badge": null
+    },
+    "live/Patrick_Williams": {
+      "name": [
+        0.0356,
+        0.1396,
+        0.1044,
+        0.6828
+      ],
+      "badge": null
+    },
+    "live/Keon_Ellis": {
+      "name": [
+        0.0252,
+        0.2298,
+        0.1253,
+        0.5024
+      ],
+      "badge": null
+    },
+    "live/Walter_Clayton": {
+      "name": [
+        0.0291,
+        0.1277,
+        0.1174,
+        0.7066
+      ],
+      "badge": null
+    },
+    "live/Javon_Small": {
+      "name": [
+        0.0252,
+        0.1805,
+        0.1253,
+        0.601
+      ],
+      "badge": null
+    },
+    "live/Daniss_Jenkins": {
+      "name": [
+        0.0284,
+        0.1327,
+        0.1187,
+        0.6965
+      ],
+      "badge": null
+    },
+    "live/Marvin_Bagley_III": {
+      "name": [
+        0.0388,
+        0.1556,
+        0.0979,
+        0.6506
+      ],
+      "badge": null
+    },
+    "live/Justin_Champagnie": {
+      "name": [
+        0.0388,
+        0.1224,
+        0.0979,
+        0.7171
+      ],
+      "badge": null
+    },
+    "live/Will_Richard": {
+      "name": [
+        0.0252,
+        0.1674,
+        0.1253,
+        0.6271
+      ],
+      "badge": null
+    },
+    "live/Ron_Holland": {
+      "name": [
+        0.0252,
+        0.1755,
+        0.1253,
+        0.6109
+      ],
+      "badge": null
+    },
+    "live/Jose_Alvarado": {
+      "name": [
+        0.0252,
+        0.1289,
+        0.1253,
+        0.7041
+      ],
+      "badge": null
+    },
+    "live/Kobe_Sanders": {
+      "name": [
+        0.0252,
+        0.1477,
+        0.1253,
+        0.6664
+      ],
+      "badge": null
+    },
+    "live/Kyle_Anderson": {
+      "name": [
+        0.0252,
+        0.1231,
+        0.1253,
+        0.7157
+      ],
+      "badge": null
+    },
+    "live/Yves_Missi": {
+      "name": [
+        0.0252,
+        0.23,
+        0.1253,
+        0.502
+      ],
+      "badge": null
+    },
+    "live/Jericho_Sims": {
+      "name": [
+        0.0252,
+        0.1677,
+        0.1253,
+        0.6265
+      ],
+      "badge": null
+    },
+    "live/Jaylin_Williams": {
+      "name": [
+        0.0323,
+        0.14,
+        0.1109,
+        0.6818
+      ],
+      "badge": null
+    },
+    "live/Mitchell_Robinson": {
+      "name": [
+        0.0389,
+        0.1264,
+        0.0979,
+        0.7091
+      ],
+      "badge": null
+    },
+    "live/Ryan_Nembhard": {
+      "name": [
+        0.0252,
+        0.1084,
+        0.1253,
+        0.7452
+      ],
+      "badge": null
+    },
+    "live/Andre_Drummond": {
+      "name": [
+        0.0304,
+        0.1005,
+        0.1148,
+        0.7609
+      ],
+      "badge": null
+    },
+    "live/Ryan_Dunn": {
+      "name": [
+        0.0252,
+        0.2308,
+        0.1253,
+        0.5003
+      ],
+      "badge": null
+    },
+    "live/Micah_Potter": {
+      "name": [
+        0.0252,
+        0.1633,
+        0.1253,
+        0.6353
+      ],
+      "badge": null
+    },
+    "live/Ousmane_Dieng": {
+      "name": [
+        0.0252,
+        0.1154,
+        0.1253,
+        0.7311
+      ],
+      "badge": null
+    },
+    "live/Caris_LeVert": {
+      "name": [
+        0.0252,
+        0.1744,
+        0.1253,
+        0.6132
+      ],
+      "badge": null
+    },
+    "live/Sidy_Cissoko": {
+      "name": [
+        0.0252,
+        0.1779,
+        0.1253,
+        0.6061
+      ],
+      "badge": null
+    },
+    "live/Taylor_Hendricks": {
+      "name": [
+        0.0356,
+        0.1287,
+        0.1044,
+        0.7045
+      ],
+      "badge": null
+    },
+    "live/Day_Ron_Sharpe": {
+      "name": [
+        0.0284,
+        0.1279,
+        0.1187,
+        0.7062
+      ],
+      "badge": null
+    },
+    "live/Olivier_Maxence_Prosper": {
+      "name": [
+        0.0519,
+        0.1271,
+        0.0718,
+        0.7076
+      ],
+      "badge": null
+    },
+    "live/Corey_Kispert": {
+      "name": [
+        0.0252,
+        0.1435,
+        0.1253,
+        0.6749
+      ],
+      "badge": null
+    },
+    "live/Pat_Spencer": {
+      "name": [
+        0.0252,
+        0.1927,
+        0.1253,
+        0.5764
+      ],
+      "badge": null
+    },
+    "live/Baylor_Scheierman": {
+      "name": [
+        0.0389,
+        0.1161,
+        0.0979,
+        0.7297
+      ],
+      "badge": null
+    },
+    "live/Mike_Conley": {
+      "name": [
+        0.0252,
+        0.1931,
+        0.1253,
+        0.5756
+      ],
+      "badge": null
+    },
+    "live/Quenton_Jackson": {
+      "name": [
+        0.0323,
+        0.1088,
+        0.1109,
+        0.7442
+      ],
+      "badge": null
+    },
+    "live/Jaxson_Hayes": {
+      "name": [
+        0.0252,
+        0.1513,
+        0.1253,
+        0.6593
+      ],
+      "badge": null
+    },
+    "live/Alex_Caruso": {
+      "name": [
+        0.0252,
+        0.1812,
+        0.1253,
+        0.5995
+      ],
+      "badge": null
+    },
+    "live/Craig_Porter_Jr": {
+      "name": [
+        0.0356,
+        0.1493,
+        0.1044,
+        0.6634
+      ],
+      "badge": null
+    },
+    "live/Jordan_Clarkson": {
+      "name": [
+        0.0323,
+        0.1089,
+        0.1109,
+        0.7441
+      ],
+      "badge": null
+    },
+    "live/Kasparas_Jakucionis": {
+      "name": [
+        0.0441,
+        0.1252,
+        0.0874,
+        0.7116
+      ],
+      "badge": null
+    },
+    "live/Jordan_Walsh": {
+      "name": [
+        0.0252,
+        0.1368,
+        0.1253,
+        0.6883
+      ],
+      "badge": null
+    },
+    "live/Javonte_Green": {
+      "name": [
+        0.0252,
+        0.1231,
+        0.1253,
+        0.7157
+      ],
+      "badge": null
+    },
+    "live/Nicolas_Batum": {
+      "name": [
+        0.0252,
+        0.1318,
+        0.1253,
+        0.6983
+      ],
+      "badge": null
+    },
+    "live/Adem_Bona": {
+      "name": [
+        0.0252,
+        0.2256,
+        0.1253,
+        0.5107
+      ],
+      "badge": null
+    },
+    "live/Josh_Okogie": {
+      "name": [
+        0.0252,
+        0.1862,
+        0.1253,
+        0.5896
+      ],
+      "badge": null
+    },
+    "live/Jarred_Vanderbilt": {
+      "name": [
+        0.0388,
+        0.1266,
+        0.0979,
+        0.7087
+      ],
+      "badge": null
+    },
+    "live/Jared_McCain": {
+      "name": [
+        0.0252,
+        0.1568,
+        0.1253,
+        0.6484
+      ],
+      "badge": null
+    },
+    "live/Quinten_Post": {
+      "name": [
+        0.0252,
+        0.1656,
+        0.1253,
+        0.6307
+      ],
+      "badge": null
+    },
+    "live/Anthony_Gill": {
+      "name": [
+        0.0252,
+        0.1648,
+        0.1253,
+        0.6323
+      ],
+      "badge": null
+    },
+    "live/T_J_McConnell": {
+      "name": [
+        0.0284,
+        0.151,
+        0.1187,
+        0.66
+      ],
+      "badge": null
+    },
+    "live/Nikola_Jovic": {
+      "name": [
+        0.0252,
+        0.1781,
+        0.1253,
+        0.6057
+      ],
+      "badge": null
+    },
+    "live/Sharife_Cooper": {
+      "name": [
+        0.0284,
+        0.125,
+        0.1187,
+        0.7119
+      ],
+      "badge": null
+    },
+    "live/Robert_Williams": {
+      "name": [
+        0.0323,
+        0.1243,
+        0.1109,
+        0.7133
+      ],
+      "badge": null
+    },
+    "live/Josh_Minott": {
+      "name": [
+        0.0252,
+        0.1879,
+        0.1253,
+        0.5862
+      ],
+      "badge": null
+    },
+    "live/Tyrese_Martin": {
+      "name": [
+        0.0252,
+        0.136,
+        0.1253,
+        0.6899
+      ],
+      "badge": null
+    },
+    "live/Simone_Fontecchio": {
+      "name": [
+        0.0388,
+        0.1253,
+        0.0979,
+        0.7113
+      ],
+      "badge": null
+    },
+    "live/Rayan_Rupert": {
+      "name": [
+        0.0252,
+        0.1567,
+        0.1253,
+        0.6485
+      ],
+      "badge": null
+    },
+    "live/Bones_Hyland": {
+      "name": [
+        0.0252,
+        0.1473,
+        0.1253,
+        0.6672
+      ],
+      "badge": null
+    },
+    "live/Gabe_Vincent": {
+      "name": [
+        0.0252,
+        0.1621,
+        0.1253,
+        0.6378
+      ],
+      "badge": null
+    },
+    "live/Isaiah_Jackson": {
+      "name": [
+        0.0284,
+        0.1329,
+        0.1187,
+        0.696
+      ],
+      "badge": null
+    },
+    "live/Jevon_Carter": {
+      "name": [
+        0.0252,
+        0.1564,
+        0.1253,
+        0.6492
+      ],
+      "badge": null
+    },
+    "live/Trendon_Watford": {
+      "name": [
+        0.033,
+        0.1096,
+        0.1096,
+        0.7427
+      ],
+      "badge": null
+    },
+    "live/Dru_Smith": {
+      "name": [
+        0.0252,
+        0.2407,
+        0.1253,
+        0.4804
+      ],
+      "badge": null
+    },
+    "live/Luka_Garza": {
+      "name": [
+        0.0252,
+        0.2075,
+        0.1253,
+        0.547
+      ],
+      "badge": null
+    },
+    "live/Buddy_Hield": {
+      "name": [
+        0.0252,
+        0.1919,
+        0.1253,
+        0.578
+      ],
+      "badge": null
+    },
+    "live/Jalen_Pickett": {
+      "name": [
+        0.0252,
+        0.1518,
+        0.1253,
+        0.6584
+      ],
+      "badge": null
+    },
+    "live/Jalen_Wilson": {
+      "name": [
+        0.0252,
+        0.1558,
+        0.1253,
+        0.6504
+      ],
+      "badge": null
+    },
+    "live/Jaden_Hardy": {
+      "name": [
+        0.0252,
+        0.1772,
+        0.1253,
+        0.6075
+      ],
+      "badge": null
+    },
+    "live/Kobe_Brown": {
+      "name": [
+        0.0252,
+        0.1922,
+        0.1253,
+        0.5776
+      ],
+      "badge": null
+    },
+    "live/Nae_Qwan_Tomlin": {
+      "name": [
+        0.0323,
+        0.1222,
+        0.1109,
+        0.7175
+      ],
+      "badge": null
+    },
+    "live/Pete_Nance": {
+      "name": [
+        0.0252,
+        0.2159,
+        0.1253,
+        0.5302
+      ],
+      "badge": null
+    },
+    "live/Josh_Green": {
+      "name": [
+        0.0252,
+        0.2028,
+        0.1253,
+        0.5563
+      ],
+      "badge": null
+    },
+    "live/Leonard_Miller": {
+      "name": [
+        0.0284,
+        0.1255,
+        0.1187,
+        0.7108
+      ],
+      "badge": null
+    },
+    "live/Gary_Payton_II": {
+      "name": [
+        0.0284,
+        0.1573,
+        0.1187,
+        0.6473
+      ],
+      "badge": null
+    },
+    "live/Kenrich_Williams": {
+      "name": [
+        0.0356,
+        0.1289,
+        0.1044,
+        0.7041
+      ],
+      "badge": null
+    },
+    "live/Justin_Edwards": {
+      "name": [
+        0.0284,
+        0.1139,
+        0.1187,
+        0.7341
+      ],
+      "badge": null
+    },
+    "live/Mouhamed_Gueye": {
+      "name": [
+        0.0304,
+        0.1045,
+        0.1148,
+        0.753
+      ],
+      "badge": null
+    },
+    "live/Goga_Bitadze": {
+      "name": [
+        0.0252,
+        0.1603,
+        0.1253,
+        0.6413
+      ],
+      "badge": null
+    },
+    "live/Julian_Strawther": {
+      "name": [
+        0.0356,
+        0.1153,
+        0.1044,
+        0.7313
+      ],
+      "badge": null
+    },
+    "live/Micah_Peavy": {
+      "name": [
+        0.0252,
+        0.1896,
+        0.1253,
+        0.5828
+      ],
+      "badge": null
+    },
+    "live/Rob_Dillingham": {
+      "name": [
+        0.0284,
+        0.1241,
+        0.1187,
+        0.7137
+      ],
+      "badge": null
+    },
+    "live/Caleb_Martin": {
+      "name": [
+        0.0252,
+        0.1629,
+        0.1253,
+        0.6361
+      ],
+      "badge": null
+    },
+    "live/Karlo_Matkovic": {
+      "name": [
+        0.0284,
+        0.1285,
+        0.1187,
+        0.705
+      ],
+      "badge": null
+    },
+    "live/Nick_Richards": {
+      "name": [
+        0.0252,
+        0.1426,
+        0.1253,
+        0.6766
+      ],
+      "badge": null
+    },
+    "live/Hugo_Gonzalez": {
+      "name": [
+        0.0252,
+        0.1126,
+        0.1253,
+        0.7366
+      ],
+      "badge": null
+    },
+    "live/Tyus_Jones": {
+      "name": [
+        0.0252,
+        0.2115,
+        0.1253,
+        0.5389
+      ],
+      "badge": null
+    },
+    "live/Dwight_Powell": {
+      "name": [
+        0.0252,
+        0.1177,
+        0.1253,
+        0.7265
+      ],
+      "badge": null
+    },
+    "live/Gradey_Dick": {
+      "name": [
+        0.0252,
+        0.19,
+        0.1253,
+        0.5819
+      ],
+      "badge": null
+    },
+    "live/Jamaree_Bouyea": {
+      "name": [
+        0.0284,
+        0.1054,
+        0.1187,
+        0.751
+      ],
+      "badge": null
+    },
+    "live/Paul_Reed": {
+      "name": [
+        0.0252,
+        0.2435,
+        0.1253,
+        0.475
+      ],
+      "badge": null
+    },
+    "live/Gary_Harris": {
+      "name": [
+        0.0252,
+        0.1828,
+        0.1253,
+        0.5963
+      ],
+      "badge": null
+    },
+    "live/Tristan_Vukcevic": {
+      "name": [
+        0.0356,
+        0.1404,
+        0.1044,
+        0.6811
+      ],
+      "badge": null
+    },
+    "live/Aaron_Holiday": {
+      "name": [
+        0.0252,
+        0.1319,
+        0.1253,
+        0.6981
+      ],
+      "badge": null
+    },
+    "live/Jordan_Hawkins": {
+      "name": [
+        0.0284,
+        0.1058,
+        0.1187,
+        0.7502
+      ],
+      "badge": null
+    },
+    "live/Jonas_Valanciunas": {
+      "name": [
+        0.0388,
+        0.1166,
+        0.0979,
+        0.7287
+      ],
+      "badge": null
+    },
+    "live/Drew_Eubanks": {
+      "name": [
+        0.0252,
+        0.1351,
+        0.1253,
+        0.6917
+      ],
+      "badge": null
+    },
+    "live/Jaylen_Clark": {
+      "name": [
+        0.0252,
+        0.1642,
+        0.1253,
+        0.6334
+      ],
+      "badge": null
+    },
+    "live/Noah_Penda": {
+      "name": [
+        0.0252,
+        0.2026,
+        0.1253,
+        0.5567
+      ],
+      "badge": null
+    },
+    "live/Jett_Howard": {
+      "name": [
+        0.0252,
+        0.1739,
+        0.1253,
+        0.614
+      ],
+      "badge": null
+    },
+    "live/Tre_Mann": {
+      "name": [
+        0.0252,
+        0.2603,
+        0.1253,
+        0.4414
+      ],
+      "badge": null
+    },
+    "live/Terrence_Shannon_Jr": {
+      "name": [
+        0.046,
+        0.1269,
+        0.0835,
+        0.7082
+      ],
+      "badge": null
+    },
+    "live/Clint_Capela": {
+      "name": [
+        0.0252,
+        0.1776,
+        0.1253,
+        0.6067
+      ],
+      "badge": null
+    },
+    "live/Thomas_Bryant": {
+      "name": [
+        0.0252,
+        0.1189,
+        0.1253,
+        0.724
+      ],
+      "badge": null
+    },
+    "live/Jamal_Cain": {
+      "name": [
+        0.0252,
+        0.2173,
+        0.1253,
+        0.5272
+      ],
+      "badge": null
+    },
+    "live/Rasheer_Fleming": {
+      "name": [
+        0.0323,
+        0.1176,
+        0.1109,
+        0.7268
+      ],
+      "badge": null
+    },
+    "live/Zeke_Nnaji": {
+      "name": [
+        0.0252,
+        0.223,
+        0.1253,
+        0.5159
+      ],
+      "badge": null
+    },
+    "live/Tyrese_Haliburton": {
+      "name": [
+        0.0388,
+        0.1236,
+        0.0979,
+        0.7148
+      ],
+      "badge": null
+    },
+    "live/Kyrie_Irving": {
+      "name": [
+        0.0252,
+        0.1834,
+        0.1253,
+        0.5951
+      ],
+      "badge": null
+    },
+    "live/Damian_Lillard": {
+      "name": [
+        0.0284,
+        0.134,
+        0.1187,
+        0.6939
+      ],
+      "badge": null
+    },
+    "live/Fred_VanVleet": {
+      "name": [
+        0.0252,
+        0.1358,
+        0.1253,
+        0.6904
+      ],
+      "badge": null
+    },
+    "summer-standouts/Tristan_Thompson": {
+      "name": [
+        0.0356,
+        0.1187,
+        0.1044,
+        0.7245
+      ],
+      "badge": null
+    },
+    "throwbacks/CJ_McCollum_2024": {
+      "name": [
+        0.0252,
+        0.1778,
+        0.1253,
+        0.6062
+      ],
+      "badge": null
+    },
+    "throwbacks/Elton_Brand_2002": {
+      "name": [
+        0.0252,
+        0.1854,
+        0.1253,
+        0.5911
+      ],
+      "badge": null
+    },
+    "throwbacks/Clint_Capela_2021": {
+      "name": [
+        0.0252,
+        0.1776,
+        0.1253,
+        0.6067
+      ],
+      "badge": null
+    },
+    "throwbacks/Toumani_Camara_2025": {
+      "name": [
+        0.0291,
+        0.1118,
+        0.1174,
+        0.7382
+      ],
+      "badge": null
+    },
+    "throwbacks/Trendon_Watford_2023": {
+      "name": [
+        0.033,
+        0.1096,
+        0.1096,
+        0.7427
+      ],
+      "badge": null
+    },
+    "super-season/Adrian_Dantley": {
+      "name": [
+        0.0284,
+        0.1268,
+        0.1187,
+        0.7082
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Arvydas_Sabonis": {
+      "name": [
+        0.0323,
+        0.1166,
+        0.1109,
+        0.7287
+      ],
+      "badge": [
+        0.8363,
+        0.5451,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Bernard_King": {
+      "name": [
+        0.0252,
+        0.1518,
+        0.1253,
+        0.6584
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Bobby_Portis": {
+      "name": [
+        0.0252,
+        0.1653,
+        0.1253,
+        0.6314
+      ],
+      "badge": null
+    },
+    "super-season/Dell_Curry": {
+      "name": [
+        0.0252,
+        0.2172,
+        0.1253,
+        0.5274
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/DeMarcus_Cousins": {
+      "name": [
+        0.0356,
+        0.1073,
+        0.1044,
+        0.7474
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Gerald_Wallace": {
+      "name": [
+        0.0291,
+        0.1149,
+        0.1174,
+        0.732
+      ],
+      "badge": null
+    },
+    "super-season/John_Wall": {
+      "name": [
+        0.0252,
+        0.2307,
+        0.1253,
+        0.5004
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Kristaps_Porzingis": {
+      "name": [
+        0.0415,
+        0.1362,
+        0.0926,
+        0.6894
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Nic_Claxton": {
+      "name": [
+        0.0252,
+        0.196,
+        0.1253,
+        0.5698
+      ],
+      "badge": null
+    },
+    "super-season/Paul_George": {
+      "name": [
+        0.0252,
+        0.1766,
+        0.1253,
+        0.6088
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Paul_Millsap": {
+      "name": [
+        0.0252,
+        0.1692,
+        0.1253,
+        0.6234
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Russell_Westbrook": {
+      "name": [
+        0.0395,
+        0.1126,
+        0.0965,
+        0.7367
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Sam_Cassell": {
+      "name": [
+        0.0252,
+        0.1845,
+        0.1253,
+        0.593
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Wesley_Matthews": {
+      "name": [
+        0.0349,
+        0.1192,
+        0.1057,
+        0.7234
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "rookie/Chris_Paul": {
+      "name": [
+        0.0252,
+        0.2242,
+        0.1253,
+        0.5134
+      ],
+      "badge": null
+    },
+    "rookie/Dell_Curry": {
+      "name": [
+        0.0252,
+        0.2172,
+        0.1253,
+        0.5274
+      ],
+      "badge": null
+    },
+    "rookie/DeMarcus_Cousins": {
+      "name": [
+        0.0356,
+        0.1073,
+        0.1044,
+        0.7474
+      ],
+      "badge": null
+    },
+    "rookie/Derrick_Rose": {
+      "name": [
+        0.0252,
+        0.163,
+        0.1253,
+        0.6359
+      ],
+      "badge": null
+    },
+    "rookie/Jason_Kidd": {
+      "name": [
+        0.0252,
+        0.2175,
+        0.1253,
+        0.527
+      ],
+      "badge": null
+    },
+    "rookie/Kristaps_Porzingis": {
+      "name": [
+        0.0415,
+        0.1362,
+        0.0926,
+        0.6894
+      ],
+      "badge": null
+    },
+    "rookie/Michael_Jordan": {
+      "name": [
+        0.0284,
+        0.1183,
+        0.1187,
+        0.7253
+      ],
+      "badge": null
+    },
+    "rookie/Paul_Millsap": {
+      "name": [
+        0.0252,
+        0.1692,
+        0.1253,
+        0.6234
+      ],
+      "badge": null
+    },
+    "rookie/Peja_Stojakovic": {
+      "name": [
+        0.0323,
+        0.1317,
+        0.1109,
+        0.6986
+      ],
+      "badge": null
+    },
+    "rookie/Reggie_Miller": {
+      "name": [
+        0.0252,
+        0.1415,
+        0.1253,
+        0.6788
+      ],
+      "badge": null
+    },
+    "rookie/Shawn_Marion": {
+      "name": [
+        0.0252,
+        0.1344,
+        0.1253,
+        0.6931
+      ],
+      "badge": null
+    },
+    "summer-standouts/Mike_Bibby": {
+      "name": [
+        0.0252,
+        0.2287,
+        0.1253,
+        0.5046
+      ],
+      "badge": null
+    },
+    "summer-standouts/Jameer_Nelson": {
+      "name": [
+        0.0252,
+        0.1173,
+        0.1253,
+        0.7274
+      ],
+      "badge": null
+    },
+    "summer-standouts/Steve_Nash": {
+      "name": [
+        0.0252,
+        0.2131,
+        0.1253,
+        0.5357
+      ],
+      "badge": null
+    },
+    "summer-standouts/Kevin_Garnett": {
+      "name": [
+        0.0252,
+        0.1362,
+        0.1253,
+        0.6896
+      ],
+      "badge": null
+    },
+    "summer-standouts/Kyrie_Irving": {
+      "name": [
+        0.0252,
+        0.1834,
+        0.1253,
+        0.5951
+      ],
+      "badge": null
+    },
+    "summer-standouts/Jamal_Murray": {
+      "name": [
+        0.0252,
+        0.1409,
+        0.1253,
+        0.6801
+      ],
+      "badge": null
+    },
+    "summer-standouts/Dwyane_Wade": {
+      "name": [
+        0.0252,
+        0.1584,
+        0.1253,
+        0.6451
+      ],
+      "badge": null
+    },
+    "dissonance/Derrick_Rose_NYK": {
+      "name": [
+        0.0252,
+        0.163,
+        0.1253,
+        0.6359
+      ],
+      "badge": null
+    },
+    "dissonance/Derrick_Rose_MIN": {
+      "name": [
+        0.0252,
+        0.163,
+        0.1253,
+        0.6359
+      ],
+      "badge": null
+    },
+    "dissonance/Derrick_Rose_DET": {
+      "name": [
+        0.0252,
+        0.163,
+        0.1253,
+        0.6359
+      ],
+      "badge": null
+    },
+    "team-rewards/Russell_Westbrook": {
+      "name": [
+        0.0395,
+        0.1126,
+        0.0965,
+        0.7367
+      ],
+      "badge": null
+    },
+    "team-rewards/LeBron_James_2016": {
+      "name": [
+        0.0252,
+        0.1464,
+        0.1253,
+        0.6692
+      ],
+      "badge": null
+    },
+    "team-rewards/LeBron_James_2020": {
+      "name": [
+        0.0252,
+        0.1464,
+        0.1253,
+        0.6692
+      ],
+      "badge": null
+    },
+    "team-rewards/Larry_Bird": {
+      "name": [
+        0.0252,
+        0.2201,
+        0.1253,
+        0.5217
+      ],
+      "badge": null
+    },
+    "team-rewards/Dwyane_Wade_2009": {
+      "name": [
+        0.0252,
+        0.1584,
+        0.1253,
+        0.6451
+      ],
+      "badge": null
+    },
+    "team-rewards/Kevin_Love": {
+      "name": [
+        0.0252,
+        0.2266,
+        0.1253,
+        0.5087
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Tim_Duncan": {
+      "name": [
+        0.0252,
+        0.2119,
+        0.1253,
+        0.5381
+      ],
+      "badge": null
+    },
+    "team-rewards/Anthony_Davis_2015": {
+      "name": [
+        0.0252,
+        0.1325,
+        0.1253,
+        0.6969
+      ],
+      "badge": null
+    },
+    "team-rewards/Dirk_Nowitzki": {
+      "name": [
+        0.0252,
+        0.1514,
+        0.1253,
+        0.659
+      ],
+      "badge": null
+    },
+    "team-rewards/Shaquille_O_Neal": {
+      "name": [
+        0.0356,
+        0.1382,
+        0.1044,
+        0.6855
+      ],
+      "badge": null
+    },
+    "team-rewards/Karl_Malone": {
+      "name": [
+        0.0252,
+        0.1779,
+        0.1253,
+        0.6062
+      ],
+      "badge": null
+    },
+    "team-rewards/Patrick_Ewing": {
+      "name": [
+        0.0252,
+        0.1412,
+        0.1253,
+        0.6796
+      ],
+      "badge": null
+    },
+    "team-rewards/Clyde_Drexler": {
+      "name": [
+        0.0252,
+        0.1397,
+        0.1253,
+        0.6825
+      ],
+      "badge": null
+    },
+    "team-rewards/Alex_English": {
+      "name": [
+        0.0252,
+        0.1658,
+        0.1253,
+        0.6304
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Yao_Ming": {
+      "name": [
+        0.0252,
+        0.2681,
+        0.1253,
+        0.4257
+      ],
+      "badge": null
+    },
+    "team-rewards/Reggie_Miller": {
+      "name": [
+        0.0252,
+        0.1415,
+        0.1253,
+        0.6788
+      ],
+      "badge": null
+    },
+    "team-rewards/Kemba_Walker": {
+      "name": [
+        0.0252,
+        0.1386,
+        0.1253,
+        0.6847
+      ],
+      "badge": null
+    },
+    "team-rewards/Derrick_Rose": {
+      "name": [
+        0.0252,
+        0.163,
+        0.1253,
+        0.6359
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Dominique_Wilkins": {
+      "name": [
+        0.0389,
+        0.1289,
+        0.0979,
+        0.704
+      ],
+      "badge": null
+    },
+    "team-rewards/Michael_Redd": {
+      "name": [
+        0.0252,
+        0.159,
+        0.1253,
+        0.644
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Steve_Nash_2006": {
+      "name": [
+        0.0252,
+        0.2131,
+        0.1253,
+        0.5357
+      ],
+      "badge": null
+    },
+    "team-rewards/Chris_Paul_2015": {
+      "name": [
+        0.0252,
+        0.2242,
+        0.1253,
+        0.5134
+      ],
+      "badge": null
+    },
+    "team-rewards/Peja_Stojakovic": {
+      "name": [
+        0.0323,
+        0.1317,
+        0.1109,
+        0.6986
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Jason_Kidd_2003": {
+      "name": [
+        0.0252,
+        0.2175,
+        0.1253,
+        0.527
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "wnba-rookie/Candice_Wiggins": {
+      "name": [
+        0.0323,
+        0.1245,
+        0.1109,
+        0.713
+      ],
+      "badge": null
+    },
+    "wnba-super-season/Jonquel_Jones": {
+      "name": [
+        0.0252,
+        0.1211,
+        0.1253,
+        0.7197
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "set-rewards/Giannis_Antetokounmpo": {
+      "name": [
+        0.048,
+        0.1105,
+        0.0796,
+        0.7408
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "set-rewards/David_Robinson": {
+      "name": [
+        0.0284,
+        0.1268,
+        0.1187,
+        0.7083
+      ],
+      "badge": null
+    },
+    "set-rewards/Anthony_Davis": {
+      "name": [
+        0.0252,
+        0.1325,
+        0.1253,
+        0.6969
+      ],
+      "badge": null
+    },
+    "set-rewards/Joel_Embiid": {
+      "name": [
+        0.0252,
+        0.2018,
+        0.1253,
+        0.5582
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "set-rewards/Stephen_Curry": {
+      "name": [
+        0.0252,
+        0.126,
+        0.1253,
+        0.7099
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "set-rewards/Giannis_Antetokounmpo_2023": {
+      "name": [
+        0.048,
+        0.1105,
+        0.0796,
+        0.7408
+      ],
+      "badge": null
+    },
+    "wnba-set-rewards/Diana_Taurasi": {
+      "name": [
+        0.0252,
+        0.1444,
+        0.1253,
+        0.6731
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "wnba-set-rewards/Breanna_Stewart": {
+      "name": [
+        0.033,
+        0.1089,
+        0.1096,
+        0.7441
+      ],
+      "badge": null
+    },
+    "throwbacks/Stephen_Curry_2021": {
+      "name": [
+        0.0252,
+        0.126,
+        0.1253,
+        0.7099
+      ],
+      "badge": null
+    },
+    "throwbacks/David_Robinson_1994": {
+      "name": [
+        0.0284,
+        0.1268,
+        0.1187,
+        0.7083
+      ],
+      "badge": null
+    },
+    "throwbacks/Kobe_Bryant_2006": {
+      "name": [
+        0.0252,
+        0.1839,
+        0.1253,
+        0.5941
+      ],
+      "badge": null
+    },
+    "throwbacks/Blake_Griffin_2014": {
+      "name": [
+        0.0252,
+        0.1486,
+        0.1253,
+        0.6647
+      ],
+      "badge": null
+    },
+    "throwbacks/Jrue_Holiday_2022": {
+      "name": [
+        0.0252,
+        0.1666,
+        0.1253,
+        0.6287
+      ],
+      "badge": null
+    },
+    "throwbacks/Julius_Erving_1977": {
+      "name": [
+        0.0252,
+        0.1413,
+        0.1253,
+        0.6792
+      ],
+      "badge": null
+    },
+    "throwbacks/DeMar_DeRozan_2022": {
+      "name": [
+        0.0252,
+        0.1106,
+        0.1253,
+        0.7408
+      ],
+      "badge": null
+    },
+    "throwbacks/Shawn_Marion_2007": {
+      "name": [
+        0.0252,
+        0.1344,
+        0.1253,
+        0.6931
+      ],
+      "badge": null
+    },
+    "throwbacks/Sam_Cassell_2004": {
+      "name": [
+        0.0252,
+        0.1845,
+        0.1253,
+        0.593
+      ],
+      "badge": null
+    },
+    "throwbacks/Allan_Houston_2003": {
+      "name": [
+        0.0252,
+        0.1212,
+        0.1253,
+        0.7195
+      ],
+      "badge": null
+    },
+    "throwbacks/John_Stockton_2002": {
+      "name": [
+        0.0252,
+        0.1247,
+        0.1253,
+        0.7126
+      ],
+      "badge": null
+    },
+    "throwbacks/Alonzo_Mourning_2006": {
+      "name": [
+        0.0323,
+        0.104,
+        0.1109,
+        0.7539
+      ],
+      "badge": null
+    },
+    "throwbacks/Myles_Turner_2019": {
+      "name": [
+        0.0252,
+        0.1509,
+        0.1253,
+        0.6601
+      ],
+      "badge": null
+    },
+    "throwbacks/Josh_Smith_2009": {
+      "name": [
+        0.0252,
+        0.2144,
+        0.1253,
+        0.5331
+      ],
+      "badge": null
+    },
+    "throwbacks/Lou_Williams_2020": {
+      "name": [
+        0.0252,
+        0.1639,
+        0.1253,
+        0.634
+      ],
+      "badge": null
+    },
+    "throwbacks/Elton_Brand_2003": {
+      "name": [
+        0.0252,
+        0.1854,
+        0.1253,
+        0.5911
+      ],
+      "badge": null
+    },
+    "throwbacks/Luol_Deng_2011": {
+      "name": [
+        0.0252,
+        0.2369,
+        0.1253,
+        0.4881
+      ],
+      "badge": null
+    },
+    "throwbacks/Luis_Scola_2011": {
+      "name": [
+        0.0252,
+        0.2253,
+        0.1253,
+        0.5112
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-30T12:05:27.034Z",
+  "generatedAt": "2026-09-30T17:37:23.208Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

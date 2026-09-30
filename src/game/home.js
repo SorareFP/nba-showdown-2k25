@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'seven-new-cards', date: '2026-09-30', title: 'Jamison, Bynum, Webber, Rubio, Baron Davis, Maggette and Cousins',
+    body: "Seven players get new cards. Super Seasons: Antawn Jamison's 2007-08 Wizards, Andrew Bynum's 2011-12 Lakers, Chris Webber's 1999-2000 Kings and Ricky Rubio's 2015-16 Timberwolves. Throwbacks: Baron Davis's 2006-07 We Believe Warriors, Corey Maggette's 2007-08 Clippers and DeMarcus Cousins' 2015-16 Kings. Jamison, Rubio, Baron Davis and Maggette also get rookie cards. The Super Season collection grows by four, so it's open again if you had finished it.",
+    to: 'collection', cta: 'Collection',
+  },
+  {
     id: 'rewards-beat-the-collection', date: '2026-09-30', title: 'Every collection reward re-picked, and new cards',
     body: "A collection's reward now beats the best card that collection asks for, and is never a player on that team's current roster. New rewards include Derrick Rose's MVP season for Chicago, Dirk's 2011 title for Dallas, Larry Bird's 1985-86 for Boston, Yao Ming for Houston, Dr. J's 1980-81 MVP for Philadelphia and Alex English for Denver. The conference and full-set rewards are Set Rewards now, and each special set's reward is its own best card. A reward that left keeps its card: it went back to its set or became a Throwback, and anyone who earned it still has it. New cards: Super Seasons for Bernard King, Adrian Dantley, Arvydas Sabonis, DeMarcus Cousins, Kristaps Porzingis, Paul Millsap and Dell Curry; Rose's rookie card and three Dissonance cards; and Throwbacks for Blake Griffin, Lou Williams and Shawn Marion (those three join packs once their photos are in). Three-point lines also got finer: they used to land only on 12, 15, 18 or 20, and now use every number between.",
     to: 'collection', cta: 'Collection',

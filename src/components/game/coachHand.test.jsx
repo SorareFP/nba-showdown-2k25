@@ -92,6 +92,52 @@ describe('playing the coach', () => {
   });
 });
 
+// WHO CAN PLAY IS NOT YOURS TO KNOW UNTIL THEIR FIVE ARE DOWN (2026-09-30).
+// The user, on Shai Gilgeous-Alexander's ⛔12m on the coach's bench mid-snake:
+// "I shouldn't know that Shai can't play this section until all five players
+// for my opponent are placed."
+describe('the coach\'s bench during placement', () => {
+  /** The snake in progress: `placed` of the coach's five down, step `step`. */
+  const placing = (placed, step) => {
+    const g = start();
+    const game = { ...g, phase: 'matchup_strats', placementStep: step };
+    game.teamA.starters = game.teamA.roster.slice(0, Math.min(STARTERS, step - placed));
+    game.teamB.starters = game.teamB.roster.slice(0, placed);
+    const ps = id => game.teamB.stats.find(s => s.id === id);
+    ps(game.teamB.roster[0].id).minutes = 8;    // placed: FAT-2 is on the floor for all to see
+    ps(game.teamB.roster[1].id).minutes = 0;
+    ps(game.teamB.roster[7].id).minutes = 12;   // on the bench: must rest
+    return game;
+  };
+  const panelOf = game => theirPanel(renderToStaticMarkup(
+    <CourtBoard game={game} setGame={() => {}} coachTeam="B"
+      onRoll={() => {}} onEndSection={() => {}} onExecCard={() => {}}
+      onResolve={() => {}} onSpendAssist={() => {}} onSpendRebound={() => {}} />
+  ));
+
+  it('shows no tracker on an unplaced player while the coach has players to place', () => {
+    const panel = panelOf(placing(2, 5));
+    expect(panel).not.toContain('⛔');
+    expect(panel).not.toContain('FAT-6');
+    expect(panel).not.toContain('12m');
+    expect(panel).toMatch(/not placed; the fatigue tracker shows once all five of theirs are down/);
+    // The placed players are on the floor and show theirs.
+    expect(panel).toContain('FAT-2');
+  });
+
+  it('shows everything once the coach\'s fifth is down', () => {
+    const panel = panelOf(placing(5, 10));
+    expect(panel).toContain('⛔12m');
+    expect(panel).not.toMatch(/not placed;/);
+  });
+
+  it('shows everything once the coach\'s five are down, even with yours still to place', () => {
+    // Coach placing first in a custom order: its five are down at step 9 and the human places last.
+    const game = placing(5, 9);
+    expect(panelOf(game)).toContain('⛔12m');
+  });
+});
+
 describe('hotseat, where both hands are the same person\'s', () => {
   it('hides nothing — there is nobody to hide it from', () => {
     expect(paint({ coachTeam: null })).toContain('data-card-id="switch_everything"');

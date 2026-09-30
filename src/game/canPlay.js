@@ -43,6 +43,21 @@ export function fwdTargets(g, teamKey) {
 }
 
 /**
+ * GREEN LIGHT'S PLAYERS: not blocked, not rolled (or their roll skipped by a
+ * card, the fwdTargets rule), and NO GREEN LIGHT YET THIS SECTION (the user,
+ * 2026-09-30: "I should not be able to play green light on the same player
+ * twice a section"). Green Light itself records the roll as replaced, and the
+ * replaced-roll door let the same shooter take a second one; who has had one
+ * is kept by player id in tempEff, cleared at section end, as Burst of
+ * Momentum does. Slot indices, for the card check, the picker, the engine and
+ * the coach alike.
+ */
+export function greenLightTargets(g, teamKey) {
+  const had = new Set(g.tempEff?.[teamKey]?.greenLightIds || []);
+  return fwdTargets(g, teamKey).filter(({ p }) => !had.has(p.id)).map(({ idx }) => idx);
+}
+
+/**
  * The players a PRE-ROLL card can still be played on: not rolled, not blocked,
  * and whatever the card itself asks for (`cond`).
  *
@@ -842,7 +857,7 @@ function cardVerdict(g, teamKey, cardId) {
   }
   switch (cardId) {
     case 'green_light':
-      if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled or is shut out');
+      if (greenLightTargets(g, teamKey).length === 0) return no('Everyone has rolled, is shut out, or has had a Green Light this section');
       return ok('Three 3PT checks instead of the roll');
     case 'five_out':
       if (preRollTargets(g, teamKey, p => (p.threePtBoost || 0) > 0).length === 0) return no('Every 3PT shooter has already rolled');

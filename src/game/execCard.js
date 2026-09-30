@@ -4,7 +4,7 @@
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead } from './engine.js';
-import { burstTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
+import { burstTargets, greenLightTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -700,6 +700,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (shut) return fail(shut);
       const existingRoll = (g.rollResults[teamKey] || [])[idx];
       if (existingRoll && !existingRoll.isReplaced) return fail(player?.name + ' has already rolled this segment.');
+      // Once per player per section (greenLightTargets, canPlay.js).
+      if (!greenLightTargets(g, teamKey).includes(idx)) return fail(`${player?.name} has had a Green Light this section`);
+      g.tempEff[teamKey] = g.tempEff[teamKey] || {};
+      g.tempEff[teamKey].greenLightIds = [...(g.tempEff[teamKey].greenLightIds || []), player?.id];
       announceCheck(g, {
         teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus,
         cardLabel: 'Green Light #1', replaceRoll: idx, replacedBy: 'green_light',

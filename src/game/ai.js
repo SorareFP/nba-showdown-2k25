@@ -5,7 +5,7 @@
 
 import { challengeTarget, getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions, timeoutProblem } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, burstTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST, pendingCheckExtra } from './canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST, pendingCheckExtra } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
 
@@ -1402,6 +1402,8 @@ export function forfeitNet(game, teamKey, idx, cardId) {
   if (!p) return null;
   if ((game.rollResults?.[teamKey] || [])[idx] != null) return null;
   if ((game.blockedRolls?.[teamKey] || {})[idx]) return null;
+  // Green Light: once per player per section (greenLightTargets, 2026-09-30).
+  if (cardId === 'green_light' && !greenLightTargets(game, teamKey).includes(idx)) return null;
   if (spec.needsThree && !((p.threePtBoost || 0) > 0)) return null;
   let checks = 0;
   for (const c of spec.checks) {

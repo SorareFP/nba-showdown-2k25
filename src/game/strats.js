@@ -30,7 +30,7 @@ export const STRATS = [
 
   // ── SCORING PHASE ──
   { id:'green_light',         name:'Green Light',        phase:'scoring',  side:'off', copies:2, locked:false, color:'#16A34A', rarity:'uncommon',
-    desc:'Select one player to attempt three 3PT Shot Checks instead of their scoring roll.' },
+    desc:'Select one player to attempt three 3PT Shot Checks instead of their scoring roll. Once per player per section.' },
   { id:'from_way_downtown',   name:'From Way Downtown',  phase:'scoring',  side:'off', copies:3, locked:false, color:'#2563EB', rarity:'common',
     desc:'3PT Shot Check at +1. Roll 1–3: cold marker. Roll 18–20: hot marker.' },
   { id:'catch_and_shoot',     name:'Catch & Shoot',      phase:'scoring',  side:'off', copies:3, locked:false, color:'#0891B2', rarity:'common',

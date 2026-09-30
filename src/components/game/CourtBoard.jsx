@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
-import { canPlayCard, burstTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, pendingCheckExtra } from '../../game/canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, pendingCheckExtra } from '../../game/canPlay.js';
 import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
-import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
+import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool, STARTERS } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick, forfeitNet, FORFEIT_CARDS } from '../../game/ai.js';
-import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName, submitSoloLineup, DEFAULT_ORDER } from '../../game/placement.js';
+import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName, submitSoloLineup, DEFAULT_ORDER, placingTeam } from '../../game/placement.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getPlayerThumbUrl, getStratImagePath, getStratThumbPath, fallbackTo } from '../../game/cardImages.js';
 import { useLightbox, ZoomImg } from '../CardLightbox.jsx';
@@ -607,9 +607,11 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
         break;
       }
       case 'green_light': {
-        // Not a shut-out player: This Is My House takes the roll AND the checks that would replace it.
-        eligible = filterStarters(myT.starters, (_, i) => (!rolls[i] || rolls[i]?.isReplaced) && !game.blockedRolls?.[teamKey]?.[i]);
-        label = 'Select player who hasn\'t rolled yet';
+        // Not a shut-out player: This Is My House takes the roll AND the checks
+        // that would replace it. And once per player per section (2026-09-30).
+        const open = new Set(greenLightTargets(game, teamKey));
+        eligible = filterStarters(myT.starters, (_, i) => open.has(i));
+        label = 'Select player (not rolled yet, no Green Light yet this section)';
         break;
       }
       // Roll-replacing / roll-modifying cards — must be pre-roll only.
@@ -2278,8 +2280,16 @@ export function OppStatusPanel({ game, teamKey }) {
   const t = getTeam(game, teamKey);
   const col = teamKey === 'A' ? 'var(--orange)' : 'var(--blue)';
   const onFloor = new Set((t.starters || []).map(p => p?.id).filter(Boolean));
+  // WHO CAN PLAY STAYS HIDDEN UNTIL THEIR FIVE ARE DOWN (2026-09-30, the
+  // user: "I shouldn't know that Shai can't play this section until all five
+  // players for my opponent are placed"). A player at twelve minutes sits the
+  // section (mustRest), so while the coach still has players to place, its
+  // bench shows no tracker: the ⛔ said it outright, and a FAT-6 tag or a bench
+  // sorted by minutes says it just as well. The floor stays visible — those
+  // players are placed — and everything shows once the fifth is down.
+  const hideTracker = placingTeam(game) !== null && onFloor.size < STARTERS;
   // On the floor first, then the bench, each by minutes played — the order a
-  // coach reads a rotation in.
+  // coach reads a rotation in. Roster order for a hidden bench.
   const rows = (t.roster || []).map(p => {
     const ps = getPS(game, teamKey, p.id) || {};
     const min = ps.minutes || 0;
@@ -2291,8 +2301,9 @@ export function OppStatusPanel({ game, teamKey }) {
       cold: ps.cold || 0,
       pts: ps.pts || 0,
       playing: onFloor.has(p.id),
+      hidden: hideTracker && !onFloor.has(p.id),
     };
-  }).sort((a, b) => (b.playing - a.playing) || (b.min - a.min));
+  }).sort((a, b) => (b.playing - a.playing) || (a.hidden || b.hidden ? 0 : b.min - a.min));
 
   return (
     <div className={`${styles.handPanel} ${teamKey === 'A' ? styles.handL : styles.handR}`}>
@@ -2305,14 +2316,18 @@ export function OppStatusPanel({ game, teamKey }) {
           <div
             key={r.p.id}
             className={`${styles.oppRow} ${r.playing ? styles.oppOn : ''}`}
-            title={`${r.p.name} — ${r.playing ? 'on the floor' : 'on the bench'}, ${r.min} min on the fatigue tracker${r.fat < 0 ? `, ${r.fat} to every roll` : ''}${r.hot ? `, ${r.hot} hot` : ''}${r.cold ? `, ${r.cold} cold` : ''}`}
+            title={r.hidden
+              ? `${r.p.name} — not placed; the fatigue tracker shows once all five of theirs are down${r.hot ? `, ${r.hot} hot` : ''}${r.cold ? `, ${r.cold} cold` : ''}`
+              : `${r.p.name} — ${r.playing ? 'on the floor' : 'on the bench'}, ${r.min} min on the fatigue tracker${r.fat < 0 ? `, ${r.fat} to every roll` : ''}${r.hot ? `, ${r.hot} hot` : ''}${r.cold ? `, ${r.cold} cold` : ''}`}
           >
             <span className={styles.oppDot} style={{ background: r.playing ? col : 'transparent', borderColor: col }} />
             <span className={styles.oppName}>{r.p.name}</span>
             <span className={styles.oppMeta}>
               {r.pts > 0 && <span className={styles.oppPts}>{r.pts}p</span>}
               {markerCount(r) !== 0 && <span>{markerEmoji(r)}</span>}
-              {r.min >= MAX_STRAIGHT_MINUTES && !restRuleLifted(game)
+              {r.hidden
+                ? <span className={styles.oppMin}>–</span>
+                : r.min >= MAX_STRAIGHT_MINUTES && !restRuleLifted(game)
                 ? <span className={styles.oppRest}>⛔{r.min}m</span>
                 : r.fat < 0
                   ? <span className={styles.fatTag}>FAT{r.fat}</span>

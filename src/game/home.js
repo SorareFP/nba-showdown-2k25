@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'green-light-once-hidden-bench', date: '2026-09-30', title: 'Green Light once per player; the coach\'s bench stays hidden while it places',
+    body: "Green Light can be played on a player once per section now; a second one on the same shooter is refused, and the coach follows the same rule. And while the coach is still placing its five, its bench no longer shows the fatigue tracker, so you can't tell who has to sit before its lineup is down. Everything shows again once its fifth player is placed.",
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'charts-rows-follow-points', date: '2026-09-30', title: 'New charts, and coins for cards that changed rarity',
     body: "Every card's chart was rebuilt. The rebounds and assists on each points row are now what the player actually averaged on the nights they scored that much, so a big scoring row no longer means more of everything, and a higher row is never worth less than the one below it. The points ladders are unchanged on nearly every card. A few cards crossed a rarity line with their new salaries. If you held any from before the change, you were paid once, on your next visit: the difference in burn value for every copy (40 coins for a rare that is now uncommon, 150 for a legendary that is now super-rare), with cards that moved up counted against it, and never below zero.",
     to: 'collection', cta: 'Collection',

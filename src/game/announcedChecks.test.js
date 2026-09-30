@@ -8,7 +8,8 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { newGame, getTeam } from './engine.js';
 import { CARDS } from './cards.js';
 import { execCard, resolvePendingShotCheck, announceCheck } from './execCard.js';
-import { canAnswerCheck } from './canPlay.js';
+import { canAnswerCheck, canPlayCard, greenLightTargets } from './canPlay.js';
+import { forfeitNet } from './ai.js';
 
 const p = (name, speed, power, extra = {}) => ({
   ...CARDS[0], id: name, name, speed, power, defBoost: 0, salary: 800,
@@ -127,6 +128,32 @@ describe('the cards themselves', () => {
     const done = resolvePendingShotCheck({ ...r.game, teamB: { ...r.game.teamB, hand: [] } });
     expect(done.log.filter(e => e.msg.startsWith('Green Light'))).toHaveLength(3);
     expect(done.rollResults.A[0]).toMatchObject({ isReplaced: true });
+  });
+
+  // ONCE PER PLAYER PER SECTION (the user, 2026-09-30: "I should not be able
+  // to play green light on the same player twice a section"). The first one
+  // records the roll as replaced, which is the door a second one walked in by.
+  it('Green Light cannot be played on the same player twice in a section', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const A = five('a'); A[0] = p('shooter', 10, 10, { threePtBoost: 3 });
+    const first = execCard(game({ A, hand: ['green_light', 'green_light'] }), 'A', 'green_light', { playerIdx: 0 });
+    expect(first.ok).toBe(true);
+    expect(greenLightTargets(first.game, 'A')).not.toContain(0);
+    const again = execCard(first.game, 'A', 'green_light', { playerIdx: 0 });
+    expect(again.ok).toBe(false);
+    expect(again.msg).toMatch(/has had a Green Light this section/);
+    // Another player is still fair game, and the card still reads as playable for them.
+    expect(greenLightTargets(first.game, 'A')).toContain(1);
+    expect(canPlayCard(first.game, 'A', 'green_light').canPlay).toBe(true);
+    expect(execCard(first.game, 'A', 'green_light', { playerIdx: 1 }).ok).toBe(true);
+  });
+
+  it('the coach never aims a second Green Light at the same player', () => {
+    const A = five('a'); A[0] = p('shooter', 10, 10, { threePtBoost: 3 });
+    const g = game({ A, hand: ['green_light'] });
+    g.tempEff = { A: { greenLightIds: ['shooter'] } };
+    expect(forfeitNet(g, 'A', 0, 'green_light')).toBeNull();
+    expect(forfeitNet(g, 'A', 1, 'green_light')).not.toBeNull();
   });
 
   it('a free throw is never interrupted, however armed the defence is', () => {

@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-09-30T16:50:32.228Z",
+ "generatedAt": "2026-09-30T17:47:57.129Z",
  "set": "team-rewards",
  "provisional": true,
  "sources": {
-  "roster": "card-data/team-rewards-2026.json — 5 cards MOVED from Super Season/Rookie/Summer Standouts, 25 built (franchise picks and the 3 tiers)",
+  "roster": "card-data/team-rewards-2026.json — 6 cards MOVED from Super Season/Rookie/Summer Standouts, 24 built (franchise picks and the 3 tiers)",
   "identity": "every card WEARS its identity (wears): the set it came from, or for a built pick the Free Agents classifier over the 1976-2026 archive (rewardIdentity.js)",
   "statLine": "that season's own row for that team, from the full-league tables",
   "skill": "EPM from the season table, Speed+Power trust from the season minutes",
@@ -135,71 +135,6 @@
    "provisional": false,
    "rewardFor": "CLE",
    "rewardGoal": "nba-team-CLE",
-   "wears": "throwbacks",
-   "badges": [
-    "throwback"
-   ]
-  },
-  {
-   "id": "LeBron_James_2020",
-   "name": "LeBron James",
-   "team": "LAL",
-   "pos": "PG",
-   "speed": 14,
-   "power": 16,
-   "shotLine": 15,
-   "paintBoost": 2,
-   "threePtBoost": 0,
-   "defBoost": 2,
-   "salary": 1660,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 2
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 35,
-   "games": 67,
-   "mpg": 34.6,
-   "bbrefId": "jamesle01",
-   "traded": false,
-   "metrics": {
-    "bpm": 8.4,
-    "vorp": 6.1,
-    "ws": 9.8,
-    "ws48": 0.204,
-    "per": 25.5
-   },
-   "provisional": false,
-   "rewardFor": "LAL",
-   "rewardGoal": "nba-team-LAL",
-   "floorException": "$50 under the floor: no Lakers season without a card clears Luka Doncic. Magic 1989-90, Shaq 1999-2000, Kareem 1985-86 and Kobe 2008-09 are all Super Season cards already, all under Luka. The bubble title year; his 2020-21 ($20 short) was 45 games.",
    "wears": "throwbacks",
    "badges": [
     "throwback"
@@ -492,6 +427,76 @@
    "badges": [
     "super-season"
    ]
+  },
+  {
+   "id": "Magic_Johnson",
+   "name": "Magic Johnson",
+   "team": "LAL",
+   "pos": "PG",
+   "speed": 19,
+   "power": 11,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 1580,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1990,
+   "seasonLabel": "1989-90",
+   "age": 30,
+   "games": 79,
+   "mpg": 37.2,
+   "bbrefId": "johnsma02",
+   "traded": false,
+   "metrics": {
+    "bpm": 10.1,
+    "vorp": 8.9,
+    "ws": 16.5,
+    "ws48": 0.27,
+    "per": 26.6
+   },
+   "provisional": false,
+   "set": "team-rewards",
+   "badges": [
+    "super-season"
+   ],
+   "wears": "super-season",
+   "migratedFrom": {
+    "set": "super-season",
+    "id": "Magic_Johnson"
+   },
+   "rewardFor": "LAL",
+   "rewardGoal": "nba-team-LAL",
+   "floorException": "$150 under the floor: no Lakers season clears Luka Doncic's $1,680 base card. Magic 1989-90 ($1,580), Shaq 1999-2000, Kareem 1985-86 and Kobe 2008-09 all price under him; the best uncarded one, LeBron 2020-21, was 45 games. The user, 2026-09-30: \"Let's just go Magic 89-90\"."
   },
   {
    "id": "Tim_Duncan",

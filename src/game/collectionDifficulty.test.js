@@ -311,12 +311,12 @@ describe('migrated rewards', () => {
     expect(new Set(goals).size).toBe(rewards.length);
   });
 
-  it('repeats no player across the reward set but the one the user approved', () => {
-    // LeBron James rewards both Cleveland (the 2016 title) and the Lakers (the
-    // 2020 bubble title) since 2026-09-30, both on the approved proposal.
+  it('repeats no player across the reward set', () => {
+    // LeBron James rewarded both Cleveland and the Lakers on the 2026-09-30
+    // re-pick until the user moved the Lakers to Magic's 1989-90 the same day.
     const names = rewards.map(c => c.name);
     const twice = [...new Set(names.filter((n, i) => names.indexOf(n) !== i))];
-    expect(twice).toEqual(['LeBron James']);
+    expect(twice).toEqual([]);
   });
 
   it('leaves each source set large enough to still be worth opening', () => {

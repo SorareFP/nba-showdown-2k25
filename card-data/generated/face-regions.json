@@ -16608,8 +16608,22 @@
         0.5112
       ],
       "badge": null
+    },
+    "team-rewards/Magic_Johnson": {
+      "name": [
+        0.0252,
+        0.1163,
+        0.1253,
+        0.7293
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     }
   },
-  "generatedAt": "2026-09-30T17:37:23.208Z",
+  "generatedAt": "2026-09-30T17:53:01.003Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

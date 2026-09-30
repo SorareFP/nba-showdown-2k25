@@ -1,77 +1,82 @@
 {
-  "Andrew_Bynum": {
-    "x": 0,
-    "y": 2.12,
-    "zoom": 1
-  },
-  "Antawn_Jamison": {
-    "x": 0,
-    "y": 12.86,
-    "zoom": 1
-  },
-  "Baron_Davis": {
-    "x": 0,
-    "y": 11.67,
-    "zoom": 1
-  },
-  "Chris_Webber": {
-    "x": -10.04,
-    "y": 0,
-    "zoom": 1
-  },
-  "Corey_Maggette": {
-    "x": 18.82,
-    "y": 0,
-    "zoom": 1
-  },
-  "Derrick_Rose": {
-    "x": 0,
-    "y": 8.28,
-    "zoom": 1
-  },
-  "Ricky_Rubio": {
-    "x": 33.16,
-    "y": 0,
-    "zoom": 1
-  },
-  "Zydrunas_Ilgauskas": {
-    "x": 0,
-    "y": 9.7,
-    "zoom": 1
-  },
-  "DeMarcus_Cousins": {
-    "x": 0.54,
-    "y": 0,
-    "zoom": 1
-  },
-  "Kevin_Durant": {
-    "x": -9.68,
-    "y": 0,
-    "zoom": 1
-  },
-  "Blake_Griffin": {
-    "x": 9.78,
-    "y": 0,
-    "zoom": 1
-  },
-  "Julius_Erving": {
-    "x": -18.73,
-    "y": -0.47,
-    "zoom": 1.23
-  },
-  "Marc_Gasol": {
-    "x": 0,
-    "y": 0.62,
-    "zoom": 1
-  },
-  "Vince_Carter": {
-    "x": 7.43,
-    "y": -14.23,
-    "zoom": 1.49
-  },
-  "John_Stockton_2002": {
-    "x": -21.23,
-    "y": 0,
-    "zoom": 1
-  }
+ "Andrew_Bynum": {
+  "x": 0,
+  "y": 2.12,
+  "zoom": 1
+ },
+ "Antawn_Jamison": {
+  "x": 0,
+  "y": 12.86,
+  "zoom": 1
+ },
+ "Baron_Davis": {
+  "x": 0,
+  "y": 11.67,
+  "zoom": 1
+ },
+ "Chris_Webber": {
+  "x": -10.04,
+  "y": 0,
+  "zoom": 1
+ },
+ "Corey_Maggette": {
+  "x": 18.82,
+  "y": 0,
+  "zoom": 1
+ },
+ "Derrick_Rose": {
+  "x": 0,
+  "y": 8.28,
+  "zoom": 1
+ },
+ "Ricky_Rubio": {
+  "x": 33.16,
+  "y": 0,
+  "zoom": 1
+ },
+ "Zydrunas_Ilgauskas": {
+  "x": 0,
+  "y": 9.7,
+  "zoom": 1
+ },
+ "DeMarcus_Cousins": {
+  "x": 0.54,
+  "y": 0,
+  "zoom": 1
+ },
+ "Kevin_Durant": {
+  "x": -9.68,
+  "y": 0,
+  "zoom": 1
+ },
+ "Blake_Griffin": {
+  "x": 9.78,
+  "y": 0,
+  "zoom": 1
+ },
+ "Julius_Erving": {
+  "x": -18.73,
+  "y": -0.47,
+  "zoom": 1.23
+ },
+ "Marc_Gasol": {
+  "x": 0,
+  "y": 0.62,
+  "zoom": 1
+ },
+ "Vince_Carter": {
+  "x": 7.43,
+  "y": -14.23,
+  "zoom": 1.49
+ },
+ "John_Stockton_2002": {
+  "x": -21.23,
+  "y": 0,
+  "zoom": 1
+ },
+ "Magic_Johnson": {
+  "x": 30.8,
+  "y": 0,
+  "zoom": 1
+ }
 }

@@ -36,7 +36,7 @@ const WEARS = {
   // ── NBA team rewards (30) since the 2026-09-30 re-pick ─────────────────
   'team-rewards:Russell_Westbrook': 'throwbacks',
   'team-rewards:LeBron_James_2016': 'throwbacks',
-  'team-rewards:LeBron_James_2020': 'throwbacks',
+  'team-rewards:Magic_Johnson': 'super-season', // his 1989-90 Super Season, moved in (the user's pick)
   'team-rewards:Larry_Bird': 'throwbacks',
   'team-rewards:Dwyane_Wade_2009': 'throwbacks', // moved from the dormant Throwback: his Super Season is 2009-10
   'team-rewards:Kevin_Durant': 'summer-standouts', // a playoff run keeps its identity (the user's ruling)

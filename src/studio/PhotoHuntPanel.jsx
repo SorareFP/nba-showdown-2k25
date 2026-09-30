@@ -44,7 +44,7 @@ export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dorman
   return groups;
 }
 
-export default function PhotoHuntPanel({ sources, allPhotos, allPlaceholders, onOpen, onUploaded, onClose }) {
+export default function PhotoHuntPanel({ sources, allPhotos, allPlaceholders, unseen = [], onOpen, onUploaded, onClose }) {
   const groups = useMemo(() => huntRows(sources, { allPhotos, allPlaceholders }), [sources, allPhotos, allPlaceholders]);
   const total = groups.reduce((n, g) => n + g.rows.length, 0);
   const [dropping, setDropping] = useState(null);
@@ -84,6 +84,26 @@ export default function PhotoHuntPanel({ sources, allPhotos, allPlaceholders, on
           Open takes you to the card to crop it. Placeholder art counts as owed; dormant Throwbacks do not.
         </p>
         {note && <p className={note.kind === 'error' ? s.err : s.ok}>{note.text}</p>}
+        {/* A row leaves the hunt the moment its photo lands, so the cards
+            that need cropping next are listed here until each is opened
+            (photoSeen.js; the user, 2026-09-30). */}
+        {unseen.length > 0 && (
+          <section className={s.group} data-testid="hunt-unseen">
+            <h3 className={s.groupTitle}>Added, not opened yet <span className={s.count}>{unseen.length}</span></h3>
+            <ul className={s.list}>
+              {unseen.map(u => (
+                <li key={u.key} className={s.row} data-unseen-row={u.key}>
+                  <span className={s.name}>{u.name}</span>
+                  <span className={s.when}>{u.sourceLabel}</span>
+                  <span className={s.where}>added {new Date(u.addedAt).toLocaleString()}</span>
+                  <span className={s.tag} />
+                  <span />
+                  <button type="button" className={s.ghost} onClick={() => onOpen(u.sourceKey, u.id)}>Open</button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
         {total === 0 && <p className={s.empty}>Every card you can edit has its photo.</p>}
         {groups.map(g => (
           <section key={g.key} id={`hunt-${g.key}`} className={s.group}>

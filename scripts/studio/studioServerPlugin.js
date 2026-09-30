@@ -52,6 +52,25 @@ const playerIdFromFile = file => file.replace(/\.[^.]+$/, '');
  * first so the choice does not depend on the filesystem's listing order
  * either.
  */
+/**
+ * WHEN EACH PHOTO ARRIVED (2026-09-30): id -> the file's mtime in ms, newest
+ * file winning when an id has two. The studio flags a photo added after its
+ * card was last on screen (src/studio/photoSeen.js) — the user: "it's easy to
+ * lose track of whose photo I just recently added". Read off the file itself,
+ * so a photo copied into the folder by hand counts the same as a drop.
+ */
+export function photoTimes(dir) {
+  if (!dir || !existsSync(dir)) return {};
+  const out = {};
+  for (const file of readdirSync(dir)) {
+    if (!ALLOWED_PHOTO_EXT.has(extname(file).toLowerCase())) continue;
+    const id = playerIdFromFile(file);
+    const ms = Math.round(statSync(join(dir, file)).mtimeMs);
+    if (!(out[id] >= ms)) out[id] = ms;
+  }
+  return out;
+}
+
 export function photoExtMap(files) {
   const map = {};
   for (const file of [...files].sort()) {
@@ -308,6 +327,9 @@ export function studioServerPlugin() {
                 return [id, files.map(playerIdFromFile)];
               })
             ),
+            // And when each of those arrived, for the "added, not opened
+            // yet" alert (photoTimes above).
+            allPhotoTimes: Object.fromEntries(STUDIO_SCOPES.map(id => [id, photoTimes(forSet[id]?.photos)])),
           });
         })
       );

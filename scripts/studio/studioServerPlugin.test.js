@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { mkdtempSync, writeFileSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, readdirSync, readFileSync, rmSync, utimesSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { photoExtMap, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES, supersedeOldPhotos } from './studioServerPlugin.js';
+import { photoExtMap, photoTimes, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES, supersedeOldPhotos } from './studioServerPlugin.js';
 import {
   DEFAULT_PHOTO_EXT,
   IMAGE_EXTENSIONS,
@@ -166,5 +166,34 @@ describe('a new photo replaces the old one whole (2026-09-24)', () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe('photoTimes', () => {
+  it('reports when each photo arrived, newest file per id, images only', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'studio-times-'));
+    try {
+      const at = (file, iso) => {
+        writeFileSync(join(dir, file), 'x');
+        const t = new Date(iso);
+        utimesSync(join(dir, file), t, t);
+      };
+      at('Antawn_Jamison.jpg', '2026-09-30T10:00:00Z');
+      at('Antawn_Jamison.png', '2026-09-30T12:00:00Z');
+      at('Luka_Doncic.avif', '2026-09-29T08:00:00Z');
+      at('_placeholders.json', '2026-09-30T13:00:00Z');
+      mkdirSync(join(dir, '_replaced'));
+      expect(photoTimes(dir)).toEqual({
+        Antawn_Jamison: Date.parse('2026-09-30T12:00:00Z'),
+        Luka_Doncic: Date.parse('2026-09-29T08:00:00Z'),
+      });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('is empty for a set with no photos folder', () => {
+    expect(photoTimes(join(tmpdir(), 'no-such-studio-dir'))).toEqual({});
+    expect(photoTimes(undefined)).toEqual({});
   });
 });

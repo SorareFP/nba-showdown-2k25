@@ -18,6 +18,8 @@ export default function PlayerList({
   photoIds,
   // The shared rule (photoNeeds.js): 'photo' | 'placeholder' | 'missing' | 'dormant'.
   stateOf = null,
+  // A photo added since this card was last on screen (photoSeen.js).
+  isNew = null,
   selectedId,
   onSelect,
   onDropFile,
@@ -137,7 +139,14 @@ export default function PlayerList({
                   title={dotTitle}
                   aria-hidden="true"
                 />
-                <span className={styles.rowName}>{player.name}</span>
+                <span className={styles.rowName}>
+                  {player.name}
+                  {isNew?.(player.id) && (
+                    <span className={styles.rowNew} data-new-photo="true" title="Photo added since you last opened this card">
+                      new photo
+                    </span>
+                  )}
+                </span>
                 <span className={uploadingId === player.id ? styles.rowBusy : styles.rowMeta}>
                   {uploadingId === player.id ? 'saving…' : `${player.team ?? '—'} ${player.pos ?? ''}`}
                 </span>

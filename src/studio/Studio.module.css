@@ -694,3 +694,47 @@
 }
 .huntLine a { color: #fdba74; font-weight: 700; text-decoration: none; }
 .huntEra { color: var(--text-dim); font-size: 12px; }
+
+/* ── Added, not opened yet (photoSeen.js, 2026-09-30) ────────────────────── */
+
+/* The photos that left the hunt and still want a look. Blue, not the notice
+ * green or red: it is a to-do list, not a result. */
+.unseenBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  padding: 7px 16px;
+  font-size: 12px;
+  color: #D6E6FF;
+  background: rgba(59, 130, 246, 0.16);
+  border-bottom: 1px solid var(--border);
+  flex: none;
+}
+.unseenLead { color: #D6E6FF; }
+.unseenChip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 2px 9px;
+  font-size: 12px;
+  color: var(--text);
+  background: rgba(59, 130, 246, 0.28);
+  border: 1px solid rgba(59, 130, 246, 0.55);
+  border-radius: var(--radius-sm);
+}
+.unseenChip:hover { background: rgba(59, 130, 246, 0.42); }
+.unseenSet { font-size: 10px; color: var(--text-muted); }
+
+.rowNew {
+  margin-left: 6px;
+  padding: 0 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--blue);
+  border-radius: 3px;
+  vertical-align: 1px;
+}

@@ -48,6 +48,7 @@ import {
 } from './prefs.js';
 import styles from './Studio.module.css';
 import { photoState, needsPhoto } from './photoNeeds.js';
+import { readSeen, writeSeen, markSeen, markAllSeen, unseenPhotos } from './photoSeen.js';
 import { DORMANT_KEYS } from '../game/cardSets.js';
 import RequestsPanel from './RequestsPanel.jsx';
 import PhotoHuntPanel, { huntRows } from './PhotoHuntPanel.jsx';
@@ -55,6 +56,9 @@ import { huntTarget, stratSearchUrl } from './photoSearch.js';
 
 /** Long enough that a drag saves once, short enough to feel immediate. */
 const SAVE_DEBOUNCE_MS = 500;
+
+/** How many unopened-photo names the alert spells out before "+N more". */
+const UNSEEN_SHOWN = 12;
 
 /**
  * Whether a keypress belongs to the focused control rather than the list.
@@ -84,6 +88,14 @@ export default function Studio() {
   // Every scope's photo ids, for the set bar's auto-hide — see the server's
   // `allPhotos`. Only the ACTIVE set's list drives the roster view.
   const [allPhotos, setAllPhotos] = useState({});
+  // When each of those photos arrived, and when each card was last on screen:
+  // together they are the "added, not opened yet" alert (photoSeen.js).
+  const [allPhotoTimes, setAllPhotoTimes] = useState({});
+  const [photoSeen, setPhotoSeen] = useState(() => {
+    const record = readSeen();
+    writeSeen(record); // pins the first run's look-back so it does not slide
+    return record;
+  });
   // Placeholder art per scope (the server reads _placeholders.json): owed a
   // real photo, so never counted done (photoNeeds.js, 2026-09-24).
   const [placeholders, setPlaceholders] = useState([]);
@@ -244,6 +256,7 @@ export default function Studio() {
         if (!live) return;
         setPhotos(state.photos ?? []);
         setAllPhotos(state.allPhotos ?? {});
+        setAllPhotoTimes(state.allPhotoTimes ?? {});
         setPlaceholders(state.placeholders ?? []);
         setAllPlaceholders(state.allPlaceholders ?? {});
         setPhotoExts(state.photoExt ?? {});
@@ -263,6 +276,63 @@ export default function Studio() {
       live = false;
     };
   }, [activeSet]);
+
+  // ── Photo lists, re-read when the window comes back ───────────────────────
+  //
+  // A photo saved into a set's folder by hand, outside the studio, shows up
+  // (and raises the alert) the moment you switch back here. Only the photo
+  // lists are taken, never crops or team colours — the same rule as the
+  // upload refresh in handleDropFile — and a response for a set you have since
+  // left is dropped.
+  const activeSetRef = useRef(activeSet);
+  activeSetRef.current = activeSet;
+  useEffect(() => {
+    const onFocus = () => {
+      fetchStudioState(activeSetRef.current)
+        .then(state => {
+          if (state.set !== activeSetRef.current) return;
+          setAllPhotos(state.allPhotos ?? {});
+          setAllPlaceholders(state.allPlaceholders ?? {});
+          setAllPhotoTimes(state.allPhotoTimes ?? {});
+          setPhotos(state.photos ?? []);
+          setPlaceholders(state.placeholders ?? []);
+          setPhotoExts(state.photoExt ?? {});
+        })
+        .catch(() => {});
+    };
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, []);
+
+  // ── "Added, not opened yet" ───────────────────────────────────────────────
+  //
+  // A card on screen is a card seen, and it stays seen while it sits there:
+  // the effect re-runs when the selected card's own photo changes, so a photo
+  // dropped on the card you are looking at never raises the alert.
+  const selectedPhotoAt = allPhotoTimes[activeSet]?.[selectedId];
+  useEffect(() => {
+    if (!editable || !selectedId) return;
+    setPhotoSeen(prev => {
+      const next = markSeen(prev, activeSet, selectedId, Math.max(Date.now(), selectedPhotoAt ?? 0));
+      if (next !== prev) writeSeen(next);
+      return next;
+    });
+  }, [editable, activeSet, selectedId, selectedPhotoAt]);
+  const unseen = useMemo(
+    () => unseenPhotos({ allPhotoTimes, allPlaceholders, record: photoSeen, sources: SOURCES }),
+    [allPhotoTimes, allPlaceholders, photoSeen]
+  );
+  const unseenHere = useMemo(
+    () => new Set(unseen.filter(u => u.set === activeSet).map(u => u.id)),
+    [unseen, activeSet]
+  );
+  const clearUnseen = () => {
+    setPhotoSeen(prev => {
+      const next = markAllSeen(prev, unseen);
+      writeSeen(next);
+      return next;
+    });
+  };
 
   // ── Debounced crop persistence ────────────────────────────────────────────
   useEffect(() => {
@@ -407,6 +477,7 @@ export default function Studio() {
       // that edit and then persist the stale value over it.
       const state = await fetchStudioState(activeSet);
       setPhotos(state.photos ?? []);
+      setAllPhotoTimes(state.allPhotoTimes ?? {});
       // A real photo dropped on a placeholder takes it off the manifest.
       setPlaceholders(state.placeholders ?? []);
       // Travels with the photo list for the same reason: an upload that lands
@@ -435,6 +506,12 @@ export default function Studio() {
     setSourceKey(key);
     setSelectedId(SOURCES[key].players[0]?.id ?? null);
     setMissingOnly(false);
+  };
+
+  /** Jump to one card in its set — the hunt's Open and the alert's names. */
+  const openCard = (key, id) => {
+    switchSource(key);
+    setSelectedId(id);
   };
 
   /** Put a set away by hand, or pull it back out — the override auto-hide needs. */
@@ -727,6 +804,32 @@ export default function Studio() {
         </div>
       )}
 
+      {unseen.length > 0 && (
+        <div className={styles.unseenBar} role="status" data-testid="unseen-photos">
+          <span className={styles.unseenLead}>
+            📷 {unseen.length} new photo{unseen.length === 1 ? '' : 's'} you haven't opened yet:
+          </span>
+          {unseen.slice(0, UNSEEN_SHOWN).map(u => (
+            <button
+              key={u.key}
+              type="button"
+              className={styles.unseenChip}
+              data-unseen={u.key}
+              title={`${u.name} · ${u.sourceLabel} — photo added ${new Date(u.addedAt).toLocaleString()}. Opening the card clears it.`}
+              onClick={() => openCard(u.sourceKey, u.id)}
+            >
+              {u.name}
+              <span className={styles.unseenSet}>{u.sourceLabel}</span>
+            </button>
+          ))}
+          {unseen.length > UNSEEN_SHOWN && <span className={styles.unseenLead}>+{unseen.length - UNSEEN_SHOWN} more</span>}
+          <span className={styles.spacer} />
+          <button type="button" className={styles.noticeDismiss} onClick={clearUnseen}>
+            mark all seen
+          </button>
+        </div>
+      )}
+
       {notice && (
         <div
           className={`${styles.notice} ${
@@ -749,12 +852,14 @@ export default function Studio() {
           allPhotos={allPhotos}
           allPlaceholders={allPlaceholders}
           onClose={() => setShowHunt(false)}
-          onOpen={(key, id) => { switchSource(key); setSelectedId(id); setShowHunt(false); }}
+          unseen={unseen}
+          onOpen={(key, id) => { openCard(key, id); setShowHunt(false); }}
           onUploaded={async (set, id) => {
             // Every set's lists come with any set's state; the active set's own
             // list too when the photo landed in it (and its preview re-fetches).
             const state = await fetchStudioState(activeSet);
             setAllPhotos(state.allPhotos ?? {});
+            setAllPhotoTimes(state.allPhotoTimes ?? {});
             setAllPlaceholders(state.allPlaceholders ?? {});
             if (set === activeSet) {
               setPhotos(state.photos ?? []);
@@ -772,6 +877,7 @@ export default function Studio() {
             visible={visible}
             photoIds={photoIds}
             stateOf={stateOf}
+            isNew={id => unseenHere.has(id)}
             selectedId={selectedId}
             onSelect={setSelectedId}
             onDropFile={handleDropFile}

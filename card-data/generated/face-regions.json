@@ -3344,7 +3344,12 @@
         0.1044,
         0.6834
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Anfernee_Simons": {
       "name": [
@@ -5583,7 +5588,12 @@
         0.1253,
         0.5452
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "wnba-super-season/Lauren_Jackson": {
       "name": [
@@ -16622,8 +16632,222 @@
         0.1507,
         0.0223
       ]
+    },
+    "super-season/Andrew_Bynum": {
+      "name": [
+        0.0252,
+        0.1265,
+        0.1253,
+        0.709
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Antawn_Jamison": {
+      "name": [
+        0.0284,
+        0.1059,
+        0.1187,
+        0.75
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Chris_Webber": {
+      "name": [
+        0.0252,
+        0.1488,
+        0.1253,
+        0.6642
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/David_Robinson": {
+      "name": [
+        0.0284,
+        0.1268,
+        0.1187,
+        0.7083
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Ricky_Rubio": {
+      "name": [
+        0.0252,
+        0.201,
+        0.1253,
+        0.5599
+      ],
+      "badge": null
+    },
+    "super-season/Shawn_Marion": {
+      "name": [
+        0.0252,
+        0.1344,
+        0.1253,
+        0.6931
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "rookie/Antawn_Jamison": {
+      "name": [
+        0.0284,
+        0.1059,
+        0.1187,
+        0.75
+      ],
+      "badge": null
+    },
+    "rookie/Baron_Davis": {
+      "name": [
+        0.0252,
+        0.187,
+        0.1253,
+        0.588
+      ],
+      "badge": null
+    },
+    "rookie/Corey_Maggette": {
+      "name": [
+        0.0291,
+        0.115,
+        0.1174,
+        0.732
+      ],
+      "badge": null
+    },
+    "rookie/Ricky_Rubio": {
+      "name": [
+        0.0252,
+        0.201,
+        0.1253,
+        0.5599
+      ],
+      "badge": null
+    },
+    "throwbacks/Michael_Jordan_1990": {
+      "name": [
+        0.0284,
+        0.1183,
+        0.1187,
+        0.7253
+      ],
+      "badge": null
+    },
+    "throwbacks/Luka_Doncic_2020": {
+      "name": [
+        0.0252,
+        0.193,
+        0.1253,
+        0.5759
+      ],
+      "badge": null
+    },
+    "throwbacks/Jayson_Tatum_2025": {
+      "name": [
+        0.0252,
+        0.158,
+        0.1253,
+        0.6459
+      ],
+      "badge": null
+    },
+    "throwbacks/Dominique_Wilkins_1987": {
+      "name": [
+        0.0389,
+        0.1289,
+        0.0979,
+        0.704
+      ],
+      "badge": null
+    },
+    "throwbacks/Kobe_Bryant_2009": {
+      "name": [
+        0.0252,
+        0.1839,
+        0.1253,
+        0.5941
+      ],
+      "badge": null
+    },
+    "throwbacks/DeMarcus_Cousins_2016": {
+      "name": [
+        0.0356,
+        0.1073,
+        0.1044,
+        0.7474
+      ],
+      "badge": null
+    },
+    "throwbacks/Paul_Pierce_2005": {
+      "name": [
+        0.0252,
+        0.2014,
+        0.1253,
+        0.5591
+      ],
+      "badge": null
+    },
+    "throwbacks/Baron_Davis_2007": {
+      "name": [
+        0.0252,
+        0.187,
+        0.1253,
+        0.588
+      ],
+      "badge": null
+    },
+    "throwbacks/Corey_Maggette_2008": {
+      "name": [
+        0.0291,
+        0.115,
+        0.1174,
+        0.732
+      ],
+      "badge": null
+    },
+    "throwbacks/Antawn_Jamison_2008": {
+      "name": [
+        0.0284,
+        0.1059,
+        0.1187,
+        0.75
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Katie_Smith_2003": {
+      "name": [
+        0.0252,
+        0.2084,
+        0.1253,
+        0.5452
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-30T22:18:09.058Z",
+  "generatedAt": "2026-09-30T23:50:11.388Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

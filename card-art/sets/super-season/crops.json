@@ -994,11 +994,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Derrick_White": {
-    "x": -1.07,
-    "y": 0,
-    "zoom": 1
-  },
   "Paul_George": {
     "x": 2.22,
     "y": 0,
@@ -1068,5 +1063,30 @@
     "x": 0,
     "y": -4.83,
     "zoom": 1
+  },
+  "Andrew_Bynum": {
+    "x": 0,
+    "y": 2.12,
+    "zoom": 1
+  },
+  "Chris_Webber": {
+    "x": -10.04,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ricky_Rubio": {
+    "x": 33.16,
+    "y": 0,
+    "zoom": 1
+  },
+  "Derrick_White": {
+    "x": -1.07,
+    "y": 0,
+    "zoom": 1
+  },
+  "David_Robinson": {
+    "x": -12.74,
+    "y": 0.94,
+    "zoom": 1.34
   }
 }

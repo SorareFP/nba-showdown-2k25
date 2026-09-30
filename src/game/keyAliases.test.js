@@ -19,7 +19,11 @@ describe('KEY_ALIASES', () => {
   it('names only keys that no longer resolve, each landing on a live card', () => {
     const live = new Set(Object.values(CARD_SETS).flat().map(cardKey));
     for (const [old, now] of Object.entries(KEY_ALIASES)) {
-      expect(live.has(now), `${old} -> ${now} is a live card`).toBe(true);
+      // A DORMANT Throwback counts (2026-09-30): it sits out of the packs, so it
+      // is not in CARD_SETS, but it resolves by key and a holder keeps it.
+      // David Robinson's 1993-94, the old Spurs reward, went dormant when its
+      // photo went back to his returning 1990-91 Super Season (same logo era).
+      expect(live.has(now) || !!getCardByKey(now), `${old} -> ${now} is a card`).toBe(true);
       expect(live.has(old), `${old} is not itself a live key`).toBe(false);
       expect(getCardByKey(old), old).toBe(getCardByKey(now));
     }

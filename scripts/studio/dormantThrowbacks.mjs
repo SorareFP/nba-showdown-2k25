@@ -19,7 +19,9 @@
 // NOT DORMANT, whatever their photos: a requested card (cards-free-agents.json;
 // someone asked for it, and a request for a dormant season builds under the
 // same key, which then wins) and a card that moved into a reward (its photo
-// lives with the reward).
+// lives with the reward) or was absorbed back into its player's Super Season
+// (2026-09-30: Shawn Marion's 2006-07 Throwback, when the real-log rebuild made
+// that season his Super Season again — the key resolves to the Super Season).
 //
 // A photo only counts once it is on disk, and the list is committed data, so
 // run this after the art moves (superSeasonArt.py --apply calls it) and after
@@ -33,7 +35,8 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const GEN = path.join(ROOT, 'card-data', 'generated');
 export const DORMANT_FILE = path.join(GEN, 'dormant-throwbacks.json');
 const THROWBACK_FILES = ['cards-throwbacks.json', 'cards-wnba-throwbacks.json'];
-const REWARD_FILES = ['cards-team-rewards.json', 'cards-set-rewards.json', 'cards-wnba-team-rewards.json', 'cards-wnba-set-rewards.json'];
+const REWARD_FILES = ['cards-team-rewards.json', 'cards-set-rewards.json', 'cards-wnba-team-rewards.json', 'cards-wnba-set-rewards.json',
+  'cards-super-season.json', 'cards-wnba-super-season.json'];
 
 const readCards = file => {
   const p = path.join(GEN, file);

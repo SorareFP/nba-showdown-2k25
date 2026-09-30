@@ -14,11 +14,6 @@
   "y": 0,
   "zoom": 1
  },
- "David_Robinson": {
-  "x": -9.14,
-  "y": 0,
-  "zoom": 1
- },
  "Anthony_Davis": {
   "x": -24.2,
   "y": 0,
@@ -26,6 +21,11 @@
  },
  "Stephen_Curry": {
   "x": 6.27,
+  "y": 0,
+  "zoom": 1
+ },
+ "Michael_Jordan": {
+  "x": -36.9,
   "y": 0,
   "zoom": 1
  }

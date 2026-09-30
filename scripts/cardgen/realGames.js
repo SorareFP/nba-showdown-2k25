@@ -38,6 +38,13 @@ export const MINUTES_DAMP = 0.9; // softened from 1.06: integer rounding turned 
 export const rebDampExponent = mpg => Math.min(1.4, 0.9 + 0.5 * Math.max(0, (22 - mpg) / 10));
 export const WINDOW_GAMES = 82;
 
+// A PLAYOFF RUN needs fewer minutes than a season to be read from its own
+// games (trial, 2026-09-30). The 400-minute floor guards against garbage-time
+// seasons, but a playoff run is a rotation player's minutes by construction,
+// and six Summer Standouts (Daniel Gibson's 2007 at 392 minutes among them)
+// fell just under it onto the synthetic path.
+export const PLAYOFF_MIN_MINUTES = 250;
+
 // Games below this many minutes are excluded from the sample. The bands
 // pipeline normalizes each game as (stat * 36 / minutes) / minutes — a
 // quadratic divide — so a 2-minute cameo with a single bucket extrapolates to
@@ -88,8 +95,13 @@ function finishWindow(rows, defense, defenseKey) {
 
   const totalMin = played.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
   const mpg = totalMin / played.length;
-  const damp = Math.pow(Math.min(mpg, 36) / 36, MINUTES_DAMP);
-  const dampReb = Math.pow(Math.min(mpg, 36) / 36, rebDampExponent(mpg));
+  // UNCAPPED (trial, 2026-09-30). The damp exists to cancel bands.js's
+  // second division by minutes, and it used to stop at 36: every season above
+  // 36 MPG kept the second division and lost scoring to it (Magic 1989-90 -5%,
+  // LeBron 2008-09 -6%, Jordan 1987-88 -11%). Above 36 it now LIFTS the counts
+  // by the same rule, so a heavy-minute season reads its per-minute rate too.
+  const damp = Math.pow(mpg / 36, MINUTES_DAMP);
+  const dampReb = Math.pow(mpg / 36, rebDampExponent(mpg));
 
   const adjusted = played.map(g => {
     const depm = defense.get(defenseKey(g)) ?? 0;
@@ -157,7 +169,7 @@ export function loadSeasonRealGames(playerId, season, defense, { playoffOnly = f
   // fringe-prior shrink over there was measured on exactly these seasons.
   const played = rows.filter(g => minutesToDecimal(g.minutes) >= MPG_FLOOR);
   const totalMin = played.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
-  if (played.length < 10 || totalMin < 400) return null;
+  if (played.length < 10 || totalMin < (playoffOnly ? PLAYOFF_MIN_MINUTES : 400)) return null;
   const alias = g => `${season}|${TEAM_ALIAS[g.opp] ?? g.opp}`;
   return finishWindow(played, defense, alias);
 }

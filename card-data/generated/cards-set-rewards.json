@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T17:48:25.973Z",
+ "generatedAt": "2026-09-30T22:43:05.188Z",
  "set": "set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
@@ -82,7 +82,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 3,
-   "salary": 2080,
+   "salary": 1440,
    "chart": [
     {
      "lo": 1,
@@ -93,37 +93,30 @@
     },
     {
      "lo": 3,
-     "hi": 4,
+     "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 8,
-     "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 9,
+     "lo": 7,
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
+     "hi": 21,
      "pts": 3,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 21,
+     "lo": 22,
      "hi": 99,
-     "pts": 5,
-     "reb": 4,
+     "pts": 3,
+     "reb": 2,
      "ast": 0
     }
    ],
@@ -141,7 +134,7 @@
     "ws48": 0.241,
     "per": 26.3
    },
-   "provisional": true,
+   "provisional": false,
    "set": "set-rewards",
    "badges": [
     "rookie"

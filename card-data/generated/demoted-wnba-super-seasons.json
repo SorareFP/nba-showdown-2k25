@@ -1,6 +1,6 @@
 {
  "set": "wnba-throwbacks",
- "generatedAt": "2026-09-30T16:48:31.511Z",
+ "generatedAt": "2026-09-30T22:43:01.088Z",
  "note": "WNBA Super Seasons that are no longer a Super Season, as WNBA Throwbacks (the value pick, 2026-09-24; card-data/wnba-super-season-retired.json). generateCuratedCards.js writes them into cards-wnba-throwbacks.json.",
  "cards": [
   {
@@ -15,7 +15,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": 3,
-   "salary": 1120,
+   "salary": 1110,
    "chart": [
     {
      "lo": 1,
@@ -442,6 +442,83 @@
    "provisional": false,
    "set": "wnba-throwbacks",
    "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Katie_Smith"
+   }
+  },
+  {
+   "id": "Katie_Smith_2003",
+   "name": "Katie Smith",
+   "team": "MIN99",
+   "statRowTeam": "MIN",
+   "pos": "G",
+   "speed": 14,
+   "power": 9,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": -1,
+   "salary": 830,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2003,
+   "seasonLabel": "2003",
+   "games": 34,
+   "mpg": 34.9,
+   "minutes": 1185,
+   "schedule": 34,
+   "bbrefId": "smithka01w",
+   "metrics": {
+    "bpmHat": 4.5,
+    "obpmHat": 5.85,
+    "dbpmHat": -1.35,
+    "seasonZ": 1.28,
+    "per": 21.6,
+    "ws": 6.8,
+    "wsPer40": 0.229,
+    "tsPct": 0.599,
+    "pts100": 30.2
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
    "demotedFrom": {
     "set": "wnba-super-season",
     "id": "Katie_Smith"

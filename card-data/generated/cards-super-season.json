@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T16:45:59.670Z",
+ "generatedAt": "2026-09-30T22:40:19.022Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -916,54 +916,21 @@
    "to": "throwbacks",
    "id": "Trendon_Watford_2023",
    "reason": "the player's Rookie card is stronger — a Throwback instead"
-  },
-  {
-   "name": "Andrei Kirilenko",
-   "season": 2005,
-   "seasonLabel": "2004-05",
-   "salary": 1070,
-   "to": "throwbacks",
-   "id": "Andrei_Kirilenko_2005",
-   "reason": "the player's Rookie card is stronger — a Throwback instead"
-  },
-  {
-   "name": "Yao Ming",
-   "season": 2009,
-   "seasonLabel": "2008-09",
-   "salary": 1350,
-   "to": "throwbacks",
-   "id": "Yao_Ming_2009",
-   "reason": "the player's Rookie card is stronger — a Throwback instead"
-  },
-  {
-   "name": "Tim Duncan",
-   "season": 2005,
-   "seasonLabel": "2004-05",
-   "salary": 1550,
-   "to": "throwbacks",
-   "id": "Tim_Duncan_2005",
-   "reason": "the player's Rookie card is stronger — a Throwback instead"
-  },
-  {
-   "name": "David Robinson",
-   "season": 1991,
-   "seasonLabel": "1990-91",
-   "salary": 1540,
-   "to": "throwbacks",
-   "id": "David_Robinson_1991",
-   "reason": "the player's Rookie card is stronger — a Throwback instead"
-  },
-  {
-   "name": "Shawn Marion",
-   "season": 2007,
-   "seasonLabel": "2006-07",
-   "salary": 1110,
-   "to": "throwbacks",
-   "id": "Shawn_Marion_2007",
-   "reason": "the player's Rookie card is stronger — a Throwback instead"
   }
  ],
  "valueRepicks": [
+  {
+   "name": "Jayson Tatum",
+   "bbrefId": "tatumja01",
+   "from": {
+    "season": 2025,
+    "salary": 1620
+   },
+   "to": {
+    "season": 2023,
+    "salary": 1830
+   }
+  },
   {
    "name": "Jaden McDaniels",
    "bbrefId": "mcdanja02",
@@ -977,18 +944,6 @@
    }
   },
   {
-   "name": "DeMar DeRozan",
-   "bbrefId": "derozde01",
-   "from": {
-    "season": 2022,
-    "salary": 1200
-   },
-   "to": {
-    "season": 2017,
-    "salary": 1260
-   }
-  },
-  {
    "name": "Peyton Watson",
    "bbrefId": "watsope01",
    "from": {
@@ -998,18 +953,6 @@
    "to": {
     "season": 2024,
     "salary": 430
-   }
-  },
-  {
-   "name": "Jrue Holiday",
-   "bbrefId": "holidjr01",
-   "from": {
-    "season": 2022,
-    "salary": 1310
-   },
-   "to": {
-    "season": 2023,
-    "salary": 1390
    }
   },
   {
@@ -1049,27 +992,51 @@
    }
   },
   {
-   "name": "Julius Erving",
-   "bbrefId": "ervinju01",
+   "name": "Luka Dončić",
+   "bbrefId": "doncilu01",
    "from": {
-    "season": 1977,
-    "salary": 1250
+    "season": 2020,
+    "salary": 1980
    },
    "to": {
-    "season": 1981,
-    "salary": 1530
+    "season": 2024,
+    "salary": 2150
    }
   },
   {
-   "name": "Tim Duncan",
-   "bbrefId": "duncati01",
+   "name": "Paul Pierce",
+   "bbrefId": "piercpa01",
    "from": {
-    "season": 2002,
-    "salary": 1150
+    "season": 2005,
+    "salary": 1320
    },
    "to": {
-    "season": 2005,
-    "salary": 1550
+    "season": 2002,
+    "salary": 1410
+   }
+  },
+  {
+   "name": "Michael Jordan",
+   "bbrefId": "jordami01",
+   "from": {
+    "season": 1990,
+    "salary": 2030
+   },
+   "to": {
+    "season": 1989,
+    "salary": 2090
+   }
+  },
+  {
+   "name": "Kobe Bryant",
+   "bbrefId": "bryanko01",
+   "from": {
+    "season": 2009,
+    "salary": 1480
+   },
+   "to": {
+    "season": 2006,
+    "salary": 1630
    }
   },
   {
@@ -1077,7 +1044,7 @@
    "bbrefId": "robinda01",
    "from": {
     "season": 1994,
-    "salary": 1430
+    "salary": 1500
    },
    "to": {
     "season": 1991,
@@ -1085,27 +1052,15 @@
    }
   },
   {
-   "name": "Paul Millsap",
-   "bbrefId": "millspa01",
+   "name": "Dominique Wilkins",
+   "bbrefId": "wilkido01",
    "from": {
-    "season": 2015,
-    "salary": 1010
+    "season": 1987,
+    "salary": 1560
    },
    "to": {
-    "season": 2012,
-    "salary": 1050
-   }
-  },
-  {
-   "name": "DeMarcus Cousins",
-   "bbrefId": "couside01",
-   "from": {
-    "season": 2016,
-    "salary": 1340
-   },
-   "to": {
-    "season": 2017,
-    "salary": 1400
+    "season": 1988,
+    "salary": 1640
    }
   },
   {
@@ -1119,18 +1074,6 @@
     "season": 2007,
     "salary": 1110
    }
-  },
-  {
-   "name": "Sam Cassell",
-   "bbrefId": "cassesa01",
-   "from": {
-    "season": 2004,
-    "salary": 1020
-   },
-   "to": {
-    "season": 1998,
-    "salary": 1160
-   }
   }
  ],
  "retired": [
@@ -1138,13 +1081,6 @@
    "name": "Alperen Şengün",
    "bbrefId": "sengual01",
    "season": 2025,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Andrei Kirilenko",
-   "bbrefId": "kirilan01",
-   "season": 2005,
    "since": "2026-09-24",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
@@ -1272,6 +1208,13 @@
    "bbrefId": "derozde01",
    "season": 2018,
    "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "DeMar DeRozan",
+   "bbrefId": "derozde01",
+   "season": 2022,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
@@ -1436,13 +1379,6 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Jayson Tatum",
-   "bbrefId": "tatumja01",
-   "season": 2023,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
    "name": "Jimmy Butler",
    "bbrefId": "butleji01",
    "season": 2023,
@@ -1468,6 +1404,20 @@
    "bbrefId": "valanjo01",
    "season": 2021,
    "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jrue Holiday",
+   "bbrefId": "holidjr01",
+   "season": 2022,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Julius Erving",
+   "bbrefId": "ervinju01",
+   "season": 1977,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
@@ -1506,13 +1456,6 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Kobe Bryant",
-   "bbrefId": "bryanko01",
-   "season": 2006,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
    "name": "Kyle Kuzma",
    "bbrefId": "kuzmaky01",
    "season": 2022,
@@ -1537,13 +1480,6 @@
    "name": "Luguentz Dort",
    "bbrefId": "dortlu01",
    "season": 2025,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Luka Dončić",
-   "bbrefId": "doncilu01",
-   "season": 2024,
    "since": "2026-09-24",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
@@ -1618,13 +1554,6 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Paul Pierce",
-   "bbrefId": "piercpa01",
-   "season": 2002,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
    "name": "Quentin Grimes",
    "bbrefId": "grimequ01",
    "season": 2025,
@@ -1656,13 +1585,6 @@
    "name": "Terance Mann",
    "bbrefId": "mannte01",
    "season": 2023,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Tim Duncan",
-   "bbrefId": "duncati01",
-   "season": 2002,
    "since": "2026-09-24",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
@@ -1702,30 +1624,44 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Yao Ming",
-   "bbrefId": "mingya01",
+   "name": "Dominique Wilkins",
+   "bbrefId": "wilkido01",
+   "season": 1987,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jayson Tatum",
+   "bbrefId": "tatumja01",
+   "season": 2025,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Kobe Bryant",
+   "bbrefId": "bryanko01",
    "season": 2009,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "DeMar DeRozan",
-   "bbrefId": "derozde01",
-   "season": 2022,
    "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Jrue Holiday",
-   "bbrefId": "holidjr01",
-   "season": 2022,
+   "name": "Luka Dončić",
+   "bbrefId": "doncilu01",
+   "season": 2020,
    "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Julius Erving",
-   "bbrefId": "ervinju01",
-   "season": 1977,
+   "name": "Michael Jordan",
+   "bbrefId": "jordami01",
+   "season": 1990,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Paul Pierce",
+   "bbrefId": "piercpa01",
+   "season": 2005,
    "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   }
@@ -2421,6 +2357,71 @@
     "ws": 10.3,
     "ws48": 0.188,
     "per": 22.9
+   },
+   "provisional": false
+  },
+  {
+   "id": "Andrei_Kirilenko",
+   "name": "Andrei Kirilenko",
+   "team": "UTA04",
+   "pos": "PF",
+   "speed": 11,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": -2,
+   "defBoost": 4,
+   "salary": 1070,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2005,
+   "seasonLabel": "2004-05",
+   "age": 23,
+   "games": 41,
+   "mpg": 32.9,
+   "bbrefId": "kirilan01",
+   "traded": false,
+   "metrics": {
+    "bpm": 9.2,
+    "vorp": 3.8,
+    "ws": 5.5,
+    "ws48": 0.197,
+    "per": 24.4
    },
    "provisional": false
   },
@@ -3768,7 +3769,7 @@
    "paintBoost": 3,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1560,
+   "salary": 1630,
    "chart": [
     {
      "lo": 1,
@@ -3782,7 +3783,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -3793,17 +3794,17 @@
     },
     {
      "lo": 15,
-     "hi": 21,
+     "hi": 20,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
-     "lo": 22,
+     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 1993,
@@ -4021,7 +4022,7 @@
    "paintBoost": 6,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 1030,
+   "salary": 1020,
    "chart": [
     {
      "lo": 1,
@@ -4325,7 +4326,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 1910,
+   "salary": 1920,
    "chart": [
     {
      "lo": 1,
@@ -4339,14 +4340,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
@@ -4448,7 +4449,7 @@
    "paintBoost": -2,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 1230,
+   "salary": 1220,
    "chart": [
     {
      "lo": 1,
@@ -4492,6 +4493,71 @@
     "ws": 7.6,
     "ws48": 0.148,
     "per": 18.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "David_Robinson",
+   "name": "David Robinson",
+   "team": "SAS90",
+   "pos": "C",
+   "speed": 11,
+   "power": 19,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -5,
+   "defBoost": 3,
+   "salary": 1540,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 1991,
+   "seasonLabel": "1990-91",
+   "age": 25,
+   "games": 82,
+   "mpg": 37.7,
+   "bbrefId": "robinda01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.5,
+    "vorp": 8.2,
+    "ws": 17,
+    "ws48": 0.264,
+    "per": 27.4
    },
    "provisional": false
   },
@@ -5114,7 +5180,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 970,
+   "salary": 940,
    "chart": [
     {
      "lo": 1,
@@ -5134,11 +5200,18 @@
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -5250,21 +5323,28 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 16,
-     "hi": 99,
+     "hi": 20,
      "pts": 3,
      "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -5422,7 +5502,7 @@
    "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 1520,
+   "salary": 1490,
    "chart": [
     {
      "lo": 1,
@@ -5447,13 +5527,13 @@
     },
     {
      "lo": 15,
-     "hi": 20,
+     "hi": 21,
      "pts": 3,
      "reb": 0,
      "ast": 1
     },
     {
-     "lo": 21,
+     "lo": 22,
      "hi": 99,
      "pts": 4,
      "reb": 1,
@@ -5552,7 +5632,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1520,
+   "salary": 1560,
    "chart": [
     {
      "lo": 1,
@@ -5573,14 +5653,21 @@
      "hi": 13,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 14,
-     "hi": 99,
+     "hi": 20,
      "pts": 3,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
     }
    ],
    "season": 2003,
@@ -5669,13 +5756,13 @@
    "name": "Dominique Wilkins",
    "team": "ATL73",
    "pos": "SF",
-   "speed": 14,
+   "speed": 13,
    "power": 13,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": -2,
-   "defBoost": 0,
-   "salary": 1380,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": -3,
+   "defBoost": -1,
+   "salary": 1640,
    "chart": [
     {
      "lo": 1,
@@ -5686,46 +5773,46 @@
     },
     {
      "lo": 3,
-     "hi": 6,
+     "hi": 3,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 7,
-     "hi": 14,
-     "pts": 3,
+     "lo": 4,
+     "hi": 7,
+     "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
+     "lo": 8,
+     "hi": 13,
      "pts": 3,
      "reb": 1,
      "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 0
     }
    ],
-   "season": 1987,
-   "seasonLabel": "1986-87",
-   "age": 27,
-   "games": 79,
-   "mpg": 37.6,
+   "season": 1988,
+   "seasonLabel": "1987-88",
+   "age": 28,
+   "games": 78,
+   "mpg": 37.8,
    "bbrefId": "wilkido01",
    "traded": false,
    "metrics": {
-    "bpm": 5.5,
-    "vorp": 5.6,
-    "ws": 12.2,
-    "ws48": 0.197,
-    "per": 23.5
+    "bpm": 4.3,
+    "vorp": 4.7,
+    "ws": 9.8,
+    "ws48": 0.16,
+    "per": 23.7
    },
    "provisional": false
   },
@@ -5740,7 +5827,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 1710,
+   "salary": 1730,
    "chart": [
     {
      "lo": 1,
@@ -5753,7 +5840,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
@@ -5767,7 +5854,7 @@
      "lo": 15,
      "hi": 20,
      "pts": 4,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -6000,7 +6087,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 2,
-   "salary": 1520,
+   "salary": 1550,
    "chart": [
     {
      "lo": 1,
@@ -6025,13 +6112,6 @@
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 2,
@@ -6130,7 +6210,7 @@
    "paintBoost": 4,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 1600,
+   "salary": 1610,
    "chart": [
     {
      "lo": 1,
@@ -6141,13 +6221,13 @@
     },
     {
      "lo": 3,
-     "hi": 7,
+     "hi": 6,
      "pts": 0,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 8,
+     "lo": 7,
      "hi": 15,
      "pts": 3,
      "reb": 0,
@@ -6155,13 +6235,13 @@
     },
     {
      "lo": 16,
-     "hi": 21,
+     "hi": 20,
      "pts": 3,
      "reb": 0,
      "ast": 1
     },
     {
-     "lo": 22,
+     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -6195,7 +6275,7 @@
    "paintBoost": 1,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1090,
+   "salary": 1420,
    "chart": [
     {
      "lo": 1,
@@ -6216,21 +6296,14 @@
      "hi": 13,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
-     "hi": 20,
-     "pts": 2,
+     "hi": 99,
+     "pts": 3,
      "reb": 1,
      "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
     }
    ],
    "season": 2006,
@@ -6714,18 +6787,11 @@
      "lo": 8,
      "hi": 15,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -7128,7 +7194,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 740,
+   "salary": 780,
    "chart": [
     {
      "lo": 1,
@@ -7142,7 +7208,7 @@
      "hi": 7,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
@@ -7156,7 +7222,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2021,
@@ -8321,14 +8387,14 @@
    "id": "Jayson_Tatum",
    "name": "Jayson Tatum",
    "team": "BOS",
-   "pos": "PF",
-   "speed": 13,
+   "pos": "SF",
+   "speed": 14,
    "power": 14,
    "shotLine": 15,
-   "paintBoost": 3,
+   "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1620,
+   "salary": 1830,
    "chart": [
     {
      "lo": 1,
@@ -8354,24 +8420,24 @@
     {
      "lo": 15,
      "hi": 99,
-     "pts": 3,
+     "pts": 4,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 26,
-   "games": 72,
-   "mpg": 36.4,
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 24,
+   "games": 74,
+   "mpg": 36.9,
    "bbrefId": "tatumja01",
    "traded": false,
    "metrics": {
-    "bpm": 5.2,
-    "vorp": 4.8,
-    "ws": 9.5,
-    "ws48": 0.174,
-    "per": 21.7
+    "bpm": 5.5,
+    "vorp": 5.1,
+    "ws": 10.5,
+    "ws48": 0.185,
+    "per": 23.7
    },
    "provisional": false
   },
@@ -9391,7 +9457,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1240,
+   "salary": 1280,
    "chart": [
     {
      "lo": 1,
@@ -9405,14 +9471,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
@@ -9572,7 +9638,7 @@
    "paintBoost": 3,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 1590,
+   "salary": 1580,
    "chart": [
     {
      "lo": 1,
@@ -9585,14 +9651,14 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -9606,7 +9672,7 @@
      "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -10333,12 +10399,12 @@
    "team": "LAL",
    "pos": "SG",
    "speed": 17,
-   "power": 11,
+   "power": 12,
    "shotLine": 15,
-   "paintBoost": 2,
+   "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1480,
+   "salary": 1630,
    "chart": [
     {
      "lo": 1,
@@ -10351,44 +10417,44 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 15,
-     "hi": 20,
+     "hi": 21,
      "pts": 3,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 21,
+     "lo": 22,
      "hi": 99,
-     "pts": 3,
-     "reb": 0,
+     "pts": 4,
+     "reb": 1,
      "ast": 1
     }
    ],
-   "season": 2009,
-   "seasonLabel": "2008-09",
-   "age": 30,
-   "games": 82,
-   "mpg": 36.1,
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 27,
+   "games": 80,
+   "mpg": 41,
    "bbrefId": "bryanko01",
    "traded": false,
    "metrics": {
-    "bpm": 5.9,
-    "vorp": 5.9,
-    "ws": 12.7,
-    "ws48": 0.206,
-    "per": 24.4
+    "bpm": 7.6,
+    "vorp": 8,
+    "ws": 15.3,
+    "ws48": 0.224,
+    "per": 28
    },
    "provisional": false
   },
@@ -10674,13 +10740,13 @@
     },
     {
      "lo": 15,
-     "hi": 20,
+     "hi": 21,
      "pts": 2,
      "reb": 0,
      "ast": 1
     },
     {
-     "lo": 21,
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -10830,7 +10896,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1630,
+   "salary": 1700,
    "chart": [
     {
      "lo": 1,
@@ -10849,7 +10915,7 @@
     {
      "lo": 7,
      "hi": 12,
-     "pts": 2,
+     "pts": 3,
      "reb": 1,
      "ast": 0
     },
@@ -10946,7 +11012,7 @@
    "paintBoost": 3,
    "threePtBoost": 0,
    "defBoost": 4,
-   "salary": 1700,
+   "salary": 1680,
    "chart": [
     {
      "lo": 1,
@@ -10960,14 +11026,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 3,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
@@ -11128,13 +11194,13 @@
    "name": "Luka Dončić",
    "team": "DAL",
    "pos": "PG",
-   "speed": 15,
-   "power": 12,
+   "speed": 17,
+   "power": 13,
    "shotLine": 14,
    "paintBoost": 2,
-   "threePtBoost": -2,
-   "defBoost": 1,
-   "salary": 1980,
+   "threePtBoost": 1,
+   "defBoost": 2,
+   "salary": 2150,
    "chart": [
     {
      "lo": 1,
@@ -11165,19 +11231,19 @@
      "ast": 1
     }
    ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 20,
-   "games": 61,
-   "mpg": 33.6,
+   "season": 2024,
+   "seasonLabel": "2023-24",
+   "age": 24,
+   "games": 70,
+   "mpg": 37.5,
    "bbrefId": "doncilu01",
    "traded": false,
    "metrics": {
-    "bpm": 8.4,
-    "vorp": 5.4,
-    "ws": 8.8,
-    "ws48": 0.207,
-    "per": 27.6
+    "bpm": 9.9,
+    "vorp": 8,
+    "ws": 12,
+    "ws48": 0.22,
+    "per": 28.1
    },
    "provisional": false
   },
@@ -11270,15 +11336,15 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 12,
      "pts": 2,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 2
     },
     {
      "lo": 13,
@@ -11500,10 +11566,10 @@
    "speed": 18,
    "power": 12,
    "shotLine": 14,
-   "paintBoost": 1,
-   "threePtBoost": 0,
-   "defBoost": 2,
-   "salary": 1990,
+   "paintBoost": 2,
+   "threePtBoost": -4,
+   "defBoost": 3,
+   "salary": 2090,
    "chart": [
     {
      "lo": 1,
@@ -11523,37 +11589,30 @@
      "lo": 7,
      "hi": 13,
      "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 20,
-     "pts": 4,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 21,
+     "lo": 14,
      "hi": 99,
      "pts": 4,
      "reb": 1,
      "ast": 1
     }
    ],
-   "season": 1990,
-   "seasonLabel": "1989-90",
-   "age": 26,
-   "games": 82,
-   "mpg": 39,
+   "season": 1989,
+   "seasonLabel": "1988-89",
+   "age": 25,
+   "games": 81,
+   "mpg": 40.2,
    "bbrefId": "jordami01",
    "traded": false,
    "metrics": {
-    "bpm": 11.2,
-    "vorp": 10.6,
-    "ws": 19,
-    "ws48": 0.285,
-    "per": 31.2
+    "bpm": 11.9,
+    "vorp": 11.4,
+    "ws": 19.8,
+    "ws48": 0.292,
+    "per": 31.1
    },
    "provisional": false
   },
@@ -11568,7 +11627,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 1280,
+   "salary": 1270,
    "chart": [
     {
      "lo": 1,
@@ -12805,14 +12864,14 @@
    "id": "Paul_Pierce",
    "name": "Paul Pierce",
    "team": "BOS",
-   "pos": "SF",
-   "speed": 13,
-   "power": 14,
+   "pos": "SG",
+   "speed": 16,
+   "power": 12,
    "shotLine": 15,
-   "paintBoost": 1,
-   "threePtBoost": 0,
+   "paintBoost": 0,
+   "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1320,
+   "salary": 1410,
    "chart": [
     {
      "lo": 1,
@@ -12826,36 +12885,43 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
-     "hi": 99,
+     "hi": 20,
      "pts": 3,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
     }
    ],
-   "season": 2005,
-   "seasonLabel": "2004-05",
-   "age": 27,
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 24,
    "games": 82,
-   "mpg": 36.1,
+   "mpg": 40.3,
    "bbrefId": "piercpa01",
    "traded": false,
    "metrics": {
-    "bpm": 4.6,
-    "vorp": 4.9,
-    "ws": 11.2,
-    "ws48": 0.182,
-    "per": 21.8
+    "bpm": 5.9,
+    "vorp": 6.6,
+    "ws": 12.9,
+    "ws48": 0.187,
+    "per": 22.3
    },
    "provisional": false
   },
@@ -13622,7 +13688,7 @@
    "paintBoost": 4,
    "threePtBoost": 1,
    "defBoost": 3,
-   "salary": 1210,
+   "salary": 1620,
    "chart": [
     {
      "lo": 1,
@@ -13648,14 +13714,14 @@
     {
      "lo": 12,
      "hi": 16,
-     "pts": 2,
+     "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
      "lo": 17,
      "hi": 99,
-     "pts": 2,
+     "pts": 3,
      "reb": 1,
      "ast": 1
     }
@@ -13810,7 +13876,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 2,
-   "salary": 1550,
+   "salary": 1600,
    "chart": [
     {
      "lo": 1,
@@ -13829,7 +13895,7 @@
     {
      "lo": 7,
      "hi": 14,
-     "pts": 2,
+     "pts": 3,
      "reb": 1,
      "ast": 0
     },
@@ -13863,6 +13929,68 @@
     "per": 30.6
    },
    "provisional": false
+  },
+  {
+   "id": "Shawn_Marion",
+   "name": "Shawn Marion",
+   "team": "PHX01",
+   "pos": "SF",
+   "speed": 14,
+   "power": 13,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": -3,
+   "defBoost": 2,
+   "salary": 1110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": 28,
+   "games": 80,
+   "mpg": 37.6,
+   "bbrefId": "mariosh01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4.4,
+    "vorp": 4.8,
+    "ws": 12,
+    "ws48": 0.191,
+    "per": 20.8
+   },
+   "provisional": false,
+   "migratedFrom": {
+    "set": "throwbacks",
+    "id": "Shawn_Marion_2007"
+   }
   },
   {
    "id": "Stephen_Curry",
@@ -13933,7 +14061,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 1050,
+   "salary": 1040,
    "chart": [
     {
      "lo": 1,
@@ -14183,6 +14311,71 @@
    "provisional": false
   },
   {
+   "id": "Tim_Duncan",
+   "name": "Tim Duncan",
+   "team": "SAS90",
+   "pos": "PF",
+   "speed": 12,
+   "power": 17,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -5,
+   "defBoost": 2,
+   "salary": 1550,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 25,
+   "games": 82,
+   "mpg": 40.6,
+   "bbrefId": "duncati01",
+   "traded": false,
+   "metrics": {
+    "bpm": 7.6,
+    "vorp": 8,
+    "ws": 17.8,
+    "ws48": 0.257,
+    "per": 27
+   },
+   "provisional": false
+  },
+  {
    "id": "Tim_Hardaway_Jr",
    "name": "Tim Hardaway Jr.",
    "team": "DAL",
@@ -14381,7 +14574,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 1620,
+   "salary": 1960,
    "chart": [
     {
      "lo": 1,
@@ -14394,20 +14587,27 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 4,
      "reb": 0,
      "ast": 1
     },
     {
-     "lo": 15,
+     "lo": 21,
      "hi": 99,
-     "pts": 3,
+     "pts": 4,
      "reb": 1,
      "ast": 1
     }
@@ -14757,7 +14957,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 1480,
+   "salary": 1450,
    "chart": [
     {
      "lo": 1,
@@ -14771,28 +14971,21 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2001,
@@ -14822,7 +15015,7 @@
    "paintBoost": 2,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1110,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -14931,6 +15124,71 @@
     "ws": 6.2,
     "ws48": 0.147,
     "per": 16.1
+   },
+   "provisional": false
+  },
+  {
+   "id": "Yao_Ming",
+   "name": "Yao Ming",
+   "team": "HOU03",
+   "pos": "C",
+   "speed": 7,
+   "power": 19,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "salary": 1350,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 28,
+   "games": 77,
+   "mpg": 33.6,
+   "bbrefId": "mingya01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.1,
+    "vorp": 3.3,
+    "ws": 10.6,
+    "ws48": 0.196,
+    "per": 22.7
    },
    "provisional": false
   },

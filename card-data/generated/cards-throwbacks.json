@@ -1,6 +1,6 @@
 {
  "set": "throwbacks",
- "generatedAt": "2026-09-30T16:49:47.237Z",
+ "generatedAt": "2026-09-30T22:40:40.696Z",
  "note": "CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json, plus demoted-super-seasons.json). Retired rewards that qualify for no other set, and Super Seasons that are no longer a Super Season (a Rookie card of the player's out-priced them, or the value pick chose another season). Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.",
  "cards": [
   {
@@ -202,6 +202,141 @@
    }
   },
   {
+   "id": "Michael_Jordan_1988",
+   "name": "Michael Jordan",
+   "team": "CHI",
+   "pos": "SG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": -6,
+   "defBoost": 4,
+   "salary": 2030,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1988,
+   "seasonLabel": "1987-88",
+   "age": 24,
+   "games": 82,
+   "mpg": 40.4,
+   "bbrefId": "jordami01",
+   "traded": false,
+   "metrics": {
+    "bpm": 13,
+    "vorp": 12.5,
+    "ws": 21.2,
+    "ws48": 0.308,
+    "per": 31.7
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Michael_Jordan"
+   }
+  },
+  {
+   "id": "Michael_Jordan_1990",
+   "name": "Michael Jordan",
+   "team": "CHI",
+   "pos": "SG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 2030,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 4,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1990,
+   "seasonLabel": "1989-90",
+   "age": 26,
+   "games": 82,
+   "mpg": 39,
+   "bbrefId": "jordami01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11.2,
+    "vorp": 10.6,
+    "ws": 19,
+    "ws48": 0.285,
+    "per": 31.2
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Michael_Jordan"
+   }
+  },
+  {
    "id": "James_Harden_2019",
    "name": "James Harden",
    "team": "HOU03",
@@ -337,17 +472,17 @@
    }
   },
   {
-   "id": "Luka_Doncic_2024",
+   "id": "Luka_Doncic_2020",
    "name": "Luka Dončić",
    "team": "DAL",
    "pos": "PG",
-   "speed": 17,
-   "power": 13,
+   "speed": 15,
+   "power": 12,
    "shotLine": 14,
    "paintBoost": 2,
-   "threePtBoost": 1,
-   "defBoost": 2,
-   "salary": 1750,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 1980,
    "chart": [
     {
      "lo": 1,
@@ -373,45 +508,45 @@
     {
      "lo": 14,
      "hi": 99,
-     "pts": 3,
+     "pts": 4,
      "reb": 1,
      "ast": 1
     }
    ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 24,
-   "games": 70,
-   "mpg": 37.5,
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "age": 20,
+   "games": 61,
+   "mpg": 33.6,
    "bbrefId": "doncilu01",
    "traded": false,
    "metrics": {
-    "bpm": 9.9,
-    "vorp": 8,
-    "ws": 12,
-    "ws48": 0.22,
-    "per": 28.1
+    "bpm": 8.4,
+    "vorp": 5.4,
+    "ws": 8.8,
+    "ws48": 0.207,
+    "per": 27.6
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
    "demotedFrom": {
     "set": "super-season",
     "id": "Luka_Doncic"
    }
   },
   {
-   "id": "Kevin_Durant_2014",
-   "name": "Kevin Durant",
-   "team": "OKC",
-   "pos": "SF",
-   "speed": 14,
-   "power": 16,
+   "id": "Damian_Lillard_2020",
+   "name": "Damian Lillard",
+   "team": "POR",
+   "pos": "PG",
+   "speed": 18,
+   "power": 11,
    "shotLine": 15,
-   "paintBoost": 3,
-   "threePtBoost": 2,
-   "defBoost": 1,
-   "salary": 1660,
+   "paintBoost": -2,
+   "threePtBoost": 3,
+   "defBoost": -1,
+   "salary": 1720,
    "chart": [
     {
      "lo": 1,
@@ -432,17 +567,81 @@
      "hi": 14,
      "pts": 3,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
+     "hi": 21,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "age": 29,
+   "games": 66,
+   "mpg": 37.5,
+   "bbrefId": "lillada01",
+   "traded": false,
+   "metrics": {
+    "bpm": 7.5,
+    "vorp": 5.9,
+    "ws": 11.6,
+    "ws48": 0.225,
+    "per": 26.9
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Damian_Lillard"
+   }
+  },
+  {
+   "id": "Kevin_Durant_2014",
+   "name": "Kevin Durant",
+   "team": "OKC",
+   "pos": "SF",
+   "speed": 14,
+   "power": 16,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": 2,
+   "defBoost": 1,
+   "salary": 1710,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
      "pts": 3,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 21,
+     "lo": 15,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -472,6 +671,70 @@
    }
   },
   {
+   "id": "Jayson_Tatum_2025",
+   "name": "Jayson Tatum",
+   "team": "BOS",
+   "pos": "PF",
+   "speed": 13,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 1620,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": 26,
+   "games": 72,
+   "mpg": 36.4,
+   "bbrefId": "tatumja01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.2,
+    "vorp": 4.8,
+    "ws": 9.5,
+    "ws48": 0.174,
+    "per": 21.7
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Jayson_Tatum"
+   }
+  },
+  {
    "id": "Dwyane_Wade_2009",
    "name": "Dwyane Wade",
    "team": "MIA",
@@ -482,7 +745,7 @@
    "paintBoost": 2,
    "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 1610,
+   "salary": 1590,
    "chart": [
     {
      "lo": 1,
@@ -503,7 +766,7 @@
      "hi": 14,
      "pts": 3,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
@@ -540,6 +803,77 @@
    "demotedFrom": {
     "set": "super-season",
     "id": "Dwyane_Wade"
+   }
+  },
+  {
+   "id": "Charles_Barkley_1990",
+   "name": "Charles Barkley",
+   "team": "PHI77",
+   "pos": "SF",
+   "speed": 16,
+   "power": 14,
+   "shotLine": 16,
+   "paintBoost": 4,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 1570,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 1990,
+   "seasonLabel": "1989-90",
+   "age": 26,
+   "games": 79,
+   "mpg": 39.1,
+   "bbrefId": "barklch01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.2,
+    "vorp": 8,
+    "ws": 17.3,
+    "ws48": 0.269,
+    "per": 27.1
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Charles_Barkley"
    }
   },
   {
@@ -607,16 +941,16 @@
    }
   },
   {
-   "id": "Michael_Jordan_1988",
-   "name": "Michael Jordan",
-   "team": "CHI",
-   "pos": "SG",
-   "speed": 18,
-   "power": 12,
-   "shotLine": 14,
-   "paintBoost": 1,
-   "threePtBoost": -6,
-   "defBoost": 4,
+   "id": "Dominique_Wilkins_1987",
+   "name": "Dominique Wilkins",
+   "team": "ATL73",
+   "pos": "SF",
+   "speed": 14,
+   "power": 13,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 0,
    "salary": 1560,
    "chart": [
     {
@@ -628,53 +962,53 @@
     },
     {
      "lo": 3,
-     "hi": 7,
+     "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 8,
-     "hi": 13,
-     "pts": 3,
-     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 14,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
+     "lo": 7,
+     "hi": 14,
      "pts": 3,
      "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
      "ast": 1
     }
    ],
-   "season": 1988,
-   "seasonLabel": "1987-88",
-   "age": 24,
-   "games": 82,
-   "mpg": 40.4,
-   "bbrefId": "jordami01",
+   "season": 1987,
+   "seasonLabel": "1986-87",
+   "age": 27,
+   "games": 79,
+   "mpg": 37.6,
+   "bbrefId": "wilkido01",
    "traded": false,
    "metrics": {
-    "bpm": 13,
-    "vorp": 12.5,
-    "ws": 21.2,
-    "ws48": 0.308,
-    "per": 31.7
+    "bpm": 5.5,
+    "vorp": 5.6,
+    "ws": 12.2,
+    "ws48": 0.197,
+    "per": 23.5
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
    "demotedFrom": {
     "set": "super-season",
-    "id": "Michael_Jordan"
+    "id": "Dominique_Wilkins"
    }
   },
   {
@@ -749,70 +1083,6 @@
    }
   },
   {
-   "id": "Larry_Bird_1985",
-   "name": "Larry Bird",
-   "team": "BOS",
-   "pos": "SF",
-   "speed": 16,
-   "power": 14,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 2,
-   "salary": 1540,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 1985,
-   "seasonLabel": "1984-85",
-   "age": 28,
-   "games": 80,
-   "mpg": 39.5,
-   "bbrefId": "birdla01",
-   "traded": false,
-   "metrics": {
-    "bpm": 8.8,
-    "vorp": 8.7,
-    "ws": 15.7,
-    "ws48": 0.238,
-    "per": 26.5
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Larry_Bird"
-   }
-  },
-  {
    "id": "Bradley_Beal_2021",
    "name": "Bradley Beal",
    "team": "WAS",
@@ -873,17 +1143,17 @@
    "curated": "The Wizards reward until 2026-09-18, when John Wall's 2016-17 Super Season took the goal (the user: \"Go with Vince, Wall and Brand\"). His 31-a-game year is nobody's best season by the rule (2018-19 is) and not his rookie year (2012-13, carded), so it keeps its card as a Throwback rather than vanishing. Nobody had earned it: \"No one has them yet, it doesn't matter. But it should just change face.\""
   },
   {
-   "id": "Damian_Lillard_2020",
-   "name": "Damian Lillard",
-   "team": "POR",
-   "pos": "PG",
-   "speed": 18,
-   "power": 11,
-   "shotLine": 15,
-   "paintBoost": -2,
-   "threePtBoost": 3,
-   "defBoost": -1,
-   "salary": 1510,
+   "id": "Larry_Bird_1985",
+   "name": "Larry Bird",
+   "team": "BOS",
+   "pos": "SF",
+   "speed": 16,
+   "power": 14,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 1520,
    "chart": [
     {
      "lo": 1,
@@ -897,63 +1167,63 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
-     "hi": 14,
-     "pts": 3,
-     "reb": 0,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
      "ast": 1
     },
     {
-     "lo": 15,
-     "hi": 21,
+     "lo": 14,
+     "hi": 20,
      "pts": 3,
-     "reb": 0,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     },
     {
-     "lo": 22,
+     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
      "ast": 1
     }
    ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 29,
-   "games": 66,
-   "mpg": 37.5,
-   "bbrefId": "lillada01",
+   "season": 1985,
+   "seasonLabel": "1984-85",
+   "age": 28,
+   "games": 80,
+   "mpg": 39.5,
+   "bbrefId": "birdla01",
    "traded": false,
    "metrics": {
-    "bpm": 7.5,
-    "vorp": 5.9,
-    "ws": 11.6,
-    "ws48": 0.225,
-    "per": 26.9
+    "bpm": 8.8,
+    "vorp": 8.7,
+    "ws": 15.7,
+    "ws48": 0.238,
+    "per": 26.5
    },
    "provisional": false,
    "set": "throwbacks",
    "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
    "demotedFrom": {
     "set": "super-season",
-    "id": "Damian_Lillard"
+    "id": "Larry_Bird"
    }
   },
   {
-   "id": "Jayson_Tatum_2023",
-   "name": "Jayson Tatum",
-   "team": "BOS",
-   "pos": "SF",
-   "speed": 14,
-   "power": 14,
+   "id": "David_Robinson_1994",
+   "name": "David Robinson",
+   "team": "SAS90",
+   "pos": "C",
+   "speed": 11,
+   "power": 19,
    "shotLine": 15,
    "paintBoost": 1,
-   "threePtBoost": 0,
-   "defBoost": 1,
+   "threePtBoost": -5,
+   "defBoost": 4,
    "salary": 1500,
    "chart": [
     {
@@ -992,77 +1262,6 @@
      "ast": 1
     }
    ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 24,
-   "games": 74,
-   "mpg": 36.9,
-   "bbrefId": "tatumja01",
-   "traded": false,
-   "metrics": {
-    "bpm": 5.5,
-    "vorp": 5.1,
-    "ws": 10.5,
-    "ws48": 0.185,
-    "per": 23.7
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Jayson_Tatum"
-   }
-  },
-  {
-   "id": "David_Robinson_1994",
-   "name": "David Robinson",
-   "team": "SAS90",
-   "pos": "C",
-   "speed": 11,
-   "power": 19,
-   "shotLine": 15,
-   "paintBoost": 1,
-   "threePtBoost": -5,
-   "defBoost": 4,
-   "salary": 1430,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
    "season": 1994,
    "seasonLabel": "1993-94",
    "age": 28,
@@ -1079,24 +1278,95 @@
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1989-90 $2080 against $1540, 2026-09-22)",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
    "demotedFrom": {
     "set": "super-season",
     "id": "David_Robinson"
    }
   },
   {
-   "id": "Kobe_Bryant_2006",
+   "id": "Kareem_Abdul_Jabbar_1977",
+   "name": "Kareem Abdul-Jabbar",
+   "team": "LAL",
+   "pos": "C",
+   "speed": 11,
+   "power": 19,
+   "shotLine": 15,
+   "paintBoost": -2,
+   "threePtBoost": -5,
+   "defBoost": 3,
+   "salary": 1490,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1977,
+   "seasonLabel": "1976-77",
+   "age": 29,
+   "games": 82,
+   "mpg": 36.8,
+   "bbrefId": "abdulka01",
+   "traded": false,
+   "metrics": {
+    "bpm": 9.4,
+    "vorp": 8.7,
+    "ws": 17.8,
+    "ws48": 0.283,
+    "per": 27.8
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Kareem_Abdul_Jabbar"
+   }
+  },
+  {
+   "id": "Kobe_Bryant_2009",
    "name": "Kobe Bryant",
    "team": "LAL",
    "pos": "SG",
    "speed": 17,
-   "power": 12,
+   "power": 11,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1420,
+   "salary": 1480,
    "chart": [
     {
      "lo": 1,
@@ -1116,41 +1386,41 @@
      "lo": 7,
      "hi": 14,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 15,
-     "hi": 21,
+     "hi": 20,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 22,
+     "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
-   "season": 2006,
-   "seasonLabel": "2005-06",
-   "age": 27,
-   "games": 80,
-   "mpg": 41,
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 30,
+   "games": 82,
+   "mpg": 36.1,
    "bbrefId": "bryanko01",
    "traded": false,
    "metrics": {
-    "bpm": 7.6,
-    "vorp": 8,
-    "ws": 15.3,
-    "ws48": 0.224,
-    "per": 28
+    "bpm": 5.9,
+    "vorp": 5.9,
+    "ws": 12.7,
+    "ws48": 0.206,
+    "per": 24.4
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
    "demotedFrom": {
     "set": "super-season",
     "id": "Kobe_Bryant"
@@ -1285,148 +1555,6 @@
    }
   },
   {
-   "id": "Kareem_Abdul_Jabbar_1977",
-   "name": "Kareem Abdul-Jabbar",
-   "team": "LAL",
-   "pos": "C",
-   "speed": 11,
-   "power": 19,
-   "shotLine": 15,
-   "paintBoost": -2,
-   "threePtBoost": -5,
-   "defBoost": 3,
-   "salary": 1370,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 1977,
-   "seasonLabel": "1976-77",
-   "age": 29,
-   "games": 82,
-   "mpg": 36.8,
-   "bbrefId": "abdulka01",
-   "traded": false,
-   "metrics": {
-    "bpm": 9.4,
-    "vorp": 8.7,
-    "ws": 17.8,
-    "ws48": 0.283,
-    "per": 27.8
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Kareem_Abdul_Jabbar"
-   }
-  },
-  {
-   "id": "Yao_Ming_2009",
-   "name": "Yao Ming",
-   "team": "HOU03",
-   "pos": "C",
-   "speed": 7,
-   "power": 19,
-   "shotLine": 14,
-   "paintBoost": 1,
-   "threePtBoost": -6,
-   "defBoost": 2,
-   "salary": 1350,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2009,
-   "seasonLabel": "2008-09",
-   "age": 28,
-   "games": 77,
-   "mpg": 33.6,
-   "bbrefId": "mingya01",
-   "traded": false,
-   "metrics": {
-    "bpm": 3.1,
-    "vorp": 3.3,
-    "ws": 10.6,
-    "ws48": 0.196,
-    "per": 22.7
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2002-03 $1430 against $1350, 2026-09-22)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Yao_Ming"
-   }
-  },
-  {
    "id": "Jimmy_Butler_2023",
    "name": "Jimmy Butler",
    "team": "MIA",
@@ -1491,17 +1619,17 @@
    }
   },
   {
-   "id": "Blake_Griffin_2014",
-   "name": "Blake Griffin",
-   "team": "LAC84",
-   "pos": "PF",
-   "speed": 10,
-   "power": 15,
-   "shotLine": 16,
-   "paintBoost": 4,
-   "threePtBoost": -4,
+   "id": "Paul_Pierce_2005",
+   "name": "Paul Pierce",
+   "team": "BOS",
+   "pos": "SF",
+   "speed": 13,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1310,
+   "salary": 1320,
    "chart": [
     {
      "lo": 1,
@@ -1514,41 +1642,45 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 7,
-     "hi": 15,
+     "hi": 14,
      "pts": 2,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 16,
+     "lo": 15,
      "hi": 99,
      "pts": 3,
      "reb": 1,
      "ast": 0
     }
    ],
-   "season": 2014,
-   "seasonLabel": "2013-14",
-   "age": 24,
-   "games": 80,
-   "mpg": 35.8,
-   "bbrefId": "griffbl01",
+   "season": 2005,
+   "seasonLabel": "2004-05",
+   "age": 27,
+   "games": 82,
+   "mpg": 36.1,
+   "bbrefId": "piercpa01",
    "traded": false,
    "metrics": {
-    "bpm": 4.5,
-    "vorp": 4.7,
-    "ws": 12.2,
-    "ws48": 0.205,
-    "per": 23.9
+    "bpm": 4.6,
+    "vorp": 4.9,
+    "ws": 11.2,
+    "ws48": 0.182,
+    "per": 21.8
    },
    "provisional": false,
    "set": "throwbacks",
-   "curated": "the user, 2026-09-30: \"I think we def need a Blake Clippers card if we don't have one other than the rookie.\" His best season is the 2018-19 Pistons card (Detroit's reward), so this is a Throwback."
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Paul_Pierce"
+   }
   },
   {
    "id": "Jrue_Holiday_2022",
@@ -1620,6 +1752,66 @@
     "set": "super-season",
     "id": "Jrue_Holiday"
    }
+  },
+  {
+   "id": "Blake_Griffin_2014",
+   "name": "Blake Griffin",
+   "team": "LAC84",
+   "pos": "PF",
+   "speed": 10,
+   "power": 15,
+   "shotLine": 16,
+   "paintBoost": 4,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 1300,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2014,
+   "seasonLabel": "2013-14",
+   "age": 24,
+   "games": 80,
+   "mpg": 35.8,
+   "bbrefId": "griffbl01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4.5,
+    "vorp": 4.7,
+    "ws": 12.2,
+    "ws48": 0.205,
+    "per": 23.9
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "curated": "the user, 2026-09-30: \"I think we def need a Blake Clippers card if we don't have one other than the rookie.\" His best season is the 2018-19 Pistons card (Detroit's reward), so this is a Throwback."
   },
   {
    "id": "Jalen_Williams_2025",
@@ -1717,7 +1909,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -1825,77 +2017,6 @@
    "demotedFrom": {
     "set": "super-season",
     "id": "Julius_Erving"
-   }
-  },
-  {
-   "id": "Charles_Barkley_1990",
-   "name": "Charles Barkley",
-   "team": "PHI77",
-   "pos": "SF",
-   "speed": 16,
-   "power": 14,
-   "shotLine": 16,
-   "paintBoost": 4,
-   "threePtBoost": -3,
-   "defBoost": 1,
-   "salary": 1220,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 1990,
-   "seasonLabel": "1989-90",
-   "age": 26,
-   "games": 79,
-   "mpg": 39.1,
-   "bbrefId": "barklch01",
-   "traded": false,
-   "metrics": {
-    "bpm": 8.2,
-    "vorp": 8,
-    "ws": 17.3,
-    "ws48": 0.269,
-    "per": 27.1
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Charles_Barkley"
    }
   },
   {
@@ -2375,77 +2496,6 @@
    }
   },
   {
-   "id": "Tim_Duncan_2002",
-   "name": "Tim Duncan",
-   "team": "SAS90",
-   "pos": "PF",
-   "speed": 12,
-   "power": 17,
-   "shotLine": 15,
-   "paintBoost": 3,
-   "threePtBoost": -5,
-   "defBoost": 2,
-   "salary": 1150,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2002,
-   "seasonLabel": "2001-02",
-   "age": 25,
-   "games": 82,
-   "mpg": 40.6,
-   "bbrefId": "duncati01",
-   "traded": false,
-   "metrics": {
-    "bpm": 7.6,
-    "vorp": 8,
-    "ws": 17.8,
-    "ws48": 0.257,
-    "per": 27
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1997-98 $1830 against $1550, 2026-09-22)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Tim_Duncan"
-   }
-  },
-  {
    "id": "Rudy_Gobert_2019",
    "name": "Rudy Gobert",
    "team": "UTA16",
@@ -2514,70 +2564,6 @@
    "demotedFrom": {
     "set": "super-season",
     "id": "Rudy_Gobert"
-   }
-  },
-  {
-   "id": "Kyle_Lowry_2016",
-   "name": "Kyle Lowry",
-   "team": "TOR",
-   "pos": "PG",
-   "speed": 18,
-   "power": 11,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 3,
-   "defBoost": 1,
-   "salary": 1110,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2016,
-   "seasonLabel": "2015-16",
-   "age": 29,
-   "games": 77,
-   "mpg": 37,
-   "bbrefId": "lowryky01",
-   "traded": false,
-   "metrics": {
-    "bpm": 5.8,
-    "vorp": 5.7,
-    "ws": 11.6,
-    "ws48": 0.196,
-    "per": 22.2
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Kyle_Lowry"
    }
   },
   {
@@ -2705,6 +2691,77 @@
    }
   },
   {
+   "id": "Kyle_Lowry_2016",
+   "name": "Kyle Lowry",
+   "team": "TOR",
+   "pos": "PG",
+   "speed": 18,
+   "power": 11,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 1,
+   "salary": 1090,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": 29,
+   "games": 77,
+   "mpg": 37,
+   "bbrefId": "lowryky01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.8,
+    "vorp": 5.7,
+    "ws": 11.6,
+    "ws48": 0.196,
+    "per": 22.2
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Kyle_Lowry"
+   }
+  },
+  {
    "id": "Chris_Paul_2009",
    "name": "Chris Paul",
    "team": "NOH",
@@ -2769,17 +2826,17 @@
    }
   },
   {
-   "id": "Paul_Pierce_2002",
-   "name": "Paul Pierce",
-   "team": "BOS",
-   "pos": "SG",
-   "speed": 16,
-   "power": 12,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 3,
-   "defBoost": 1,
-   "salary": 1080,
+   "id": "Elton_Brand_2002",
+   "name": "Elton Brand",
+   "team": "LAC84",
+   "pos": "PF",
+   "speed": 11,
+   "power": 15,
+   "shotLine": 16,
+   "paintBoost": 4,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 1060,
    "chart": [
     {
      "lo": 1,
@@ -2792,18 +2849,18 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
-     "hi": 14,
+     "hi": 15,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 15,
+     "lo": 16,
      "hi": 20,
      "pts": 2,
      "reb": 1,
@@ -2813,101 +2870,30 @@
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
-     "ast": 1
+     "reb": 2,
+     "ast": 0
     }
    ],
    "season": 2002,
    "seasonLabel": "2001-02",
-   "age": 24,
-   "games": 82,
-   "mpg": 40.3,
-   "bbrefId": "piercpa01",
+   "age": 22,
+   "games": 80,
+   "mpg": 37.8,
+   "bbrefId": "brandel01",
    "traded": false,
    "metrics": {
-    "bpm": 5.9,
-    "vorp": 6.6,
-    "ws": 12.9,
-    "ws48": 0.187,
-    "per": 22.3
+    "bpm": 4.3,
+    "vorp": 4.8,
+    "ws": 13.6,
+    "ws48": 0.216,
+    "per": 23.6
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
    "demotedFrom": {
     "set": "super-season",
-    "id": "Paul_Pierce"
-   }
-  },
-  {
-   "id": "Andrei_Kirilenko_2005",
-   "name": "Andrei Kirilenko",
-   "team": "UTA04",
-   "pos": "PF",
-   "speed": 11,
-   "power": 15,
-   "shotLine": 15,
-   "paintBoost": 2,
-   "threePtBoost": -2,
-   "defBoost": 4,
-   "salary": 1070,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 7,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 14,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2005,
-   "seasonLabel": "2004-05",
-   "age": 23,
-   "games": 41,
-   "mpg": 32.9,
-   "bbrefId": "kirilan01",
-   "traded": false,
-   "metrics": {
-    "bpm": 9.2,
-    "vorp": 3.8,
-    "ws": 5.5,
-    "ws48": 0.197,
-    "per": 24.4
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2001-02 $1140 against $1070, 2026-09-22)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Andrei_Kirilenko"
+    "id": "Elton_Brand"
    }
   },
   {
@@ -3100,70 +3086,6 @@
    "demotedFrom": {
     "set": "super-season",
     "id": "Domantas_Sabonis"
-   }
-  },
-  {
-   "id": "Elton_Brand_2002",
-   "name": "Elton Brand",
-   "team": "LAC84",
-   "pos": "PF",
-   "speed": 11,
-   "power": 15,
-   "shotLine": 16,
-   "paintBoost": 4,
-   "threePtBoost": -4,
-   "defBoost": 0,
-   "salary": 1030,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 7,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2002,
-   "seasonLabel": "2001-02",
-   "age": 22,
-   "games": 80,
-   "mpg": 37.8,
-   "bbrefId": "brandel01",
-   "traded": false,
-   "metrics": {
-    "bpm": 4.3,
-    "vorp": 4.8,
-    "ws": 13.6,
-    "ws48": 0.216,
-    "per": 23.6
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Elton_Brand"
    }
   },
   {
@@ -3834,70 +3756,6 @@
    }
   },
   {
-   "id": "Nicolas_Batum_2014",
-   "name": "Nicolas Batum",
-   "team": "POR",
-   "pos": "SF",
-   "speed": 12,
-   "power": 12,
-   "shotLine": 14,
-   "paintBoost": 2,
-   "threePtBoost": 0,
-   "defBoost": 1,
-   "salary": 920,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 14,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2014,
-   "seasonLabel": "2013-14",
-   "age": 25,
-   "games": 82,
-   "mpg": 36,
-   "bbrefId": "batumni01",
-   "traded": false,
-   "metrics": {
-    "bpm": 3.4,
-    "vorp": 4,
-    "ws": 7.9,
-    "ws48": 0.128,
-    "per": 15.8
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Nicolas_Batum"
-   }
-  },
-  {
    "id": "Alonzo_Mourning_2006",
    "name": "Alonzo Mourning",
    "team": "MIA",
@@ -4029,6 +3887,197 @@
    }
   },
   {
+   "id": "Elton_Brand_2003",
+   "name": "Elton Brand",
+   "team": "LAC84",
+   "pos": "PF",
+   "speed": 10,
+   "power": 13,
+   "shotLine": 16,
+   "paintBoost": 3,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 910,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": 23,
+   "games": 62,
+   "mpg": 39.6,
+   "bbrefId": "brandel01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3,
+    "vorp": 3.1,
+    "ws": 7.6,
+    "ws48": 0.149,
+    "per": 21.7
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "curated": "the Clippers reward until 2026-09-30 (Chris Paul took the goal); it keeps its card as a Throwback."
+  },
+  {
+   "id": "Luol_Deng_2011",
+   "name": "Luol Deng",
+   "team": "CHI",
+   "pos": "SF",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 910,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 25,
+   "games": 82,
+   "mpg": 39.1,
+   "bbrefId": "denglu01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.7,
+    "vorp": 3,
+    "ws": 9.9,
+    "ws48": 0.149,
+    "per": 15.5
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "curated": "the Chicago reward until 2026-09-30 (Derrick Rose took the goal); it keeps its card as a Throwback."
+  },
+  {
+   "id": "Nicolas_Batum_2014",
+   "name": "Nicolas Batum",
+   "team": "POR",
+   "pos": "SF",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 900,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2014,
+   "seasonLabel": "2013-14",
+   "age": 25,
+   "games": 82,
+   "mpg": 36,
+   "bbrefId": "batumni01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.4,
+    "vorp": 4,
+    "ws": 7.9,
+    "ws48": 0.128,
+    "per": 15.8
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Nicolas_Batum"
+   }
+  },
+  {
    "id": "Jakob_Poeltl_2023",
    "name": "Jakob Poeltl",
    "team": "TOR",
@@ -4039,7 +4088,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 900,
+   "salary": 890,
    "chart": [
     {
      "lo": 1,
@@ -4502,126 +4551,6 @@
    "provisional": false,
    "set": "throwbacks",
    "curated": "the user, 2026-09-30: \"we need some Lou Will somewhere too. Something that makes him useful as a 6th man, but not too expensive.\" His Sixth Man award seasons price $1,030-1,260; 2019-20 with the Clippers is $800."
-  },
-  {
-   "id": "Elton_Brand_2003",
-   "name": "Elton Brand",
-   "team": "LAC84",
-   "pos": "PF",
-   "speed": 10,
-   "power": 13,
-   "shotLine": 16,
-   "paintBoost": 3,
-   "threePtBoost": -4,
-   "defBoost": 1,
-   "salary": 780,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 15,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2003,
-   "seasonLabel": "2002-03",
-   "age": 23,
-   "games": 62,
-   "mpg": 39.6,
-   "bbrefId": "brandel01",
-   "traded": false,
-   "metrics": {
-    "bpm": 3,
-    "vorp": 3.1,
-    "ws": 7.6,
-    "ws48": 0.149,
-    "per": 21.7
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "curated": "the Clippers reward until 2026-09-30 (Chris Paul took the goal); it keeps its card as a Throwback."
-  },
-  {
-   "id": "Luol_Deng_2011",
-   "name": "Luol Deng",
-   "team": "CHI",
-   "pos": "SF",
-   "speed": 12,
-   "power": 12,
-   "shotLine": 15,
-   "paintBoost": 1,
-   "threePtBoost": 0,
-   "defBoost": 1,
-   "salary": 780,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2011,
-   "seasonLabel": "2010-11",
-   "age": 25,
-   "games": 82,
-   "mpg": 39.1,
-   "bbrefId": "denglu01",
-   "traded": false,
-   "metrics": {
-    "bpm": 1.7,
-    "vorp": 3,
-    "ws": 9.9,
-    "ws48": 0.149,
-    "per": 15.5
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "curated": "the Chicago reward until 2026-09-30 (Derrick Rose took the goal); it keeps its card as a Throwback."
   },
   {
    "id": "Dillon_Brooks_2025",
@@ -5224,6 +5153,77 @@
    "curated": "the Houston reward until 2026-09-30 (Yao Ming took the goal); it keeps its card as a Throwback."
   },
   {
+   "id": "Dennis_Rodman_1992",
+   "name": "Dennis Rodman",
+   "team": "DET79",
+   "pos": "PF",
+   "speed": 11,
+   "power": 13,
+   "shotLine": 18,
+   "paintBoost": 6,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 670,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 17,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 23,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 1,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1992,
+   "seasonLabel": "1991-92",
+   "age": 30,
+   "games": 82,
+   "mpg": 40.3,
+   "bbrefId": "rodmade01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.8,
+    "vorp": 4,
+    "ws": 12.6,
+    "ws48": 0.183,
+    "per": 17
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Dennis_Rodman"
+   }
+  },
+  {
    "id": "Dennis_Schroder_2017",
    "name": "Dennis Schröder",
    "team": "ATL",
@@ -5420,70 +5420,6 @@
    "demotedFrom": {
     "set": "super-season",
     "id": "Luke_Kennard"
-   }
-  },
-  {
-   "id": "Dennis_Rodman_1992",
-   "name": "Dennis Rodman",
-   "team": "DET79",
-   "pos": "PF",
-   "speed": 11,
-   "power": 13,
-   "shotLine": 18,
-   "paintBoost": 6,
-   "threePtBoost": 0,
-   "defBoost": 1,
-   "salary": 640,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 7,
-     "pts": 0,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 8,
-     "hi": 17,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 18,
-     "hi": 99,
-     "pts": 1,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 1992,
-   "seasonLabel": "1991-92",
-   "age": 30,
-   "games": 82,
-   "mpg": 40.3,
-   "bbrefId": "rodmade01",
-   "traded": false,
-   "metrics": {
-    "bpm": 2.8,
-    "vorp": 4,
-    "ws": 12.6,
-    "ws48": 0.183,
-    "per": 17
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Dennis_Rodman"
    }
   },
   {

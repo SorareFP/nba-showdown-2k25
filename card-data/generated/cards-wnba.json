@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T16:46:15.380Z",
+ "generatedAt": "2026-09-30T22:40:46.019Z",
  "provisional": false,
  "set": "wnba",
  "league": "WNBA",
@@ -3382,7 +3382,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 890,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,

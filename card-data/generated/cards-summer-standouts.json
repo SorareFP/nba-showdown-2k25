@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T16:50:27.228Z",
+ "generatedAt": "2026-09-30T22:40:21.753Z",
  "set": "summer-standouts",
  "provisional": true,
  "sources": {
@@ -22,7 +22,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 620,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -35,8 +35,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     },
     {
      "lo": 4,
@@ -47,13 +47,6 @@
     },
     {
      "lo": 14,
-     "hi": 22,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 1,
      "reb": 1,
@@ -142,7 +135,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 770,
+   "salary": 850,
    "chart": [
     {
      "lo": 1,
@@ -156,17 +149,10 @@
      "hi": 4,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 5,
-     "hi": 8,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 9,
      "hi": 14,
      "pts": 2,
      "reb": 0,
@@ -174,10 +160,17 @@
     },
     {
      "lo": 15,
-     "hi": 99,
+     "hi": 22,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
     }
    ],
    "season": 2002,
@@ -488,7 +481,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 710,
+   "salary": 590,
    "chart": [
     {
      "lo": 1,
@@ -499,29 +492,29 @@
     },
     {
      "lo": 3,
-     "hi": 7,
+     "hi": 5,
      "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 14,
+     "pts": 1,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 8,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
      "lo": 15,
-     "hi": 25,
+     "hi": 20,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
-     "lo": 26,
+     "lo": 21,
      "hi": 99,
-     "pts": 4,
+     "pts": 2,
      "reb": 1,
      "ast": 1
     }
@@ -534,7 +527,7 @@
    "bbrefId": "gibsoda01",
    "traded": false,
    "metrics": {},
-   "provisional": true,
+   "provisional": false,
    "playoffRun": true
   },
   {
@@ -788,7 +781,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 1220,
+   "salary": 1230,
    "chart": [
     {
      "lo": 1,
@@ -808,14 +801,14 @@
      "lo": 5,
      "hi": 7,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 8,
      "hi": 15,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -829,7 +822,7 @@
      "lo": 23,
      "hi": 99,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -855,7 +848,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 1050,
+   "salary": 1200,
    "chart": [
     {
      "lo": 1,
@@ -869,21 +862,21 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
      "hi": 6,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 16,
@@ -895,7 +888,7 @@
     {
      "lo": 21,
      "hi": 99,
-     "pts": 2,
+     "pts": 3,
      "reb": 1,
      "ast": 1
     }
@@ -1095,7 +1088,7 @@
    "paintBoost": -3,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 700,
+   "salary": 660,
    "chart": [
     {
      "lo": 1,
@@ -1106,30 +1099,30 @@
     },
     {
      "lo": 3,
-     "hi": 7,
+     "hi": 5,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 8,
+     "lo": 6,
      "hi": 12,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 13,
-     "hi": 27,
+     "hi": 25,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
-     "lo": 28,
+     "lo": 26,
      "hi": 99,
-     "pts": 3,
-     "reb": 2,
+     "pts": 2,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -1141,7 +1134,7 @@
    "bbrefId": "dudleja01",
    "traded": false,
    "metrics": {},
-   "provisional": true,
+   "provisional": false,
    "playoffRun": true
   },
   {
@@ -1222,7 +1215,7 @@
    "paintBoost": 1,
    "threePtBoost": 5,
    "defBoost": 1,
-   "salary": 610,
+   "salary": 510,
    "chart": [
     {
      "lo": 1,
@@ -1236,35 +1229,28 @@
      "hi": 8,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 9,
-     "hi": 9,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 10,
      "hi": 16,
-     "pts": 2,
-     "reb": 1,
+     "pts": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 17,
-     "hi": 23,
+     "hi": 20,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
-     "lo": 24,
+     "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 2,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     }
    ],
    "season": 2010,
@@ -1275,7 +1261,7 @@
    "bbrefId": "pietrmi01",
    "traded": false,
    "metrics": {},
-   "provisional": true,
+   "provisional": false,
    "playoffRun": true
   },
   {
@@ -1455,7 +1441,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 510,
+   "salary": 390,
    "chart": [
     {
      "lo": 1,
@@ -1466,13 +1452,13 @@
     },
     {
      "lo": 3,
-     "hi": 7,
+     "hi": 9,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 8,
+     "lo": 10,
      "hi": 15,
      "pts": 1,
      "reb": 1,
@@ -1480,16 +1466,9 @@
     },
     {
      "lo": 16,
-     "hi": 19,
+     "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 20,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
      "ast": 1
     }
    ],
@@ -1501,7 +1480,7 @@
    "bbrefId": "diawbo01",
    "traded": false,
    "metrics": {},
-   "provisional": true,
+   "provisional": false,
    "playoffRun": true
   },
   {
@@ -1568,7 +1547,7 @@
    "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 480,
+   "salary": 430,
    "chart": [
     {
      "lo": 1,
@@ -1593,24 +1572,10 @@
     },
     {
      "lo": 16,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 23,
-     "hi": 26,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 27,
      "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
     }
    ],
    "season": 2012,
@@ -1621,7 +1586,7 @@
    "bbrefId": "jacksst02",
    "traded": false,
    "metrics": {},
-   "provisional": true,
+   "provisional": false,
    "playoffRun": true
   },
   {
@@ -1748,7 +1713,7 @@
    "paintBoost": 4,
    "threePtBoost": 3,
    "defBoost": 2,
-   "salary": 1180,
+   "salary": 1430,
    "chart": [
     {
      "lo": 1,
@@ -1761,7 +1726,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -1773,8 +1738,15 @@
     },
     {
      "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
      "hi": 99,
-     "pts": 2,
+     "pts": 3,
      "reb": 1,
      "ast": 1
     }
@@ -1861,7 +1833,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1320,
+   "salary": 1340,
    "chart": [
     {
      "lo": 1,
@@ -1874,7 +1846,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -1886,9 +1858,16 @@
     },
     {
      "lo": 15,
-     "hi": 99,
+     "hi": 20,
      "pts": 3,
      "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -2274,7 +2253,7 @@
    "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 760,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -2285,30 +2264,37 @@
     },
     {
      "lo": 3,
-     "hi": 7,
+     "hi": 5,
      "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 6,
+     "hi": 7,
+     "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 12,
      "pts": 2,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     },
     {
      "lo": 13,
-     "hi": 24,
+     "hi": 23,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
-     "lo": 25,
+     "lo": 24,
      "hi": 99,
-     "pts": 3,
-     "reb": 2,
+     "pts": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -2320,7 +2306,7 @@
    "bbrefId": "hillge01",
    "traded": false,
    "metrics": {},
-   "provisional": true,
+   "provisional": false,
    "playoffRun": true
   },
   {
@@ -2334,7 +2320,7 @@
    "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 1660,
+   "salary": 1620,
    "chart": [
     {
      "lo": 1,
@@ -2348,7 +2334,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -2359,6 +2345,13 @@
     },
     {
      "lo": 15,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -2888,7 +2881,7 @@
    "paintBoost": 4,
    "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 1370,
+   "salary": 1360,
    "chart": [
     {
      "lo": 1,
@@ -3126,7 +3119,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 3,
-   "salary": 1420,
+   "salary": 1510,
    "chart": [
     {
      "lo": 1,
@@ -3139,22 +3132,29 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
-     "pts": 2,
+     "pts": 3,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
+     "hi": 21,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2006,

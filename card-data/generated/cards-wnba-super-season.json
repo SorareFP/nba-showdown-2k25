@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T16:48:31.513Z",
+ "generatedAt": "2026-09-30T22:43:01.090Z",
  "provisional": false,
  "set": "wnba-super-season",
  "league": "WNBA",
@@ -1986,7 +1986,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 1060,
+   "salary": 1050,
    "chart": [
     {
      "lo": 1,
@@ -2597,13 +2597,13 @@
    "team": "MIN99",
    "statRowTeam": "MIN",
    "pos": "G",
-   "speed": 14,
+   "speed": 15,
    "power": 9,
    "shotLine": 13,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": -1,
-   "salary": 830,
+   "paintBoost": -2,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 1090,
    "chart": [
     {
      "lo": 1,
@@ -2614,51 +2614,44 @@
     },
     {
      "lo": 3,
-     "hi": 7,
+     "hi": 6,
      "pts": 0,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     },
     {
-     "lo": 8,
+     "lo": 7,
      "hi": 12,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 13,
-     "hi": 21,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
-     "pts": 2,
+     "pts": 3,
      "reb": 1,
      "ast": 0
     }
    ],
    "league": "WNBA",
-   "season": 2003,
-   "seasonLabel": "2003",
-   "games": 34,
-   "mpg": 34.9,
-   "minutes": 1185,
-   "schedule": 34,
+   "season": 2001,
+   "seasonLabel": "2001",
+   "games": 32,
+   "mpg": 38.6,
+   "minutes": 1234,
+   "schedule": 32,
    "bbrefId": "smithka01w",
    "metrics": {
-    "bpmHat": 4.5,
-    "obpmHat": 5.85,
-    "dbpmHat": -1.35,
-    "seasonZ": 1.28,
-    "per": 21.6,
-    "ws": 6.8,
-    "wsPer40": 0.229,
-    "tsPct": 0.599,
-    "pts100": 30.2
+    "bpmHat": 5.17,
+    "obpmHat": 7.13,
+    "dbpmHat": -1.96,
+    "seasonZ": 1.64,
+    "per": 23.3,
+    "ws": 7.5,
+    "wsPer40": 0.244,
+    "tsPct": 0.577,
+    "pts100": 34.7
    },
    "provisional": false
   },

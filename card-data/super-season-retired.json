@@ -9,13 +9,6 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Andrei Kirilenko",
-   "bbrefId": "kirilan01",
-   "season": 2005,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
    "name": "Anfernee Simons",
    "bbrefId": "simonan01",
    "season": 2025,
@@ -205,6 +198,13 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
+   "name": "Dominique Wilkins",
+   "bbrefId": "wilkido01",
+   "season": 1987,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
    "name": "Draymond Green",
    "bbrefId": "greendr01",
    "season": 2016,
@@ -312,8 +312,8 @@
   {
    "name": "Jayson Tatum",
    "bbrefId": "tatumja01",
-   "season": 2023,
-   "since": "2026-09-24",
+   "season": 2025,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
@@ -396,8 +396,8 @@
   {
    "name": "Kobe Bryant",
    "bbrefId": "bryanko01",
-   "season": 2006,
-   "since": "2026-09-24",
+   "season": 2009,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
@@ -431,8 +431,8 @@
   {
    "name": "Luka Dončić",
    "bbrefId": "doncilu01",
-   "season": 2024,
-   "since": "2026-09-24",
+   "season": 2020,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
@@ -461,6 +461,13 @@
    "bbrefId": "jordami01",
    "season": 1988,
    "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Michael Jordan",
+   "bbrefId": "jordami01",
+   "season": 1990,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
@@ -508,8 +515,8 @@
   {
    "name": "Paul Pierce",
    "bbrefId": "piercpa01",
-   "season": 2002,
-   "since": "2026-09-24",
+   "season": 2005,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
@@ -548,13 +555,6 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Tim Duncan",
-   "bbrefId": "duncati01",
-   "season": 2002,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
    "name": "Tim Hardaway Jr.",
    "bbrefId": "hardati02",
    "season": 2017,
@@ -586,13 +586,6 @@
    "name": "Tyus Jones",
    "bbrefId": "jonesty01",
    "season": 2023,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Yao Ming",
-   "bbrefId": "mingya01",
-   "season": 2009,
    "since": "2026-09-24",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   }

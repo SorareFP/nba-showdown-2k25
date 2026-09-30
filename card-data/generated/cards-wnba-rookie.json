@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T16:50:52.631Z",
+ "generatedAt": "2026-09-30T22:43:01.883Z",
  "set": "wnba-rookie",
  "provisional": false,
  "referenceSeason": 2026,
@@ -614,7 +614,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 530,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -1097,7 +1097,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 490,
+   "salary": 480,
    "chart": [
     {
      "lo": 1,
@@ -3356,7 +3356,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 610,
+   "salary": 600,
    "chart": [
     {
      "lo": 1,

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T17:47:57.129Z",
+ "generatedAt": "2026-09-30T22:40:44.828Z",
  "set": "team-rewards",
  "provisional": true,
  "sources": {
@@ -212,88 +212,6 @@
    ]
   },
   {
-   "id": "Dwyane_Wade_2009",
-   "name": "Dwyane Wade",
-   "team": "MIA",
-   "pos": "SG",
-   "speed": 18,
-   "power": 12,
-   "shotLine": 15,
-   "paintBoost": 2,
-   "threePtBoost": -2,
-   "defBoost": 2,
-   "salary": 1610,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 3,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2009,
-   "seasonLabel": "2008-09",
-   "age": 27,
-   "games": 79,
-   "mpg": 38.6,
-   "bbrefId": "wadedw01",
-   "traded": false,
-   "metrics": {
-    "bpm": 10.6,
-    "vorp": 9.6,
-    "ws": 14.7,
-    "ws48": 0.232,
-    "per": 30.4
-   },
-   "provisional": false,
-   "set": "team-rewards",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Dwyane_Wade"
-   },
-   "badges": [
-    "throwback"
-   ],
-   "wears": "throwbacks",
-   "migratedFrom": {
-    "set": "throwbacks",
-    "id": "Dwyane_Wade_2009"
-   },
-   "rewardFor": "MIA",
-   "rewardGoal": "nba-team-MIA",
-   "floorException": "$400 under the floor: nothing in Heat history clears Giannis Antetokounmpo's $1,960 base card. The user, 2026-09-30: \"I think this is mostly just a problem with the Giannis card in its current form\". Wade's 2008-09 scoring title; the card was a dormant Throwback (the value pick moved his Super Season to 2009-10), so it moves in rather than being built twice."
-  },
-  {
    "id": "Kevin_Durant",
    "name": "Kevin Durant",
    "team": "GSW",
@@ -363,6 +281,88 @@
    },
    "rewardFor": "GSW",
    "rewardGoal": "nba-team-GSW"
+  },
+  {
+   "id": "Dwyane_Wade_2009",
+   "name": "Dwyane Wade",
+   "team": "MIA",
+   "pos": "SG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": -2,
+   "defBoost": 2,
+   "salary": 1590,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 27,
+   "games": 79,
+   "mpg": 38.6,
+   "bbrefId": "wadedw01",
+   "traded": false,
+   "metrics": {
+    "bpm": 10.6,
+    "vorp": 9.6,
+    "ws": 14.7,
+    "ws48": 0.232,
+    "per": 30.4
+   },
+   "provisional": false,
+   "set": "team-rewards",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Dwyane_Wade"
+   },
+   "badges": [
+    "throwback"
+   ],
+   "wears": "throwbacks",
+   "migratedFrom": {
+    "set": "throwbacks",
+    "id": "Dwyane_Wade_2009"
+   },
+   "rewardFor": "MIA",
+   "rewardGoal": "nba-team-MIA",
+   "floorException": "$400 under the floor: nothing in Heat history clears Giannis Antetokounmpo's $1,960 base card. The user, 2026-09-30: \"I think this is mostly just a problem with the Giannis card in its current form\". Wade's 2008-09 scoring title; the card was a dormant Throwback (the value pick moved his Super Season to 2009-10), so it moves in rather than being built twice."
   },
   {
    "id": "Kevin_Love",
@@ -452,15 +452,15 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 12,
      "pts": 2,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 2
     },
     {
      "lo": 13,
@@ -786,17 +786,17 @@
    ]
   },
   {
-   "id": "Shaquille_O_Neal",
-   "name": "Shaquille O'Neal",
-   "team": "ORL89",
+   "id": "Patrick_Ewing",
+   "name": "Patrick Ewing",
+   "team": "NYK",
    "pos": "C",
-   "speed": 8,
-   "power": 20,
-   "shotLine": 18,
-   "paintBoost": 6,
-   "threePtBoost": -2,
-   "defBoost": 0,
-   "salary": 1490,
+   "speed": 10,
+   "power": 17,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -5,
+   "defBoost": 2,
+   "salary": 1480,
    "chart": [
     {
      "lo": 1,
@@ -810,40 +810,40 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
-     "hi": 17,
+     "hi": 14,
      "pts": 3,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 18,
+     "lo": 15,
      "hi": 99,
      "pts": 3,
-     "reb": 2,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     }
    ],
-   "season": 1995,
-   "seasonLabel": "1994-95",
-   "age": 22,
-   "games": 79,
-   "mpg": 37,
-   "bbrefId": "onealsh01",
+   "season": 1990,
+   "seasonLabel": "1989-90",
+   "age": 27,
+   "games": 82,
+   "mpg": 38.6,
+   "bbrefId": "ewingpa01",
    "traded": false,
    "metrics": {
-    "bpm": 5.8,
-    "vorp": 5.7,
-    "ws": 14,
-    "ws48": 0.23,
-    "per": 28.6
+    "bpm": 5.5,
+    "vorp": 6,
+    "ws": 13.5,
+    "ws48": 0.205,
+    "per": 25.8
    },
    "provisional": false,
-   "rewardFor": "ORL",
-   "rewardGoal": "nba-team-ORL",
+   "rewardFor": "NYK",
+   "rewardGoal": "nba-team-NYK",
    "wears": "throwbacks",
    "badges": [
     "throwback"
@@ -860,7 +860,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 1450,
+   "salary": 1440,
    "chart": [
     {
      "lo": 1,
@@ -915,70 +915,6 @@
    "provisional": false,
    "rewardFor": "UTA",
    "rewardGoal": "nba-team-UTA",
-   "wears": "throwbacks",
-   "badges": [
-    "throwback"
-   ]
-  },
-  {
-   "id": "Patrick_Ewing",
-   "name": "Patrick Ewing",
-   "team": "NYK",
-   "pos": "C",
-   "speed": 10,
-   "power": 17,
-   "shotLine": 15,
-   "paintBoost": 3,
-   "threePtBoost": -5,
-   "defBoost": 2,
-   "salary": 1440,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 1990,
-   "seasonLabel": "1989-90",
-   "age": 27,
-   "games": 82,
-   "mpg": 38.6,
-   "bbrefId": "ewingpa01",
-   "traded": false,
-   "metrics": {
-    "bpm": 5.5,
-    "vorp": 6,
-    "ws": 13.5,
-    "ws48": 0.205,
-    "per": 25.8
-   },
-   "provisional": false,
-   "rewardFor": "NYK",
-   "rewardGoal": "nba-team-NYK",
    "wears": "throwbacks",
    "badges": [
     "throwback"
@@ -1050,6 +986,70 @@
    "provisional": false,
    "rewardFor": "WAS",
    "rewardGoal": "nba-team-WAS",
+   "wears": "throwbacks",
+   "badges": [
+    "throwback"
+   ]
+  },
+  {
+   "id": "Shaquille_O_Neal",
+   "name": "Shaquille O'Neal",
+   "team": "ORL89",
+   "pos": "C",
+   "speed": 8,
+   "power": 20,
+   "shotLine": 18,
+   "paintBoost": 6,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 1430,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 17,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 1995,
+   "seasonLabel": "1994-95",
+   "age": 22,
+   "games": 79,
+   "mpg": 37,
+   "bbrefId": "onealsh01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.8,
+    "vorp": 5.7,
+    "ws": 14,
+    "ws48": 0.23,
+    "per": 28.6
+   },
+   "provisional": false,
+   "rewardFor": "ORL",
+   "rewardGoal": "nba-team-ORL",
    "wears": "throwbacks",
    "badges": [
     "throwback"
@@ -1551,21 +1551,28 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 16,
-     "hi": 99,
+     "hi": 20,
      "pts": 3,
      "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -1748,28 +1755,21 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     }
    ],
@@ -1941,7 +1941,7 @@
    "paintBoost": 2,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1060,
+   "salary": 1070,
    "chart": [
     {
      "lo": 1,
@@ -1952,16 +1952,16 @@
     },
     {
      "lo": 3,
-     "hi": 7,
+     "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 8,
+     "lo": 7,
      "hi": 13,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -1975,7 +1975,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -2025,7 +2025,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {

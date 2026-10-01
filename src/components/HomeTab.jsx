@@ -26,6 +26,9 @@ import { readLocalGame, describeSave, newerSave, readBackups, recoverable, reque
 import { getPlayerThumbUrl, getPlayerImageUrl, getStratThumbPath, getStratImagePath, fallbackTo } from '../game/cardImages.js';
 import { newsFor, closestGoals, seasonsInProgress, careerLeaders, careerTotals } from '../game/home.js';
 import Skeleton from '../ui/Skeleton.jsx';
+import SuggestionBox from './SuggestionBox.jsx';
+import { mySuggestions } from '../firebase/suggestions.js';
+import { SUGGESTION_KIND_LABELS, SUGGESTION_STATUS_LABELS } from '../game/suggestions.js';
 import s from './HomeTab.module.css';
 
 const NEWS_SHOWN = 4;
@@ -51,6 +54,12 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
   const [forgot, setForgot] = useState(0);
   // Free Agents whose card is made and invoiced, waiting for this player to sign.
   const [signable, setSignable] = useState(0);
+  // The suggestion box (SuggestionBox.jsx). `mine` is a TRUSTED player's own
+  // suggestions and what became of them; everyone else gets `trusted: false`
+  // and never sees the panel.
+  const [suggesting, setSuggesting] = useState(false);
+  const [mine, setMine] = useState(null);
+  const loadMine = () => mySuggestions().then(setMine).catch(() => {});
 
   useEffect(() => {
     if (!uid) return undefined;
@@ -60,6 +69,7 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
     loadClaims(uid).then(c => { if (live) setClaimed(new Set(Object.keys(c ?? {}))); }).catch(() => { if (live) setClaimed(new Set()); });
     loadRemoteGame(uid).then(r => { if (live) setRemoteSave(r); }).catch(() => {});
     loadRemoteBackup(uid).then(r => { if (live) setRemoteBackup(r); }).catch(() => {});
+    mySuggestions().then(r => { if (live) setMine(r); }).catch(() => {});
     Promise.all([listSeasons(uid).catch(() => []), listMyLeagues(uid).catch(() => [])]).then(([solo, leagues]) => {
       if (!live) return;
       const shared = leagues.filter(l => l.kind === 'season').map(league => ({ league, season: seasonOfLeague(league) }));
@@ -149,7 +159,11 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
         <button className={s.quickBtn} onClick={() => onGo('season')}><span aria-hidden="true">📅</span> Seasons</button>
         <button className={s.quickBtn} onClick={() => onGo('shop')}><span aria-hidden="true">🛒</span> Pack Shop</button>
         <button className={s.quickBtn} onClick={onTutorial}><span aria-hidden="true">🎓</span> Tutorial</button>
+        <button className={s.quickBtn} onClick={() => setSuggesting(true)}><span aria-hidden="true">💬</span> Suggest something</button>
       </nav>
+      {suggesting && (
+        <SuggestionBox screen="home" onClose={() => setSuggesting(false)} onSent={() => { if (mine?.trusted) loadMine(); }} />
+      )}
 
       <div className={s.grid}>
         {/* ── Seasons ── */}
@@ -324,6 +338,28 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
             </ol>
           )}
         </section>
+
+        {/* ── Your suggestions: trusted players only ── */}
+        {mine?.trusted && mine.items.length > 0 && (
+          <section className={s.panel} aria-labelledby="home-suggestions">
+            <div className={s.panelHead}>
+              <h2 id="home-suggestions" className={s.panelTitle}>Your suggestions</h2>
+              <button className={s.link} onClick={() => setSuggesting(true)}>Send another →</button>
+            </div>
+            <ul className={s.suggList}>
+              {mine.items.slice(0, 8).map(item => (
+                <li key={item.id} className={s.suggItem}>
+                  <div className={s.suggTop}>
+                    <span className={s.muted}>{SUGGESTION_KIND_LABELS[item.kind] ?? item.kind}</span>
+                    <span className={s.suggStatus} data-status={item.status}>{SUGGESTION_STATUS_LABELS[item.status] ?? item.status}</span>
+                  </div>
+                  <div className={s.suggText}>{item.text}</div>
+                  {item.outcome && <div className={s.suggOutcome}>{item.outcome}</div>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     </div>
   );

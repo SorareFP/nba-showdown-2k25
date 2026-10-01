@@ -64,6 +64,7 @@ import { DPHASE } from './shared/src/game/modes/dynasty.js';
 import { createFriendsDynasty, friendsAct, bidProblem, FRIEND_MOVES } from './shared/src/game/modes/dynastyFriends.js';
 import { packDynasty, unpackDynasty } from './shared/src/game/modes/seasonPack.js';
 import { settleShifts, RARITY_SHIFTS } from './shared/src/game/rarityShift.js';
+import { checkSuggestion, sentToday, SUGGESTIONS_PER_DAY, SUGGESTION_STATUS, OUTCOME_MAX } from './shared/src/game/suggestions.js';
 
 initializeApp();
 const db = getFirestore();
@@ -2105,4 +2106,93 @@ export const regiftCardRequest = onCall({ region: 'us-central1' }, async request
     });
     return { id: ref.id, status: REQUEST_STATUS.invoiced, removed: removing.length, invoice };
   });
+});
+
+/**
+ * THE SUGGESTION BOX (2026-10-01) — src/game/suggestions.js has the story.
+ * A signed-in player sends one; admins read the queue (the Card Studio saves
+ * it into the repo, where Claude reads it), answer it, and trust a player to
+ * see the answers. A server-only collection: firestore.rules' closing match
+ * refuses the client both ways, so the rules needed no change.
+ */
+const msOf = t => t?.toMillis?.() ?? null;
+
+export const submitSuggestion = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const checked = checkSuggestion(request.data ?? {});
+  if (!checked.ok) throw new HttpsError('invalid-argument', checked.msg);
+  const screen = String(request.data?.screen ?? '').slice(0, 40) || null;
+  const mine = await db.collection('suggestions').where('uid', '==', uid).get();
+  if (sentToday(mine.docs.map(d => msOf(d.data().createdAt))) >= SUGGESTIONS_PER_DAY) {
+    throw new HttpsError('resource-exhausted', `That's ${SUGGESTIONS_PER_DAY} today. Send the rest tomorrow.`);
+  }
+  const ref = db.collection('suggestions').doc();
+  await ref.set({
+    uid,
+    name: request.auth?.token?.name ?? null,
+    email: request.auth?.token?.email ?? null,
+    kind: checked.kind,
+    text: checked.text,
+    screen,
+    status: SUGGESTION_STATUS.new,
+    outcome: null,
+    createdAt: FieldValue.serverTimestamp(),
+  });
+  return { id: ref.id };
+});
+
+/** A trusted player's own suggestions and what became of them; anyone else gets `{ trusted: false }`. */
+export const mySuggestions = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const user = await db.doc(`users/${uid}`).get();
+  if (!user.data()?.suggestionTrusted) return { trusted: false, items: [] };
+  const snap = await db.collection('suggestions').where('uid', '==', uid).get();
+  const items = snap.docs.map(d => {
+    const r = d.data();
+    return { id: d.id, kind: r.kind, text: r.text, status: r.status, outcome: r.outcome ?? null, createdAt: msOf(r.createdAt), answeredAt: msOf(r.answeredAt) };
+  }).sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+  return { trusted: true, items };
+});
+
+/** THE QUEUE, for the Card Studio. Admins only; each row says whether its sender is trusted. */
+export const listSuggestions = onCall({ region: 'us-central1' }, async request => {
+  requireAdmin(request);
+  const snap = await db.collection('suggestions').limit(500).get();
+  const items = snap.docs.map(d => {
+    const r = d.data();
+    return { ...r, id: d.id, createdAt: msOf(r.createdAt), answeredAt: msOf(r.answeredAt) };
+  });
+  const trusted = new Set();
+  await Promise.all([...new Set(items.map(i => i.uid))].map(async u => {
+    if (!u || u.includes('/')) return;
+    const s = await db.doc(`users/${u}`).get();
+    if (s.data()?.suggestionTrusted) trusted.add(u);
+  }));
+  return items.map(i => ({ ...i, trusted: trusted.has(i.uid) })).sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+});
+
+/** Answer one: a status and, optionally, a line the sender reads if trusted. Admins only. */
+export const answerSuggestion = onCall({ region: 'us-central1' }, async request => {
+  requireAdmin(request);
+  const id = String(request.data?.id ?? '');
+  if (!id || id.includes('/')) throw new HttpsError('invalid-argument', 'No suggestion given');
+  const status = request.data?.status;
+  if (!Object.values(SUGGESTION_STATUS).includes(status)) throw new HttpsError('invalid-argument', 'Unknown status');
+  const ref = db.doc(`suggestions/${id}`);
+  const snap = await ref.get();
+  if (!snap.exists) throw new HttpsError('not-found', 'No such suggestion');
+  const patch = { status, answeredAt: FieldValue.serverTimestamp() };
+  if (request.data?.outcome !== undefined) patch.outcome = String(request.data.outcome ?? '').trim().slice(0, OUTCOME_MAX) || null;
+  await ref.set(patch, { merge: true });
+  return { id, status };
+});
+
+/** Trust a player to see what became of their suggestions, or take it back. Admins only. */
+export const setSuggestionTrust = onCall({ region: 'us-central1' }, async request => {
+  requireAdmin(request);
+  const target = String(request.data?.uid ?? '');
+  if (!target || target.includes('/')) throw new HttpsError('invalid-argument', 'No player given');
+  const trusted = Boolean(request.data?.trusted);
+  await db.doc(`users/${target}`).set({ suggestionTrusted: trusted }, { merge: true });
+  return { uid: target, trusted };
 });

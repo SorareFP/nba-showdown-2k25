@@ -103,6 +103,12 @@ async function postJson(url, value) {
 }
 
 /**
+ * THE SUGGESTION INBOX: fold the queue into docs/suggestions/inbox.json on this
+ * machine (gitignored; where Claude reads it). `{ saved, open, file }`.
+ */
+export const saveSuggestionInbox = items => postJson(`${BASE}/suggestions`, { items });
+
+/**
  * FREE AGENTS: build one requested card (scripts/cardgen/buildFreeAgent.mjs).
  * Nothing is written yet — commitFreeAgent writes it, after the request is
  * recorded as built, because the write reloads this page.

@@ -36,3 +36,6 @@ public/cards/thumbs/live
 # Saved copies of card-data/generated taken before a chart-method change (the user, 2026-09-29:
 # "keep a save of the current cards so we can easily revert"). Local only; git tags carry the same.
 card-data/snapshots
+
+# The suggestion box inbox the Card Studio saves for Claude: it names players, and this repo is public.
+docs/suggestions/

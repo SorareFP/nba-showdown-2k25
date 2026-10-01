@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { mkdtempSync, writeFileSync, readdirSync, readFileSync, rmSync, utimesSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { photoExtMap, photoTimes, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES, supersedeOldPhotos } from './studioServerPlugin.js';
+import { photoExtMap, photoTimes, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES, supersedeOldPhotos, mergeSuggestionInbox } from './studioServerPlugin.js';
 import {
   DEFAULT_PHOTO_EXT,
   IMAGE_EXTENSIONS,
@@ -195,5 +195,24 @@ describe('photoTimes', () => {
   it('is empty for a set with no photos folder', () => {
     expect(photoTimes(join(tmpdir(), 'no-such-studio-dir'))).toEqual({});
     expect(photoTimes(undefined)).toEqual({});
+  });
+});
+
+describe('mergeSuggestionInbox', () => {
+  const now = new Date('2026-10-01T12:00:00Z');
+  it('folds the queue in by id, newest first, and keeps no email or account id', () => {
+    const first = mergeSuggestionInbox(null, [
+      { id: 'a', kind: 'idea', text: 'More Dantley', status: 'new', name: 'Rob', email: 'rob@example.com', uid: 'u1', createdAt: 100 },
+      { id: 'b', kind: 'bug', text: 'Green Light twice', status: 'new', name: 'Rob', email: 'rob@example.com', uid: 'u1', createdAt: 200 },
+    ], now);
+    expect(first.items.map(i => i.id)).toEqual(['b', 'a']);
+    expect(first.open).toBe(2);
+    expect(JSON.stringify(first)).not.toMatch(/example\.com|u1/);
+    // A later save replaces a suggestion that was answered, and keeps the rest.
+    const second = mergeSuggestionInbox(first, [{ id: 'a', kind: 'idea', text: 'More Dantley', status: 'done', outcome: 'Built.', createdAt: 100 }], now);
+    expect(second.items).toHaveLength(2);
+    expect(second.items.find(i => i.id === 'a')).toMatchObject({ status: 'done', outcome: 'Built.' });
+    expect(second.open).toBe(1);
+    expect(second.savedAt).toBe('2026-10-01T12:00:00.000Z');
   });
 });

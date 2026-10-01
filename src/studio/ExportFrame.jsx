@@ -15,7 +15,7 @@ import CardTemplate from '../cards/CardTemplate.jsx';
 import CardBack from '../cards/CardBack.jsx';
 import StratTemplate from '../cards/StratTemplate.jsx';
 import { SOURCES } from './players.js';
-import { fetchStudioState, teamsUrl } from './api.js';
+import { fetchStudioState } from './api.js';
 
 export default function ExportFrame() {
   const params = new URLSearchParams(location.search);
@@ -34,15 +34,16 @@ export default function ExportFrame() {
   useEffect(() => {
     if (!card) return;
     (async () => {
-      const [studio, teams] = await Promise.all([
-        fetchStudioState(set),
-        fetch(teamsUrl(set)).then(r => (r.ok ? r.json() : {})).catch(() => ({})),
-      ]);
+      // The team colours come with the state (2026-09-30). They used to be
+      // fetched from /__studio/teams, a WRITE-ONLY route that answers a GET
+      // with 405 — read as "no overrides", so no exported face carried a
+      // colour the user set in the Studio from the day the export shipped.
+      const studio = await fetchStudioState(set);
       setState({
         hasPhoto: (studio.photos ?? []).includes(id),
         photoExt: (studio.photoExt ?? {})[id],
         crop: (studio.crops ?? {})[id],
-        teamOverrides: teams ?? {},
+        teamOverrides: studio.teamOverrides ?? {},
       });
     })();
   }, [set, id]);

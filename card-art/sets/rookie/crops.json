@@ -1333,5 +1333,25 @@
     "x": -9.14,
     "y": 0,
     "zoom": 1
+  },
+  "Antawn_Jamison": {
+    "x": 0,
+    "y": 13.45,
+    "zoom": 1
+  },
+  "Baron_Davis": {
+    "x": -12.98,
+    "y": 0,
+    "zoom": 1
+  },
+  "Corey_Maggette": {
+    "x": 1.9,
+    "y": 13.89,
+    "zoom": 1.59
+  },
+  "Ricky_Rubio": {
+    "x": 1.55,
+    "y": -7.5,
+    "zoom": 1.15
   }
 }

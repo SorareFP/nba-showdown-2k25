@@ -97,6 +97,10 @@ export const STRATS = [
   { id:'verticality',         name:'Verticality',        phase:'reaction', side:'def', copies:2, locked:false, color:'#0F766E', rarity:'common',
     desc:'An opponent card just scored with no roll and no check: if your defender on that player has a Defensive Bonus or matches their Power, those points are wiped.' },
   { id:'dogged',              name:'Dogged',             phase:'scoring',  side:'def', copies:1, locked:false, color:'#78716C', rarity:'rare',
+    // UNTIL BENCHED, AS PRINTED (2026-10-01, the user: "The effects should last
+    // until a player is benched"): the −2/−2 used to vanish at section end; it
+    // now follows the player into every section until he sits one
+    // (engine.js applyLingering).
     // A RARE (2026-09-24, the user: "Dogged is a VERY valuable card and should
     // be a rare. You can basically knock a star out of the game with it."):
     // one copy and the rare's share of packs and deck caps; it was a common x2.

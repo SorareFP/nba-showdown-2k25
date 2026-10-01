@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'dogged-until-benched-curry-11', date: '2026-10-01', title: 'Dogged lasts until benched; Curry shoots threes on 11',
+    body: "Dogged now does what it says: the −2 Speed and −2 Power stay on the player in every section until he sits one, wherever he lines up. It used to wear off at the end of the section. And Stephen Curry's 2015-16 card (45% from three on 11 attempts a game) is the one card in the game whose three-point check needs an 11. Every other card's floor stays at 12.",
+    to: 'collection', cta: 'Collection',
+  },
+  {
     id: 'charts-from-real-games', date: '2026-09-30', title: 'More cards built from real games',
     body: "45 cards, most of them rookie cards, had been built from a fallback model because their game logs were missing. They now use their real games, and nearly all came down: Tim Duncan's rookie card went from $1,830 to $990. Five Super Seasons that those rookie cards had pushed out are back: Duncan 2001-02, David Robinson 1990-91, Yao 2008-09, Kirilenko 2004-05 and Marion 2006-07. Seasons over 36 minutes a game no longer lose scoring, so Jordan's 1987-88 rose from $1,560 to $2,030. Six Super Seasons moved to a more valuable season (Jordan 1988-89, Luka 2023-24, Kobe 2005-06, Tatum 2022-23, Pierce 2001-02, Wilkins 1987-88); if you hold one, you still have it. Short playoff runs like Daniel Gibson's 2007 now use their own games too. Jordan's 1984-85 rookie card is the Rookie set reward again. Cards that dropped a rarity pay the difference once, the same as this afternoon.",
     to: 'collection', cta: 'Collection',

@@ -3,7 +3,7 @@
 // wave introduced — an announced Paint check the defence can answer (Back to
 // the Basket), and ONE answer per announced check.
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { newGame, getTeam, doRoll, matchupAdv, matchupContest, checkNeed } from './engine.js';
+import { newGame, getTeam, doRoll, matchupAdv, matchupContest, checkNeed, passTurn, benchRest } from './engine.js';
 import { CARDS } from './cards.js';
 import { execCard, resolvePendingShotCheck } from './execCard.js';
 import { canPlayCard } from './canPlay.js';
@@ -320,6 +320,34 @@ describe('scoring-phase wave-one cards', () => {
     expect(r.game.tempEff.B.p2).toBe(-2);
     expect(log(r.game, 'Dogged')[0].msg).toContain('FAT -2');
     expect(play(g, 'dogged', { playerIdx: 0 }).ok).toBe(false);           // fresh
+  });
+
+  it('Dogged lasts until the player is benched: every later section applies it again, wherever he plays (2026-10-01)', () => {
+    const g = game({ hand: ['dogged'] });
+    getTeam(g, 'B').stats.push({ id: 'b2', minutes: 8 });
+    const played = play(g, 'dogged', { playerIdx: 2 }).game;
+    expect(getTeam(played, 'B').stats.find(s => s.id === 'b2').dogged).toBe(1);
+
+    // The next section: the slot effects are gone, he plays from slot 0 now,
+    // and the penalty comes back as the scoring phase opens.
+    const next = JSON.parse(JSON.stringify(played));
+    next.tempEff = {};
+    const b = getTeam(next, 'B');
+    b.starters = [b.starters[2], ...b.starters.filter((_, i) => i !== 2)];
+    next.phase = 'matchup_strats';
+    next.matchupPasses = 0;
+    const open = passTurn(passTurn(next, 'A'), 'B');
+    expect(open.phase).toBe('scoring');
+    expect(open.tempEff.B.s0).toBe(-2);
+    expect(open.tempEff.B.p0).toBe(-2);
+    expect(open.tempEff.B.s2 ?? 0).toBe(0);
+    expect(log(open, 'Dogged: ')[0].msg).toContain('until benched');
+
+    // A section on the bench ends it.
+    const rested = JSON.parse(JSON.stringify(next));
+    benchRest(getTeam(rested, 'B').stats.find(s => s.id === 'b2'));
+    const after = passTurn(passTurn(rested, 'A'), 'B');
+    expect(after.tempEff.B?.s0 ?? 0).toBe(0);
   });
 
   it('Burst of Momentum (reworked 2026-09-16) opens on a top-tier roll of 3+ points — 5+ never happened', () => {

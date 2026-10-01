@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T22:55:22.741Z",
+ "generatedAt": "2026-10-01T12:43:22.781Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -14252,9 +14252,9 @@
    "power": 11,
    "shotLine": 13,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 2130,
+   "salary": 2170,
    "chart": [
     {
      "lo": 1,

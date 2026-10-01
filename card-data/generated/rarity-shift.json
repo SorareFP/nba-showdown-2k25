@@ -4,6 +4,7 @@
  "from": "cards-before-conditional-rows",
  "fromCommit": "949624d2d383c4059e6de372ebb9b45579b5c686",
  "cutoff": "2026-09-30T22:05:34.282Z",
+ "deployed": "2026-09-30T22:10:25Z",
  "rates": {
   "common": 2,
   "uncommon": 5,

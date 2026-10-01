@@ -424,6 +424,8 @@ export function restMinutes(min) {
 export function benchRest(ps) {
   ps.hot = 0;
   ps.cold = 0;
+  // Dogged lasts until he is benched (applyLingering).
+  ps.dogged = 0;
   ps.minutes = restMinutes(ps.minutes);
 }
 
@@ -1385,6 +1387,33 @@ export function pruneStanding(g) {
   return g;
 }
 
+/**
+ * DOGGED LASTS UNTIL HE IS BENCHED (the user, 2026-10-01: "The effects should
+ * last until a player is benched"). It used to live only in tempEff, which
+ * every section end clears, so the card printed "until benched" and played
+ * as one section. Now the card also marks the player's stat record
+ * (`dogged`, one per play), benchRest clears the mark with his hot and cold
+ * markers, and this re-applies −2 Speed/−2 Power per mark to whatever slot he
+ * holds as each scoring phase opens — the earliest point the new lineup
+ * exists, the moment pruneStanding checks the standing cards.
+ */
+export const DOGGED_PENALTY = 2;
+export function applyLingering(g) {
+  for (const k of ['A', 'B']) {
+    const t = getTeam(g, k);
+    (t.starters ?? []).forEach((p, i) => {
+      const n = (p && (t.stats ?? []).find(s => s.id === p.id)?.dogged) || 0;
+      if (!n) return;
+      const by = DOGGED_PENALTY * n;
+      if (!g.tempEff[k]) g.tempEff[k] = {};
+      g.tempEff[k]['s' + i] = (g.tempEff[k]['s' + i] || 0) - by;
+      g.tempEff[k]['p' + i] = (g.tempEff[k]['p' + i] || 0) - by;
+      g.log = [...g.log, { team: k, msg: `Dogged: ${p.name} is still −${by} Spd/−${by} Pwr until benched` }];
+    });
+  }
+  return g;
+}
+
 /** The standing entry for a team's card, or undefined. */
 export function standingEntry(g, teamKey, cardId) {
   return (g.standing ?? []).find(e => e.teamKey === teamKey && e.cardId === cardId);
@@ -1400,6 +1429,7 @@ export function passTurn(g, teamKey) {
       ng.rollResults = { A: [], B: [] };
       ng.log = [...ng.log, { team: null, msg: 'Both passed — Scoring Phase!' }];
       pruneStanding(ng);
+      applyLingering(ng);
     } else {
       ng.matchupTurn = other(teamKey);
       ng.log = [...ng.log, { team: teamKey, msg: 'Passed.' }];

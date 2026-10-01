@@ -583,7 +583,11 @@ export function buildHistoricalCard({
     positionShares,
     calibration,
   });
-  const { shotLine, paintBoost, threePtBoost } = shooting;
+  const { shotLine, paintBoost } = shooting;
+  // The Curry nod (shooting.js THREE_LINE_NODS): a named season's effective
+  // three line is set outright, under the floor every other card keeps.
+  const nod = S.THREE_LINE_NODS[`${season.playerId}:${season.season}`];
+  const threePtBoost = nod != null ? Math.min(shotLine - nod, S.THREE_BOOST_MAX) : shooting.threePtBoost;
   // DBPM in DEF EPM's place — the same rounding rule on the same kind of number.
   const defBoost = A.defBoostFromEpm(season.dbpm);
 

@@ -1139,6 +1139,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!g.tempEff[oppKey3]) g.tempEff[oppKey3] = {};
       g.tempEff[oppKey3]['s' + targetIdx] = (g.tempEff[oppKey3]['s' + targetIdx] || 0) - 2;
       g.tempEff[oppKey3]['p' + targetIdx] = (g.tempEff[oppKey3]['p' + targetIdx] || 0) - 2;
+      // ...and a mark on the player, so later sections apply it again until
+      // he sits one (engine.js applyLingering; benchRest clears it).
+      const doggedStats = (oppT.stats ?? []).find(s => s.id === targetP.id);
+      if (doggedStats) doggedStats.dogged = (doggedStats.dogged || 0) + 1;
       addLog(g, teamKey, `Dogged: ${targetP.name} (FAT ${fat}) suffers −2 Spd/−2 Pwr until benched`);
       break;
     }

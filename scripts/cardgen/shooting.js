@@ -388,6 +388,17 @@ export const THREE_LINE_MAX = 20;
 export const THREE_LINE_SPREAD = 1.9;
 
 /** What a Shot Line of 12 against a three line of 20 implies, and its mirror. */
+/**
+ * THE CURRY NOD (the user, 2026-10-01). The effective three-point line never
+ * goes under 12 — "nobody makes a three more easily than the best shot in the
+ * game" — and Stephen Curry's 2015-16 (45.4% on 11.2 threes a game, 402 made)
+ * sat on that floor with the league's other best shooters. Asked whether 11
+ * would be "a fun acknowledgement of who he is as a player": "I think we
+ * should tbh". One season, by name, not a lower floor: a floor of 11 would
+ * move other cards off 12 and stop being his. `bbrefId:season` -> the line.
+ */
+export const THREE_LINE_NODS = { 'curryst01:2016': 11 };
+
 export const THREE_BOOST_MIN = -8;
 export const THREE_BOOST_MAX = 5;
 

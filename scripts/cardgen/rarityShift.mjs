@@ -52,6 +52,17 @@ const newest = fs.readdirSync(GEN)
   .sort((a, b) => Number(b[1] ?? 1) - Number(a[1] ?? 1))[0]?.[0];
 const OUT = path.join(GEN, arg('out') ?? newest ?? 'rarity-shift.json');
 const current = !arg('out') && fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, 'utf8')) : null;
+// A LIVE TABLE IS NEVER RE-CUT. `deployed` is stamped on a table once its
+// deploy is confirmed; a bare run against one stops here instead of
+// repricing receipts accounts are already claiming.
+if (current?.deployed) {
+  console.error(`rarity-shift: ${path.basename(OUT)} (${current.id}) went live ${current.deployed} and is never re-cut.
+` +
+    `A new rarity change starts the next table: --out rarity-shift-<n>.json --id rarity-shift:<date>-<n> --from <the deployed commit>,
+` +
+    'and an import beside the others in src/game/rarityShift.js.');
+  process.exit(1);
+}
 const REF = arg('from') ?? current?.fromCommit ?? 'cards-before-conditional-rows';
 const TODAY = new Date().toISOString().slice(0, 10);
 const ID = arg('id') ?? current?.id ?? `rarity-shift:${TODAY}`;

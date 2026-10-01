@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'team-builder-every-set', date: '2026-10-01', title: 'Team Builder shows every card you own',
+    body: "The Team Builder's pool only listed base-set NBA cards, so a Super Season, Rookie, Throwback or WNBA card you owned could not be picked there. It now lists every player card in your collection, and the dice draw from all of them too. One card a player on a team. Strategy decks are still built in Collection, under My Decks, and chosen on the Play screen; the Team Builder now says so and links there.",
+    to: 'collection', cta: 'My Decks',
+  },
+  {
     id: 'lob-city-credits-players', date: '2026-10-01', title: 'Card stats go on the player who earned them',
     body: "Assists and rebounds a strategy card pays now land on a player's stat line, not only in the team's pool. Lob City's assists go to each Speed 15+ player. A shot check that pays assists on a make (Hammer Set, Pick-and-Pop, Outside Pick, Transition Outlet) credits the shooter. Short-Roll Playmaker and Spain Pick & Roll credit the scorer, Burst of Momentum and Delayed Slip the player the card names, Glass Cleaner and Rim Protector your defender on the shooter. Strength in Numbers gives one assist each to your three biggest edges, and Grab and Go gives its two to your leading rebounder on the floor. A cancelled stat comes off the line too: Passing Lane and Box Out take the assists or rebounds off the player who rolled them, and a make that Coach's Challenge overturns gives back the assists it paid. Pin-Down Screen's assist goes to the highest-salary guard beside the shooter, or the slowest forward when there is no guard. And the coach now pays the discard Pin-Down Screen asks for; it had been playing the card for free.",
     to: 'play', cta: 'Play',

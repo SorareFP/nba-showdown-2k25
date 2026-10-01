@@ -369,6 +369,7 @@ function AppInner() {
                 teamB={teamB} setTeamB={setTeamB}
                 onStartGame={() => setTab('play')}
                 collection={collection}
+                onOpenDecks={() => { setCollectionView('decks'); goTab('collection'); }}
               />
             )}
             {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} initialView={collectionView} />}

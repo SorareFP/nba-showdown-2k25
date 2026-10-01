@@ -73,6 +73,22 @@ describe('randomizeTeam', () => {
     for (const c of r) expect(c.id).toBe(ALL_CARDS[0].id);
     expect(r.length).toBeLessThanOrEqual(1);
   });
+
+  it('an owned draw reaches every set, by collection key', () => {
+    // The owned draw read the base set by bare id, so a special or WNBA card
+    // a player owned was never dealt to them (a player's report, 2026-10-01).
+    const r = randomizeTeam([], true, { [cardKey(special)]: { type: 'player', count: 1 } });
+    expect(r).toEqual([special]);
+  });
+
+  it('never deals two cards of the same player', () => {
+    // A base card and a special card of one player share an id, and a
+    // roster's stat rows are kept by id.
+    const twin = ALL_CARDS.find(c => c.set && c.set !== BASE_SET && ALL_CARDS.some(b => (!b.set || b.set === BASE_SET) && b.id === c.id));
+    const baseTwin = ALL_CARDS.find(b => (!b.set || b.set === BASE_SET) && b.id === twin.id);
+    const r = randomizeTeam([], true, { [cardKey(twin)]: { count: 1 }, [cardKey(baseTwin)]: { count: 1 } });
+    expect(r).toHaveLength(1);
+  });
 });
 
 describe('the pool controls', () => {

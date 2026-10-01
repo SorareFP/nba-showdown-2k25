@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { CARDS, CARD_MAP } from '../game/cards.js';
+import { cardKey } from '../game/cardSets.js';
 import { getPlayerRarity, RARITY_CONFIG } from '../game/rarity.js';
 // Shared with the collection-only editor in My Teams, so the two cannot drift.
-import { CAP, MAX, capSal, randomizeTeam, ownedRoster, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
+import { CAP, MAX, capSal, randomizeTeam, ownedRoster, ownedPlayers, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
 import PoolFilters from './PoolFilters.jsx';
 import PlayerCard from './PlayerCard.jsx';
 import { useLightbox } from './CardLightbox.jsx';
@@ -12,7 +13,7 @@ import { saveTeam, loadTeams } from '../firebase/savedTeams.js';
 import styles from './TeamBuilderTab.module.css';
 
 
-export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame, collection }) {
+export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame, collection, onOpenDecks }) {
   const { open } = useLightbox();
   const { user } = useAuth();
   const { toast, askText } = useDialogs();
@@ -26,7 +27,17 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loadModal, setLoadModal] = useState(null); // null | { slot: 'A'|'B', teams: [] }
 
-  const allTeams = useMemo(() => [...new Set(CARDS.map(c => c.team))].sort(), []);
+  // WHAT YOU OWN IS EVERY SET (2026-10-01). The pool was the base NBA set
+  // filtered by bare id, so an owned Super Season, Rookie, Throwback or WNBA
+  // card — keyed `set:id` in a collection — never appeared here, and the only
+  // way to field one was the editor in Collection → My Teams (a player's
+  // report: "unable to select anyone but base set nba players in the team
+  // builder"). Signed out is unchanged: the base set, as a sandbox.
+  const source = useMemo(
+    () => (enforceOwnership ? ownedPlayers(collection).map(o => o.card) : CARDS),
+    [enforceOwnership, collection],
+  );
+  const allTeams = useMemo(() => [...new Set(source.map(c => c.team))].sort(), [source]);
 
   const handleSave = async (roster) => {
     const name = await askText({
@@ -36,7 +47,9 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
     });
     if (!name) return;
     const sal = capSal(roster);
-    await saveTeam(user.uid, { name, players: roster.map(c => c.id), salary: sal });
+    // Collection keys, as My Teams saves them: a bare id would bring a special
+    // card back as the base card of the same player, or as nothing.
+    await saveTeam(user.uid, { name, players: roster.map(cardKey), salary: sal });
     toast(`Saved “${name}” — $${sal.toLocaleString()}`, { tone: 'success' });
   };
 
@@ -57,21 +70,24 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
     setLoadModal(null);
   };
 
-  const pool = useMemo(() => {
-    const owned = enforceOwnership ? CARDS.filter(c => (collection[c.id]?.count || 0) > 0) : CARDS;
-    return sortPool(filterPool(owned, filters), filters.sort);
-  }, [filters, enforceOwnership, collection]);
+  const pool = useMemo(() => sortPool(filterPool(source, filters), filters.sort), [source, filters]);
 
   const addTo = (team, setTeam, card) => {
+    if (team.includes(card)) return;
+    // One card a player: two cards of the same player share an id, and a
+    // roster's stat rows and fatigue are kept by id.
+    if (team.some(c => c.id === card.id)) {
+      return toast(`${card.name} is already on this team — one card a player.`, { tone: 'error' });
+    }
     if (team.length >= MAX) return toast(`Team full — ${MAX} players is the roster.`, { tone: 'error' });
     if (capSal(team) + card.salary > CAP) {
       const over = capSal(team) + card.salary - CAP;
       return toast(`${card.name} puts you $${over.toLocaleString()} over the $${CAP.toLocaleString()} cap.`, { tone: 'error' });
     }
-    if (!team.find(c => c.id === card.id)) setTeam([...team, card]);
+    setTeam([...team, card]);
   };
 
-  const removeFrom = (team, setTeam, id) => setTeam(team.filter(c => c.id !== id));
+  const removeFrom = (team, setTeam, card) => setTeam(team.filter(c => c !== card));
 
   const salA = capSal(teamA), salB = capSal(teamB);
   const canPlay = teamA.length >= 5 && teamB.length >= 5;
@@ -82,7 +98,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
       <div className={styles.teams}>
         <RosterPanel
           name="Team A" color="var(--orange)" sal={salA} roster={teamA}
-          onRemove={id => removeFrom(teamA, setTeamA, id)}
+          onRemove={card => removeFrom(teamA, setTeamA, card)}
           onRandomize={() => setTeamA(randomizeTeam(teamB, enforceOwnership, collection))}
           onView={card => open('player', card)}
           showFirebase={!!user}
@@ -91,7 +107,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
         />
         <RosterPanel
           name="Team B" color="var(--blue)" sal={salB} roster={teamB}
-          onRemove={id => removeFrom(teamB, setTeamB, id)}
+          onRemove={card => removeFrom(teamB, setTeamB, card)}
           onRandomize={() => setTeamB(randomizeTeam(teamA, enforceOwnership, collection))}
           onView={card => open('player', card)}
           showFirebase={!!user}
@@ -113,6 +129,21 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
         </div>
       )}
 
+      {/* THE DECK IS NOT BUILT HERE, and nothing said so (the same report:
+          "also unable to choose strategy cards"). It is built in Collection →
+          My Decks and picked on the Play screen; without one a game plays the
+          default fifty. */}
+      {user && onOpenDecks && (
+        <p style={{ margin: '4px 0 14px', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+          Strategy cards: a game plays the default deck unless you build your own.{' '}
+          <button type="button" onClick={onOpenDecks}
+            style={{ background: 'none', border: 'none', padding: 0, color: 'var(--orange)', font: 'inherit', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
+            Build a deck
+          </button>
+          , then choose it for each team on the Play screen.
+        </p>
+      )}
+
       {/* Pool */}
       <div className={styles.poolHeader}>
         <h3>Player Pool</h3>
@@ -131,7 +162,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
           const rarity = getPlayerRarity(card);
           const cfg = RARITY_CONFIG[rarity];
           return (
-            <PlayerCard key={card.id} card={card} onClick={() => open('player', card)}
+            <PlayerCard key={cardKey(card)} card={card} onClick={() => open('player', card)}
               actions={
                 <div style={{ display:'flex', gap:6, width:'100%', flexDirection:'column' }}>
                   {enforceOwnership && (
@@ -187,14 +218,14 @@ function RosterPanel({ name, color, sal, roster, onRemove, onRandomize, onView, 
       <div className={styles.rosterList}>
         {roster.length === 0 && <div className={styles.empty}>Add players from pool below</div>}
         {roster.map(c => (
-          <div key={c.id} className={styles.rosterItem}>
+          <div key={cardKey(c)} className={styles.rosterItem}>
             <div>
               <div className={styles.rosterName}
                 style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
                 onClick={() => onView(c)}>{c.name}</div>
               <div className={styles.rosterSub}>{c.team} · S{c.speed} P{c.power} · ${c.salary}</div>
             </div>
-            <button className={styles.rmBtn} onClick={() => onRemove(c.id)}>×</button>
+            <button className={styles.rmBtn} onClick={() => onRemove(c)}>×</button>
           </div>
         ))}
       </div>

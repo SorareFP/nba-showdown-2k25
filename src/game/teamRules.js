@@ -57,10 +57,14 @@ export const RANDOM_MIN_SAL = 4800;
 // Prince (coinRewards.js capOf). Both ends move, so a richer draw actually
 // spends the extra: a 1.2x cap that lands on a plain salary is no advantage.
 export function randomizeTeam(other, ownedOnly, collection, capMult = 1) {
-  let available = [...CARDS];
-  if (ownedOnly && collection) {
-    available = available.filter(c => (collection[c.id]?.count || 0) > 0);
-  }
+  // OWNED MEANS EVERY SET (2026-10-01). The owned draw read the base set and
+  // looked each card up by its bare id, so a Super Season, a Rookie, a
+  // Throwback or any WNBA card a player owned could never be dealt to them
+  // (a player's report: "unable to select anyone but base set nba players").
+  const available = ownedOnly && collection ? ownedPlayers(collection).map(o => o.card) : [...CARDS];
+  // One card a player: two cards of the same player share an id, and the
+  // engine keeps a roster's stat rows and fatigue by id.
+  const fresh = (roster, card) => !roster.some(r => r.id === card.id);
   const MIN_SAL = Math.round(RANDOM_MIN_SAL * capMult);
   const MAX_SAL = Math.round(CAP * capMult);
 
@@ -77,6 +81,7 @@ export function randomizeTeam(other, ownedOnly, collection, capMult = 1) {
 
     for (const card of shuffled) {
       if (roster.length >= 10) break;
+      if (!fresh(roster, card)) continue;
       if (sal + card.salary > MAX_SAL) continue;
       // Skip if adding this card would make it impossible to fill remaining slots
       // (each remaining player needs at least ~100 salary minimum)
@@ -103,7 +108,7 @@ export function randomizeTeam(other, ownedOnly, collection, capMult = 1) {
   const roster = []; let sal = 0;
   for (const card of shuffled) {
     if (roster.length >= 10) break;
-    if (sal + card.salary <= CAP) { roster.push(card); sal += card.salary; }
+    if (fresh(roster, card) && sal + card.salary <= CAP) { roster.push(card); sal += card.salary; }
   }
   return roster;
 }

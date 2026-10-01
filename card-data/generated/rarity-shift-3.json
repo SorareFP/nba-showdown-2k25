@@ -1,9 +1,10 @@
 {
  "note": "RARITY SHIFT — card keys whose rarity moved between the cards as shipped (`from`) and now; each copy held before `cutoff` is owed `coins` (negative for a card that moved up), the total floored at zero, once per account under claims/<id>. Written by scripts/cardgen/rarityShift.mjs; read by src/game/rarityShift.js.",
  "id": "rarity-shift:2026-10-01",
- "from": "821c739d",
+ "from": "821c739df06fd065f65045270ee46475011a7639",
  "fromCommit": "821c739df06fd065f65045270ee46475011a7639",
- "cutoff": "2026-10-01T13:11:14.754Z",
+ "cutoff": "2026-10-01T13:24:20.275Z",
+ "deployed": "2026-10-01T13:28:33Z",
  "rates": {
   "common": 2,
   "uncommon": 5,

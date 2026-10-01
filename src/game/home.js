@@ -24,7 +24,7 @@ import { teamIdFor } from './modes/league.js';
 export const NEWS = [
   {
     id: 'lob-city-credits-players', date: '2026-10-01', title: 'Card stats go on the player who earned them',
-    body: "Assists and rebounds a strategy card pays now land on a player's stat line, not only in the team's pool. Lob City's assists go to each Speed 15+ player. A shot check that pays assists on a make (Hammer Set, Pick-and-Pop, Outside Pick, Transition Outlet) credits the shooter. Short-Roll Playmaker and Spain Pick & Roll credit the scorer, Burst of Momentum and Delayed Slip the player the card names, and Glass Cleaner and Rim Protector your defender on the shooter. Points already worked this way. The game log names who got what.",
+    body: "Assists and rebounds a strategy card pays now land on a player's stat line, not only in the team's pool. Lob City's assists go to each Speed 15+ player. A shot check that pays assists on a make (Hammer Set, Pick-and-Pop, Outside Pick, Transition Outlet) credits the shooter. Short-Roll Playmaker and Spain Pick & Roll credit the scorer, Burst of Momentum and Delayed Slip the player the card names, Glass Cleaner and Rim Protector your defender on the shooter. Strength in Numbers gives one assist each to your three biggest edges, and Grab and Go gives its two to your leading rebounder on the floor. A cancelled stat comes off the line too: Passing Lane and Box Out take the assists or rebounds off the player who rolled them. And the coach now pays the discard Pin-Down Screen asks for; it had been playing the card for free.",
     to: 'play', cta: 'Play',
   },
   {

@@ -93,6 +93,49 @@ describe('a card\'s assists go to the player who earned them', () => {
     expect(r.ok).toBe(true);
     expect(line(r.game, 'A', 'a2')).toMatchObject({ ast: 1, reb: 1 });
   });
+
+  it('Strength in Numbers: one assist each to the three biggest edges, the earlier slot on a tie', () => {
+    // Edges over a 10/10 defence: +5, +2, +2, +1, +3.
+    const A = [p('big', 15, 10), p('tie1', 12, 10), p('tie2', 10, 12), p('small', 11, 10), p('mid', 13, 10)];
+    const r = execCard(game({ A, hand: ['strength_in_numbers'] }), 'A', 'strength_in_numbers', {});
+    expect(r.ok).toBe(true);
+    expect(getTeam(r.game, 'A').assists).toBe(3);
+    expect(['big', 'tie1', 'tie2', 'small', 'mid'].map(id => line(r.game, 'A', id).ast)).toEqual([1, 1, 0, 0, 1]);
+    expect(r.game.log.some(l => l.msg.includes('big (+5), mid (+3), tie1 (+2) one each'))).toBe(true);
+  });
+
+  it('Grab and Go: both assists go to the player on the floor with the most rebounds this game', () => {
+    const g = game({ hand: ['grab_and_go'] });
+    getTeam(g, 'A').rebounds = 3;
+    line(g, 'A', 'a3').reb = 7;
+    line(g, 'A', 'a1').reb = 4;
+    const r = execCard(g, 'A', 'grab_and_go', {});
+    expect(r.ok).toBe(true);
+    expect(getTeam(r.game, 'A').assists).toBe(2);
+    expect(line(r.game, 'A', 'a3').ast).toBe(2);
+    expect(line(r.game, 'A', 'a1').ast).toBe(0);
+  });
+
+  it('Passing Lane: the cancelled assists come off the roller\'s own line, and never below zero', () => {
+    const B = five('b'); B[1] = p('thief', 14, 10);              // faster than the roller: one more comes off
+    const g = game({ B, hand: ['passing_lane'], who: 'B' });
+    getTeam(g, 'A').assists = 4;
+    line(g, 'A', 'a1').ast = 2;                                   // the two his roll just won
+    g.lastRoll = { teamKey: 'A', idx: 1, reb: 0, ast: 2, pts: 3, boxed: false, deflected: false };
+    const r = execCard(g, 'B', 'passing_lane', {});
+    expect(r.ok).toBe(true);
+    expect(getTeam(r.game, 'A').assists).toBe(1);                 // 2 from the roll, 1 more for the Speed edge
+    expect(line(r.game, 'A', 'a1').ast).toBe(0);                  // 2 - 3, floored
+  });
+
+  it('Pin-Down Screen costs a discard: the engine takes one, and refuses with nothing to pay', () => {
+    // No card named: the last other card in hand pays.
+    const r = dice(1, () => execCard(game({ hand: ['pin_down_screen', 'close_out', 'box_out'] }), 'A', 'pin_down_screen', { playerIdx: 0 }));
+    expect(r.ok).toBe(true);
+    expect(getTeam(r.game, 'A').hand).toEqual(['close_out']);
+    // Nothing else in hand: no play.
+    expect(execCard(game({ hand: ['pin_down_screen'] }), 'A', 'pin_down_screen', { playerIdx: 0 }).ok).toBe(false);
+  });
 });
 
 describe('a card\'s rebounds go to the player who earned them', () => {
@@ -112,6 +155,16 @@ describe('a card\'s rebounds go to the player who earned them', () => {
     const r = execCard(g, 'B', 'glass_cleaner', {});
     expect(r.ok).toBe(true);
     expect(line(r.game, 'B', 'bruiser').reb).toBe(3);
+  });
+
+  it('Box Out: the cancelled boards come off the roller\'s own line as well as the track', () => {
+    const g = game({ hand: ['box_out'], who: 'B' });
+    getTeam(g, 'A').rebounds = 2; getTeam(g, 'A').reboundsWon = 2;
+    line(g, 'A', 'a1').reb = 2;
+    g.lastRoll = { teamKey: 'A', idx: 1, reb: 2, ast: 0, pts: 3, boxed: false, deflected: false };
+    const r = execCard(g, 'B', 'box_out', {});
+    expect(r.ok).toBe(true);
+    expect(line(r.game, 'A', 'a1').reb).toBe(0);
   });
 
   it('Rim Protector: the defender who protected the rim takes the two boards on a miss', () => {

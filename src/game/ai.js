@@ -1763,7 +1763,9 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       const bestShooter = starters.reduce((b, p, i) => {
         return (p.threePtBoost || 0) > (b.boost || -99) ? { idx: i, boost: p.threePtBoost || 0 } : b;
       }, { idx: 0, boost: -99 });
-      return { playerIdx: bestShooter.idx, discardIdx: 0 };
+      // The cheapest card in hand pays for it, as for Outside Pick.
+      const others = (myT.hand || []).filter(id => id !== cardId);
+      return { playerIdx: bestShooter.idx, discardId: others[others.length - 1] };
     }
 
     case 'putback_dunk': {

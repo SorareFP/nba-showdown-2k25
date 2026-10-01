@@ -38,7 +38,10 @@ function scorePts(g, teamKey, playerId, pts) {
  */
 function creditLine(g, teamKey, playerId, stat, n = 1) {
   const ps = playerId && n ? getPS(g, teamKey, playerId) : null;
-  if (ps) ps[stat] = (ps[stat] || 0) + n;
+  // A CANCELLED STAT COMES OFF THE LINE TOO (the user, 2026-10-01, on Passing
+  // Lane: "those two assists are technically turnovers now and were 'never'
+  // assists"): a negative `n`, and a line never goes below zero.
+  if (ps) ps[stat] = Math.max(0, (ps[stat] || 0) + n);
 }
 
 /**
@@ -765,7 +768,16 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'pin_down_screen': {
-      if (opts.discardId) removeFromHand(myT, opts.discardId);
+      // THE DISCARD IS THE COST, and the engine collects it (2026-10-01). It
+      // used to discard only when handed a `discardId`; the coach's opts said
+      // `discardIdx`, which nothing read, so the AI took a free three at +5.
+      // Lob City's and Outside Pick's shape: no other card, no play; a named
+      // card if it is in hand, else the last one.
+      const pdOthers = myT.hand.filter(id => id !== 'pin_down_screen');
+      if (pdOthers.length === 0) return fail('No card to discard');
+      const pdDiscard = opts.discardId && pdOthers.includes(opts.discardId) ? opts.discardId : pdOthers[pdOthers.length - 1];
+      removeFromHand(myT, pdDiscard);
+      addLog(g, teamKey, `Pin-Down Screen: discards ${pdDiscard.replace(/_/g, ' ')}`);
       announceCheck(g, {
         teamKey, playerIdx: idx, type: '3pt', bonus: 5 + _assistShotBonus,
         // "1 assist to a teammate": not the shooter's. Which teammate is the
@@ -1287,15 +1299,21 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       break;
     }
     case 'strength_in_numbers': {
-      const allEdge = myT.starters.every((p, i) => {
+      const edges = myT.starters.map((p, i) => {
         const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i];
-        if (!p || !dp) return false;
+        if (!p || !dp) return { p, i, edge: 0 };
         const a = calcAdv(p, dp, g.tempEff[teamKey] || {}, i);
-        return Math.max(a.speedAdv, a.powerAdv) >= 1;
+        return { p, i, edge: Math.max(a.speedAdv, a.powerAdv) };
       });
-      if (!allEdge) return fail('All five of your players need at least a +1 advantage');
+      if (!edges.every(e => e.edge >= 1)) return fail('All five of your players need at least a +1 advantage');
       myT.assists += 3;
-      addLog(g, teamKey, `Strength in Numbers: every matchup has an edge — +3 AST (${myT.assists})`);
+      // Five earners and three assists: one each to the three biggest edges,
+      // the earlier lineup slot on a tie (the user, 2026-10-01: "the correct
+      // vibe").
+      const top = [...edges].sort((a, b) => b.edge - a.edge || a.i - b.i).slice(0, 3);
+      for (const e of top) creditLine(g, teamKey, e.p?.id, 'ast');
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += 3;
+      addLog(g, teamKey, `Strength in Numbers: every matchup has an edge — +3 AST (${myT.assists}): ${top.map(e => `${e.p?.name} (+${e.edge})`).join(', ')} one each`);
       break; // the wrapper below removes the card and runs the 5-assist draw
     }
     case 'energizer': {
@@ -1710,8 +1728,14 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (myT.rebounds < 3) return fail(`Need 3 rebounds (have ${myT.rebounds})`);
       myT.rebounds -= 3;
       myT.assists += 2;
+      // The card names nobody, so the assists go to the man who has been
+      // grabbing them: the player on the floor with the most rebounds this
+      // game, the earlier lineup slot on a tie (the user, 2026-10-01).
+      const boards = id => getPS(g, teamKey, id)?.reb || 0;
+      const grabber = myT.starters.filter(Boolean).reduce((best, p) => (best == null || boards(p.id) > boards(best.id) ? p : best), null);
+      creditLine(g, teamKey, grabber?.id, 'ast', 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += 2;
-      addLog(g, teamKey, 'Grab and Go: −3 REB → +2 AST');
+      addLog(g, teamKey, `Grab and Go: −3 REB → +2 AST${grabber ? ` (${grabber.name} pushes it)` : ''}`);
       break;
     }
     case 'own_the_glass': {
@@ -1832,6 +1856,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       let take = lr.reb;
       if (roller && guard && (guard.power || 0) > (roller.power || 0)) take += 1;
       const cancelled = loseRebounds(oppT, take);
+      // ...and off the roller's own line: boards he never came down with.
+      creditLine(g, lr.teamKey, roller?.id, 'reb', -cancelled);
       lr.boxed = true;
       addLog(g, teamKey, `Box Out: ${guard?.name || 'your defender'} boxes out ${roller?.name || 'the roller'} — ${cancelled} REB cancelled`);
       break;
@@ -1874,6 +1900,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (rollerA && guardA && (guardA.speed || 0) > (rollerA.speed || 0)) takeA += 1;
       const beforeA = oppT.assists || 0;
       oppT.assists = Math.max(0, beforeA - takeA);
+      // ...and off the roller's own line: passes that never arrived.
+      creditLine(g, lrA.teamKey, rollerA?.id, 'ast', -(beforeA - oppT.assists));
       lrA.deflected = true;
       addLog(g, teamKey, `Passing Lane: ${guardA?.name || 'your defender'} jumps the pass to ${rollerA?.name || 'the roller'} — ${beforeA - oppT.assists} AST cancelled`);
       break;

@@ -769,6 +769,8 @@ function cardVerdict(g, teamKey, cardId) {
       return ok();
     }
 
+    // Pin-Down Screen costs a discard, so it needs another card to pay with.
+    if (cardId === 'pin_down_screen' && myT.hand.filter(id => id !== cardId).length === 0) return no('Need another card to discard');
     // You Stand Over There and Pin-Down Screen: someone must still have a roll
     // to come, or the picker finds nobody. See preRollTargets.
     if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');

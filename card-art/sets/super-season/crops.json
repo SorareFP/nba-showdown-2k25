@@ -1079,11 +1079,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Derrick_White": {
-    "x": -1.07,
-    "y": 0,
-    "zoom": 1
-  },
   "David_Robinson": {
     "x": -12.74,
     "y": 0.94,
@@ -1094,8 +1089,8 @@
     "y": 9.21,
     "zoom": 1
   },
-  "Shawn_Marion": {
-    "x": -11.24,
+  "Derrick_White": {
+    "x": -1.07,
     "y": 0,
     "zoom": 1
   }

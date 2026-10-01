@@ -16846,8 +16846,17 @@
         0.5452
       ],
       "badge": null
+    },
+    "throwbacks/Kobe_Brown_2025": {
+      "name": [
+        0.0252,
+        0.1922,
+        0.1253,
+        0.5776
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-10-01T12:45:38.765Z",
+  "generatedAt": "2026-10-01T13:16:01.912Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

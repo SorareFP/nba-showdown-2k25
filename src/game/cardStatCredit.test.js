@@ -5,7 +5,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { newGame, getTeam, doRoll, creditPaintScore } from './engine.js';
 import { CARDS } from './cards.js';
-import { execCard, resolvePendingShotCheck } from './execCard.js';
+import { execCard, resolvePendingShotCheck, pinDownPasser } from './execCard.js';
 
 const p = (name, speed, power, extra = {}) => ({
   ...CARDS[0], id: name, name, speed, power, defBoost: 0, salary: 800,
@@ -57,12 +57,28 @@ describe('a card\'s assists go to the player who earned them', () => {
     expect(line(r.game, 'A', 'slasher').ast).toBe(0);
   });
 
-  it('Pin-Down Screen: the assist is "a teammate\'s", so it is not put on the shooter', () => {
-    const g = game({ hand: ['pin_down_screen', 'close_out'] });
+  it('Pin-Down Screen: the assist is "a teammate\'s" — the highest-salary guard beside the shooter', () => {
+    const A = [p('shooter', 10, 10, { pos: 'SG', salary: 2000 }), p('wing', 10, 10, { pos: 'SF' }),
+      p('lead', 10, 10, { pos: 'PG', salary: 900 }), p('combo', 10, 10, { pos: 'G-F', salary: 1200 }), p('big', 6, 14, { pos: 'C' })];
+    const g = game({ A, hand: ['pin_down_screen', 'close_out'] });
     const r = dice(20, () => execCard(g, 'A', 'pin_down_screen', { playerIdx: 0, discardId: 'close_out' }));
     expect(r.ok).toBe(true);
     expect(getTeam(r.game, 'A').assists).toBe(1);
-    expect(line(r.game, 'A', 'a0').ast).toBe(0);
+    // Never the shooter, though he is the dearest guard out there.
+    expect(line(r.game, 'A', 'shooter').ast).toBe(0);
+    expect(line(r.game, 'A', 'combo').ast).toBe(1);
+    expect(line(r.game, 'A', 'lead').ast).toBe(0);
+    expect(r.game.log.some(l => l.msg.includes('+1 AST (combo)'))).toBe(true);
+  });
+
+  it('Pin-Down Screen\'s passer: no guard beside him, the slowest forward; no forward either, the slowest teammate', () => {
+    const noGuard = [p('shooter', 12, 8, { pos: 'PG' }), p('quick', 13, 9, { pos: 'SF' }), p('slow', 8, 13, { pos: 'PF' }), p('c1', 5, 15, { pos: 'C' }), p('c2', 7, 14, { pos: 'C' })];
+    expect(pinDownPasser(noGuard, 0).id).toBe('slow');
+    const centres = [p('shooter', 12, 8, { pos: 'SG' }), ...['c1', 'c2', 'c3', 'c4'].map((id, i) => p(id, 9 - i, 14, { pos: 'C' }))];
+    expect(pinDownPasser(centres, 0).id).toBe('c4');
+    // A tie goes to the earlier slot.
+    const tied = [p('g1', 10, 10, { pos: 'PG', salary: 800 }), p('shooter', 10, 10, { pos: 'SG' }), p('g2', 10, 10, { pos: 'SG', salary: 800 }), p('f', 10, 10, { pos: 'SF' }), p('c', 10, 10, { pos: 'C' })];
+    expect(pinDownPasser(tied, 1).id).toBe('g1');
   });
 
   it('Short-Roll Playmaker: he gets the assist he earned by making the shot', () => {
@@ -135,6 +151,66 @@ describe('a card\'s assists go to the player who earned them', () => {
     expect(getTeam(r.game, 'A').hand).toEqual(['close_out']);
     // Nothing else in hand: no play.
     expect(execCard(game({ hand: ['pin_down_screen'] }), 'A', 'pin_down_screen', { playerIdx: 0 }).ok).toBe(false);
+  });
+});
+
+// A MAKE THE CHALLENGE OVERTURNS NEVER HAPPENED (the user, 2026-10-01): the
+// assists it paid leave the pool and the line they were written on.
+describe('Coach\'s Challenge takes back the assists an overturned make paid', () => {
+  // A hits the card's check on a 20; B challenges, and the re-roll lands on `reroll`.
+  const challenged = (g, card, opts, reroll) => {
+    const made = dice(20, () => execCard(g, 'A', card, opts)).game;
+    getTeam(made, 'B').hand = ['coaches_challenge'];
+    return { made, after: dice(reroll, () => execCard(made, 'B', 'coaches_challenge', {})) };
+  };
+
+  it('Hammer Set overturned: both assists come off the pool and off the shooter', () => {
+    const A = five('a'); A[0] = p('slasher', 13, 10);
+    const { made, after } = challenged(game({ A, hand: ['hammer_set'] }), 'hammer_set', { playerIdx: 0 }, 1);
+    expect(getTeam(made, 'A').assists).toBe(2);
+    expect(after.ok).toBe(true);
+    expect(getTeam(after.game, 'A').assists).toBe(0);
+    expect(line(after.game, 'A', 'slasher')).toMatchObject({ ast: 0, pts: 0 });
+    expect(after.game.log.some(l => l.msg.includes('2 AST taken back'))).toBe(true);
+  });
+
+  it('the call stands: a re-roll that goes in leaves the assists where they were', () => {
+    const A = five('a'); A[0] = p('slasher', 13, 10);
+    const { after } = challenged(game({ A, hand: ['hammer_set'] }), 'hammer_set', { playerIdx: 0 }, 20);
+    expect(getTeam(after.game, 'A').assists).toBe(2);
+    expect(line(after.game, 'A', 'slasher')).toMatchObject({ ast: 2, pts: 3 });
+  });
+
+  it('Pin-Down Screen overturned: the assist comes off the teammate it went to', () => {
+    const A = five('a'); A[2] = p('lead', 10, 10, { pos: 'PG', salary: 1500 });
+    const { made, after } = challenged(game({ A, hand: ['pin_down_screen', 'close_out'] }), 'pin_down_screen', { playerIdx: 0 }, 1);
+    expect(line(made, 'A', 'lead').ast).toBe(1);
+    expect(getTeam(after.game, 'A').assists).toBe(0);
+    expect(line(after.game, 'A', 'lead').ast).toBe(0);
+  });
+
+  it('assists already spent stay spent: the pool stops at zero, and a standing call returns only what was taken', () => {
+    const A = five('a'); A[0] = p('slasher', 13, 10);
+    const made = dice(20, () => execCard(game({ A, hand: ['hammer_set'] }), 'A', 'hammer_set', { playerIdx: 0 })).game;
+    getTeam(made, 'A').assists = 1;                       // one of the two already spent
+    getTeam(made, 'B').hand = ['coaches_challenge', 'coaches_challenge'];
+    const missed = dice(1, () => execCard(structuredClone(made), 'B', 'coaches_challenge', {}));
+    expect(getTeam(missed.game, 'A').assists).toBe(0);
+    const stood = dice(20, () => execCard(structuredClone(made), 'B', 'coaches_challenge', {}));
+    expect(getTeam(stood.game, 'A').assists).toBe(1);
+  });
+
+  it('Short-Roll Playmaker\'s assist on a paint make goes back with the make', () => {
+    const g = game();
+    g.tempEff.A = { paintAst0: 1 };
+    g.pendingShotCheck = { teamKey: 'A', playerIdx: 0, type: 'paint', bonus: 0, cardLabel: 'Paint check' };
+    const made = dice(20, () => resolvePendingShotCheck(g));
+    expect(line(made, 'A', 'a0').ast).toBe(1);
+    getTeam(made, 'B').hand = ['coaches_challenge'];
+    const after = dice(1, () => execCard(made, 'B', 'coaches_challenge', {}));
+    expect(after.ok).toBe(true);
+    expect(getTeam(after.game, 'A').assists).toBe(0);
+    expect(line(after.game, 'A', 'a0').ast).toBe(0);
   });
 });
 

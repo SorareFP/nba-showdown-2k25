@@ -1008,7 +1008,7 @@ export function checkNeed(g, teamKey, idx, type, { extra = 0, banked = true } = 
 export function creditPaintScore(g, teamKey, playerIdx, player) {
   g.lastPaintScore = { teamKey, playerIdx, playerId: player?.id };
   const te = g.tempEff?.[teamKey] || {};
-  if (!te['paintAst' + playerIdx]) return;
+  if (!te['paintAst' + playerIdx]) return 0;
   getTeam(g, teamKey).assists += 1;
   // The assist is his (the user, 2026-10-01: "they should get the assist that
   // they earned by making the shot").
@@ -1016,6 +1016,7 @@ export function creditPaintScore(g, teamKey, playerIdx, player) {
   if (ps) ps.ast = (ps.ast || 0) + 1;
   if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += 1;
   g.log = [...g.log, { team: teamKey, msg: `Short-Roll Playmaker: ${player?.name} scores inside — +1 AST` }];
+  return 1;
 }
 
 /**
@@ -1035,8 +1036,14 @@ export function creditPaintScore(g, teamKey, playerIdx, player) {
  * Challenge takes them back out of the same place: 'card' (the shot-check
  * tallies trackShotCheck keeps), 'assistSpend' or 'reboundBonus'. `bonus` is
  * what the re-roll adds — a number or shotCheck's parts array.
+ *
+ * `astPaid` is every assist the make paid, as { playerId, n } rows: the card's
+ * own (Hammer Set's two, Pin-Down Screen's one to a teammate) and Short-Roll
+ * Playmaker's on a paint score. A Challenge that overturns the make takes
+ * them back from the pool and from those lines (the user, 2026-10-01: a
+ * cancelled stat "never" happened).
  */
-export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, label, bonus = 0, pool = 'card', specialRoll, onHit, closeOutApplied = false }) {
+export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, label, bonus = 0, pool = 'card', specialRoll, onHit, closeOutApplied = false, astPaid = [] }) {
   g.checkSeq = (g.checkSeq || 0) + 1;
   // WHO GUARDED THE SHOT, as the check was taken (2026-09-30). A Challenge
   // reaches back through the section, and a switch card may have moved the
@@ -1049,7 +1056,7 @@ export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, lab
   const rec = {
     seq: g.checkSeq,
     teamKey, playerIdx, playerId: player?.id, type, result, pts: result.pts,
-    cardLabel: label, bonus, pool, specialRoll, onHit, closeOutApplied,
+    cardLabel: label, bonus, pool, specialRoll, onHit, closeOutApplied, astPaid,
     defenderId: getTeam(g, defKey)?.starters?.[defIdx]?.id ?? null,
   };
   g.lastShotCheck = rec;
@@ -1159,15 +1166,20 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     const r = shotCheck(player, 'paint', partsP, ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
-    noteLastCheck(ng, { teamKey, playerIdx, player, type: 'paint', result: r, label: `${SPEND_COSTS.assistPaint}-AST paint check`, bonus: partsP, pool: 'assistSpend' });
+    // Recorded after the make is paid, so the record knows the assist it paid.
+    let paintAstA = 0;
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) ps2.pts += r.pts;
       creditAllowed(ng, teamKey, playerIdx, r.pts);
       if (ng.analytics?.[teamKey]) ng.analytics[teamKey].assistSpendPts += r.pts;
-      creditPaintScore(ng, teamKey, playerIdx, player);
+      paintAstA = creditPaintScore(ng, teamKey, playerIdx, player);
     }
+    noteLastCheck(ng, {
+      teamKey, playerIdx, player, type: 'paint', result: r, label: `${SPEND_COSTS.assistPaint}-AST paint check`, bonus: partsP, pool: 'assistSpend',
+      astPaid: paintAstA ? [{ playerId: player.id, n: paintAstA }] : [],
+    });
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
     if (ng.tempEff?.[teamKey]) delete ng.tempEff[teamKey]['astBoost_' + playerIdx];
@@ -1200,15 +1212,19 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     const r = shotCheck(player, 'paint', partsR, ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
-    noteLastCheck(ng, { teamKey, playerIdx, player, type: 'paint', result: r, label: 'Rebound Paint Check', bonus: partsR, pool: 'reboundBonus' });
+    let paintAstR = 0;
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) ps2.pts += r.pts;
       creditAllowed(ng, teamKey, playerIdx, r.pts);
       if (ng.analytics?.[teamKey]) ng.analytics[teamKey].reboundBonusPts += r.pts;
-      creditPaintScore(ng, teamKey, playerIdx, player);
+      paintAstR = creditPaintScore(ng, teamKey, playerIdx, player);
     }
+    noteLastCheck(ng, {
+      teamKey, playerIdx, player, type: 'paint', result: r, label: 'Rebound Paint Check', bonus: partsR, pool: 'reboundBonus',
+      astPaid: paintAstR ? [{ playerId: player.id, n: paintAstR }] : [],
+    });
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
     // Mark as used: the published check (with a gate, once a section) and the

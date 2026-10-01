@@ -132,9 +132,9 @@ describe("the check a Coach's Challenge reaches", () => {
         // The wrapper's body — a few lines since it learned to write a
         // preview's check down instead of rolling it (cardPreview.js).
         if (lines.slice(Math.max(0, i - 12), i).some(l => /const _shotCheck/.test(l))) return;
-        // Up to the next roll (or 60 lines): applyShotCheck notes its check at the end.
+        // Up to the next roll (or 80 lines): applyShotCheck notes its check at the end.
         let end = i + 1;
-        while (end < lines.length && end < i + 60 && !/(?:_shotCheck|\bshotCheck)\(/.test(lines[end].replace(/\/\/.*$/, ''))) end += 1;
+        while (end < lines.length && end < i + 80 && !/(?:_shotCheck|\bshotCheck)\(/.test(lines[end].replace(/\/\/.*$/, ''))) end += 1;
         if (!/noteLastCheck\(/.test(lines.slice(i, end).join('\n'))) missing.push(`${file}:${i + 1}`);
       });
     }

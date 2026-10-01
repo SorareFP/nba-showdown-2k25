@@ -45,6 +45,24 @@ function creditLine(g, teamKey, playerId, stat, n = 1) {
 }
 
 /**
+ * WHO GETS PIN-DOWN SCREEN'S ASSIST (the user, 2026-10-01: "assist goes to the
+ * highest salary guard on the floor, maybe? If there's no guard, the lowest
+ * speed forward"). The card says "to a teammate", so never the shooter: the
+ * best guard beside him threw the pass, and with no guard out there the
+ * slowest forward set the screen. Four centres beside him: the slowest of
+ * them. Printed numbers; the earlier slot on a tie.
+ */
+export function pinDownPasser(starters, shooterIdx) {
+  const plays = (p, set) => String(p?.pos || '').split(/[-/]/).some(t => set.includes(t));
+  const mates = (starters || []).filter((p, i) => p && i !== shooterIdx);
+  const guards = mates.filter(p => plays(p, ['PG', 'SG', 'G']));
+  if (guards.length) return guards.reduce((best, p) => ((p.salary || 0) > (best.salary || 0) ? p : best));
+  const forwards = mates.filter(p => plays(p, ['SF', 'PF', 'F']));
+  const pool = forwards.length ? forwards : mates;
+  return pool.length ? pool.reduce((best, p) => ((p.speed || 0) < (best.speed || 0) ? p : best)) : null;
+}
+
+/**
  * What a cancelled screen put back — said on the cancel line, because a log
  * that reads "High Screen & Roll: X now guarded by Y" / "Fight Over: canceled
  * HSR" / "High Screen & Roll: X now guarded by Y" (the second copy of the
@@ -780,9 +798,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       addLog(g, teamKey, `Pin-Down Screen: discards ${pdDiscard.replace(/_/g, ' ')}`);
       announceCheck(g, {
         teamKey, playerIdx: idx, type: '3pt', bonus: 5 + _assistShotBonus,
-        // "1 assist to a teammate": not the shooter's. Which teammate is the
-        // user's call (asked 2026-10-01); until then it stays in the pool.
+        // "1 assist to a teammate": not the shooter's (pinDownPasser).
         cardLabel: 'Pin-Down Screen', onHitAst: 1, hitAstToTeammate: true,
+        hitAstTo: pinDownPasser(myT.starters, idx)?.id ?? null,
       });
       break;
     }
@@ -1216,7 +1234,20 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       } else if (ccAn) {
         ccAn[`${ccPool}Pts`] = (ccAn[`${ccPool}Pts`] || 0) - oldPts;
       }
-      if (oldResult.hit && lsc.onHit === 'ast') { ccTeam.assists--; }
+      // THE ASSISTS THE MAKE PAID GO BACK WITH IT (the user, 2026-10-01: a
+      // cancelled stat was "never" one). Out of the pool, as far as the pool
+      // still holds them (an assist already spent is spent), and off the
+      // line they were written on. A record from before the receipt existed
+      // knows only Catch & Shoot's one, and no line.
+      const ccAst = (lsc.astPaid ?? (lsc.onHit === 'ast' ? [{ playerId: null, n: 1 }] : [])).map(a => ({ ...a, took: 0 }));
+      if (oldResult.hit) {
+        for (const a of ccAst) {
+          a.took = Math.min(ccTeam.assists || 0, a.n);
+          ccTeam.assists = (ccTeam.assists || 0) - a.took;
+          creditLine(g, oppKey2, a.playerId, 'ast', -a.n);
+          if (ccAn && lsc.astPaid) ccAn.assistsFromCards = Math.max(0, (ccAn.assistsFromCards || 0) - a.n);
+        }
+      }
       // Reverse shot stats
       if (oldResult.type === '3pt') {
         if (ccPs) { ccPs.threepa = Math.max(0, (ccPs.threepa || 0) - 1); if (oldResult.hit) ccPs.threepm = Math.max(0, (ccPs.threepm || 0) - 1); }
@@ -1246,7 +1277,12 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         ccTeam.score += newR.pts;
         if (ccPs) ccPs.pts += newR.pts;
         creditAllowed(g, oppKey2, lsc.playerIdx, newR.pts);
-        if (lsc.onHit === 'ast') ccTeam.assists++;
+        // The call stands: what the reversal took comes back.
+        for (const a of ccAst) {
+          ccTeam.assists = (ccTeam.assists || 0) + a.took;
+          creditLine(g, oppKey2, a.playerId, 'ast', a.n);
+          if (ccAn && lsc.astPaid) ccAn.assistsFromCards = (ccAn.assistsFromCards || 0) + a.n;
+        }
       }
 
       // Close Out cold marker on miss still applies if original had it
@@ -1262,7 +1298,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (g.lastShotCheck && (g.lastShotCheck === lsc || g.lastShotCheck.seq === lsc.seq)) g.lastShotCheck = null;
 
       const diff = (newR.hit ? newR.pts : 0) - oldPts;
-      addLog(g, teamKey, `Coach's Challenge: ${ccPlayer.name}'s ${lsc.cardLabel} re-rolled! ${scStr(oldResult)}→${scStr(newR)} (${diff >= 0 ? '+' : ''}${diff}pts)`);
+      const ccAstBack = oldResult.hit && !newR.hit ? ccAst.reduce((n, a) => n + a.n, 0) : 0;
+      addLog(g, teamKey, `Coach's Challenge: ${ccPlayer.name}'s ${lsc.cardLabel} re-rolled! ${scStr(oldResult)}→${scStr(newR)} (${diff >= 0 ? '+' : ''}${diff}pts)${ccAstBack ? ` — ${ccAstBack} AST taken back` : ''}`);
       break;
     }
 
@@ -1994,6 +2031,10 @@ export function applyShotCheck(g, psc) {
     bonus -= 2;
   }
   const hitAst = psc.onHitAst ?? (psc.onHit === 'ast' ? 1 : 0);
+  // Every assist this make pays and whose line it went on: the Challenge's
+  // receipt (noteLastCheck).
+  const astPaid = [];
+  let astTo = null;
 
   const r = shotCheck(player, psc.type, bonus, ps, getFatigue(g, psc.teamKey, psc.playerIdx));
   recordShot(g, psc.teamKey, player?.id, psc.type, r.hit);
@@ -2021,11 +2062,17 @@ export function applyShotCheck(g, psc) {
     // Playmaker pays on it, and neither could see it before: `lastRoll` is a
     // scoring ROLL and a paint bucket is a shot check, which is a different
     // thing. Cleared at section end with the rest of the per-section state.
-    if (psc.type === 'paint') creditPaintScore(g, psc.teamKey, psc.playerIdx, player);
+    if (psc.type === 'paint') {
+      const paintAst = creditPaintScore(g, psc.teamKey, psc.playerIdx, player);
+      if (paintAst) astPaid.push({ playerId: player?.id ?? null, n: paintAst });
+    }
     if (hitAst) {
       myT.assists += hitAst;
-      // He made the shot the card asked for: the assists are on his line.
-      if (!psc.hitAstToTeammate) creditLine(g, psc.teamKey, player?.id, 'ast', hitAst);
+      // He made the shot the card asked for: the assists are on his line,
+      // unless the card says a teammate's (Pin-Down Screen names him).
+      astTo = psc.hitAstToTeammate ? (psc.hitAstTo ?? null) : (player?.id ?? null);
+      creditLine(g, psc.teamKey, astTo, 'ast', hitAst);
+      astPaid.push({ playerId: astTo, n: hitAst });
       if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards += hitAst;
     }
     if (psc.onHitHot) ps.hot = (ps.hot || 0) + 1;
@@ -2043,7 +2090,10 @@ export function applyShotCheck(g, psc) {
     ps.cold = (ps.cold || 0) + 1;
     msg += ' — Close Out! Miss → ❄️ cold marker';
   }
-  if (r.hit && hitAst) msg += ` +${hitAst} AST`;
+  if (r.hit && hitAst) {
+    const passer = psc.hitAstToTeammate && astTo ? myT.starters.find(s => s?.id === astTo) : null;
+    msg += ` +${hitAst} AST${passer ? ` (${passer.name})` : ''}`;
+  }
   if (r.hit && psc.onHitHot) msg += ' 🔥';
   if (!r.hit && psc.rimProtector) msg += ' — Rim Protector! +2 REB for the defence';
   g.log = [...g.log, { team: psc.teamKey, msg }];
@@ -2051,7 +2101,7 @@ export function applyShotCheck(g, psc) {
   // Track for Coach's Challenge — the one record every check route writes.
   noteLastCheck(g, {
     teamKey: psc.teamKey, playerIdx: psc.playerIdx, player, type: psc.type, result: r, label,
-    bonus, specialRoll: psc.specialRoll, onHit: psc.onHit, closeOutApplied: !!psc.closeOutBonus,
+    bonus, specialRoll: psc.specialRoll, onHit: psc.onHit, closeOutApplied: !!psc.closeOutBonus, astPaid,
   });
   return r;
 }

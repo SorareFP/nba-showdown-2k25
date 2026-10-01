@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T16:53:43.785Z",
+ "generatedAt": "2026-10-01T18:19:17.759Z",
  "source": "Basketball-Reference's WNBA award voting pages (rank-1 rows) and each season page's Finals result. All-Star selections are the remaining gap: they live on per-season All-Star pages this does not fetch yet.",
  "declared": [
   "MVP",
@@ -42,6 +42,16 @@
  ],
  "sets": {
   "wnba": [
+   {
+    "id": "Angel_Reese",
+    "name": "Angel Reese",
+    "season": 2026,
+    "bbrefId": "reesean01w",
+    "awards": [
+     "DPOY"
+    ],
+    "champion": null
+   },
    {
     "id": "Olivia_Miles",
     "name": "Olivia Miles",

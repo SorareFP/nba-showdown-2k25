@@ -110,6 +110,45 @@ async function loadSeasonChampion(season) {
 
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 
+/**
+ * AWARDS ENTERED BY HAND (2026-10-01).
+ *
+ * The user, minutes after the announcement: "Can you add the DPOY trophy or
+ * badge to Angel Reese? She just won the award a few moments ago." The voting
+ * page is the source for everything here, and it trails an announcement by
+ * days: asked that afternoon, it listed the season's ROY and nothing else. So
+ * a winner can be written down ahead of it, in card-data/wnba-manual-awards.json:
+ *
+ *   { "2026": { "DPOY": { "playerId": "reesean01w", "name": "Angel Reese" } } }
+ *
+ * keyed by season, then by the mark's code, with the id the archive keys on.
+ * It is a bridge, not a second source: once the page names a winner of that
+ * award the page is what prints, and an entry the page contradicts is reported
+ * rather than kept. An entry the page now agrees with can be deleted.
+ */
+export const MANUAL_AWARDS_FILE = path.join(REPO_ROOT, 'card-data', 'wnba-manual-awards.json');
+
+export function readManualAwards(file = MANUAL_AWARDS_FILE) {
+  if (!fs.existsSync(file)) return {};
+  const { _comment, ...bySeason } = readJson(file);
+  return bySeason;
+}
+
+/** One season's page winners with the hand-entered ones folded in. Pure. */
+export function mergeManualAwards(winners, byCode) {
+  const codes = new Set(Object.values(AWARD_TABLES));
+  const out = { ...winners };
+  const notes = [];
+  for (const [code, entry] of Object.entries(byCode ?? {})) {
+    if (!codes.has(code) || !entry?.playerId) { notes.push(`manual ${code}: not an award this reads, skipped`); continue; }
+    const listed = winners[code];
+    if (!listed) { out[code] = { playerId: entry.playerId, name: entry.name }; notes.push(`manual ${code}: ${entry.name ?? entry.playerId} (not on the voting page yet)`); }
+    else if (listed.playerId === entry.playerId) notes.push(`manual ${code}: the voting page agrees now — the entry can go`);
+    else notes.push(`manual ${code}: the voting page says ${listed.name ?? listed.playerId}, NOT ${entry.name ?? entry.playerId} — the page wins`);
+  }
+  return { winners: out, notes };
+}
+
 export async function main({ log = console.log } = {}) {
   const setFiles = {
     wnba: 'cards-wnba.json',
@@ -153,6 +192,18 @@ export async function main({ log = console.log } = {}) {
       championBySeason.set(season, null);
     }
     if (!hadChampion) { fetched += 1; await politeDelay(DEFAULT_REQUEST_SPACING_MS); }
+  }
+
+  // AN AWARD THE SITE DOES NOT LIST YET (manual-awards.json). A hand-entered
+  // winner joins the season's; the page's own winner of that award wins once
+  // it is there, and a hand entry it disagrees with is said out loud.
+  const manual = readManualAwards();
+  for (const [seasonKey, byCode] of Object.entries(manual)) {
+    const season = Number(seasonKey);
+    if (!seasonsNeeded.has(season)) continue;
+    const { winners, notes } = mergeManualAwards(awardsBySeason.get(season) ?? {}, byCode);
+    awardsBySeason.set(season, winners);
+    for (const note of notes) log(`  ${season}: ${note}`);
   }
 
   for (const [set, cards] of Object.entries(cardsBySet)) {

@@ -1,0 +1,6 @@
+{
+  "_comment": "WNBA awards entered by hand, for a winner Basketball-Reference's voting page does not list yet (generateWnbaAwards.js). Season, then the mark's code (MVP, ROY, DPOY, 6MOY, MIP), then the player's Basketball-Reference id and name. The voting page wins once it names that award's winner; delete an entry when the generator says the page agrees. After an edit: node scripts/cardgen/wnba/generateWnbaAwards.js, then re-export the card's face.",
+  "2026": {
+    "DPOY": { "playerId": "reesean01w", "name": "Angel Reese" }
+  }
+}

@@ -1,6 +1,6 @@
 {
  "set": "throwbacks",
- "generatedAt": "2026-09-30T23:00:17.767Z",
+ "generatedAt": "2026-10-01T13:10:16.987Z",
  "note": "CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json, plus demoted-super-seasons.json). Retired rewards that qualify for no other set, and Super Seasons that are no longer a Super Season (a Rookie card of the player's out-priced them, or the value pick chose another season). Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.",
  "cards": [
   {
@@ -6671,77 +6671,6 @@
    }
   },
   {
-   "id": "Trendon_Watford_2023",
-   "name": "Trendon Watford",
-   "team": "POR",
-   "pos": "PF",
-   "speed": 5,
-   "power": 7,
-   "shotLine": 14,
-   "paintBoost": -1,
-   "threePtBoost": -3,
-   "defBoost": 0,
-   "salary": 350,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 4,
-     "hi": 13,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 22,
-   "games": 62,
-   "mpg": 19.1,
-   "bbrefId": "watfotr01",
-   "traded": false,
-   "metrics": {
-    "bpm": -1.8,
-    "vorp": 0.1,
-    "ws": 2.1,
-    "ws48": 0.084,
-    "per": 13.6
-   },
-   "provisional": false,
-   "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2021-22 $410 against $350, 2026-09-22)",
-   "demotedFrom": {
-    "set": "super-season",
-    "id": "Trendon_Watford"
-   }
-  },
-  {
    "id": "Tyrese_Martin_2025",
    "name": "Tyrese Martin",
    "team": "BKN",
@@ -6810,6 +6739,155 @@
    "demotedFrom": {
     "set": "super-season",
     "id": "Tyrese_Martin"
+   }
+  },
+  {
+   "id": "Trendon_Watford_2023",
+   "name": "Trendon Watford",
+   "team": "POR",
+   "pos": "PF",
+   "speed": 4,
+   "power": 7,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": -3,
+   "defBoost": 0,
+   "salary": 320,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 22,
+   "games": 62,
+   "mpg": 19.1,
+   "bbrefId": "watfotr01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.8,
+    "vorp": 0.1,
+    "ws": 2.1,
+    "ws48": 0.084,
+    "per": 13.6
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "best season is the current one — its card is stronger (retired 2026-09-30)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Trendon_Watford"
+   }
+  },
+  {
+   "id": "Kobe_Brown_2025",
+   "name": "Kobe Brown",
+   "team": "LAC",
+   "pos": "PF",
+   "speed": 4,
+   "power": 6,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 200,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 9,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 23,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": 25,
+   "games": 40,
+   "mpg": 6.8,
+   "bbrefId": "brownko01",
+   "traded": false,
+   "metrics": {
+    "bpm": -2.1,
+    "vorp": 0,
+    "ws": 0.5,
+    "ws48": 0.085,
+    "per": 10.8
+   },
+   "provisional": true,
+   "set": "throwbacks",
+   "demoted": "best season is the current one — its card is stronger (retired 2026-10-01)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Kobe_Brown"
    }
   }
  ]

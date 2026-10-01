@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T22:55:23.467Z",
+ "generatedAt": "2026-10-01T13:09:47.963Z",
  "set": "2026-27",
  "provisional": true,
  "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
@@ -15,10 +15,10 @@
   "live"
  ],
  "counts": {
-  "players": 175,
+  "players": 177,
   "applies": {
    "rookie": 33,
-   "super-season": 175,
+   "super-season": 177,
    "best-season": 0,
    "summer-standout": 0,
    "dissonance": 0,
@@ -30,7 +30,7 @@
   "printed": {
    "rookie": 33,
    "super-season": 17,
-   "best-season": 125,
+   "best-season": 127,
    "summer-standout": 0,
    "dissonance": 0,
    "team-reward": 0,
@@ -731,6 +731,13 @@
    ]
   },
   {
+   "id": "Kobe_Brown",
+   "name": "Kobe Brown",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
    "id": "Kobe_Sanders",
    "name": "Kobe Sanders",
    "badges": [
@@ -1193,6 +1200,13 @@
   {
    "id": "Tre_Mann",
    "name": "Tre Mann",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Trendon_Watford",
+   "name": "Trendon Watford",
    "badges": [
     "super-season"
    ]

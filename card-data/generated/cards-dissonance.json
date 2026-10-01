@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T22:55:26.568Z",
+ "generatedAt": "2026-10-01T13:09:51.417Z",
  "set": "dissonance",
  "provisional": true,
  "sources": {
@@ -1673,12 +1673,12 @@
    "team": "ATL",
    "pos": "PF",
    "speed": 6,
-   "power": 7,
+   "power": 6,
    "shotLine": 16,
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 390,
+   "salary": 360,
    "chart": [
     {
      "lo": 1,
@@ -1825,12 +1825,12 @@
    "team": "HOU03",
    "pos": "SF",
    "speed": 5,
-   "power": 6,
+   "power": 5,
    "shotLine": 15,
    "paintBoost": -2,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 210,
+   "salary": 180,
    "chart": [
     {
      "lo": 1,
@@ -1893,13 +1893,13 @@
    "name": "Rajon Rondo",
    "team": "CLE17",
    "pos": "PG",
-   "speed": 8,
-   "power": 5,
+   "speed": 7,
+   "power": 4,
    "shotLine": 17,
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 460,
+   "salary": 380,
    "chart": [
     {
      "lo": 1,
@@ -2046,12 +2046,12 @@
    "team": "LAL",
    "pos": "PG",
    "speed": 9,
-   "power": 5,
+   "power": 4,
    "shotLine": 17,
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -4,
-   "salary": 360,
+   "salary": 330,
    "chart": [
     {
      "lo": 1,

@@ -1753,7 +1753,8 @@ describe('the season and the card-type badge', () => {
     // Robinson and Tyrese Martin's Super Season cards came back and their base
     // cards lost the pill; Camara's and Watford's base cards gained it.
     // 142 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back.
-    expect(superSeason.length).toBe(142);
+    // 144 on 2026-10-01, the shrink only pulls down: Kobe Brown's Super Season and Trendon Watford's fall under their base cards, which wear the badge instead.
+    expect(superSeason.length).toBe(144);
     for (const player of superSeason) {
       const html = render({ card: player, set: CURRENT_SET });
       expect(html, player.name).not.toContain('ROOKIE');
@@ -1806,9 +1807,9 @@ describe('the season and the card-type badge', () => {
     expect(gilded.length).toBe(17);
     // 125 on 2026-09-07: the beaten-by-base rule's 39 are mostly cheap role
     // players, so nearly all of them land on the BEST SEASON side of the line.
-    expect(superSeason.length - gilded.length).toBe(125);
+    expect(superSeason.length - gilded.length).toBe(127);
     expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(17);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(125);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(127);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 

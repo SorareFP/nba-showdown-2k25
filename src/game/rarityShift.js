@@ -36,9 +36,11 @@
 // yet, each once, each on its own receipt and its own floor at zero.
 import first from '../../card-data/generated/rarity-shift.json' with { type: 'json' };
 import second from '../../card-data/generated/rarity-shift-2.json' with { type: 'json' };
+// 2026-10-01: a short season below replacement is no longer pulled up (four cards, uncommon to common).
+import third from '../../card-data/generated/rarity-shift-3.json' with { type: 'json' };
 
 /** Every table, oldest first: `{ id, cutoff, shifts: { cardKey: { from, to, coins } } }`. */
-export const RARITY_SHIFTS = [first, second].filter(t => t?.id);
+export const RARITY_SHIFTS = [first, second, third].filter(t => t?.id);
 
 /** The newest table: its id is what the client remembers as settled, its cutoff who can be owed. */
 export const RARITY_SHIFT = RARITY_SHIFTS.at(-1) ?? null;

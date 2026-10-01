@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'short-bad-seasons-as-played', date: '2026-10-01', title: 'Short, rough seasons are priced as they were played',
+    body: "A short season that went badly used to be nudged up toward an average bench player, while a full season of the same play was not. Now a below-average season counts as it was played, however short. 39 rookie cards and a handful of others came down, most by about $30. Four cards went from uncommon to common, and each copy you held pays 3 coins, once.",
+    to: 'collection', cta: 'Collection',
+  },
+  {
     id: 'suggestion-box', date: '2026-10-01', title: 'A suggestion box',
     body: "Found a bug, want a card, or have an idea? Home has a new Suggest something button. Pick what it is about, write it, and send. It goes straight to the people making the game.",
   },

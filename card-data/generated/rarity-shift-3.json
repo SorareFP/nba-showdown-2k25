@@ -1,0 +1,68 @@
+{
+ "note": "RARITY SHIFT — card keys whose rarity moved between the cards as shipped (`from`) and now; each copy held before `cutoff` is owed `coins` (negative for a card that moved up), the total floored at zero, once per account under claims/<id>. Written by scripts/cardgen/rarityShift.mjs; read by src/game/rarityShift.js.",
+ "id": "rarity-shift:2026-10-01",
+ "from": "821c739d",
+ "fromCommit": "821c739df06fd065f65045270ee46475011a7639",
+ "cutoff": "2026-10-01T13:11:14.754Z",
+ "rates": {
+  "common": 2,
+  "uncommon": 5,
+  "rare": 45,
+  "super-rare": 100,
+  "legendary": 250
+ },
+ "summary": {
+  "keys": 4,
+  "down": 4,
+  "up": 0,
+  "moves": {
+   "uncommon -> common": 4
+  }
+ },
+ "shifts": {
+  "dissonance:Rajon_Rondo": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Rajon Rondo",
+   "season": "2021-22",
+   "salary": [
+    460,
+    380
+   ]
+  },
+  "rookie:Craig_Porter_Jr": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Craig Porter Jr.",
+   "season": "2023-24",
+   "salary": [
+    420,
+    340
+   ]
+  },
+  "rookie:Dell_Curry": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Dell Curry",
+   "season": "1986-87",
+   "salary": [
+    460,
+    370
+   ]
+  },
+  "rookie:Karlo_Matkovic": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Karlo Matković",
+   "season": "2024-25",
+   "salary": [
+    440,
+    370
+   ]
+  }
+ }
+}

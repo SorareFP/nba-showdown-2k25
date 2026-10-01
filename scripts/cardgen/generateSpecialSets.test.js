@@ -512,7 +512,8 @@ describe('the base set\'s badges', () => {
     // 223 after the real-log rebuild: Duncan 2001-02, David Robinson 1990-91,
     // Yao 2008-09, Kirilenko 2004-05 and Marion 2006-07 back from Throwbacks,
     // once real games priced the rookie cards that had beaten them.
-    expect(SUPER.cards.length).toBe(223);
+    // 222 on 2026-10-01, the shrink only pulls down: Kobe Brown's Super Season and Trendon Watford's fall under their base cards, which wear the badge instead (Brown's leaves the set; Watford's was a Throwback already).
+    expect(SUPER.cards.length).toBe(222);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -669,7 +670,8 @@ describe('the base set\'s badges', () => {
     // 124/18 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back.
     // 125/17 on 2026-09-30, the three-line reprice: one more base card fell
     // under SUPER_SEASON_MIN_SALARY.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(125);
+    // 127 on 2026-10-01, the shrink only pulls down: Kobe Brown's Super Season and Trendon Watford's fall under their base cards, which wear the badge instead.
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(127);
     // 19 on 2026-09-29: three base cards handed the pill back to their
     // returning Super Season cards, two took it (see the 206 above).
     expect(counts.printed[SUPER_SEASON_BADGE]).toBe(17);

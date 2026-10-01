@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-01T12:43:22.781Z",
+ "generatedAt": "2026-10-01T13:09:47.219Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -845,7 +845,17 @@
    "badge": "super-season"
   },
   {
+   "name": "Trendon Watford",
+   "reason": "best season is the current one — its card is stronger",
+   "badge": "super-season"
+  },
+  {
    "name": "Jalen Pickett",
+   "reason": "best season is the current one — its card is stronger",
+   "badge": "super-season"
+  },
+  {
+   "name": "Kobe Brown",
    "reason": "best season is the current one — its card is stronger",
    "badge": "super-season"
   },
@@ -895,7 +905,7 @@
    "badge": "super-season"
   }
  ],
- "excludedCount": 175,
+ "excludedCount": 177,
  "excludedThin": [],
  "excludedThinCount": 0,
  "demoted": [
@@ -907,30 +917,9 @@
    "to": "throwbacks",
    "id": "Mitchell_Robinson_2020",
    "reason": "the player's Rookie card is stronger — a Throwback instead"
-  },
-  {
-   "name": "Trendon Watford",
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "salary": 350,
-   "to": "throwbacks",
-   "id": "Trendon_Watford_2023",
-   "reason": "the player's Rookie card is stronger — a Throwback instead"
   }
  ],
  "valueRepicks": [
-  {
-   "name": "Jayson Tatum",
-   "bbrefId": "tatumja01",
-   "from": {
-    "season": 2025,
-    "salary": 1620
-   },
-   "to": {
-    "season": 2023,
-    "salary": 1830
-   }
-  },
   {
    "name": "Jaden McDaniels",
    "bbrefId": "mcdanja02",
@@ -976,7 +965,7 @@
    },
    "to": {
     "season": 2024,
-    "salary": 570
+    "salary": 520
    }
   },
   {
@@ -989,102 +978,6 @@
    "to": {
     "season": 2020,
     "salary": 460
-   }
-  },
-  {
-   "name": "Luka Dončić",
-   "bbrefId": "doncilu01",
-   "from": {
-    "season": 2020,
-    "salary": 1980
-   },
-   "to": {
-    "season": 2024,
-    "salary": 2150
-   }
-  },
-  {
-   "name": "Paul Pierce",
-   "bbrefId": "piercpa01",
-   "from": {
-    "season": 2005,
-    "salary": 1320
-   },
-   "to": {
-    "season": 2002,
-    "salary": 1410
-   }
-  },
-  {
-   "name": "Michael Jordan",
-   "bbrefId": "jordami01",
-   "from": {
-    "season": 1990,
-    "salary": 2030
-   },
-   "to": {
-    "season": 1989,
-    "salary": 2090
-   }
-  },
-  {
-   "name": "Kobe Bryant",
-   "bbrefId": "bryanko01",
-   "from": {
-    "season": 2009,
-    "salary": 1480
-   },
-   "to": {
-    "season": 2006,
-    "salary": 1630
-   }
-  },
-  {
-   "name": "David Robinson",
-   "bbrefId": "robinda01",
-   "from": {
-    "season": 1994,
-    "salary": 1500
-   },
-   "to": {
-    "season": 1991,
-    "salary": 1540
-   }
-  },
-  {
-   "name": "Dominique Wilkins",
-   "bbrefId": "wilkido01",
-   "from": {
-    "season": 1987,
-    "salary": 1560
-   },
-   "to": {
-    "season": 1988,
-    "salary": 1640
-   }
-  },
-  {
-   "name": "Shawn Marion",
-   "bbrefId": "mariosh01",
-   "from": {
-    "season": 2006,
-    "salary": 1080
-   },
-   "to": {
-    "season": 2007,
-    "salary": 1110
-   }
-  },
-  {
-   "name": "Antawn Jamison",
-   "bbrefId": "jamisan01",
-   "from": {
-    "season": 2008,
-    "salary": 820
-   },
-   "to": {
-    "season": 2001,
-    "salary": 940
    }
   }
  ],
@@ -1286,6 +1179,13 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
+   "name": "Dominique Wilkins",
+   "bbrefId": "wilkido01",
+   "season": 1987,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
    "name": "Draymond Green",
    "bbrefId": "greendr01",
    "season": 2016,
@@ -1391,6 +1291,13 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
+   "name": "Jayson Tatum",
+   "bbrefId": "tatumja01",
+   "season": 2025,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
    "name": "Jimmy Butler",
    "bbrefId": "butleji01",
    "season": 2023,
@@ -1468,6 +1375,13 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
+   "name": "Kobe Bryant",
+   "bbrefId": "bryanko01",
+   "season": 2009,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
    "name": "Kyle Kuzma",
    "bbrefId": "kuzmaky01",
    "season": 2022,
@@ -1496,6 +1410,13 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
+   "name": "Luka Dončić",
+   "bbrefId": "doncilu01",
+   "season": 2020,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
    "name": "Luke Kennard",
    "bbrefId": "kennalu01",
    "season": 2025,
@@ -1521,6 +1442,13 @@
    "bbrefId": "jordami01",
    "season": 1988,
    "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Michael Jordan",
+   "bbrefId": "jordami01",
+   "season": 1990,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
@@ -1563,6 +1491,13 @@
    "bbrefId": "gasolpa01",
    "season": 2011,
    "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Paul Pierce",
+   "bbrefId": "piercpa01",
+   "season": 2005,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
@@ -1636,45 +1571,10 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Dominique Wilkins",
-   "bbrefId": "wilkido01",
-   "season": 1987,
-   "since": "2026-09-30",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Jayson Tatum",
-   "bbrefId": "tatumja01",
+   "name": "Kobe Brown",
+   "bbrefId": "brownko01",
    "season": 2025,
-   "since": "2026-09-30",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Kobe Bryant",
-   "bbrefId": "bryanko01",
-   "season": 2009,
-   "since": "2026-09-30",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Luka Dončić",
-   "bbrefId": "doncilu01",
-   "season": 2020,
-   "since": "2026-09-30",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Michael Jordan",
-   "bbrefId": "jordami01",
-   "season": 1990,
-   "since": "2026-09-30",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Paul Pierce",
-   "bbrefId": "piercpa01",
-   "season": 2005,
-   "since": "2026-09-30",
+   "since": "2026-10-01",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   }
  ],
@@ -8322,12 +8222,12 @@
    "team": "IND",
    "pos": "PF",
    "speed": 5,
-   "power": 7,
+   "power": 6,
    "shotLine": 14,
    "paintBoost": -3,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 390,
+   "salary": 360,
    "chart": [
     {
      "lo": 1,
@@ -10513,78 +10413,6 @@
     "per": 20.8
    },
    "provisional": false
-  },
-  {
-   "id": "Kobe_Brown",
-   "name": "Kobe Brown",
-   "team": "LAC",
-   "pos": "PF",
-   "speed": 6,
-   "power": 8,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": -2,
-   "defBoost": 0,
-   "salary": 330,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 9,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 19,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 20,
-     "hi": 23,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 25,
-   "games": 40,
-   "mpg": 6.8,
-   "bbrefId": "brownko01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.1,
-    "vorp": 0,
-    "ws": 0.5,
-    "ws48": 0.085,
-    "per": 10.8
-   },
-   "provisional": true
   },
   {
    "id": "Kobe_Bryant",
@@ -13369,13 +13197,13 @@
    "name": "Rob Dillingham",
    "team": "MIN18",
    "pos": "PG",
-   "speed": 8,
-   "power": 5,
+   "speed": 7,
+   "power": 4,
    "shotLine": 17,
    "paintBoost": 3,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 360,
+   "salary": 300,
    "chart": [
     {
      "lo": 1,
@@ -14430,12 +14258,12 @@
    "team": "MIN18",
    "pos": "SG",
    "speed": 7,
-   "power": 7,
+   "power": 6,
    "shotLine": 17,
    "paintBoost": 3,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 530,
+   "salary": 480,
    "chart": [
     {
      "lo": 1,

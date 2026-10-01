@@ -391,13 +391,15 @@ export function historicalComposite(season, basis, weights = COMPOSITE_WEIGHTS) 
   // a Hawk is still played by the 2003-04 Rasheed Wallace.
   const evidence = season.trustMinutes ?? season.minutes ?? 0;
   let trust = rated ? Math.min(Math.max(evidence / fullMinutes, 0), 1) : 0;
-  // TRIAL (2026-10-01): below replacement, `raise` trusts every season only as
-  // much as the shortest a Rookie card may be (600 of 1500 minutes), so a full
-  // season sits no further below than a short one could; `honest` trusts
-  // every rated season fully, so a short bad season is not pulled up.
-  const mode = process.env.BELOW_REPLACEMENT;
-  if (rated && raw < replacement && mode === 'raise') trust = Math.min(trust, 600 / FULL_SEASON_MINUTES);
-  if (rated && raw < replacement && mode === 'honest') trust = 1;
+  // THE SHRINK ONLY PULLS DOWN (2026-10-01). It exists to stop a hot week
+  // reading as a great player; applied below replacement it did the reverse
+  // and pulled a short BAD season up, where a full season of the same play
+  // kept its full badness. A rated season below replacement is now taken as
+  // it is. Trialled both ways first (branch trial/below-replacement): this
+  // moved 47 cards down; the other (capping every bad season's trust at the
+  // shortest season's) bunched 72 bad full seasons up at one number. The
+  // user, shown both: "Go for it."
+  if (rated && raw < replacement) trust = 1;
   return trust * raw + (1 - trust) * replacement;
 }
 

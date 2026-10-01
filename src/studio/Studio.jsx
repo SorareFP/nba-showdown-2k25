@@ -51,6 +51,7 @@ import { photoState, needsPhoto } from './photoNeeds.js';
 import { readSeen, writeSeen, markSeen, markAllSeen, unseenPhotos } from './photoSeen.js';
 import { DORMANT_KEYS } from '../game/cardSets.js';
 import RequestsPanel from './RequestsPanel.jsx';
+import SuggestionsPanel from './SuggestionsPanel.jsx';
 import PhotoHuntPanel, { huntRows } from './PhotoHuntPanel.jsx';
 import { huntTarget, stratSearchUrl } from './photoSearch.js';
 
@@ -129,6 +130,9 @@ export default function Studio() {
   // every set, read from this state, so it never drifts the way the published
   // page does the moment a photo is dropped.
   const [showHunt, setShowHunt] = useState(false);
+  // The suggestion box's inbox (SuggestionsPanel.jsx); the count is known once it has been opened.
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [newSuggestions, setNewSuggestions] = useState(null);
   const [selectedId, setSelectedId] = useState(SOURCES[DEFAULT_SOURCE].players[0]?.id ?? null);
   const [saveStatus, setSaveStatus] = useState('idle');
   const [notice, setNotice] = useState(null);
@@ -560,6 +564,9 @@ export default function Studio() {
         <button type="button" className={styles.setBadge} onClick={() => setShowRequests(true)} title="Free Agent requests">
           Requests
         </button>
+        <button type="button" className={styles.setBadge} onClick={() => setShowSuggestions(true)} title="What players sent through the suggestion box">
+          Suggestions{newSuggestions ? ` · ${newSuggestions} new` : ''}
+        </button>
         <button type="button" className={styles.setBadge} onClick={() => setShowHunt(true)} title="Every card still owed a photo, live">
           Photo Hunt · {huntCount}
         </button>
@@ -846,6 +853,7 @@ export default function Studio() {
       )}
 
       {showRequests && <RequestsPanel onClose={() => setShowRequests(false)} />}
+      {showSuggestions && <SuggestionsPanel onClose={() => setShowSuggestions(false)} onCount={setNewSuggestions} />}
       {showHunt && (
         <PhotoHuntPanel
           sources={SOURCES}

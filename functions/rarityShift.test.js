@@ -64,6 +64,7 @@ vi.mock('./shared/src/game/modes/dynasty.js', () => import('../src/game/modes/dy
 vi.mock('./shared/src/game/modes/dynastyFriends.js', () => import('../src/game/modes/dynastyFriends.js'));
 vi.mock('./shared/src/game/modes/seasonPack.js', () => import('../src/game/modes/seasonPack.js'));
 vi.mock('./shared/src/game/rarityShift.js', () => import('../src/game/rarityShift.js'));
+vi.mock('./shared/src/game/suggestions.js', () => import('../src/game/suggestions.js'));
 
 const { settleRarityShift } = await import('./index.js');
 const { RARITY_SHIFTS } = await import('../src/game/rarityShift.js');

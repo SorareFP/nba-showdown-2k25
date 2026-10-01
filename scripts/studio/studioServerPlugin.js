@@ -195,6 +195,34 @@ function readJsonFile(path, fallback) {
   }
 }
 
+/**
+ * THE SUGGESTION INBOX (2026-10-01): where the Studio's Suggestions panel
+ * saves the queue for Claude to read at the start of a session
+ * (src/game/suggestions.js has the story).
+ *
+ * docs/suggestions/ is GITIGNORED. This repository is public, and the file
+ * holds players' names and what they wrote; it stays on this machine. No
+ * email and no account id are written to it either.
+ */
+export const SUGGESTION_INBOX = 'docs/suggestions/inbox.json';
+const INBOX_FIELDS = ['id', 'kind', 'text', 'screen', 'status', 'outcome', 'name', 'trusted', 'createdAt', 'answeredAt'];
+
+/** The inbox with `incoming` folded in by id (a later copy of a suggestion replaces the earlier one), newest first. */
+export function mergeSuggestionInbox(existing, incoming, now = new Date()) {
+  const byId = new Map((existing?.items ?? []).filter(i => i?.id).map(i => [i.id, i]));
+  for (const row of incoming ?? []) {
+    if (!row?.id) continue;
+    byId.set(row.id, Object.fromEntries(INBOX_FIELDS.filter(f => row[f] !== undefined).map(f => [f, row[f]])));
+  }
+  const items = [...byId.values()].sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+  return {
+    note: 'The suggestion box, saved by the Card Studio (Suggestions panel) for Claude to read. Gitignored: it names players. status new = not yet looked at.',
+    savedAt: now.toISOString(),
+    open: items.filter(i => i.status === 'new').length,
+    items,
+  };
+}
+
 function json(res, status, body) {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json');
@@ -463,6 +491,21 @@ export function studioServerPlugin() {
       );
 
       server.middlewares.use('/__studio/crops', writeJsonRoute(s => s.crops));
+      // POST the suggestion queue; it is merged into the local, gitignored inbox.
+      server.middlewares.use(
+        '/__studio/suggestions',
+        guard(async (req, res) => {
+          if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
+          const body = await bodyJson(req);
+          const file = resolve(server.config.root, SUGGESTION_INBOX);
+          mkdirSync(resolve(file, '..'), { recursive: true });
+          const inbox = mergeSuggestionInbox(readJsonFile(file, null), body.items ?? []);
+          writeFileSync(file, `${JSON.stringify(inbox, null, 2)}
+`);
+          json(res, 200, { ok: true, saved: inbox.items.length, open: inbox.open, file: SUGGESTION_INBOX });
+        })
+      );
+
       server.middlewares.use(
         '/__studio/teams',
         writeJsonRoute(s => s.teams, { editableOnly: false })

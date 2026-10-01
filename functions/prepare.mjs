@@ -79,6 +79,8 @@ const COPY = [
   // The one-time settlement for cards that changed rarity (2026-09-30) and
   // its table, rarity-shift.json, below.
   'src/game/rarityShift.js',
+  // The suggestion box's kinds, limits and check (submitSuggestion).
+  'src/game/suggestions.js',
 ];
 
 /** The generated card data those modules import. */

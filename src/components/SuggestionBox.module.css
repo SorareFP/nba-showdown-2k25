@@ -1,0 +1,88 @@
+/* The suggestion form: the ask sheet's look (ui/dialogs.module.css) and the
+ * motion tokens, with a textarea where the sheet has one line. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(3, 8, 18, 0.72);
+  animation: fadeIn var(--dur-quick) var(--ease-out) both;
+}
+.box {
+  width: min(480px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  background: #0F1E35;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+  animation: boxIn var(--dur-beat) var(--ease-punch) both;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes boxIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.title { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.35; }
+.body { margin: 8px 0 0; font-size: 13px; line-height: 1.55; color: var(--text-muted); }
+.kinds { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.kind {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--dur-quick) var(--ease-out);
+}
+.kind:hover { background: rgba(255, 255, 255, 0.11); color: var(--text); }
+.kindOn, .kindOn:hover { background: rgba(234, 88, 12, 0.2); border-color: var(--orange); color: var(--text); }
+.text {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--navy);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.text:focus-visible, .kind:focus-visible, .send:focus-visible, .cancel:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.meta { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; font-size: 12px; min-height: 18px; }
+.count { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.error { color: #FFB4B4; }
+.foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.cancel, .send {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--dur-quick) var(--ease-out);
+}
+.cancel { background: rgba(255, 255, 255, 0.07); border: 1px solid var(--border); color: var(--text-muted); }
+.cancel:hover { background: rgba(255, 255, 255, 0.13); color: var(--text); }
+.send { background: var(--orange); border: 1px solid var(--orange); color: #fff; }
+.send:hover { background: var(--orange-light); }
+.send:disabled, .cancel:disabled { opacity: 0.5; cursor: default; }
+@media (max-width: 520px) {
+  .foot { flex-direction: column-reverse; }
+  .cancel, .send { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .backdrop, .box { animation: none; }
+}

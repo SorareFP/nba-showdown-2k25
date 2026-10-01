@@ -23,6 +23,10 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'suggestion-box', date: '2026-10-01', title: 'A suggestion box',
+    body: "Found a bug, want a card, or have an idea? Home has a new Suggest something button. Pick what it is about, write it, and send. It goes straight to the people making the game.",
+  },
+  {
     id: 'dogged-until-benched-curry-11', date: '2026-10-01', title: 'Dogged lasts until benched; Curry shoots threes on 11',
     body: "Dogged now does what it says: the −2 Speed and −2 Power stay on the player in every section until he sits one, wherever he lines up. It used to wear off at the end of the section. And Stephen Curry's 2015-16 card (45% from three on 11 attempts a game) is the one card in the game whose three-point check needs an 11. Every other card's floor stays at 12.",
     to: 'collection', cta: 'Collection',

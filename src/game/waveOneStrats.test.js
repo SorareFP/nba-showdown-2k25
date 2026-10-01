@@ -242,10 +242,18 @@ describe('scoring-phase wave-one cards', () => {
   it('Lob City discards a card and pays per 15+ player', () => {
     const A = five('a'); A[0] = p('flyer', 15, 10); A[1] = p('runner', 16, 10); A[2] = p('dunker', 10, 15);
     const g = game({ A, hand: ['lob_city', 'close_out'] });
+    for (const id of ['flyer', 'runner', 'dunker']) getTeam(g, 'A').stats.push({ id, pts: 0, reb: 0, ast: 0, minutes: 0 });
     const r = play(g, 'lob_city', { discardId: 'close_out' });
     expect(r.ok).toBe(true);
     expect(getTeam(r.game, 'A').assists).toBe(2);
     expect(getTeam(r.game, 'A').score).toBe(2);
+    // Each player gets what he earned, on his own line (2026-10-01): the two
+    // Speed 15+ players an assist apiece, the Power 15+ player his 2 points.
+    const line = id => getTeam(r.game, 'A').stats.find(s => s.id === id);
+    expect([line('flyer').ast, line('runner').ast, line('dunker').ast]).toEqual([1, 1, 0]);
+    expect([line('flyer').pts, line('runner').pts, line('dunker').pts]).toEqual([0, 0, 2]);
+    expect(log(r.game, 'Lob City')[0].msg).toContain('scores 2 (Power 15+)');
+    expect(log(r.game, 'Lob City')[0].msg).toMatch(/\+1 AST each \(Speed 15\+\)/);
     expect(getTeam(r.game, 'A').hand).toEqual([]);
     expect(canPlayCard(game({ A, hand: ['lob_city'] }), 'A', 'lob_city').canPlay).toBe(false);
   });

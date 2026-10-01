@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'lob-city-credits-players', date: '2026-10-01', title: 'Lob City credits each player',
+    body: "Lob City's assists now go on the stat line of each Speed 15+ player who earned one, the way its 2 points already went to each Power 15+ player, and the game log names who got what.",
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'short-bad-seasons-as-played', date: '2026-10-01', title: 'Short, rough seasons are priced as they were played',
     body: "A short season that went badly used to be nudged up toward an average bench player, while a full season of the same play was not. Now a below-average season counts as it was played, however short. 39 rookie cards and a handful of others came down, most by about $30. Four cards went from uncommon to common, and each copy you held pays 3 coins, once.",
     to: 'collection', cta: 'Collection',

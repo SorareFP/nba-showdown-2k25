@@ -1561,13 +1561,25 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (others.length === 0) return fail('No card to discard');
       const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
       removeFromHand(myT, discard);
+      // EACH PLAYER GETS WHAT HE EARNED (the user, 2026-10-01: "points and
+      // assists from the card should be assigned to the players that earn
+      // them"). The dunks were always credited through scorePts; the assists
+      // went to the team's pool and onto nobody's line, and the log gave two
+      // totals and no names.
       let ast = 0, pts = 0;
+      const passers = [], dunkers = [];
       myT.starters.forEach(p => {
         if (!p) return;
-        if ((p.speed || 0) >= 15) ast += 1;
-        if ((p.power || 0) >= 15) { pts += 2; scorePts(g, teamKey, p.id, 2); }
+        if ((p.speed || 0) >= 15) {
+          ast += 1;
+          passers.push(p.name);
+          const ps = getPS(g, teamKey, p.id);
+          if (ps) ps.ast = (ps.ast || 0) + 1;
+        }
+        if ((p.power || 0) >= 15) { pts += 2; dunkers.push(p.name); scorePts(g, teamKey, p.id, 2); }
       });
       myT.assists += ast;
+      if (ast && g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += ast;
       // One bucket is what Verticality answers, so the hook names the last man
       // to dunk it rather than the whole lob barrage.
       if (pts > 0) {
@@ -1575,7 +1587,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         myT.starters.forEach((p, i) => { if (p && (p.power || 0) >= 15) lobIdx = i; });
         if (lobIdx >= 0) g.lastAutoScore = { teamKey, playerIdx: lobIdx, playerId: myT.starters[lobIdx]?.id, pts: 2, cardId };
       }
-      addLog(g, teamKey, `Lob City: discards ${discard.replace(/_/g, ' ')} — +${ast} AST (Speed 15+), +${pts} pts (Power 15+)`);
+      const earned = [
+        dunkers.length ? `${dunkers.join(' and ')} ${dunkers.length > 1 ? 'score 2 each' : 'scores 2'} (Power 15+)` : null,
+        passers.length ? `${passers.join(' and ')} +1 AST${passers.length > 1 ? ' each' : ''} (Speed 15+)` : null,
+      ].filter(Boolean).join('; ');
+      addLog(g, teamKey, `Lob City: discards ${discard.replace(/_/g, ' ')} — ${earned} — +${pts} pts, +${ast} AST`);
       break; // the wrapper below removes the card and runs the 5-assist draw
     }
     case 'stretch_five': {

@@ -102,6 +102,9 @@ async function postJson(url, value) {
   return body;
 }
 
+/** Take one photo's replacement flag off: the photo is being kept (photoSeen.js flaggedPhotos). */
+export const dismissPhotoFlag = (id, set) => postJson(`${BASE}/photo-flag${scope(set)}`, { id });
+
 /**
  * THE SUGGESTION INBOX: fold the queue into docs/suggestions/inbox.json on this
  * machine (gitignored; where Claude reads it). `{ saved, open, file }`.

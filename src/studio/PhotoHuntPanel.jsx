@@ -44,7 +44,7 @@ export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dorman
   return groups;
 }
 
-export default function PhotoHuntPanel({ sources, allPhotos, allPlaceholders, unseen = [], onOpen, onUploaded, onClose }) {
+export default function PhotoHuntPanel({ sources, allPhotos, allPlaceholders, unseen = [], flagged = [], onDismissFlag, onOpen, onUploaded, onClose }) {
   const groups = useMemo(() => huntRows(sources, { allPhotos, allPlaceholders }), [sources, allPhotos, allPlaceholders]);
   const total = groups.reduce((n, g) => n + g.rows.length, 0);
   const [dropping, setDropping] = useState(null);
@@ -99,6 +99,27 @@ export default function PhotoHuntPanel({ sources, allPhotos, allPlaceholders, un
                   <span className={s.tag} />
                   <span />
                   <button type="button" className={s.ghost} onClick={() => onOpen(u.sourceKey, u.id)}>Open</button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+        {/* Photos that are there but wrong — a former team's jersey — until a
+            newer file replaces each one (photoSeen.js flaggedPhotos). */}
+        {flagged.length > 0 && (
+          <section className={s.group} data-testid="hunt-flagged">
+            <h3 className={s.groupTitle}>Photo to replace <span className={s.count}>{flagged.length}</span></h3>
+            <ul className={s.list}>
+              {flagged.map(f => (
+                <li key={f.key} className={s.row} data-flagged-row={f.key}>
+                  <span className={s.name}>{f.name}</span>
+                  <span className={s.when}>{f.sourceLabel}</span>
+                  <span className={s.where}>{f.note}</span>
+                  <span className={s.tag} />
+                  {onDismissFlag
+                    ? <button type="button" className={s.ghost} title="The photo is fine: take the flag off" onClick={() => onDismissFlag(f.set, f.id)}>Keep this photo</button>
+                    : <span />}
+                  <button type="button" className={s.ghost} onClick={() => onOpen(f.sourceKey, f.id)}>Open</button>
                 </li>
               ))}
             </ul>

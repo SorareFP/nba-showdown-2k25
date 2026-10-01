@@ -20,6 +20,8 @@ export default function PlayerList({
   stateOf = null,
   // A photo added since this card was last on screen (photoSeen.js).
   isNew = null,
+  // Why this card's photo is flagged for a replacement, or nothing (flaggedPhotos).
+  flagNote = null,
   selectedId,
   onSelect,
   onDropFile,
@@ -144,6 +146,11 @@ export default function PlayerList({
                   {isNew?.(player.id) && (
                     <span className={styles.rowNew} data-new-photo="true" title="Photo added since you last opened this card">
                       new photo
+                    </span>
+                  )}
+                  {flagNote?.(player.id) != null && (
+                    <span className={styles.rowNew} data-flagged-photo="true" title={`Photo to replace: ${flagNote(player.id) || 'flagged'}`}>
+                      replace photo
                     </span>
                   )}
                 </span>

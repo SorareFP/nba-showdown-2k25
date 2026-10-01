@@ -186,6 +186,27 @@ function readPlaceholders(photosDir) {
   return Array.isArray(list) ? list : [];
 }
 
+/**
+ * PHOTOS FLAGGED FOR A REPLACEMENT (2026-10-01): `_flags.json` in a set's
+ * photo folder, id -> { at, note }. The studio lists a flagged card in its
+ * blue bar until a newer photo lands (src/studio/photoSeen.js flaggedPhotos).
+ * Beside the photos and gitignored with them: it is about the files on this
+ * machine, and it clears by their times.
+ */
+export const PHOTO_FLAGS_FILE = '_flags.json';
+export function readPhotoFlags(photosDir) {
+  const flags = photosDir ? readJsonFile(join(photosDir, PHOTO_FLAGS_FILE), {}) : {};
+  return flags && typeof flags === 'object' && !Array.isArray(flags) ? flags : {};
+}
+/** One flag taken off: the photo is being kept. Returns whether it was there. */
+export function dismissPhotoFlag(photosDir, playerId) {
+  const flags = readPhotoFlags(photosDir);
+  if (!(playerId in flags)) return false;
+  delete flags[playerId];
+  writeFileSync(join(photosDir, PHOTO_FLAGS_FILE), JSON.stringify(flags, null, 2) + '\n');
+  return true;
+}
+
 function readJsonFile(path, fallback) {
   if (!existsSync(path)) return fallback;
   try {
@@ -358,6 +379,8 @@ export function studioServerPlugin() {
             // And when each of those arrived, for the "added, not opened
             // yet" alert (photoTimes above).
             allPhotoTimes: Object.fromEntries(STUDIO_SCOPES.map(id => [id, photoTimes(forSet[id]?.photos)])),
+            // And which are flagged for a replacement (readPhotoFlags above).
+            allPhotoFlags: Object.fromEntries(STUDIO_SCOPES.map(id => [id, readPhotoFlags(forSet[id]?.photos)])),
           });
         })
       );
@@ -491,6 +514,16 @@ export function studioServerPlugin() {
       );
 
       server.middlewares.use('/__studio/crops', writeJsonRoute(s => s.crops));
+      // POST { id }: take one photo's replacement flag off (the photo is kept).
+      server.middlewares.use(
+        '/__studio/photo-flag',
+        guard(async (req, res) => {
+          if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
+          const { id } = JSON.parse((await readBody(req)).toString('utf8') || '{}');
+          if (!isSafePlayerId(id)) return json(res, 400, { error: 'invalid id' });
+          json(res, 200, { ok: true, removed: dismissPhotoFlag(pathsFor(req).photos, id) });
+        })
+      );
       // POST the suggestion queue; it is merged into the local, gitignored inbox.
       server.middlewares.use(
         '/__studio/suggestions',

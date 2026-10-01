@@ -116,3 +116,45 @@ export function unseenPhotos({ allPhotoTimes = {}, allPlaceholders = {}, record,
   }
   return out.sort((a, b) => b.addedAt - a.addedAt || a.name.localeCompare(b.name));
 }
+
+/**
+ * PHOTOS FLAGGED FOR A REPLACEMENT (2026-10-01).
+ *
+ * The user, after an audit found 66 of the 2026-27 set's photos in a former
+ * team's jersey: "Can you throw the blue bar on all of these? The one that
+ * indicates it needs checked." A flag is a line in the set's photo folder
+ * (`_flags.json`: id -> { at, note }, read by the studio server) and it is a
+ * to-do, not a notice: OPENING THE CARD DOES NOT CLEAR IT. A photo newer than
+ * the flag does — the replacement landed — and from then on the card is an
+ * ordinary "added, not opened yet" entry. A flag on a photo worth keeping is
+ * dismissed by hand (the hunt's "keep this photo").
+ *
+ * Alphabetical, because this list is worked through, not reacted to.
+ */
+export function flaggedPhotos({ allPhotoFlags = {}, allPhotoTimes = {}, sources }) {
+  const out = [];
+  const listed = new Set();
+  for (const src of Object.values(sources)) {
+    if (src.secondary || src.editable === false || !src.players?.length) continue;
+    const flags = allPhotoFlags[src.set] ?? {};
+    const times = allPhotoTimes[src.set] ?? {};
+    for (const p of src.players) {
+      const flag = flags[p.id];
+      const key = seenKey(src.set, p.id);
+      if (!flag || !Number.isFinite(flag.at) || listed.has(key)) continue;
+      if (Number.isFinite(times[p.id]) && times[p.id] > flag.at) continue;
+      listed.add(key);
+      out.push({
+        key,
+        set: src.set,
+        sourceKey: src.key,
+        sourceLabel: String(src.label ?? src.key).replace(/ · .*$/, ''),
+        id: p.id,
+        name: p.name,
+        note: typeof flag.note === 'string' ? flag.note : '',
+        flaggedAt: flag.at,
+      });
+    }
+  }
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}

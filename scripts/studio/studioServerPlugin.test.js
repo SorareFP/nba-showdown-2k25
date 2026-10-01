@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { mkdtempSync, writeFileSync, readdirSync, readFileSync, rmSync, utimesSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { photoExtMap, photoTimes, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES, supersedeOldPhotos, mergeSuggestionInbox } from './studioServerPlugin.js';
+import { photoExtMap, photoTimes, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES, supersedeOldPhotos, mergeSuggestionInbox, readPhotoFlags, dismissPhotoFlag, PHOTO_FLAGS_FILE } from './studioServerPlugin.js';
 import {
   DEFAULT_PHOTO_EXT,
   IMAGE_EXTENSIONS,
@@ -214,5 +214,33 @@ describe('mergeSuggestionInbox', () => {
     expect(second.items.find(i => i.id === 'a')).toMatchObject({ status: 'done', outcome: 'Built.' });
     expect(second.open).toBe(1);
     expect(second.savedAt).toBe('2026-10-01T12:00:00.000Z');
+  });
+});
+
+describe('photo flags', () => {
+  it('reads the flags of a folder, takes one off by hand, and reads nothing where there is no file', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'flags-'));
+    try {
+      expect(readPhotoFlags(dir)).toEqual({});
+      writeFileSync(join(dir, PHOTO_FLAGS_FILE), JSON.stringify({ A: { at: 1, note: 'Nets jersey' }, B: { at: 2 } }));
+      expect(Object.keys(readPhotoFlags(dir))).toEqual(['A', 'B']);
+      expect(dismissPhotoFlag(dir, 'A')).toBe(true);
+      expect(dismissPhotoFlag(dir, 'A')).toBe(false);
+      expect(readPhotoFlags(dir)).toEqual({ B: { at: 2 } });
+      // The flags file is not a photo: it never shows up as one.
+      expect(photoTimes(dir)).toEqual({});
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('a file that is not an object reads as no flags', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'flags-'));
+    try {
+      writeFileSync(join(dir, PHOTO_FLAGS_FILE), '["A"]');
+      expect(readPhotoFlags(dir)).toEqual({});
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

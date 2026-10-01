@@ -7,6 +7,7 @@ import {
   markSeen,
   readSeen,
   unseenPhotos,
+  flaggedPhotos,
   writeSeen,
 } from './photoSeen.js';
 
@@ -114,5 +115,36 @@ describe('the stored record', () => {
   it('never moves a seen time backwards', () => {
     const record = markSeen(freshSeen(NOW), '2026-27', 'Luka_Doncic', NOW);
     expect(markSeen(record, '2026-27', 'Luka_Doncic', NOW - HOUR)).toBe(record);
+  });
+});
+
+describe('flaggedPhotos', () => {
+  const allPhotoFlags = { '2026-27': {
+    Stephen_Curry: { at: NOW, note: 'Hornets jersey, now GSW' },
+    Luka_Doncic: { at: NOW, note: 'Mavericks jersey, now LAL' },
+  } };
+
+  it('lists a flagged photo until a newer file replaces it, by name, with its note', () => {
+    const out = flaggedPhotos({ allPhotoFlags, allPhotoTimes: { '2026-27': { Stephen_Curry: NOW - HOUR, Luka_Doncic: NOW - HOUR } }, sources: SOURCES });
+    expect(out.map(f => f.name)).toEqual(['Luka Doncic', 'Stephen Curry']);
+    expect(out[0]).toMatchObject({ key: '2026-27:Luka_Doncic', sourceKey: 'pool', sourceLabel: '2026-27 set', note: 'Mavericks jersey, now LAL' });
+  });
+
+  it('a photo newer than the flag clears it, and that photo is then an ordinary unseen one', () => {
+    const allPhotoTimes = { '2026-27': { Stephen_Curry: NOW + HOUR, Luka_Doncic: NOW - HOUR } };
+    expect(flaggedPhotos({ allPhotoFlags, allPhotoTimes, sources: SOURCES }).map(f => f.id)).toEqual(['Luka_Doncic']);
+    const record = { since: NOW - 48 * HOUR, at: { '2026-27:Stephen_Curry': NOW, '2026-27:Luka_Doncic': NOW } };
+    expect(unseenPhotos({ allPhotoTimes, record, sources: SOURCES }).map(u => u.id)).toEqual(['Stephen_Curry']);
+  });
+
+  it('opening the card does not clear a flag: the seen record is not consulted', () => {
+    // A to-do, not a notice. The same call with every card "seen" a minute ago.
+    const out = flaggedPhotos({ allPhotoFlags, allPhotoTimes: { '2026-27': { Luka_Doncic: NOW - HOUR } }, sources: SOURCES });
+    expect(out.map(f => f.id)).toEqual(['Luka_Doncic', 'Stephen_Curry']);
+  });
+
+  it('ignores a flag for a card no editable source lists, and a malformed one', () => {
+    const flags = { '2025-26': { Stephen_Curry: { at: NOW } }, '2026-27': { Nobody: { at: NOW }, Jalen_Brunson: { note: 'no time' } } };
+    expect(flaggedPhotos({ allPhotoFlags: flags, sources: SOURCES })).toEqual([]);
   });
 });

@@ -38,7 +38,7 @@ import {
 } from './players.js';
 import { pruneCrops, resetCrop } from './crop.js';
 import { pruneTeamOverrides } from './teamTheme.js';
-import { fetchStudioState, uploadPhoto, saveCrops, saveTeams, isImageFile } from './api.js';
+import { fetchStudioState, uploadPhoto, saveCrops, saveTeams, isImageFile, dismissPhotoFlag } from './api.js';
 import {
   readShowReferenceSets, writeShowReferenceSets,
   readHiddenSets, writeHiddenSets,
@@ -48,7 +48,7 @@ import {
 } from './prefs.js';
 import styles from './Studio.module.css';
 import { photoState, needsPhoto } from './photoNeeds.js';
-import { readSeen, writeSeen, markSeen, markAllSeen, unseenPhotos } from './photoSeen.js';
+import { readSeen, writeSeen, markSeen, markAllSeen, unseenPhotos, flaggedPhotos } from './photoSeen.js';
 import { DORMANT_KEYS } from '../game/cardSets.js';
 import RequestsPanel from './RequestsPanel.jsx';
 import SuggestionsPanel from './SuggestionsPanel.jsx';
@@ -92,6 +92,8 @@ export default function Studio() {
   // When each of those photos arrived, and when each card was last on screen:
   // together they are the "added, not opened yet" alert (photoSeen.js).
   const [allPhotoTimes, setAllPhotoTimes] = useState({});
+  // set -> id -> { at, note }: photos flagged for a replacement (flaggedPhotos).
+  const [allPhotoFlags, setAllPhotoFlags] = useState({});
   const [photoSeen, setPhotoSeen] = useState(() => {
     const record = readSeen();
     writeSeen(record); // pins the first run's look-back so it does not slide
@@ -261,6 +263,7 @@ export default function Studio() {
         setPhotos(state.photos ?? []);
         setAllPhotos(state.allPhotos ?? {});
         setAllPhotoTimes(state.allPhotoTimes ?? {});
+        setAllPhotoFlags(state.allPhotoFlags ?? {});
         setPlaceholders(state.placeholders ?? []);
         setAllPlaceholders(state.allPlaceholders ?? {});
         setPhotoExts(state.photoExt ?? {});
@@ -298,6 +301,7 @@ export default function Studio() {
           setAllPhotos(state.allPhotos ?? {});
           setAllPlaceholders(state.allPlaceholders ?? {});
           setAllPhotoTimes(state.allPhotoTimes ?? {});
+          setAllPhotoFlags(state.allPhotoFlags ?? {});
           setPhotos(state.photos ?? []);
           setPlaceholders(state.placeholders ?? []);
           setPhotoExts(state.photoExt ?? {});
@@ -330,6 +334,21 @@ export default function Studio() {
     () => new Set(unseen.filter(u => u.set === activeSet).map(u => u.id)),
     [unseen, activeSet]
   );
+  // PHOTOS TO REPLACE: flagged, and no newer file yet. Opening one does not
+  // clear it; the replacement does, or "keep this photo" in the hunt.
+  const flagged = useMemo(
+    () => flaggedPhotos({ allPhotoFlags, allPhotoTimes, sources: SOURCES }),
+    [allPhotoFlags, allPhotoTimes]
+  );
+  const flaggedHere = useMemo(
+    () => new Map(flagged.filter(f => f.set === activeSet).map(f => [f.id, f.note])),
+    [flagged, activeSet]
+  );
+  const keepFlaggedPhoto = async (set, id) => {
+    await dismissPhotoFlag(id, set);
+    const state = await fetchStudioState(activeSet);
+    setAllPhotoFlags(state.allPhotoFlags ?? {});
+  };
   const clearUnseen = () => {
     setPhotoSeen(prev => {
       const next = markAllSeen(prev, unseen);
@@ -482,6 +501,7 @@ export default function Studio() {
       const state = await fetchStudioState(activeSet);
       setPhotos(state.photos ?? []);
       setAllPhotoTimes(state.allPhotoTimes ?? {});
+      setAllPhotoFlags(state.allPhotoFlags ?? {});
       // A real photo dropped on a placeholder takes it off the manifest.
       setPlaceholders(state.placeholders ?? []);
       // Travels with the photo list for the same reason: an upload that lands
@@ -811,6 +831,32 @@ export default function Studio() {
         </div>
       )}
 
+      {flagged.length > 0 && (
+        <div className={styles.unseenBar} role="status" data-testid="flagged-photos">
+          <span className={styles.unseenLead}>
+            👕 {flagged.length} photo{flagged.length === 1 ? '' : 's'} to replace:
+          </span>
+          {flagged.slice(0, UNSEEN_SHOWN).map(f => (
+            <button
+              key={f.key}
+              type="button"
+              className={styles.unseenChip}
+              data-flagged={f.key}
+              title={`${f.name} · ${f.sourceLabel} — ${f.note || 'flagged for a new photo'}. A new photo clears it.`}
+              onClick={() => openCard(f.sourceKey, f.id)}
+            >
+              {f.name}
+              <span className={styles.unseenSet}>{f.note}</span>
+            </button>
+          ))}
+          {flagged.length > UNSEEN_SHOWN && (
+            <button type="button" className={styles.noticeDismiss} onClick={() => setShowHunt(true)}>
+              +{flagged.length - UNSEEN_SHOWN} more — see all
+            </button>
+          )}
+        </div>
+      )}
+
       {unseen.length > 0 && (
         <div className={styles.unseenBar} role="status" data-testid="unseen-photos">
           <span className={styles.unseenLead}>
@@ -861,6 +907,8 @@ export default function Studio() {
           allPlaceholders={allPlaceholders}
           onClose={() => setShowHunt(false)}
           unseen={unseen}
+          flagged={flagged}
+          onDismissFlag={keepFlaggedPhoto}
           onOpen={(key, id) => { openCard(key, id); setShowHunt(false); }}
           onUploaded={async (set, id) => {
             // Every set's lists come with any set's state; the active set's own
@@ -868,6 +916,7 @@ export default function Studio() {
             const state = await fetchStudioState(activeSet);
             setAllPhotos(state.allPhotos ?? {});
             setAllPhotoTimes(state.allPhotoTimes ?? {});
+            setAllPhotoFlags(state.allPhotoFlags ?? {});
             setAllPlaceholders(state.allPlaceholders ?? {});
             if (set === activeSet) {
               setPhotos(state.photos ?? []);
@@ -886,6 +935,7 @@ export default function Studio() {
             photoIds={photoIds}
             stateOf={stateOf}
             isNew={id => unseenHere.has(id)}
+            flagNote={id => flaggedHere.get(id)}
             selectedId={selectedId}
             onSelect={setSelectedId}
             onDropFile={handleDropFile}

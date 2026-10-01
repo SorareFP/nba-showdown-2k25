@@ -1556,6 +1556,137 @@
    "requested": true,
    "requestId": "OOKtPCYigJmNfUILJURP",
    "builtAt": "2026-09-30T12:20:34.941Z"
+  },
+  {
+   "id": "Rex_Chapman",
+   "name": "Rex Chapman",
+   "team": "PHX93",
+   "pos": "SG",
+   "speed": 12,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": -3,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 700,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    }
+   ],
+   "season": 1998,
+   "seasonLabel": "1997-98",
+   "age": 30,
+   "games": 68,
+   "mpg": 33.3,
+   "bbrefId": "chapmre01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.2,
+    "vorp": 1.3,
+    "ws": 4.5,
+    "ws48": 0.095,
+    "per": 14.5
+   },
+   "provisional": false,
+   "set": "super-season",
+   "requested": true,
+   "requestId": "H0lMlFYkhcTUBGerphOB",
+   "builtAt": "2026-10-01T15:53:21.153Z"
+  },
+  {
+   "id": "Chris_Kaman_2008",
+   "name": "Chris Kaman",
+   "team": "LAC84",
+   "pos": "C",
+   "speed": 7,
+   "power": 13,
+   "shotLine": 16,
+   "paintBoost": 1,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 720,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2008,
+   "seasonLabel": "2007-08",
+   "age": 25,
+   "games": 56,
+   "mpg": 37.2,
+   "bbrefId": "kamanch01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.3,
+    "vorp": 1.2,
+    "ws": 3.6,
+    "ws48": 0.083,
+    "per": 17.5
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "qWZhre9GLt2LP03Lbe8D",
+   "builtAt": "2026-10-01T15:53:30.666Z"
   }
  ]
 }

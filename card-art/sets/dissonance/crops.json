@@ -193,5 +193,20 @@
     "x": -7.25,
     "y": 6.5,
     "zoom": 1.13
+  },
+  "Derrick_Rose_NYK": {
+    "x": -5.91,
+    "y": 0,
+    "zoom": 1
+  },
+  "Derrick_Rose_MIN": {
+    "x": 2.15,
+    "y": 0,
+    "zoom": 1
+  },
+  "Derrick_Rose_DET": {
+    "x": -13.25,
+    "y": 0,
+    "zoom": 1
   }
 }

@@ -390,7 +390,14 @@ export function historicalComposite(season, basis, weights = COMPOSITE_WEIGHTS) 
   // Speed+Power is the player's whole season — Rasheed Wallace's one game as
   // a Hawk is still played by the 2003-04 Rasheed Wallace.
   const evidence = season.trustMinutes ?? season.minutes ?? 0;
-  const trust = rated ? Math.min(Math.max(evidence / fullMinutes, 0), 1) : 0;
+  let trust = rated ? Math.min(Math.max(evidence / fullMinutes, 0), 1) : 0;
+  // TRIAL (2026-10-01): below replacement, `raise` trusts every season only as
+  // much as the shortest a Rookie card may be (600 of 1500 minutes), so a full
+  // season sits no further below than a short one could; `honest` trusts
+  // every rated season fully, so a short bad season is not pulled up.
+  const mode = process.env.BELOW_REPLACEMENT;
+  if (rated && raw < replacement && mode === 'raise') trust = Math.min(trust, 600 / FULL_SEASON_MINUTES);
+  if (rated && raw < replacement && mode === 'honest') trust = 1;
   return trust * raw + (1 - trust) * replacement;
 }
 

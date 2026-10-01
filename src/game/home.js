@@ -23,8 +23,8 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
-    id: 'lob-city-credits-players', date: '2026-10-01', title: 'Lob City credits each player',
-    body: "Lob City's assists now go on the stat line of each Speed 15+ player who earned one, the way its 2 points already went to each Power 15+ player, and the game log names who got what.",
+    id: 'lob-city-credits-players', date: '2026-10-01', title: 'Card stats go on the player who earned them',
+    body: "Assists and rebounds a strategy card pays now land on a player's stat line, not only in the team's pool. Lob City's assists go to each Speed 15+ player. A shot check that pays assists on a make (Hammer Set, Pick-and-Pop, Outside Pick, Transition Outlet) credits the shooter. Short-Roll Playmaker and Spain Pick & Roll credit the scorer, Burst of Momentum and Delayed Slip the player the card names, and Glass Cleaner and Rim Protector your defender on the shooter. Points already worked this way. The game log names who got what.",
     to: 'play', cta: 'Play',
   },
   {

@@ -29,6 +29,19 @@ function scorePts(g, teamKey, playerId, pts) {
 }
 
 /**
+ * EVERY STAT A STRATEGY CARD PAYS GOES ON A PLAYER'S LINE (the user,
+ * 2026-10-01: "all stats derived from strats should go to a player. Who it
+ * goes to depends on which player allows it to happen"). scorePts above has
+ * done that for points since 2026-09-08; this is its twin for the assists and
+ * rebounds a card pays, which reached the team's pool and nobody's line.
+ * The pool itself is still moved at each site — this is the box score only.
+ */
+function creditLine(g, teamKey, playerId, stat, n = 1) {
+  const ps = playerId && n ? getPS(g, teamKey, playerId) : null;
+  if (ps) ps[stat] = (ps[stat] || 0) + n;
+}
+
+/**
  * What a cancelled screen put back — said on the cancel line, because a log
  * that reads "High Screen & Roll: X now guarded by Y" / "Fight Over: canceled
  * HSR" / "High Screen & Roll: X now guarded by Y" (the second copy of the
@@ -755,7 +768,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (opts.discardId) removeFromHand(myT, opts.discardId);
       announceCheck(g, {
         teamKey, playerIdx: idx, type: '3pt', bonus: 5 + _assistShotBonus,
-        cardLabel: 'Pin-Down Screen', onHitAst: 1,
+        // "1 assist to a teammate": not the shooter's. Which teammate is the
+        // user's call (asked 2026-10-01); until then it stays in the pool.
+        cardLabel: 'Pin-Down Screen', onHitAst: 1, hitAstToTeammate: true,
       });
       break;
     }
@@ -905,6 +920,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       g.tempEff[teamKey].burstIds = [...(g.tempEff[teamKey].burstIds || []), player?.id];
       myT.assists++;
       gainRebounds(myT, 1);
+      creditLine(g, teamKey, player?.id, 'ast');
+      creditLine(g, teamKey, player?.id, 'reb');
       if (g.analytics?.[teamKey]) { g.analytics[teamKey].assistsFromCards++; g.analytics[teamKey].reboundsGenerated++; }
       pss().hot = (pss().hot || 0) + 1;
       addLog(g, teamKey, `Burst of Momentum: ${player?.name} +1 AST +1 REB 🔥`);
@@ -1244,6 +1261,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 2;
       gainRebounds(myT, 1);
+      creditLine(g, teamKey, player?.id, 'reb');
       if (g.analytics?.[teamKey]) g.analytics[teamKey].reboundsGenerated++;
       addLog(g, teamKey, `Delayed Slip: ${player?.name} +2 scoring roll + 1 REB`);
       break;
@@ -1801,6 +1819,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const guard = shooter ? myT.starters[(g.offMatchups[miss.teamKey] || [])[miss.playerIdx]] : null;
       if (shooter && guard && (guard.power || 0) > (shooter.power || 0)) gain += 1;
       gainRebounds(myT, gain);
+      // Your defender on the shooter cleans the glass: the boards are his.
+      creditLine(g, teamKey, guard?.id, 'reb', gain);
       addLog(g, teamKey, `Glass Cleaner: ${shooter ? shooter.name + ' misses — ' : ''}+${gain} REB${gain === 3 ? ` (${guard.name} out-muscles him)` : ''}`);
       break;
     }
@@ -1976,11 +1996,17 @@ export function applyShotCheck(g, psc) {
     if (psc.type === 'paint') creditPaintScore(g, psc.teamKey, psc.playerIdx, player);
     if (hitAst) {
       myT.assists += hitAst;
+      // He made the shot the card asked for: the assists are on his line.
+      if (!psc.hitAstToTeammate) creditLine(g, psc.teamKey, player?.id, 'ast', hitAst);
       if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards += hitAst;
     }
     if (psc.onHitHot) ps.hot = (ps.hot || 0) + 1;
   } else if (psc.rimProtector) {
-    gainRebounds(getTeam(g, psc.rimProtector), 2);
+    const protT = getTeam(g, psc.rimProtector);
+    gainRebounds(protT, 2);
+    // "Your defender on them": the man who protected the rim takes the boards.
+    const protector = protT.starters[(g.offMatchups[psc.teamKey] || [])[psc.playerIdx] ?? psc.playerIdx];
+    creditLine(g, psc.rimProtector, protector?.id, 'reb', 2);
   }
 
   const label = psc.cardLabel || psc.type.toUpperCase();

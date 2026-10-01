@@ -1010,6 +1010,10 @@ export function creditPaintScore(g, teamKey, playerIdx, player) {
   const te = g.tempEff?.[teamKey] || {};
   if (!te['paintAst' + playerIdx]) return;
   getTeam(g, teamKey).assists += 1;
+  // The assist is his (the user, 2026-10-01: "they should get the assist that
+  // they earned by making the shot").
+  const ps = player?.id ? getPS(g, teamKey, player.id) : null;
+  if (ps) ps.ast = (ps.ast || 0) + 1;
   if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += 1;
   g.log = [...g.log, { team: teamKey, msg: `Short-Roll Playmaker: ${player?.name} scores inside — +1 AST` }];
 }
@@ -1705,6 +1709,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   ng.lastRoll = { teamKey, idx, reb: result.reb, ast: result.ast, pts: result.pts, boxed: false, deflected: false };
   if (te['astOnScore' + idx] && result.pts > 0) {
     nMyT.assists += 1;
+    // The scorer's own line, like every stat a card pays (2026-10-01).
+    if (ps2) ps2.ast += 1;
     ng.log = [...ng.log, { team: teamKey, msg: `Spain Pick & Roll: ${nPlayer.name} scores — +1 AST` }];
   }
   // Check assist bonus draw

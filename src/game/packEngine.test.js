@@ -700,7 +700,21 @@ describe('the aimed Rare Deluxes', () => {
     expect(PACK_TYPES.team_rare_deluxe.price / rd.price).toBe(PACK_TYPES.team_pack.price / PACK_TYPES.booster.price);
   });
 
-  it('deal three rare-or-better players from inside the aim, and never the same card twice', () => {
+  // A team pack's pool: the roster, and the franchise's cards in the special
+  // sets the packs deal.
+  const franchisePool = team => ALL_CARDS.filter(c => (c.set === BASE_SET && c.team === team)
+    || (SPECIAL_SETS_IN_PACKS.includes(c.set) && leagueOfCard(c) === 'nba' && currentFranchise(c.team) === team));
+  // NO CARD TWICE WHILE ITS BAND HAS A NEW ONE: in each band a pack holds as
+  // many different cards as it could, and repeats only what it had to.
+  const expectNoNeedlessRepeat = (pulls, pool, label) => {
+    for (const band of ['rare', 'super-rare']) {
+      const dealt = pulls.filter(c => rarityOf(c) === band).map(c => c.id);
+      const size = pool.filter(c => getPlayerRarity(c) === band).length;
+      expect(new Set(dealt).size, `${label}: ${band} ${dealt.join(', ')}`).toBe(Math.min(dealt.length, size));
+    }
+  };
+
+  it('deal three rare-or-better players from inside the aim, and no card twice while its band has a new one', () => {
     const inside = {
       division_rare_deluxe: [{ division: 'Pacific' }, c => DIVISIONS.Pacific.includes(c.team) && c.set === BASE_SET],
       conference_rare_deluxe: [{ conference: 'West' }, c => CONFERENCES.West.includes(c.team) && c.set === BASE_SET],
@@ -709,10 +723,11 @@ describe('the aimed Rare Deluxes', () => {
     };
     for (const key of AIMED) {
       const [options, ok] = inside[key];
+      const pool = ALL_CARDS.filter(c => ok(c) && (c.set === BASE_SET || c.set === 'wnba' || SPECIAL_SETS_IN_PACKS.includes(c.set)));
       for (let i = 0; i < 150; i += 1) {
         const pulls = players(generatePack(key, options));
         expect(pulls, key).toHaveLength(3);
-        expect(new Set(pulls.map(c => c.id)).size, `${key} dealt a card twice`).toBe(3);
+        expectNoNeedlessRepeat(pulls, pool, key);
         for (const pull of pulls) {
           expect(atLeast(rarityOf(pull), 'rare'), `${key} ${pull.id}`).toBe(true);
           expect(ok(CARD_MAP[pull.id]), `${key} left its aim: ${pull.id}`).toBe(true);
@@ -721,14 +736,41 @@ describe('the aimed Rare Deluxes', () => {
     }
   });
 
-  it('holds for every franchise: three distinct rare-or-better cards, the thinnest roster included', () => {
+  it('holds for every franchise: three rare-or-better cards and no needless repeat, the thinnest roster included', () => {
     for (const team of Object.keys(TEAM_ROSTERS)) {
+      const pool = franchisePool(team);
       for (let i = 0; i < 12; i += 1) {
         const pulls = players(generatePack('team_rare_deluxe', { team }));
-        expect(new Set(pulls.map(c => c.id)).size, team).toBe(3);
+        expect(pulls, team).toHaveLength(3);
+        expectNoNeedlessRepeat(pulls, pool, team);
         for (const pull of pulls) expect(atLeast(rarityOf(pull), 'rare'), `${team} ${pull.id}`).toBe(true);
       }
     }
+  });
+
+  it('never moves the rarity to avoid a repeat: a pool with two rare cards deals rares as often as any other', () => {
+    // The user: "Isn't that going to artificially pump up certain rarity
+    // outputs?" It did, here. The Mavericks hold two rare cards; a third rare
+    // slot used to become a super rare (1.33 a pack against everyone's 1.07).
+    // It is a repeat now, and the rarity is what was rolled.
+    const pool = franchisePool('DAL');
+    expect(pool.filter(c => getPlayerRarity(c) === 'rare')).toHaveLength(2);
+    const N = 1500;
+    let slots = 0, srs = 0, tripleRare = 0;
+    for (let i = 0; i < N; i += 1) {
+      const rs = players(generatePack('team_rare_deluxe', { team: 'DAL' })).map(rarityOf);
+      if (rs.every(r => r === 'rare')) tripleRare += 1;
+      for (const r of rs) {
+        if (r === 'legendary') continue;
+        slots += 1;
+        if (r === 'super-rare') srs += 1;
+      }
+    }
+    expect(srs / slots).toBeGreaterThan(0.29);
+    expect(srs / slots).toBeLessThan(0.38);
+    // Three rares come up about (2/3)^3 of the packs with no legendary: 26%.
+    expect(tripleRare / N).toBeGreaterThan(0.2);
+    expect(tripleRare / N).toBeLessThan(0.32);
   });
 
   it('refuse to open without their aim: unaimed they would be a cheaper Rare Deluxe', () => {

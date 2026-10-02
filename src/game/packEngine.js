@@ -166,9 +166,11 @@ export const PACK_TYPES = {
   // ~90 team packs (22,000 coins) and once in ~12 of these (21,700).
   //
   // Two things the aimed pools need that the whole pool never did:
-  //   `distinct`     no card twice in a pack. A franchise has one to five
-  //                  rare-or-better base cards; drawn with repeats, a Clippers
-  //                  pack was its one rare three times over.
+  //   `distinct`     no card twice in a pack while its band has a new one to
+  //                  give. It chooses WHICH card and never the rarity (see
+  //                  the slot). A franchise has one to five rare-or-better
+  //                  base cards; drawn with free repeats, a Clippers pack
+  //                  was its one rare three times over.
   //   `requireScope` the engine refuses the pack without its division,
   //                  conference or team — unaimed it would be a cheaper
   //                  Rare Deluxe over the base set alone.
@@ -179,10 +181,10 @@ export const PACK_TYPES = {
   // Every aim deals the same odds, because the band is rolled before the
   // card (RARE_PLUS_SR_SHARE): 1.05-1.09 super rares a pack and 5.0-5.1
   // value a coin across the WNBA, both conferences and all six divisions;
-  // 2.0 a coin for a franchise. What is left of the spread is three thin
-  // rosters (the Mavericks, Pelicans and Jazz hold two rare cards, so a
-  // third rare slot becomes a super rare: 1.33 a pack) and the two with no
-  // legendary (1.85 a coin). The user approved the prices as measured.
+  // 2.0 a coin for a franchise — every one of the thirty, the three with
+  // only two rare cards included (a third rare there is a repeat, about one
+  // pack in four). What is left of the spread is the two with no legendary
+  // (1.85 a coin). The user approved the prices as measured.
   division_rare_deluxe:   { name: 'Division Rare Deluxe',   players: 3, strats: 1, price: 750,  themed: 'division',   allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true, requireScope: true },
   conference_rare_deluxe: { name: 'Conference Rare Deluxe', players: 3, strats: 1, price: 750,  themed: 'conference', allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true, requireScope: true },
   team_rare_deluxe:       { name: 'Team Rare Deluxe',       players: 3, strats: 1, price: 1875, needsTeam: true,      allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true, requireScope: true },
@@ -952,13 +954,21 @@ export function generatePack(packType, options = {}) {
       const taken = def.distinct ? new Set(result.filter(c => c.type === 'player').map(c => c.id)) : null;
       const fresh = taken ? playerPool.filter(c => !taken.has(cardKey(c))) : playerPool;
       // THE BAND FIRST, at the pack's own chance (srShare), then a card from
-      // it; the other band when that one has nothing new to give. A pack with
-      // no srShare picks among the rare and super-rare cards alike, as these
-      // slots always did.
+      // it. A pack with no srShare picks among the rare and super-rare cards
+      // alike, as these slots always did.
+      //
+      // THE BAND HOLDS (the user, 2026-10-02: "Isn't that going to artificially
+      // pump up certain rarity outputs?"). It did, in three pools: when the
+      // rolled band had nothing NEW left the slot moved to the other band, so
+      // the Mavericks, Pelicans and Jazz — two rare cards each — turned a
+      // third rare into a super rare and dealt 1.33 a pack against everyone
+      // else's 1.07. Now a band with nothing new repeats one of its own cards:
+      // the rarity is what was rolled, and no-repeat only ever chooses WHICH
+      // card. The other band is for a pool that has no card of the band at all.
       if (def.srShare != null) {
         const first = Math.random() < def.srShare ? 'super-rare' : 'rare';
-        for (const band of [first, first === 'rare' ? 'super-rare' : 'rare']) {
-          const list = fresh.filter(c => getPlayerRarity(c) === band);
+        const inBand = (list, band) => list.filter(c => getPlayerRarity(c) === band);
+        for (const list of [inBand(fresh, first), inBand(playerPool, first), inBand(fresh, first === 'rare' ? 'super-rare' : 'rare')]) {
           if (list.length) return pulled(pickWeighted(list, supply));
         }
       }

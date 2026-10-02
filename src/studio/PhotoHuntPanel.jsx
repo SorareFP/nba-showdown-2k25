@@ -9,7 +9,7 @@
 // Open jumps to the card in its set for cropping.
 import { useMemo, useState } from 'react';
 import { photoState, needsPhoto } from './photoNeeds.js';
-import { huntTarget, replacementTarget, stratSearchUrl } from './photoSearch.js';
+import { huntTarget, stratSearchUrl } from './photoSearch.js';
 import { uploadPhoto, isImageFile } from './api.js';
 import { DORMANT_KEYS } from '../game/cardSets.js';
 import s from './PhotoHuntPanel.module.css';
@@ -45,14 +45,16 @@ export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dorman
 }
 
 /**
- * The flagged photos as hunt rows: the same search and uniform the owed cards
- * get, aimed at a replacement (photoSearch.js replacementTarget). A flag whose
- * card is no longer in its source keeps its row and loses only the search.
+ * The flagged photos as hunt rows, with the search an owed card gets: the
+ * player, the team ON THE CARD (the one he plays for now) and the year. The
+ * user tried a media-day search for a day and asked for it out (2026-10-02).
+ * A flag whose card is no longer in its source keeps its row and loses only
+ * the search.
  */
 export function flaggedRows(sources, flagged = []) {
   return flagged.map(f => {
     const card = sources[f.sourceKey]?.players?.find(p => p.id === f.id);
-    const t = card ? replacementTarget(f.set, card) : null;
+    const t = card ? huntTarget(f.set, card) : null;
     return { ...f, where: t?.code ?? '', era: t?.era ?? '', url: t?.url ?? null };
   });
 }
@@ -96,7 +98,7 @@ export default function PhotoHuntPanel({ sources, allPhotos, allPlaceholders, un
         <p className={s.muted}>
           Search opens Google Images tuned to the season and uniform. Drop an image on a row to save it into that card's set;
           Open takes you to the card to crop it. Placeholder art counts as owed; dormant Throwbacks do not.
-          A photo to replace searches its team's media day this season; dropping the new image on its row replaces the old one.
+          A photo to replace searches the team on its card; dropping the new image on its row replaces the old one.
         </p>
         {note && <p className={note.kind === 'error' ? s.err : s.ok}>{note.text}</p>}
         {/* A row leaves the hunt the moment its photo lands, so the cards

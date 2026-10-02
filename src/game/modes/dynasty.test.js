@@ -1678,7 +1678,13 @@ describe('waivers (2026-09-18)', () => {
     const y = startSeason(x, { rng: seeded(3) });
     expect(y.contracts[key]).toEqual({ teamId: c, dp: 1, years: 3, since: y.year, how: 'waivers' });
     expect(deadMoney(y, a)).toBe(0);
-    expect(payroll(y, a)).toBe(payroll(d, a) - 1);
+    // His salary is off A's books: nothing dead, and A's payroll is exactly the
+    // men it has now. NOT "what it was, less one" — the same tip-off lets the
+    // AI trade, and which trade it finds turns on the real rosters the league
+    // is drawn from (it took Adem Bona the day Bennedict Mathurin's card moved
+    // to New Orleans, 2026-10-02, and this line had pinned the old rosters).
+    expect(y.dead.filter(m => m.teamId === a)).toEqual([]);
+    expect(payroll(y, a)).toBe(Object.values(y.contracts).filter(k => k.teamId === a).reduce((n, k) => n + k.dp, 0));
     expect(waiverList(y)).toEqual([]);
     const name = getCardByKey(key).name;
     expect(y.news.some(n => n.text === `${teamOf(y, c).name} claimed ${name} off waivers — his salary comes off ${teamOf(y, a).name}'s books.`)).toBe(true);

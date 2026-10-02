@@ -2,5 +2,8 @@
   "_comment": "Teams set by hand, keyed by the player name exactly as it appears in player-pool-2026.json. Since 2026-09-18 an entry here WINS over nba.com's roster (resolveTeams.js): it is how a move the cached roster does not show yet — an offseason trade — reaches the card (Kawhi Leonard to Toronto and Brandon Ingram to the Clippers, both 2026-09-18: \"Can you change the Kawhi Leonard 26-27 card to the Raptors? He was traded.\"; Ingram went the other way in the same deal). It is also the fallback for a player neither the roster nor his own pool record can place (absent from the roster AND carrying a 2TM/3TM aggregate code). null means unresolved — the resolver reports it rather than guessing, since a wrong team puts the wrong logo and colors on a card. After an edit, run generateTeams.js (or edit player-teams-2026.json to match) and generateCards.js, then re-export the face.",
   "Kawhi Leonard": "TOR",
   "Brandon Ingram": "LAC",
-  "Bennedict Mathurin": "NOP"
+  "Bennedict Mathurin": "NOP",
+  "Tyrese Martin": "PHI",
+  "Gabe Vincent": "ATL",
+  "Rob Dillingham": "CHI"
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-02T14:03:32.982Z",
+ "generatedAt": "2026-10-02T14:19:30.675Z",
  "provisional": false,
  "set": "2026-27",
  "statsSeason": 2026,
@@ -2692,7 +2692,7 @@
   {
    "id": "DeMar_DeRozan",
    "name": "DeMar DeRozan",
-   "team": "SAC",
+   "team": "DEN",
    "pos": "PF",
    "speed": 7,
    "power": 5,
@@ -8453,7 +8453,7 @@
   {
    "id": "Bruce_Brown",
    "name": "Bruce Brown",
-   "team": "DEN",
+   "team": "NYK",
    "pos": "SG",
    "speed": 6,
    "power": 4,
@@ -12565,7 +12565,7 @@
   {
    "id": "Ryan_Nembhard",
    "name": "Ryan Nembhard",
-   "team": "ATL",
+   "team": "DEN",
    "pos": "PG",
    "speed": 9,
    "power": 5,
@@ -14809,7 +14809,7 @@
   {
    "id": "Buddy_Hield",
    "name": "Buddy Hield",
-   "team": "ATL",
+   "team": "CHI",
    "pos": "SG",
    "speed": 7,
    "power": 4,
@@ -15595,7 +15595,7 @@
   {
    "id": "Micah_Peavy",
    "name": "Micah Peavy",
-   "team": "NOP",
+   "team": "MEM",
    "pos": "SG",
    "speed": 6,
    "power": 5,
@@ -15982,7 +15982,7 @@
   {
    "id": "Gradey_Dick",
    "name": "Gradey Dick",
-   "team": "TOR",
+   "team": "LAC",
    "pos": "SG",
    "speed": 7,
    "power": 6,
@@ -16135,7 +16135,7 @@
   {
    "id": "Gary_Harris",
    "name": "Gary Harris",
-   "team": "DET",
+   "team": "MIL",
    "pos": "SG",
    "speed": 7,
    "power": 5,
@@ -16288,7 +16288,7 @@
   {
    "id": "Jordan_Hawkins",
    "name": "Jordan Hawkins",
-   "team": "NOP",
+   "team": "MEM",
    "pos": "SG",
    "speed": 4,
    "power": 3,
@@ -16397,7 +16397,7 @@
   {
    "id": "Drew_Eubanks",
    "name": "Drew Eubanks",
-   "team": "SAC",
+   "team": "NYK",
    "pos": "C",
    "speed": 4,
    "power": 6,

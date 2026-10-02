@@ -457,7 +457,7 @@
   },
   {
     "name": "DeMar DeRozan",
-    "team": "SAC",
+    "team": "DEN",
     "pos": "PF",
     "games": 77,
     "mpg": 31.2,
@@ -1409,7 +1409,7 @@
   },
   {
     "name": "Bruce Brown",
-    "team": "DEN",
+    "team": "NYK",
     "pos": "SG",
     "games": 82,
     "mpg": 24.4,
@@ -2065,7 +2065,7 @@
   },
   {
     "name": "Ryan Nembhard",
-    "team": "ATL",
+    "team": "DEN",
     "pos": "PG",
     "games": 60,
     "mpg": 19.5,
@@ -2417,7 +2417,7 @@
   },
   {
     "name": "Buddy Hield",
-    "team": "ATL",
+    "team": "CHI",
     "pos": "SG",
     "games": 51,
     "mpg": 16.1,
@@ -2537,7 +2537,7 @@
   },
   {
     "name": "Micah Peavy",
-    "team": "NOP",
+    "team": "MEM",
     "pos": "SG",
     "games": 61,
     "mpg": 15,
@@ -2601,7 +2601,7 @@
   },
   {
     "name": "Gradey Dick",
-    "team": "TOR",
+    "team": "LAC",
     "pos": "SG",
     "games": 76,
     "mpg": 14,
@@ -2625,7 +2625,7 @@
   },
   {
     "name": "Gary Harris",
-    "team": "DET",
+    "team": "MIL",
     "pos": "SG",
     "games": 48,
     "mpg": 13.8,
@@ -2649,7 +2649,7 @@
   },
   {
     "name": "Jordan Hawkins",
-    "team": "NOP",
+    "team": "MEM",
     "pos": "SG",
     "games": 51,
     "mpg": 13.6,
@@ -2665,11 +2665,11 @@
   },
   {
     "name": "Drew Eubanks",
-    "team": "SAC",
+    "team": "NYK",
     "pos": "C",
     "games": 42,
     "mpg": 13.1,
-    "personId": null
+    "personId": 1629234
   },
   {
     "name": "Jaylen Clark",

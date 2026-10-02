@@ -209,7 +209,13 @@ describe('Sports Science', () => {
   it('protects one named player from the year\'s roll, and the protection is spent at the turn of the year', () => {
     const rng = seeded(9);
     let d = ownDynasty({ aging: true });
-    const mine = rosterKeys(d, HUMAN_ID)[0];
+    // A man whose deal outlasts the year: the proof below is that he is still
+    // under contract after the roll, and a deal that simply ran out would look
+    // like a retirement. (The roster is drawn from the real ones; "the first
+    // man" became someone on an expiring deal the day nine cards changed
+    // teams, 2026-10-02.)
+    const mine = rosterKeys(d, HUMAN_ID).find(k => d.contracts[k].years >= 2);
+    expect(mine).toBeTruthy();
     expect(protectProblem(d, HUMAN_ID, mine)).toMatch(/tier 2/);
     expect(protectProblem({ ...d, aging: false, staff: { [HUMAN_ID]: { science: 2 } } }, HUMAN_ID, mine)).toMatch(/ten-year/);
     d = { ...d, staff: { [HUMAN_ID]: { science: 2 } } };

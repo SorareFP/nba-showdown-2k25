@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'strats-not-burned-by-hand', date: '2026-10-02', title: 'Strategy cards are no longer burned by hand',
+    body: "The Burn button is gone from strategy cards in your collection. They leave one way now: a copy that would take a card past its deck limit (5 common, 4 uncommon, 3 rare, 1 legendary) is burned for its coins as it arrives, as it has been since September. Player cards are unchanged: a spare can still be burned or listed on the market.",
+    to: 'collection', cta: 'Collection',
+  },
+  {
     id: 'aimed-rare-deluxe', date: '2026-10-02', title: 'Rare Deluxe packs you can aim, and a fairer premium shelf',
     body: "Four new packs in the shop: a Rare Deluxe for one division, one conference, one franchise or the WNBA. Each is three players, every one rare or better, with the same one-in-nine shot at a Legendary, and no card twice in a pack unless the pool has run out of that rarity. Division, conference and WNBA cost 750; one franchise costs 1,875 and reaches that team's special-set cards too. The premium packs were also rebalanced. A rare-or-better slot is now a super rare one time in three, in every one of these packs. The Super Deluxe's other two players are rare or better, where they were ordinary booster slots, so a second super rare is better than even instead of a 3% shot. The Legendary Chase now comes with two super rares beside its Legendary. The Rare Deluxe gives a little back: about one super rare a pack, down from one and a half.",
     to: 'shop', cta: 'Pack Shop',

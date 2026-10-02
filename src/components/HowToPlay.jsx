@@ -218,7 +218,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
           <h4>Cards, Coins, Packs</h4>
           <ul>
             <li>Playing earns <strong>coins</strong>: every finished game, a win bonus that grows with the margin (20 for a one-point win up to 100 for a 50-point blowout), 15 for losing by five or fewer, milestones by your own players (a triple-double, a 50-point game) and a daily first-win bonus; the coach's rung scales it (above), and PvP pays half again, win or lose. Each game is <strong>paid once</strong> — reloading its results screen shows what it paid. Coins buy packs, from the 100-coin Booster up to the 6,000-coin Legendary Chase. Special sets — Super Season, Rookie, Summer Standouts and their WNBA counterparts — appear in ordinary packs at reduced odds.</li>
-            <li>A pulled card is a <strong>spare</strong> until you press <strong>Collect</strong>. Collected cards count towards set goals and rewards; spares can be listed on the <strong>market</strong> (never below the card's burn value) or <strong>burned</strong> for coins.</li>
+            <li>A pulled card is a <strong>spare</strong> until you press <strong>Collect</strong>. Collected cards count towards set goals and rewards; spare player cards can be listed on the <strong>market</strong> (never below the card's burn value) or <strong>burned</strong> for coins. Strategy cards are not burned by hand: a copy past a card's deck limit is burned for coins as it arrives.</li>
             <li>Build teams and decks from what you own. A team carries its own deck.</li>
           </ul>
           <h4>Ways to Play</h4>

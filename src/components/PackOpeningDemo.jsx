@@ -19,6 +19,7 @@ import ClaimReveal from './ClaimReveal.jsx';
 import MyCollection from './MyCollection.jsx';
 import CollectionGoals from './CollectionGoals.jsx';
 import PackShop from './PackShop.jsx';
+import { STRATS } from '../game/strats.js';
 import PlayTab from './PlayTab.jsx';
 import DynastyTab from './DynastyTab.jsx';
 import { listDynasties, saveDynasty } from '../firebase/dynasties.js';
@@ -71,9 +72,11 @@ function ClaimDemo() {
  * collected), for judging the layout at any width without an account.
  */
 function CollectionDemo() {
-  const collection = useMemo(() => Object.fromEntries(
-    PACKABLE.map((c, i) => [cardKey(c), { type: 'player', count: 1 + (i % 3 === 0 ? 1 : 0), collected: c.set === BASE_SET }])
-  ), []);
+  const collection = useMemo(() => Object.fromEntries([
+    ...PACKABLE.map((c, i) => [cardKey(c), { type: 'player', count: 1 + (i % 3 === 0 ? 1 : 0), collected: c.set === BASE_SET }]),
+    // A few strategy cards too, so their rows (a deck limit, no Burn) can be seen.
+    ...STRATS.slice(0, 8).map((st, i) => [st.id, { type: 'strat', count: 1 + (i % 3) }]),
+  ]), []);
   const noop = () => {};
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>

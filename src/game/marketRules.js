@@ -24,6 +24,25 @@ export function burnValueFor(cardKey) {
   return Number.isFinite(value) ? value : null;
 }
 
+/**
+ * MAY A PLAYER BURN THIS CARD BY HAND? A player card, yes. A STRATEGY CARD,
+ * NO (the user, 2026-10-02: "Please remove the burn-ability from strategy
+ * cards, and just keep the auto-burn when a user exceeds a card's deck
+ * limit"). A strategy copy leaves a collection one way now: the copy that
+ * would take a card past its deck limit is burned on arrival, for its burn
+ * value (recordMints and burnOverCap on the server, which price it with
+ * burnValueFor and never ask this).
+ *
+ * Null when the burn may go ahead, else the reason, as the player is told it.
+ * One rule for the server's burnCard, the direct route and the collection's
+ * button, so a hidden button is never the only thing in the way.
+ */
+export const STRAT_BURN_REFUSAL = 'Strategy cards cannot be burned. A copy over a card\'s deck limit is burned for you.';
+export function burnProblem(cardKey) {
+  if (getCardByKey(cardKey)) return null;
+  return getStrat(cardKey) ? STRAT_BURN_REFUSAL : 'That card cannot be burned';
+}
+
 /** The least a listing may ask: the card's burn value. */
 export function listingFloor(cardKey) {
   return burnValueFor(cardKey);

@@ -21,7 +21,8 @@ import { cardKey } from './cardSets.js';
 import {
   getPlayerRarity, getStratRarity, BURN_VALUES, STRAT_BURN_VALUES, MARKET_PRICES, RARITY_ORDER,
 } from './rarity.js';
-import { burnValueFor, listingFloor } from './marketRules.js';
+import { burnValueFor, listingFloor, burnProblem, STRAT_BURN_REFUSAL } from './marketRules.js';
+import { ALL_CARDS } from './cardSets.js';
 
 /** Exactly what MyCollection puts in the "+N coins?" confirm. */
 const shown = card => (card.type === 'strat'
@@ -39,6 +40,8 @@ describe('the burn value the collection shows is the one that gets paid', () => 
     expect(wrong.slice(0, 10)).toEqual([]);
   });
 
+  // A strategy card has no button any more (see below); this is the value its
+  // auto-burn pays, which the pack's toast reads from the same table.
   it('agrees on every strategy card', () => {
     const wrong = [];
     for (const s of STRATS) {
@@ -74,5 +77,26 @@ describe('burning is a sink, not a sale', () => {
     expect(Object.values(BURN_VALUES)).not.toContain(400);
     // The rare MARKET price is the number nearest what they remembered.
     expect(MARKET_PRICES.rare).toBe(600);
+  });
+});
+
+// STRATEGY CARDS ARE NOT BURNED BY HAND (the user, 2026-10-02: "Please remove
+// the burn-ability from strategy cards, and just keep the auto-burn when a
+// user exceeds a card's deck limit").
+describe('who may be burned by hand', () => {
+  it('every player card in every set, and no strategy card', () => {
+    for (const c of ALL_CARDS) expect(burnProblem(cardKey(c)), c.name).toBeNull();
+    for (const s of STRATS) expect(burnProblem(s.id), s.name).toBe(STRAT_BURN_REFUSAL);
+  });
+
+  it('tells the player why, and where the copy over the limit goes', () => {
+    expect(STRAT_BURN_REFUSAL).toMatch(/cannot be burned/);
+    expect(STRAT_BURN_REFUSAL).toMatch(/deck limit is burned for you/);
+    expect(burnProblem('definitely_not_a_card')).toBe('That card cannot be burned');
+  });
+
+  it('leaves the auto-burn its price: a strategy card still has a burn value', () => {
+    // recordMints and burnOverCap pay burnValueFor and never ask burnProblem.
+    for (const s of STRATS) expect(burnValueFor(s.id), s.name).toBeGreaterThan(0);
   });
 });

@@ -57,7 +57,7 @@ import {
 } from './market.js';
 import { generatePack, PACK_TYPES, favoriteTeamOptions, nextBoxPack } from '../game/packEngine.js';
 import { getCardByKey } from '../game/cardSets.js';
-import { burnValueFor, listingFloor, checkListingPrice } from '../game/marketRules.js';
+import { burnValueFor, burnProblem, listingFloor, checkListingPrice } from '../game/marketRules.js';
 import { settleGameReward, todayKey, sanitizeBox, payFactorOf } from '../game/coinRewards.js';
 import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from '../game/modes/prizes.js';
 import { settleShifts, RARITY_SHIFTS } from '../game/rarityShift.js';
@@ -100,7 +100,7 @@ async function call(name, payload) {
  * meant the browser named its own price. It lives in marketRules.js now,
  * beside the listing floor it also sets; re-exported here for its readers.
  */
-export { burnValueFor, listingFloor, checkListingPrice };
+export { burnValueFor, burnProblem, listingFloor, checkListingPrice };
 
 /** The server route. `uid` is ignored: the server knows who is calling. */
 const server = {
@@ -281,6 +281,9 @@ const direct = {
   },
   delistCard: (uid, listingId) => delistCardDirect(uid, listingId),
   async burnCard(uid, cardKey) {
+    // The same refusal the server makes: a strategy card is not burned by hand.
+    const problem = burnProblem(cardKey);
+    if (problem) throw new Error(problem);
     const value = burnValueFor(cardKey);
     if (value == null) throw new Error('That card cannot be burned');
     await burnCardDirect(uid, cardKey, value);

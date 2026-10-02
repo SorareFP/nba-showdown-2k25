@@ -24,13 +24,19 @@
 // start and never burnable at any count. The guarantee itself lives in
 // burnCard and collectCard on the server, because a hidden button is a
 // suggestion and not a rule.
+//
+// STRATEGY CARDS ARE NOT BURNED BY HAND (the user, 2026-10-02: "remove the
+// burn-ability from strategy cards, and just keep the auto-burn when a user
+// exceeds a card's deck limit"). Their rows carry no Burn button and say the
+// deck limit instead; the server refuses the burn whatever the screen shows
+// (marketRules.js burnProblem).
 import { useState, useMemo, useCallback } from 'react';
 import { ALL_CARDS, cardKey, BASE_SET } from '../game/cardSets.js';
 import { STRATS } from '../game/strats.js';
 import { ZoomImg } from './CardLightbox.jsx';
 import {
   getPlayerRarity, getStratRarity, RARITY_CONFIG, RARITY_ORDER,
-  BURN_VALUES, STRAT_BURN_VALUES, getMarketPrice,
+  BURN_VALUES, STRAT_COPY_CAPS, getMarketPrice,
 } from '../game/rarity.js';
 import { ALL_CARDS as CARDS_FOR_PRICE } from '../game/cardSets.js';
 import { getPlayerImageUrl, getStratImagePath, getPlayerThumbUrl, getStratThumbPath, fallbackTo } from '../game/cardImages.js';
@@ -134,7 +140,9 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
   const filtered = useMemo(() => {
     let list = allCards.filter(c => (collection[c.key]?.count ?? 0) > 0);
     if (copiesFilter === 'dupes') list = list.filter(c => (collection[c.key]?.count ?? 0) > 1);
-    if (copiesFilter === 'spare') list = list.filter(c => sparesOf(c.key) > 0);
+    // A strategy card is never a spare to sell or burn: it has no market and
+    // no burn button.
+    if (copiesFilter === 'spare') list = list.filter(c => c.type === 'player' && sparesOf(c.key) > 0);
     if (typeFilter !== 'all') list = list.filter(c => c.type === typeFilter);
     if (rarityFilter !== 'all') list = list.filter(c => c.rarity === rarityFilter);
     if (setFilter !== 'ALL') list = list.filter(c => c.set === setFilter);
@@ -223,9 +231,7 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
           const spares = sparesOf(c.key);
           const canCollect = Boolean(onCollect) && c.type === 'player' && owned > 0 && !collected;
           const cfg = RARITY_CONFIG[c.rarity];
-          const burnVal = c.type === 'strat'
-            ? (STRAT_BURN_VALUES[c.rarity] ?? 1)
-            : (BURN_VALUES[c.rarity] ?? 0);
+          const burnVal = BURN_VALUES[c.rarity] ?? 0;
           return (
             <div key={c.key} className={styles.card} style={{ borderColor: cfg.color }}>
               <Holo className={styles.cardArt} active={c.type === 'player' && holoRegionsFor(c).length > 0} regions={holoRegionsFor(c)} idle={false}>
@@ -261,7 +267,17 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
                 </button>
               )}
 
-              {spares === 0 ? (
+              {c.type === 'strat' ? (
+                <div className={styles.spareActions}>
+                  <div
+                    className={styles.lockedNote}
+                    data-strat-limit={c.key}
+                    title="A copy past the deck limit is burned for coins as it arrives. Strategy cards are not burned by hand."
+                  >
+                    Deck limit {STRAT_COPY_CAPS[c.rarity] ?? 5}
+                  </div>
+                </div>
+              ) : spares === 0 ? (
                 <div className={styles.spareActions}>
                   {listed > 0 && onUnlist ? (
                     <>

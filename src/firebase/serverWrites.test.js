@@ -62,3 +62,10 @@ describe('the listing floor', () => {
     expect(sw.checkListingPrice(key, floor).ok).toBe(true);
   });
 });
+
+describe('a strategy card is not burned by hand, on either route', () => {
+  it('exports the one refusal both routes read', () => {
+    expect(sw.burnProblem('turnover')).toMatch(/cannot be burned/);
+    expect(sw.burnProblem(cardKey(ALL_CARDS[0]))).toBeNull();
+  });
+});

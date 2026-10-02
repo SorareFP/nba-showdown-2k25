@@ -80,3 +80,30 @@ describe('what each reading means for the same three cards', () => {
     expect(dupes(keyOf(2))).toBe(true);
   });
 });
+
+// STRATEGY CARDS CARRY NO BURN BUTTON (2026-10-02): the row says the deck
+// limit, and the copy over it is burned as it arrives.
+describe('a strategy card in the collection', () => {
+  const withStrats = renderToStaticMarkup(
+    <MyCollection
+      collection={{ ...collection, turnover: { type: 'strat', count: 3 } }}
+      listedByCard={listedByCard}
+      onBurn={() => {}}
+      onList={() => {}}
+      onUnlist={() => {}}
+      onCollect={() => {}}
+    />
+  );
+  const row = withStrats.slice(withStrats.indexOf('data-strat-limit="turnover"') - 400);
+
+  it('shows its deck limit where the Burn button was', () => {
+    expect(withStrats).toContain('data-strat-limit="turnover"');
+    expect(row).toMatch(/Deck limit(?:<!-- -->)? ?(?:<!-- -->)?5/);
+    expect(row.slice(0, row.indexOf('</div></div>') + 12)).not.toContain('Burn (');
+  });
+
+  it('leaves the player cards their Burn button', () => {
+    // Two spares of the second card: still burnable.
+    expect(withStrats).toContain('Burn (+');
+  });
+});

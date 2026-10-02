@@ -44,7 +44,7 @@ import { generatePack, PACK_TYPES, favoriteTeamOptions, normalizeFavoriteTeam, n
 import { goalProgress, goalCoinReward, REWARD_BY_GOAL, collectedKeys } from './shared/src/game/collections.js';
 import { getCardByKey } from './shared/src/game/cardSets.js';
 import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game/rarity.js';
-import { burnValueFor, checkListingPrice } from './shared/src/game/marketRules.js';
+import { burnValueFor, burnProblem, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox, payFactorOf } from './shared/src/game/coinRewards.js';
 import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from './shared/src/game/modes/prizes.js';
@@ -648,8 +648,13 @@ export const burnCard = onCall({ region: 'us-central1' }, async request => {
   const { cardKey } = request.data ?? {};
   if (!cardKey) throw new HttpsError('invalid-argument', 'No card given');
 
-  // A player is valued by its rarity band; a strategy card by its own table —
-  // in marketRules.js, which the listing floor reads too.
+  // PLAYER CARDS ONLY (2026-10-02). A strategy card is not burned by hand; the
+  // copy over its deck limit burns itself (recordMints, burnOverCap).
+  const problem = burnProblem(cardKey);
+  if (problem) throw new HttpsError('failed-precondition', problem);
+
+  // Valued by its rarity band, in marketRules.js, which the listing floor
+  // reads too.
   const value = burnValueFor(cardKey);
   if (!Number.isFinite(value)) throw new HttpsError('invalid-argument', 'That card cannot be burned');
 

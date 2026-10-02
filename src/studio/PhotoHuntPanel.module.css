@@ -49,6 +49,8 @@
   font-size: 13px;
 }
 .row:last-child { border-bottom: none; }
+/* A photo to replace has one more control than an owed one: keep it. */
+.rowReplace { grid-template-columns: minmax(160px, 1.4fr) 90px minmax(160px, 1.2fr) 60px auto auto auto; }
 .rowDrop { background: rgba(234, 88, 12, 0.22); outline: 1px dashed #ea580c; }
 .name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .when { color: rgba(248, 250, 252, 0.65); font-variant-numeric: tabular-nums; }
@@ -58,5 +60,6 @@
 .search { color: #fdba74; font-weight: 700; text-decoration: none; font-size: 12px; white-space: nowrap; }
 @media (max-width: 760px) {
   .row { grid-template-columns: 1fr auto auto; }
+  .rowReplace { grid-template-columns: 1fr auto auto auto; }
   .when, .where, .tag { display: none; }
 }

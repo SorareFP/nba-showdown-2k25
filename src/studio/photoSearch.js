@@ -60,3 +60,25 @@ export function huntTarget(setId, card) {
   const rookie = /rookie$/.test(setId) || /rookie$/.test(card.migratedFrom?.set ?? '');
   return { league, code, era: team?.era ?? '', team, label, rookie, url: searchUrl(card.name, team, label, league, rookie) };
 }
+
+/**
+ * THE SEARCH FOR A REPLACEMENT PHOTO (2026-10-02).
+ *
+ * A flagged photo (photoSeen.js flaggedPhotos) is one that exists and is
+ * wrong: the 2026-27 set's 66 are players photographed in a former team's
+ * jersey, and the user is replacing them "with media day pics". So a
+ * current-season card searches its team's MEDIA DAY — the one day every player
+ * is shot in the new uniform, before he has played a game in it — in the year
+ * the season opens. A card with a season of its own (a Super Season, a
+ * Throwback) has no media day worth finding: it searches as the hunt does.
+ */
+export function replacementTarget(setId, card) {
+  const t = huntTarget(setId, card);
+  if (card.season) return t;
+  const parts = [
+    card.name, t.team?.city, t.team?.name,
+    t.league === 'WNBA' ? 'WNBA' : null,
+    'media day', searchSeason(t.label),
+  ].filter(Boolean).join(' ');
+  return { ...t, url: images(parts) };
+}

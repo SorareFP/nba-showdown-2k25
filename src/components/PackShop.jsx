@@ -13,7 +13,7 @@
 // and not to a group shows up in "More" instead of vanishing, so the two can
 // not silently drift apart again.
 import { useMemo, useState } from 'react';
-import { PACK_TYPES, CONFERENCES, DIVISIONS } from '../game/packEngine.js';
+import { PACK_TYPES, CONFERENCES, DIVISIONS, franchiseHasLegendary } from '../game/packEngine.js';
 import { TEAM_CODES, WNBA_TEAM_CODES } from '../game/collections.js';
 import { getTeam } from '../cards/teams.js';
 import { useDialogs } from '../ui/dialogs.jsx';
@@ -36,11 +36,16 @@ export const PACK_COPY = {
   wnba_super:     { group: 'Targeted', desc: '5 WNBA players only · 1 rare+ player' },
   // The user, 2026-09-21: "I think we should have WNBA team packs too."
   wnba_team_pack: { group: 'Targeted', desc: '5 players from ONE WNBA roster — the fast way to finish a WNBA collection', pick: 'wnbaTeam' },
+  // The Rare Deluxe, aimed (the user, 2026-10-02). Same odds whatever the aim.
+  division_rare_deluxe:   { group: 'Targeted', desc: '3 players from one division, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine', pick: 'division' },
+  conference_rare_deluxe: { group: 'Targeted', desc: '3 players from one conference, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine', pick: 'conference' },
+  team_rare_deluxe:       { group: 'Targeted', desc: '3 players from ONE franchise, its special sets included, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine', pick: 'team' },
+  wnba_rare_deluxe:       { group: 'Targeted', desc: '3 WNBA players, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine' },
 
-  rare_deluxe:    { group: 'Premium', desc: '3 players, every one rare or better · a Legendary about one pack in nine' },
-  super_deluxe:   { group: 'Premium', desc: '3 players · 1 guaranteed super rare · a Legendary about one pack in four' },
+  rare_deluxe:    { group: 'Premium', desc: '3 players, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine' },
+  super_deluxe:   { group: 'Premium', desc: '1 guaranteed super rare + 2 more rare or better (a super rare one time in three) · a Legendary about one pack in four' },
   mega_deluxe:    { group: 'Premium', desc: '3 super rares + 1 rare strat · a Legendary about one pack in two' },
-  legendary_chase:{ group: 'Premium', desc: 'The only pack that guarantees a LEGENDARY' },
+  legendary_chase:{ group: 'Premium', desc: 'The only pack that guarantees a LEGENDARY · plus 2 super rares' },
   booster_box:    { group: 'Premium', desc: '36 boosters at a discount, plus a bonus Super Booster' },
 
   super_season:   { group: 'Other Sets', desc: '3 Super Season players at the set\'s own odds · a Legendary about one pack in fourteen' },
@@ -89,7 +94,11 @@ export default function PackShop({ currency, onBuyPack }) {
       const detail = pack.pick === 'conference' ? ` (${conf})` : pack.pick === 'division' ? ` (${div})` : pack.pick === 'team' ? ` (${getTeam(team)?.name ?? team})` : pack.pick === 'wnbaTeam' ? ` (${getTeam(wnbaTeam, { league: 'WNBA' })?.name ?? wnbaTeam})` : '';
       const yes = await ask({
         title: `Buy ${pack.def.name}${detail}?`,
-        body: `${pack.def.price.toLocaleString()} coins. You have ${coins.toLocaleString()}.`,
+        // A franchise with no Legendary card is told before the coins move.
+        body: `${pack.def.price.toLocaleString()} coins. You have ${coins.toLocaleString()}.`
+          + (pack.key === 'team_rare_deluxe' && !franchiseHasLegendary(team)
+            ? ` The ${getTeam(team, { league: 'NBA' })?.name ?? team} have no Legendary card, so this pack's Legendary roll pays a super rare instead.`
+            : ''),
         confirmLabel: `Buy for ${pack.def.price.toLocaleString()}`,
       });
       if (!yes) return;

@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'aimed-rare-deluxe', date: '2026-10-02', title: 'Rare Deluxe packs you can aim, and a fairer premium shelf',
+    body: "Four new packs in the shop: a Rare Deluxe for one division, one conference, one franchise or the WNBA. Each is three players, every one rare or better, with the same one-in-nine shot at a Legendary, and no card twice in a pack. Division, conference and WNBA cost 750; one franchise costs 1,875 and reaches that team's special-set cards too. The premium packs were also rebalanced. A rare-or-better slot is now a super rare one time in three, in every one of these packs. The Super Deluxe's other two players are rare or better, where they were ordinary booster slots, so a second super rare is better than even instead of a 3% shot. The Legendary Chase now comes with two super rares beside its Legendary. The Rare Deluxe gives a little back: about one super rare a pack, down from one and a half.",
+    to: 'shop', cta: 'Pack Shop',
+  },
+  {
     id: 'team-builder-every-set', date: '2026-10-01', title: 'Team Builder shows every card you own',
     body: "The Team Builder's pool only listed base-set NBA cards, so a Super Season, Rookie, Throwback or WNBA card you owned could not be picked there. It now lists every player card in your collection, and the dice draw from all of them too. One card a player on a team. Strategy decks are still built in Collection, under My Decks, and chosen on the Play screen; the Team Builder now says so and links there.",
     to: 'collection', cta: 'My Decks',

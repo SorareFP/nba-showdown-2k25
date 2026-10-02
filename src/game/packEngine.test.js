@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest';
 import {
   generatePack, PACK_TYPES, CONFERENCES, DIVISIONS, MAX_DUPES_PER_PACK,
   SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE, parseFavoriteTeam, favoriteTeamOptions, normalizeFavoriteTeam, leagueOfCard,
-  tierScaleFor } from './packEngine.js';
+  tierScaleFor, RARE_PLUS_SR_SHARE, franchiseHasLegendary } from './packEngine.js';
 import { CARD_MAP } from './cards.js';
 import { TEAM_ROSTERS, WNBA_ROSTERS, WNBA_TEAM_CODES } from './collections.js';
 import { STRATS } from './strats.js';
@@ -615,5 +615,158 @@ describe('the starter pack\'s favourite-team core', () => {
     expect(parseFavoriteTeam('wnba:lva')).toEqual({ league: 'wnba', abbr: 'LVA' });
     expect(parseFavoriteTeam('')).toBeNull();
     expect(parseFavoriteTeam(null)).toBeNull();
+  });
+});
+
+// THE THREE-CARD PREMIUM PACKS, REBALANCED AND AIMED (2026-10-02). The user:
+// "we need to redistribute the value per coin a little", and of the aimed
+// packs' first cut, where a pool's make-up set the odds, "the variance
+// couldn't be this wide if we rolled it out". scripts/analysis/packOdds.mjs
+// is the measurement behind the numbers on the shelf.
+describe('rare-or-better slots roll their band first', () => {
+  const srShareOf = (type, options, n) => {
+    let slots = 0, srs = 0;
+    for (let i = 0; i < n; i += 1) {
+      for (const r of players(generatePack(type, options)).map(rarityOf)) {
+        if (r === 'legendary') continue;            // the pack's own roll, not a slot's band
+        slots += 1;
+        if (r === 'super-rare') srs += 1;
+      }
+    }
+    return srs / slots;
+  };
+
+  it('is one in three, by the user\'s call', () => {
+    expect(RARE_PLUS_SR_SHARE).toBeCloseTo(1 / 3, 9);
+  });
+
+  it('a Rare Deluxe slot is a super rare one time in three, not the 47% the pool holds', () => {
+    const share = srShareOf('rare_deluxe', {}, 1500);
+    expect(share).toBeGreaterThan(0.29);
+    expect(share).toBeLessThan(0.38);
+  });
+
+  it('deals the same odds whatever the aim: the richest division and the poorest', () => {
+    // By card count the Southwest's rare-or-better cards are 70% super rare
+    // and the Pacific's 18%; drawn by count they dealt 2.14 and 0.64 a pack.
+    const southwest = srShareOf('division_rare_deluxe', { division: 'Southwest' }, 1500);
+    const pacific = srShareOf('division_rare_deluxe', { division: 'Pacific' }, 1500);
+    for (const share of [southwest, pacific]) {
+      expect(share).toBeGreaterThan(0.28);
+      expect(share).toBeLessThan(0.39);
+    }
+    expect(Math.abs(southwest - pacific)).toBeLessThan(0.07);
+  });
+
+  it('the Super Deluxe is one super rare and two more rare-or-better players', () => {
+    let second = 0;
+    const N = 600;
+    for (let i = 0; i < N; i += 1) {
+      const rs = players(generatePack('super_deluxe')).map(rarityOf);
+      expect(rs).toHaveLength(3);
+      for (const r of rs) expect(atLeast(r, 'rare')).toBe(true);
+      const top = rs.filter(r => atLeast(r, 'super-rare')).length;
+      expect(top).toBeGreaterThanOrEqual(1);
+      if (top >= 2) second += 1;
+    }
+    // A second one was a 3% shot while the other two were booster slots.
+    expect(second / N).toBeGreaterThan(0.4);
+  });
+
+  it('the Legendary Chase is its legendary and two super rares', () => {
+    for (let i = 0; i < 150; i += 1) {
+      const pack = generatePack('legendary_chase');
+      const rs = players(pack).map(rarityOf).sort();
+      expect(rs).toEqual(['legendary', 'super-rare', 'super-rare']);
+      expect(pack.filter(c => c.type === 'strat')).toHaveLength(PACK_TYPES.legendary_chase.strats);
+    }
+  });
+});
+
+describe('the aimed Rare Deluxes', () => {
+  const AIMED = ['division_rare_deluxe', 'conference_rare_deluxe', 'team_rare_deluxe', 'wnba_rare_deluxe'];
+
+  it('are the Rare Deluxe over a narrower pool: its shape, its legendary chance, its super-rare share', () => {
+    const rd = PACK_TYPES.rare_deluxe;
+    for (const key of AIMED) {
+      const def = PACK_TYPES[key];
+      expect(def, key).toMatchObject({ players: rd.players, strats: rd.strats, allRarePlus: true, apexOdds: rd.apexOdds, srShare: rd.srShare, distinct: true });
+    }
+    // Priced as the targeted boosters are against the booster: a division, a
+    // conference and a league at the unaimed price, one franchise at 2.5x.
+    expect(PACK_TYPES.division_rare_deluxe.price).toBe(rd.price);
+    expect(PACK_TYPES.conference_rare_deluxe.price).toBe(rd.price);
+    expect(PACK_TYPES.wnba_rare_deluxe.price).toBe(rd.price);
+    expect(PACK_TYPES.team_rare_deluxe.price / rd.price).toBe(PACK_TYPES.team_pack.price / PACK_TYPES.booster.price);
+  });
+
+  it('deal three rare-or-better players from inside the aim, and never the same card twice', () => {
+    const inside = {
+      division_rare_deluxe: [{ division: 'Pacific' }, c => DIVISIONS.Pacific.includes(c.team) && c.set === BASE_SET],
+      conference_rare_deluxe: [{ conference: 'West' }, c => CONFERENCES.West.includes(c.team) && c.set === BASE_SET],
+      team_rare_deluxe: [{ team: 'LAC' }, c => leagueOfCard(c) === 'nba' && currentFranchise(c.team) === 'LAC'],
+      wnba_rare_deluxe: [{}, c => c.set === 'wnba'],
+    };
+    for (const key of AIMED) {
+      const [options, ok] = inside[key];
+      for (let i = 0; i < 150; i += 1) {
+        const pulls = players(generatePack(key, options));
+        expect(pulls, key).toHaveLength(3);
+        expect(new Set(pulls.map(c => c.id)).size, `${key} dealt a card twice`).toBe(3);
+        for (const pull of pulls) {
+          expect(atLeast(rarityOf(pull), 'rare'), `${key} ${pull.id}`).toBe(true);
+          expect(ok(CARD_MAP[pull.id]), `${key} left its aim: ${pull.id}`).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('holds for every franchise: three distinct rare-or-better cards, the thinnest roster included', () => {
+    for (const team of Object.keys(TEAM_ROSTERS)) {
+      for (let i = 0; i < 12; i += 1) {
+        const pulls = players(generatePack('team_rare_deluxe', { team }));
+        expect(new Set(pulls.map(c => c.id)).size, team).toBe(3);
+        for (const pull of pulls) expect(atLeast(rarityOf(pull), 'rare'), `${team} ${pull.id}`).toBe(true);
+      }
+    }
+  });
+
+  it('refuse to open without their aim: unaimed they would be a cheaper Rare Deluxe', () => {
+    expect(() => generatePack('division_rare_deluxe')).toThrow(/pick a division/);
+    expect(() => generatePack('division_rare_deluxe', { division: 'Nowhere' })).toThrow(/pick a division/);
+    expect(() => generatePack('conference_rare_deluxe', { division: 'Pacific' })).toThrow(/pick a conference/);
+    expect(() => generatePack('team_rare_deluxe')).toThrow(/pick a team/);
+    expect(() => generatePack('team_rare_deluxe', { team: 'XXX' })).toThrow();
+    // The plain targeted packs are as they were: no aim, the whole base set.
+    expect(players(generatePack('division'))).toHaveLength(PACK_TYPES.division.players);
+  });
+
+  it('a pool with no legendary pays the legendary roll in a super rare, never a stray card', () => {
+    // The Nets have none, base or special.
+    const nets = ALL_CARDS.filter(c => leagueOfCard(c) === 'nba' && currentFranchise(c.team) === 'BKN'
+      && (c.set === BASE_SET || SPECIAL_SETS_IN_PACKS.includes(c.set)));
+    expect(nets.some(c => getPlayerRarity(c) === 'legendary')).toBe(false);
+    // The shop reads the same fact to say so before the coins move.
+    expect(franchiseHasLegendary('BKN')).toBe(false);
+    expect(franchiseHasLegendary('CHA')).toBe(false);
+    expect(franchiseHasLegendary('BOS')).toBe(true);
+    for (let i = 0; i < 400; i += 1) {
+      for (const r of players(generatePack('team_rare_deluxe', { team: 'BKN' })).map(rarityOf)) {
+        expect(['rare', 'super-rare']).toContain(r);
+      }
+    }
+  });
+
+  it('deals a legendary at the Rare Deluxe odds where the pool has one', () => {
+    const N = 2500;
+    let hits = 0;
+    for (let i = 0; i < N; i += 1) {
+      const legs = players(generatePack('conference_rare_deluxe', { conference: 'East' })).map(rarityOf).filter(r => r === 'legendary').length;
+      expect(legs).toBeLessThanOrEqual(1);
+      hits += legs;
+    }
+    const odds = PACK_TYPES.conference_rare_deluxe.apexOdds;
+    const sd = Math.sqrt((odds * (1 - odds)) / N);
+    expect(Math.abs(hits / N - odds)).toBeLessThan(4 * sd + 0.004);
   });
 });

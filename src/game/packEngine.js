@@ -33,6 +33,39 @@ const DIVISIONS = {
   Southwest: ['DAL','HOU','MEM','NOP','SAS'],
 };
 
+/**
+ * HOW OFTEN A "RARE OR BETTER" SLOT IS A SUPER RARE, in the three-card
+ * premium packs (2026-10-02).
+ *
+ * Those slots used to pick evenly among every rare and super-rare CARD in the
+ * pool, so the pool's make-up set the odds: 47% super rare in the whole pool,
+ * which made the 750-coin Rare Deluxe deal 1.47 super rares a pack against
+ * the 1,500-coin Super Deluxe's 1.03 — and, aimed at one franchise, anything
+ * from 0.39 (the Bulls) to 2.79 (the Cavaliers). The user, shown both: "we
+ * need to redistribute the value per coin a little", and of the aimed packs
+ * "the variance couldn't be this wide if we rolled it out".
+ *
+ * A fixed share is the same answer to both. The band is rolled first, at
+ * this chance, and the card comes from that band — so every aim deals the
+ * same odds whatever its pool holds, and the number is one dial. One in
+ * three, by the user's call ("One in three works"). Measured over 20,000
+ * packs each (scripts/analysis/packOdds.mjs; value = players at
+ * MARKET_PRICES, strats at 20x burn):
+ *
+ *   pack              price   SR+/pack        value/coin
+ *   Booster             100   0.10            8.1
+ *   Deluxe Booster      200   0.33            7.2
+ *   Super Booster       300   0.55            6.4
+ *   Rare Deluxe         750   1.47 -> 1.07    5.8 -> 5.1
+ *   Super Deluxe      1,500   1.03 -> 1.67    2.0 -> 3.3
+ *   Mega Deluxe       3,000   3.00            2.5
+ *   Legendary Chase   6,000   1.04 -> 3.00    0.9 -> 1.5
+ *
+ * The boosters' and the set packs' own guaranteed slot is untouched: it
+ * still picks among the rare and super-rare cards alike.
+ */
+export const RARE_PLUS_SR_SHARE = 1 / 3;
+
 // Pack type definitions. `pool` defaults to the base set.
 export const PACK_TYPES = {
   // `favoriteCore` is the franchise a new player names on the way in — see
@@ -73,8 +106,12 @@ export const PACK_TYPES = {
   // and cannot lift it. The 15% / 3% "share of the band" this replaced
   // (earlier the same day) made a Mega Deluxe dearer a legendary than a
   // booster, which is the silliness the user named.
-  rare_deluxe:   { name: 'Rare Deluxe',         players: 3,  strats: 1,  price: 750,  allRarePlus: true, mixesSpecials: true, apexOdds: 0.115 },
-  super_deluxe:  { name: 'Super Deluxe',        players: 3,  strats: 1,  price: 1500, guaranteedSR: 1, mixesSpecials: true, apexOdds: 0.235 },
+  // 2026-10-02: both roll each rare-or-better slot at RARE_PLUS_SR_SHARE,
+  // and the Super Deluxe's other two players are rare-or-better slots where
+  // they were plain booster slots (a second super rare was a 3% shot in a
+  // 1,500-coin pack; it is 56% now).
+  rare_deluxe:   { name: 'Rare Deluxe',         players: 3,  strats: 1,  price: 750,  allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, mixesSpecials: true, apexOdds: 0.115 },
+  super_deluxe:  { name: 'Super Deluxe',        players: 3,  strats: 1,  price: 1500, guaranteedSR: 1, allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, mixesSpecials: true, apexOdds: 0.235 },
   mega_deluxe:   { name: 'Mega Deluxe',         players: 3,  strats: 1,  price: 3000, allSR: true, rareStrat: true, mixesSpecials: true, apexOdds: 0.48 },
   // The bulk play: 36 boosters at a discount PLUS a bonus Super Booster —
   // volume and a kicker, while Mega Deluxe stays the certainty play.
@@ -83,7 +120,11 @@ export const PACK_TYPES = {
   // base odds — about one apex card every 67 boosters, which is a lottery
   // rather than a goal. This is the deliberate path: expensive, and the only
   // pack in the shop whose guarantee reaches the apex band at all.
-  legendary_chase: { name: 'Legendary Chase', players: 3, strats: 1, price: 6000, guaranteedLegendary: 1, apexStrat: true, mixesSpecials: true },
+  // 2026-10-02 ("lift the Chase"): its other two players are super rares,
+  // where they were plain booster slots. At 0.9 value a coin it was the
+  // poorest pack on the shelf by a distance; a legendary and two super rares
+  // is the Mega Deluxe's best outcome, guaranteed, at 1.5.
+  legendary_chase: { name: 'Legendary Chase', players: 3, strats: 1, price: 6000, guaranteedLegendary: 1, apexStrat: true, allSR: true, mixesSpecials: true },
   // Set-scoped packs.
   // TEAM PACK — priced at 250 against a booster's 100. The premium buys a ~30x
   // narrower pool, and it has to be a premium: at booster price it would strictly
@@ -112,6 +153,40 @@ export const PACK_TYPES = {
   nba_super:     { name: 'NBA Super',           players: 5,  strats: 2,  price: 300,  pool: '2026-27', guaranteedRarePlayer: 1 },
   wnba_booster:  { name: 'WNBA Booster',        players: 5,  strats: 2,  price: 100,  pool: 'wnba' },
   wnba_super:    { name: 'WNBA Super',          players: 5,  strats: 2,  price: 300,  pool: 'wnba', guaranteedRarePlayer: 1 },
+  // ── THE RARE DELUXE, AIMED (2026-10-02) ─────────────────────────────────
+  //
+  // The user: "Can we add Division, Conference, Team, and WNBA Rare Deluxe
+  // packs?" The Rare Deluxe's shape — three players, every one rare or super
+  // rare, one rare strat, the ladder's legendary chance — over a targeted
+  // pool, priced the way the targeted boosters already are against the
+  // booster: a division, a conference and a league cost what the unaimed
+  // pack costs (division 100 = booster 100), and one franchise costs 2.5x
+  // (team pack 250). That multiple is also what keeps a NAMED legendary's
+  // price level with the pack below it: a Celtics pack finds Tatum once in
+  // ~90 team packs (22,000 coins) and once in ~12 of these (21,700).
+  //
+  // Two things the aimed pools need that the whole pool never did:
+  //   `distinct`     no card twice in a pack. A franchise has one to five
+  //                  rare-or-better base cards; drawn with repeats, a Clippers
+  //                  pack was its one rare three times over.
+  //   `requireScope` the engine refuses the pack without its division,
+  //                  conference or team — unaimed it would be a cheaper
+  //                  Rare Deluxe over the base set alone.
+  // And one rule for every apexOdds pack: in a pool with no legendary (the
+  // Nets and the Hornets have none, base or special) the legendary roll
+  // deals a super rare, rather than a stray card or nothing.
+  //
+  // Every aim deals the same odds, because the band is rolled before the
+  // card (RARE_PLUS_SR_SHARE): 1.05-1.09 super rares a pack and 5.0-5.1
+  // value a coin across the WNBA, both conferences and all six divisions;
+  // 2.0 a coin for a franchise. What is left of the spread is three thin
+  // rosters (the Mavericks, Pelicans and Jazz hold two rare cards, so a
+  // third rare slot becomes a super rare: 1.33 a pack) and the two with no
+  // legendary (1.85 a coin). The user approved the prices as measured.
+  division_rare_deluxe:   { name: 'Division Rare Deluxe',   players: 3, strats: 1, price: 750,  themed: 'division',   allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true, requireScope: true },
+  conference_rare_deluxe: { name: 'Conference Rare Deluxe', players: 3, strats: 1, price: 750,  themed: 'conference', allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true, requireScope: true },
+  team_rare_deluxe:       { name: 'Team Rare Deluxe',       players: 3, strats: 1, price: 1875, needsTeam: true,      allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true, requireScope: true },
+  wnba_rare_deluxe:       { name: 'WNBA Rare Deluxe',       players: 3, strats: 1, price: 750,  pool: 'wnba',         allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true },
   // ── THE SET PACKS EARN THEIR PRICE WITH A GUARANTEE, NOT WITH THEIR POOL ──
   //
   // Super Season is a genuinely elite pool — median salary $840 against the
@@ -703,6 +778,17 @@ export function generatePack(packType, options = {}) {
   // a crafted call turn a 100-coin booster into a team pack (the WNBA team
   // pack's reviewer found it, 2026-09-21). A themed pack reads its theme's
   // option; a team pack reads its team; every other pack ignores all three.
+  //
+  // A pack that REQUIRES its aim refuses to open without one it knows
+  // (requireScope, the aimed Rare Deluxes): unaimed it would deal the whole
+  // base set, which is a different and cheaper pack than the one on the shelf.
+  if (def.requireScope) {
+    const aimed = def.themed === 'conference' ? Boolean(CONFERENCES[options.conference])
+      : def.themed === 'division' ? Boolean(DIVISIONS[options.division])
+        : def.needsTeam ? Boolean(options.team)
+          : true;
+    if (!aimed) throw new Error(`${def.name}: pick a ${def.themed ?? 'team'} first`);
+  }
   if (options.conference && def.themed === 'conference') {
     const teams = CONFERENCES[options.conference] || [];
     playerPool = playerPool.filter(c => teams.includes(c.team));
@@ -819,12 +905,17 @@ export function generatePack(packType, options = {}) {
   // premium slot below; every other draw in an apexOdds pack stays out of the
   // apex band (the fill excludes it), so the chance on the pack is the chance.
   const apexHit = (def.apexOdds ?? 0) > 0 && Math.random() < def.apexOdds;
+  // A POOL WITH NO LEGENDARY PAYS THE ROLL IN A SUPER RARE (2026-10-02).
+  // pickInBand hands back a stray card when its band is empty, which never
+  // happened while every apexOdds pack drew on a pool that has legendaries;
+  // an aimed pool may not.
+  const apexBand = playerPool.some(c => getPlayerRarity(c) === 'legendary') ? 'legendary' : 'super-rare';
   let apexDealt = false;
   const apexNow = () => apexHit && !apexDealt;
   const dealApex = () => {
     apexDealt = true;
     srCount += 1;
-    return pulled(pickInBand(playerPool, getPlayerRarity, 'legendary', 'legendary', supply));
+    return pulled(pickInBand(playerPool, getPlayerRarity, apexBand, apexBand, supply));
   };
 
   // Guaranteed super-rare players — the band exactly, unless this is the
@@ -855,8 +946,27 @@ export function generatePack(packType, options = {}) {
   // All rare+ packs: rare or super-rare, with the pack's legendary (apexOdds)
   // taking the first slot when it hits.
   if (def.allRarePlus) {
-    for (let i = result.length; i < def.players; i++) {
-      result.push(apexNow() ? dealApex() : pulled(pickInBand(playerPool, getPlayerRarity, 'rare', 'super-rare', supply)));
+    const rarePlusSlot = () => {
+      // A `distinct` pack deals no card twice while a new one is left: an
+      // aimed pool can be a handful of rare-or-better cards.
+      const taken = def.distinct ? new Set(result.filter(c => c.type === 'player').map(c => c.id)) : null;
+      const fresh = taken ? playerPool.filter(c => !taken.has(cardKey(c))) : playerPool;
+      // THE BAND FIRST, at the pack's own chance (srShare), then a card from
+      // it; the other band when that one has nothing new to give. A pack with
+      // no srShare picks among the rare and super-rare cards alike, as these
+      // slots always did.
+      if (def.srShare != null) {
+        const first = Math.random() < def.srShare ? 'super-rare' : 'rare';
+        for (const band of [first, first === 'rare' ? 'super-rare' : 'rare']) {
+          const list = fresh.filter(c => getPlayerRarity(c) === band);
+          if (list.length) return pulled(pickWeighted(list, supply));
+        }
+      }
+      const any = fresh.some(c => ['rare', 'super-rare'].includes(getPlayerRarity(c)));
+      return pulled(pickInBand(any ? fresh : playerPool, getPlayerRarity, 'rare', 'super-rare', supply));
+    };
+    for (let i = result.filter(c => c.type === 'player').length; i < def.players; i++) {
+      result.push(apexNow() ? dealApex() : rarePlusSlot());
     }
     for (let i = 0; i < def.strats; i++) {
       result.push({ id: pickInBand(stratPool, getStratRarity, 'rare', 'rare').id, type: 'strat' });
@@ -884,7 +994,7 @@ export function generatePack(packType, options = {}) {
   // All super-rare packs: the band exactly, with the pack's legendary
   // (apexOdds — about one Mega Deluxe in two) taking the first slot when it hits.
   if (def.allSR) {
-    for (let i = result.length; i < def.players; i++) {
+    for (let i = result.filter(c => c.type === 'player').length; i < def.players; i++) {
       result.push(apexNow() ? dealApex() : pulled(pickInBand(playerPool, getPlayerRarity, 'super-rare', 'super-rare', supply)));
     }
     if (def.rareStrat) {
@@ -987,5 +1097,18 @@ export function nextBoxPack(box) {
 }
 
 export const MAX_DUPES_PER_PACK = 2;
+
+/**
+ * Does a franchise's team-pack pool hold a legendary at all? The Nets and the
+ * Hornets do not, base or special, and a Team Rare Deluxe pays their legendary
+ * roll in a super rare. The shop says so before the coins move.
+ */
+export function franchiseHasLegendary(team) {
+  const roster = (CARD_SETS[BASE_SET] ?? []).filter(c => c.team === team);
+  const specials = SPECIAL_SETS_IN_PACKS
+    .flatMap(id => CARD_SETS[id] ?? [])
+    .filter(c => leagueOfCard(c) === 'nba' && currentFranchise(c.team) === team);
+  return [...roster, ...specials].some(c => getPlayerRarity(c) === 'legendary');
+}
 
 export { CONFERENCES, DIVISIONS };

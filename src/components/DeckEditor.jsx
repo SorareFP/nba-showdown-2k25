@@ -78,7 +78,7 @@ export default function DeckEditor({ deck, onSave, onCancel, collection }) {
     <div className={styles.wrap}>
       <div className={styles.header}>
         <button className={styles.backBtn} onClick={onCancel}>← Back</button>
-        <h2 className={styles.title}>{deck?.id ? 'Edit Deck' : 'New Deck'}</h2>
+        <h2 className={styles.title}>{deck?.id ? 'Edit Strategy Deck' : 'New Strategy Deck'}</h2>
       </div>
 
       <div className={styles.layout}>

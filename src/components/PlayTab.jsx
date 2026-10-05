@@ -943,8 +943,8 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel,
 
         {user && hasSavedDecks && (
           <div className={styles.deckPickers}>
-            <DeckPicker label="Team A Deck" value={deckA} onChange={setDeckA} decks={decks} color="var(--orange)" />
-            <DeckPicker label="Team B Deck" value={deckB} onChange={setDeckB} decks={decks} color="var(--blue)" />
+            <DeckPicker label="Team A Strategy Deck" value={deckA} onChange={setDeckA} decks={decks} color="var(--orange)" />
+            <DeckPicker label="Team B Strategy Deck" value={deckB} onChange={setDeckB} decks={decks} color="var(--blue)" />
           </div>
         )}
 
@@ -1012,7 +1012,7 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel,
         )}
         {rosterA.length < MIN_TO_PLAY && <p className={styles.hint}>Load a team into Team A to play it — or Quick Match.</p>}
         {user && !hasSavedDecks && !loadingDecks && (
-          <p className={styles.hint}>No saved decks — using default deck. Build one in the Collection tab.</p>
+          <p className={styles.hint}>No strategy decks saved — both teams play the default deck. Build one in Collection, under Strategy Decks.</p>
         )}
       </div>
     </div>

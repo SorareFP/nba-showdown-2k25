@@ -131,14 +131,14 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
 
       {/* THE DECK IS NOT BUILT HERE, and nothing said so (the same report:
           "also unable to choose strategy cards"). It is built in Collection →
-          My Decks and picked on the Play screen; without one a game plays the
+          Strategy Decks and picked on the Play screen; without one a game plays the
           default fifty. */}
       {user && onOpenDecks && (
         <p style={{ margin: '4px 0 14px', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
           Strategy cards: a game plays the default deck unless you build your own.{' '}
           <button type="button" onClick={onOpenDecks}
             style={{ background: 'none', border: 'none', padding: 0, color: 'var(--orange)', font: 'inherit', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
-            Build a deck
+            Build a strategy deck
           </button>
           , then choose it for each team on the Play screen.
         </p>

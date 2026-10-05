@@ -39,8 +39,8 @@ export const NEWS = [
   },
   {
     id: 'team-builder-every-set', date: '2026-10-01', title: 'Team Builder shows every card you own',
-    body: "The Team Builder's pool only listed base-set NBA cards, so a Super Season, Rookie, Throwback or WNBA card you owned could not be picked there. It now lists every player card in your collection, and the dice draw from all of them too. One card a player on a team. Strategy decks are still built in Collection, under My Decks, and chosen on the Play screen; the Team Builder now says so and links there.",
-    to: 'collection', cta: 'My Decks',
+    body: "The Team Builder's pool only listed base-set NBA cards, so a Super Season, Rookie, Throwback or WNBA card you owned could not be picked there. It now lists every player card in your collection, and the dice draw from all of them too. One card a player on a team. Strategy decks are still built in Collection, under Strategy Decks, and chosen on the Play screen; the Team Builder now says so and links there.",
+    to: 'collection', cta: 'Strategy Decks',
   },
   {
     id: 'lob-city-credits-players', date: '2026-10-01', title: 'Card stats go on the player who earned them',

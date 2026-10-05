@@ -185,6 +185,14 @@ function AppInner() {
     window.addEventListener('showdown-help', handler);
     return () => window.removeEventListener('showdown-help', handler);
   }, []);
+  // "BUILD YOUR OWN" FROM ANY TEAM PICKER (RosterPicker, 2026-10-02): six
+  // screens use it, so it asks the app by event rather than by a prop
+  // threaded through each, as the help links do.
+  useEffect(() => {
+    const openDecks = () => { setCollectionView('decks'); setTab('collection'); setMoreOpen(false); };
+    window.addEventListener('showdown-open-decks', openDecks);
+    return () => window.removeEventListener('showdown-open-decks', openDecks);
+  }, []);
 
   const tabs = user ? AUTH_TABS : GUEST_TABS;
   // The button a route lights: a season is part of Dynasty now.

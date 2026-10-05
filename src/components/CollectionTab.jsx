@@ -33,7 +33,9 @@ import styles from './CollectionTab.module.css';
 
 const VIEWS = [
   { key: 'teams', label: 'My Teams' },
-  { key: 'decks', label: 'My Decks' },
+  // "STRATEGY" IN THE NAME (Ryan, through the suggestion box, 2026-10-02:
+  // "'Deck builder' to me wasn't obvious that was talking about strategies").
+  { key: 'decks', label: 'Strategy Decks' },
   { key: 'collection', label: 'My Collection' },
   { key: 'goals', label: 'Collections' },
   { key: 'shop', label: 'Pack Shop' },
@@ -645,16 +647,16 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         </div>
       )}
 
-      {/* ── My Decks ── */}
+      {/* ── Strategy Decks ── */}
       {view === 'decks' && (
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>My Decks</h2>
-            <button className={styles.newBtn} onClick={() => setEditingDeck('new')}>+ New Deck</button>
+            <h2 className={styles.sectionTitle}>Strategy Decks</h2>
+            <button className={styles.newBtn} onClick={() => setEditingDeck('new')}>+ New Strategy Deck</button>
           </div>
           {loading && <Skeleton rows={3} height={52} label="Loading your decks" />}
           {!loading && decks.length === 0 && (
-            <div className={styles.empty}>No saved decks yet. Create one to build your strategy card deck.</div>
+            <div className={styles.empty}>No strategy decks yet. Every game plays the default fifty strategy cards until you build your own; a team, a season or a dynasty can then take yours.</div>
           )}
           <div className={styles.list}>
             {decks.map(d => (

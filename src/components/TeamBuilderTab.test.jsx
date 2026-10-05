@@ -46,9 +46,9 @@ describe('TeamBuilderTab, signed in', () => {
   });
 
   it('says where a strategy deck is built, with a way there', () => {
-    expect(html(owned)).not.toContain('Build a deck');           // no handler, no link
+    expect(html(owned)).not.toContain('Build a strategy deck');  // no handler, no link
     const out = html(owned, { onOpenDecks: () => {} });
-    expect(out).toContain('Build a deck');
+    expect(out).toContain('Build a strategy deck');
     expect(out).toContain('default deck');
   });
 });
@@ -59,7 +59,7 @@ describe('TeamBuilderTab, signed out', () => {
     try {
       const out = html({}, { onOpenDecks: () => {} });
       expect(out).not.toContain('data-card="super-season"');
-      expect(out).not.toContain('Build a deck');
+      expect(out).not.toContain('Build a strategy deck');
       expect(out.split(`data-card="${BASE_SET}"`).length - 1).toBeGreaterThan(300);
     } finally {
       auth.user = { uid: 'u1' };

@@ -17,13 +17,14 @@ export default function RosterPicker({ teamA = [], collection = {}, uid, onChang
   const [savedId, setSavedId] = useState('');
   const [saved, setSaved] = useState([]);
   const [decks, setDecks] = useState([]);
+  const [decksLoaded, setDecksLoaded] = useState(false);
   const [deckId, setDeckId] = useState('default');
   const [rolled, setRolled] = useState(null);
 
   useEffect(() => {
     if (!uid) return;
     loadTeams(uid).then(setSaved).catch(() => setSaved([]));
-    loadDecks(uid).then(setDecks).catch(() => setDecks([]));
+    loadDecks(uid).then(setDecks).catch(() => setDecks([])).finally(() => setDecksLoaded(true));
   }, [uid]);
 
   const ownedOnly = Object.keys(collection ?? {}).length > 0;
@@ -91,17 +92,51 @@ export default function RosterPicker({ teamA = [], collection = {}, uid, onChang
         </div>
       </div>
 
-      {decks.length > 0 && (
-        <label className={styles.field}>
-          <span className={styles.label}>Strategy deck</span>
-          <select className={styles.input} value={deckId} onChange={e => setDeckId(e.target.value)}>
-            <option value="default">The default fifty</option>
-            {decks.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-          </select>
-          {deckHint && <span className={styles.hint}>{deckHint}</span>}
-        </label>
-      )}
+      <StrategyDeckRow decks={decks} loaded={decksLoaded} deckId={deckId} onPick={setDeckId} hint={deckHint} />
     </>
+  );
+}
+
+/**
+ * THE STRATEGY DECK A TEAM WILL PLAY: a choice when there are saved decks;
+ * when there are none, the default fifty, said so, with the way to build one.
+ *
+ * NO DECK SAVED USED TO MEAN NO ROW AT ALL (Ryan, through the suggestion box,
+ * 2026-10-02: "when starting a season you aren't prompted if there are none
+ * built"), so a season, a tournament or a dynasty began on the default fifty
+ * with nothing on screen saying a deck came with the team. "Build your own"
+ * asks the app to open Collection, Strategy Decks (App.jsx listens).
+ * Exported so the empty state can be rendered in a test without a DOM.
+ */
+export function StrategyDeckRow({ decks = [], loaded = false, deckId = 'default', onPick, hint = null }) {
+  if (decks.length > 0) {
+    return (
+      <label className={styles.field}>
+        <span className={styles.label}>Strategy deck</span>
+        <select className={styles.input} value={deckId} onChange={e => onPick?.(e.target.value)}>
+          <option value="default">The default fifty</option>
+          {decks.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+        </select>
+        {hint && <span className={styles.hint}>{hint}</span>}
+      </label>
+    );
+  }
+  if (!loaded) return null;
+  return (
+    <div className={styles.field} data-no-strategy-deck="true">
+      <span className={styles.label}>Strategy deck</span>
+      <span>
+        Default deck — the game's own fifty strategy cards.{' '}
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent('showdown-open-decks'))}
+          style={{ background: 'none', border: 'none', padding: 0, color: 'var(--orange)', font: 'inherit', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
+        >
+          Build your own
+        </button>
+      </span>
+      {hint && <span className={styles.hint}>{hint}</span>}
+    </div>
   );
 }
 

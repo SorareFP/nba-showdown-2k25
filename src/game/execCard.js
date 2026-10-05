@@ -4,6 +4,7 @@
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead } from './engine.js';
+import { checkTerms } from './checkTerms.js';
 import { burstTargets, greenLightTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -1803,12 +1804,14 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         if (psc.type !== 'paint') return fail('Rim Protector answers a Paint check');
         if (!guard || (guard.power || 0) + (guard.defBoost || 0) < 15) return fail('Your defender on the shooter needs Power + Defensive Bonus of 15');
         psc.contest = (psc.contest || 0) - 4;
+        psc.contestBy = 'Rim Protector';
         psc.rimProtector = teamKey;
         addLog(g, teamKey, `Rim Protector: ${guard.name} meets ${shooterName} at the rim — check −4, a miss is +2 REB`);
       } else if (cardId === 'drop_coverage') {
         if (psc.type !== 'paint') return fail('Drop Coverage answers a Paint check');
         if (!guard || (guard.defBoost || 0) <= 0) return fail('Your defender on the shooter needs a Defensive Bonus');
         psc.contest = (psc.contest || 0) - 2;
+        psc.contestBy = 'Drop Coverage';
         addLog(g, teamKey, `Drop Coverage: ${guard.name} drops on ${shooterName} — check −2`);
       } else if (cardId === 'smothering_defense') {
         if (!guard || (guard.defBoost || 0) <= 0) return fail('Your defender on the shooter needs a Defensive Bonus');
@@ -1831,6 +1834,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
           ? cheap.find(c => c.i === opts.playerIdx)
           : cheap.reduce((b, c) => ((c.p.defBoost || 0) > (b.p.defBoost || 0) ? c : b), cheap[0]);
         psc.contest = (psc.contest || 0) - (pick.p.defBoost || 0);
+        psc.contestBy = `Hustle Play (${pick.p.name})`;
         addLog(g, teamKey, `Hustle Play: ${pick.p.name} ($${pick.p.salary}) contests ${shooterName} — check −${pick.p.defBoost}`);
       }
       psc.reacted = teamKey;
@@ -2014,21 +2018,18 @@ export function applyShotCheck(g, psc) {
   const player = myT.starters[psc.playerIdx];
   const ps = getPS(g, psc.teamKey, player?.id) || {};
 
-  // The card's own bonus first (Smothering Defense trims it, never below 0),
-  // then the defence's answers, then the passive matchup contest.
-  let bonus = psc.bonus || 0;
-  if (psc.smother) bonus = Math.max(0, bonus - psc.smother);
-  if (psc.closeOutBonus) bonus += psc.closeOutBonus;
-  if (psc.contest) bonus += psc.contest;
+  // THE CHECK'S TERMS ARE checkTerms (checkTerms.js): the card's bonus
+  // (Smothering Defense trims it, never below 0), the defence's answers, the
+  // defender's own contest, Twin Towers — the same parts the banner prints as
+  // the target before the roll (2026-10-05). Passed to shotCheck as parts, so
+  // the log names each one ("−2 Drop Coverage", "−1 contest (Gobert)") where
+  // it used to fold them all into one "card" number. Taken BEFORE Denial's
+  // assists are paid: whether the check is −3 turns on what the team holds as
+  // it is taken.
+  const bonus = checkTerms(g, psc);
   if (psc.denial) {
     if (myT.assists >= 2) { myT.assists -= 2; g.log = [...g.log, { team: psc.teamKey, msg: `Denial: ${myT.name} loses 2 AST` }]; }
-    else { bonus -= 3; g.log = [...g.log, { team: psc.teamKey, msg: `Denial: fewer than 2 AST to lose — the check is at −3` }]; }
-  }
-  bonus -= matchupContest(g, psc.teamKey, psc.playerIdx, psc.type);
-  // TWIN TOWERS, from the other side of the floor: while it stands, every
-  // paint check the OPPOSING team takes is two harder.
-  if (psc.type === 'paint' && standingEntry(g, psc.teamKey === 'A' ? 'B' : 'A', 'twin_towers')) {
-    bonus -= 2;
+    else { g.log = [...g.log, { team: psc.teamKey, msg: `Denial: fewer than 2 AST to lose — the check is at −3` }]; }
   }
   const hitAst = psc.onHitAst ?? (psc.onHit === 'ast' ? 1 : 0);
   // Every assist this make pays and whose line it went on: the Challenge's
@@ -2203,7 +2204,7 @@ export function resolvePendingShotCheck(game) {
     // So does a Blitz: the rest of the chain goes back to the player the card
     // was played on, unless the next check names its own shooter.
     const clean = { ...psc, ...(psc.blitzFrom != null ? { playerIdx: psc.blitzFrom } : {}), ...next, then: after };
-    delete clean.smother; delete clean.closeOutBonus; delete clean.contest;
+    delete clean.smother; delete clean.closeOutBonus; delete clean.contest; delete clean.contestBy;
     delete clean.denial; delete clean.rimProtector; delete clean.reacted;
     delete clean.blitzed; delete clean.blitzFrom;
     announceCheck(g, clean, total);

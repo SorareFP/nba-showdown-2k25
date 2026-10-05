@@ -288,17 +288,6 @@ export function blitzSlots(g) {
 }
 
 /**
- * The bonus a paused check carries apart from the shooter's own — its card
- * bonus as Smothering Defense left it, Close Out's −3 and Hustle Play's
- * contest — as applyShotCheck will add it. For choosing who takes it.
- */
-export function pendingCheckExtra(psc) {
-  if (!psc) return 0;
-  const card = psc.smother ? Math.max(0, (psc.bonus || 0) - psc.smother) : (psc.bonus || 0);
-  return card + (psc.closeOutBonus || 0) + (psc.contest || 0);
-}
-
-/**
  * DOES THE DEFENCE ACTUALLY HOLD AN ANSWER TO THIS CHECK?
  *
  * The user's rule (2026-09-07): "Every card that cues a shot check of any sort

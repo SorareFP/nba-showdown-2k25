@@ -146,6 +146,9 @@ export function tutorialCoachStep(game) {
       const played = react?.type === 'play_card' && card(react.cardId, react.opts);
       if (played) return played;
     }
+    // An answered check waits for the learner's Resolve, as in a real game
+    // (PlayTab, 2026-10-05): the banner shows what the answer did first.
+    if (psc.reacted === 'B') return null;
     return { type: 'RESOLVE_CHECK' };
   }
 

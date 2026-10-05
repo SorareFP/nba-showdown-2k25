@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
-import { canPlayCard, burstTargets, greenLightTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, pendingCheckExtra } from '../../game/canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
+import { checkNeedFor } from '../../game/checkTerms.js';
 import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool, STARTERS } from '../../game/engine.js';
@@ -2173,7 +2174,7 @@ function ChoiceBanner({ game, setGame, pvpMode = false, myTeamKey = null }) {
           <div className={styles.pendingActions}>
             {pc.slots.map(slot => {
               const p = offT.starters[slot];
-              const need = Math.max(1, Math.min(21, checkNeed(game, pc.teamKey, slot, psc.type, { extra: pendingCheckExtra(psc), banked: false }).need));
+              const need = Math.max(1, Math.min(21, checkNeedFor(game, psc, slot).need));
               return (
                 <button key={slot} className={styles.resolveBtn} onClick={() => choose(slot)} title={`Needs ${need}+ on the die`}>
                   {p?.name} · {need > 20 ? 'no' : `${need}+`}
@@ -2195,8 +2196,8 @@ function ChoiceBanner({ game, setGame, pvpMode = false, myTeamKey = null }) {
         <div className={styles.pendingActions}>
           {pc.slots.map(slot => {
             const p = offT.starters[slot];
-            const n = checkNeed(game, pc.teamKey, slot, '3pt');
-            const need = Math.max(1, Math.min(21, n.need - pc.extra));
+            const n = checkNeed(game, pc.teamKey, slot, '3pt', { extra: pc.extra, banked: false });
+            const need = Math.max(1, Math.min(21, n.need));
             return (
               <button key={slot} className={styles.resolveBtn} onClick={() => choose(slot)} title={`Needs ${need}+ on the die`}>
                 {p?.name} · {need > 20 ? 'no' : `${need}+`}
@@ -2227,10 +2228,24 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
   // blitzed check has no shooter yet.
   const canBlitz=defLive && getTeam(game,defKey).hand.includes('blitz') && canPlayCard(game,defKey,'blitz').canPlay;
   const waitingOnBlitz=game.pendingChoice?.kind==='blitz';
+  // THE TARGET, AS IT WILL BE ROLLED (2026-10-05). The user: "I just rolled
+  // something that said 13+ and then it comped it against a 15 because of
+  // the -2 contest." The coach's answer (Drop Coverage, −2) landed after the
+  // 13+ was shown and the die flew at once. The check now waits after an
+  // answer (PlayTab), and this line is the number it waits at: checkNeedFor,
+  // the same terms applyShotCheck rolls with, itemised on hover.
+  const checkAt=checkNeedFor(game,psc);
+  const sgn=n=>`${n>0?'+':'−'}${Math.abs(n)}`;
+  const terms=checkAt.parts.map(p=>`${sgn(p.n)} ${p.label}`).join(' · ');
+  const needText=checkAt.need<=1?'makes it on any roll':checkAt.need>20?`needs ${checkAt.need}, can't make it`:`needs ${checkAt.need}+ (${Math.round(checkAt.pHit*100)}%)`;
+  const answeredBy=psc.reacted&&psc.reacted!==psc.teamKey?(psc.contestBy??(psc.smother?'Smothering Defense':psc.denial?'Denial':psc.closeOutBonus?'Close Out':null)):null;
   return (
     <div className={styles.pendingBanner}>
       <div className={styles.pendingInfo}>
         <span className={styles.pendingTitle}>⏸ {offP?.name} — {psc.cardLabel} at +{psc.bonus}</span>
+        <span data-check-need={checkAt.need} title={terms||undefined} style={{fontSize:13,fontWeight:700}}>{psc.type==='ft'?'Free throw':psc.type==='3pt'?'3PT':'Paint'} check {needText}</span>
+        {terms&&<span style={{color:'#94A3B8',fontSize:12}}>{terms}</span>}
+        {answeredBy&&<span style={{color:'var(--red)',fontSize:12}}>Answered with {answeredBy}</span>}
         {psc.closeOutBonus&&<span style={{color:'var(--red)',fontSize:12}}> Close Out applied: net {psc.bonus+psc.closeOutBonus}</span>}
         <span style={{color:hasCloseOut&&coPlay?.canPlay?'var(--green)':'#94A3B8',fontSize:12}}>Team {defKey}: {hasCloseOut&&coPlay?.canPlay?'⚡ Close Out available!':'no Close Out'}</span>
       </div>

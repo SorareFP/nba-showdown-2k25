@@ -470,6 +470,13 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
             const react = aiReactionDecision(game, 'B', 'shot_check', { iq });
             if (react?.type === 'play_card' && tryCard(react.cardId, react.opts)) return;
           }
+          // THE COACH ANSWERED: THE CHECK WAITS FOR YOU (2026-10-05). The die
+          // used to fly the moment the answer landed, so what it did to the
+          // target (Drop Coverage's −2, Rim Protector's −4) was first seen in
+          // the result — "it said 13+ and then it comped it against a 15".
+          // The banner shows the new target and you press Resolve. A check the
+          // coach let go still rolls at once, as it always has.
+          if (psc.reacted === 'B') return;
           dispatch({ type: 'RESOLVE_CHECK' });
         }
         return;

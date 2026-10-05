@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'answered-checks-wait', date: '2026-10-05', title: 'See the coach\'s answer before you shoot',
+    body: "When the coach answers one of your shot checks (Close Out, Drop Coverage, Rim Protector, Hustle Play, Smothering Defense, Denial), the check now waits instead of rolling at once. The banner shows the new target, what it needs on the die and every term behind it, and you press Resolve. The log names each term too (\"−2 Drop Coverage\", \"−1 contest (Gobert)\") where it used to fold them into one number. A check the coach lets go still rolls straight away.",
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'strats-not-burned-by-hand', date: '2026-10-02', title: 'Strategy cards are no longer burned by hand',
     body: "The Burn button is gone from strategy cards in your collection. They leave one way now: a copy that would take a card past its deck limit (5 common, 4 uncommon, 3 rare, 1 legendary) is burned for its coins as it arrives, as it has been since September. Player cards are unchanged: a spare can still be burned or listed on the market.",
     to: 'collection', cta: 'Collection',

@@ -75,7 +75,8 @@ describe('Unethical Hoops', () => {
     // the only +4 left is the hot-marker streak a run of makes builds.
     expect(lines.some(l => /\+\d+ card/.test(l.msg))).toBe(false);
     expect(lines.filter(l => /\+10 FT/.test(l.msg))).toHaveLength(4);
-    expect(g2.lastShotCheck).toMatchObject({ type: 'ft', bonus: 0 });
+    // The check's own terms (checkTerms): none at all for a plain free throw.
+    expect(g2.lastShotCheck).toMatchObject({ type: 'ft', bonus: [] });
   });
 
   it('refuses a player with no edge', () => {

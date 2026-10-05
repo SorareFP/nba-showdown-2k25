@@ -696,13 +696,18 @@ describe('the tutorial coach (tutorialCoachStep, what TutorialGame dispatches)',
     expect(tutorialCoachStep(g)).toBe(null);
   });
 
-  it('answers a check on your shooter with its reaction, then lets the die fly', () => {
+  it('answers a check on your shooter with its reaction, then waits for your Resolve (2026-10-05)', () => {
+    // The die used to fly the moment the answer landed, so what it did to the
+    // target was first seen in the result. The answered check now waits.
     const g = announced('A');
     expect(g).toBeTruthy();
     const first = tutorialCoachStep(g);
     expect(first.type).toBe('UPDATE');
     expect(first.game.pendingShotCheck?.reacted).toBeTruthy();
-    expect(tutorialCoachStep(first.game)).toEqual({ type: 'RESOLVE_CHECK' });
+    expect(tutorialCoachStep(first.game)).toBeNull();
+    // A check the coach lets go still rolls at once.
+    const unanswered = { ...g, pendingShotCheck: { ...g.pendingShotCheck }, teamB: { ...g.teamB, hand: [] } };
+    expect(tutorialCoachStep(unanswered)).toEqual({ type: 'RESOLVE_CHECK' });
   });
 
   it('is the only coach TutorialGame runs', async () => {

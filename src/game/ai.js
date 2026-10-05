@@ -5,9 +5,10 @@
 
 import { challengeTarget, getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions, timeoutProblem } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, burstTargets, greenLightTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST, pendingCheckExtra } from './canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
+import { checkNeedFor } from './checkTerms.js';
 
 /**
  * AI action types:
@@ -1104,13 +1105,12 @@ export function aiGoUnderChoice(game, teamKey) {
 }
 
 /**
- * THE CHANCE A PAUSED CHECK LANDS FOR `slot` of the offence: the check's own
- * extra (card bonus as answered, Close Out, Hustle Play — pendingCheckExtra)
- * on top of the player's own bonus, markers, fatigue and defender (checkNeed).
+ * THE CHANCE A PAUSED CHECK LANDS FOR `slot` of the offence: the target the
+ * roll will be taken at (checkNeedFor — the check as answered, the defender,
+ * Twin Towers, the player's own bonus, markers and fatigue).
  */
 function pausedCheckChance(game, psc, slot) {
-  const n = checkNeed(game, psc.teamKey, slot, psc.type, { extra: pendingCheckExtra(psc), banked: false });
-  return Math.min(1, Math.max(0, (21 - n.need) / 20));
+  return checkNeedFor(game, psc, slot).pHit;
 }
 
 /** The offence's answer to a Blitz: the player on the floor likeliest to make the check. */

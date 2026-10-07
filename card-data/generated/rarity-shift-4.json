@@ -1,0 +1,35 @@
+{
+ "note": "RARITY SHIFT — card keys whose rarity moved between the cards as shipped (`from`) and now; each copy held before `cutoff` is owed `coins` (negative for a card that moved up), the total floored at zero, once per account under claims/<id>. Written by scripts/cardgen/rarityShift.mjs; read by src/game/rarityShift.js.",
+ "id": "rarity-shift:2026-10-07-4",
+ "from": "59d16aad",
+ "fromCommit": "59d16aad6f3896fbf624f7a55e140563cb03a8d3",
+ "cutoff": "2026-10-07T13:48:59.787Z",
+ "rates": {
+  "common": 2,
+  "uncommon": 5,
+  "rare": 45,
+  "super-rare": 100,
+  "legendary": 250
+ },
+ "summary": {
+  "keys": 1,
+  "down": 1,
+  "up": 0,
+  "moves": {
+   "uncommon -> common": 1
+  }
+ },
+ "shifts": {
+  "throwbacks:Jawad_Williams_2011": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Jawad Williams",
+   "season": "2010-11",
+   "salary": [
+    440,
+    240
+   ]
+  }
+ }
+}

@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'free-agents-rebuilt', date: '2026-10-07', title: 'Requested cards rebuilt on the current rules',
+    body: "The 25 Free Agents cards were built the day they were signed, so the September 30 card rules (finer three-point lines, no scoring cut for seasons over 36 minutes a game, rebounds and assists read per scoring band) never reached them. They are rebuilt now like every other set. Most moved $30 or less. Jawad Williams 2010-11 drops to common, and anyone holding one gets the coin difference, the same way as the other rarity changes.",
+    to: 'collection', cta: 'Collection',
+  },
+  {
     id: 'twin-towers-spend-checks', date: '2026-10-07', title: 'Twin Towers guards the paint checks you pay for',
     body: "Twin Towers says the other team's paint checks are two harder while it stands. It only touched the paint checks a card calls for: the ones you buy with 5 assists or 5 rebounds ignored it. They now need two more on the die as well, and the banner itemises it before you pay.",
     to: 'play', cta: 'Play',

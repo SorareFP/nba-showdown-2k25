@@ -11,9 +11,9 @@
    "power": 7,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 470,
+   "salary": 480,
    "chart": [
     {
      "lo": 1,
@@ -26,29 +26,29 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
-     "hi": 15,
+     "hi": 8,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 16,
-     "hi": 20,
-     "pts": 2,
+     "lo": 9,
+     "hi": 15,
+     "pts": 1,
      "reb": 0,
      "ast": 1
     },
     {
-     "lo": 21,
+     "lo": 16,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
-     "ast": 2
+     "reb": 0,
+     "ast": 1
     }
    ],
    "season": 1996,
@@ -69,20 +69,21 @@
    "set": "rookie",
    "requested": true,
    "requestId": "icPR9oLCfGeyhJaO6cNZ",
-   "builtAt": "2026-09-10T21:56:57.035Z"
+   "builtAt": "2026-09-10T21:56:57.035Z",
+   "rebuiltAt": "2026-10-07T13:47:55.790Z"
   },
   {
    "id": "Jawad_Williams_2011",
    "name": "Jawad Williams",
    "team": "CLE16",
    "pos": "SF",
-   "speed": 6,
-   "power": 7,
+   "speed": 4,
+   "power": 4,
    "shotLine": 18,
    "paintBoost": 2,
-   "threePtBoost": 3,
+   "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 440,
+   "salary": 240,
    "chart": [
     {
      "lo": 1,
@@ -138,7 +139,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "XMjrxRKtApyVINeCRJjk",
-   "builtAt": "2026-09-11T00:42:46.729Z"
+   "builtAt": "2026-09-11T00:42:46.729Z",
+   "rebuiltAt": "2026-10-07T13:47:57.724Z"
   },
   {
    "id": "Mitch_Richmond_1998",
@@ -149,9 +151,9 @@
    "power": 10,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 3,
+   "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1220,
+   "salary": 1140,
    "chart": [
     {
      "lo": 1,
@@ -179,7 +181,7 @@
      "hi": 20,
      "pts": 3,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 21,
@@ -207,7 +209,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "HCriYGAZnzZOsVaV6kn0",
-   "builtAt": "2026-09-11T00:42:57.168Z"
+   "builtAt": "2026-09-11T00:42:57.168Z",
+   "rebuiltAt": "2026-10-07T13:48:00.116Z"
   },
   {
    "id": "Shawn_Kemp_1999",
@@ -220,7 +223,7 @@
    "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 1180,
+   "salary": 1130,
    "chart": [
     {
      "lo": 1,
@@ -241,21 +244,14 @@
      "hi": 15,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
-     "hi": 20,
+     "hi": 99,
      "pts": 3,
      "reb": 1,
      "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
     }
    ],
    "season": 1999,
@@ -276,7 +272,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "QaKsW1ZOAKZpJLdkfe86",
-   "builtAt": "2026-09-11T00:43:03.784Z"
+   "builtAt": "2026-09-11T00:43:03.784Z",
+   "rebuiltAt": "2026-10-07T13:48:01.887Z"
   },
   {
    "id": "Marissa_Coleman_2010",
@@ -288,9 +285,9 @@
    "power": 7,
    "shotLine": 15,
    "paintBoost": -2,
-   "threePtBoost": 1,
+   "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 520,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -310,7 +307,7 @@
      "lo": 8,
      "hi": 14,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -351,7 +348,8 @@
    "set": "wnba-throwbacks",
    "requested": true,
    "requestId": "EeklL0xNEwWURNgrvr14",
-   "builtAt": "2026-09-11T00:43:08.345Z"
+   "builtAt": "2026-09-11T00:43:08.345Z",
+   "rebuiltAt": "2026-10-07T13:48:02.911Z"
   },
   {
    "id": "LeBron_James",
@@ -362,9 +360,9 @@
    "power": 14,
    "shotLine": 18,
    "paintBoost": 5,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 1180,
+   "salary": 1160,
    "chart": [
     {
      "lo": 1,
@@ -377,7 +375,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -408,7 +406,8 @@
    "set": "summer-standouts",
    "requested": true,
    "requestId": "oSmoXAN5z6eIgMn4lTRq",
-   "builtAt": "2026-09-11T13:01:37.420Z"
+   "builtAt": "2026-09-11T13:01:37.420Z",
+   "rebuiltAt": "2026-10-07T13:48:04.564Z"
   },
   {
    "id": "Cedric_Henderson",
@@ -434,7 +433,7 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -477,7 +476,8 @@
    "set": "rookie",
    "requested": true,
    "requestId": "UJtiHGZf03Jwy5jIFw7H",
-   "builtAt": "2026-09-16T14:03:10.759Z"
+   "builtAt": "2026-09-16T14:03:10.759Z",
+   "rebuiltAt": "2026-10-07T13:48:06.395Z"
   },
   {
    "id": "Darius_Miles_2003",
@@ -539,7 +539,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "BhOiNk3jZXs9tGnu7YJq",
-   "builtAt": "2026-09-16T14:03:25.707Z"
+   "builtAt": "2026-09-16T14:03:25.707Z",
+   "rebuiltAt": "2026-10-07T13:48:08.421Z"
   },
   {
    "id": "Zydrunas_Ilgauskas_2006",
@@ -552,7 +553,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 830,
+   "salary": 800,
    "chart": [
     {
      "lo": 1,
@@ -566,7 +567,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -577,16 +578,9 @@
     },
     {
      "lo": 16,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -608,7 +602,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "Ha9EltRc0qkyfoRdlXbe",
-   "builtAt": "2026-09-16T14:03:42.683Z"
+   "builtAt": "2026-09-16T14:03:42.683Z",
+   "rebuiltAt": "2026-10-07T13:48:10.265Z"
   },
   {
    "id": "Ira_Newble_2004",
@@ -616,12 +611,12 @@
    "team": "CLE04",
    "pos": "SF",
    "speed": 5,
-   "power": 5,
+   "power": 4,
    "shotLine": 16,
    "paintBoost": -1,
    "threePtBoost": -4,
    "defBoost": -1,
-   "salary": 70,
+   "salary": 80,
    "chart": [
     {
      "lo": 1,
@@ -634,8 +629,8 @@
      "lo": 3,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 9,
@@ -646,6 +641,13 @@
     },
     {
      "lo": 16,
+     "hi": 23,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 24,
      "hi": 99,
      "pts": 1,
      "reb": 1,
@@ -670,7 +672,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "hj6l3uPLebL0X7AOdwsU",
-   "builtAt": "2026-09-16T14:35:20.758Z"
+   "builtAt": "2026-09-16T14:35:20.758Z",
+   "rebuiltAt": "2026-10-07T13:48:12.134Z"
   },
   {
    "id": "Nikoloz_Tskitishvili",
@@ -678,12 +681,12 @@
    "team": "DEN",
    "pos": "SF",
    "speed": 4,
-   "power": 5,
+   "power": 4,
    "shotLine": 18,
    "paintBoost": 0,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 50,
+   "salary": 70,
    "chart": [
     {
      "lo": 1,
@@ -696,7 +699,7 @@
      "lo": 3,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -704,14 +707,14 @@
      "hi": 17,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 18,
      "hi": 21,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
@@ -739,7 +742,8 @@
    "set": "rookie",
    "requested": true,
    "requestId": "lvNFbKoinSBeWeC3hjiL",
-   "builtAt": "2026-09-16T20:29:20.196Z"
+   "builtAt": "2026-09-16T20:29:20.196Z",
+   "rebuiltAt": "2026-10-07T13:48:14.049Z"
   },
   {
    "id": "Maya_Moore_2016",
@@ -753,7 +757,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 1410,
+   "salary": 1440,
    "chart": [
     {
      "lo": 1,
@@ -767,14 +771,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
@@ -807,7 +811,8 @@
    "set": "wnba-throwbacks",
    "requested": true,
    "requestId": "rXMYaa1kNoDoGI7KaAlt",
-   "builtAt": "2026-09-17T01:50:55.216Z"
+   "builtAt": "2026-09-17T01:50:55.216Z",
+   "rebuiltAt": "2026-10-07T13:48:14.970Z"
   },
   {
    "id": "Rafer_Alston_2005",
@@ -818,7 +823,7 @@
    "power": 8,
    "shotLine": 16,
    "paintBoost": -1,
-   "threePtBoost": 1,
+   "threePtBoost": 2,
    "defBoost": -1,
    "salary": 590,
    "chart": [
@@ -833,21 +838,28 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -869,7 +881,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "wc2zIjrijUGIPy6Kip1l",
-   "builtAt": "2026-09-18T17:05:18.497Z"
+   "builtAt": "2026-09-18T17:05:18.497Z",
+   "rebuiltAt": "2026-10-07T13:48:16.869Z"
   },
   {
    "id": "Luke_Ridnour_2005",
@@ -882,7 +895,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 330,
+   "salary": 320,
    "chart": [
     {
      "lo": 1,
@@ -938,7 +951,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "oDBkdqyGafi4KWgOLG8V",
-   "builtAt": "2026-09-21T17:42:43.938Z"
+   "builtAt": "2026-09-21T17:42:43.938Z",
+   "rebuiltAt": "2026-10-07T13:48:18.703Z"
   },
   {
    "id": "Tristan_Thompson",
@@ -978,7 +992,7 @@
      "lo": 18,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -1000,7 +1014,8 @@
    "set": "rookie",
    "requested": true,
    "requestId": "w45EfQsds0c0v3TISHqa",
-   "builtAt": "2026-09-21T17:42:52.032Z"
+   "builtAt": "2026-09-21T17:42:52.032Z",
+   "rebuiltAt": "2026-10-07T13:48:20.576Z"
   },
   {
    "id": "Kyle_Korver_2011",
@@ -1013,7 +1028,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 630,
+   "salary": 640,
    "chart": [
     {
      "lo": 1,
@@ -1026,14 +1041,14 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -1047,7 +1062,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -1069,7 +1084,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "6obZ9jUyK3ymK5SmfYsD",
-   "builtAt": "2026-09-21T18:42:51.518Z"
+   "builtAt": "2026-09-21T18:42:51.518Z",
+   "rebuiltAt": "2026-10-07T13:48:22.518Z"
   },
   {
    "id": "Tyreke_Evans_2013",
@@ -1080,9 +1096,9 @@
    "power": 8,
    "shotLine": 16,
    "paintBoost": 2,
-   "threePtBoost": -2,
+   "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 770,
+   "salary": 790,
    "chart": [
     {
      "lo": 1,
@@ -1095,14 +1111,14 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
      "hi": 7,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -1110,14 +1126,14 @@
      "hi": 15,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
      "hi": 20,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 21,
@@ -1145,7 +1161,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "f1vXvMxgnd6v8tQkodm3",
-   "builtAt": "2026-09-22T11:52:38.975Z"
+   "builtAt": "2026-09-22T11:52:38.975Z",
+   "rebuiltAt": "2026-10-07T13:48:24.375Z"
   },
   {
    "id": "Derrick_White_2024",
@@ -1156,9 +1173,9 @@
    "power": 10,
    "shotLine": 15,
    "paintBoost": 1,
-   "threePtBoost": 3,
+   "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 1060,
+   "salary": 1040,
    "chart": [
     {
      "lo": 1,
@@ -1179,7 +1196,7 @@
      "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
@@ -1207,7 +1224,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "Zj6cBaY2C4JN9TBaZ3ZB",
-   "builtAt": "2026-09-25T13:44:20.540Z"
+   "builtAt": "2026-09-25T13:44:20.540Z",
+   "rebuiltAt": "2026-10-07T13:48:26.204Z"
   },
   {
    "id": "Elena_Delle_Donne_2014",
@@ -1242,7 +1260,7 @@
      "hi": 13,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
@@ -1275,7 +1293,8 @@
    "set": "wnba-throwbacks",
    "requested": true,
    "requestId": "ijowTwo4VjhTGEeEj6ED",
-   "builtAt": "2026-09-28T15:10:58.401Z"
+   "builtAt": "2026-09-28T15:10:58.401Z",
+   "rebuiltAt": "2026-10-07T13:48:27.173Z"
   },
   {
    "id": "Nick_Young_2015",
@@ -1288,7 +1307,7 @@
    "paintBoost": 3,
    "threePtBoost": 5,
    "defBoost": -2,
-   "salary": 640,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -1301,7 +1320,7 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -1309,7 +1328,7 @@
      "hi": 7,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
@@ -1351,20 +1370,21 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "OrvZ3v4Fy6BYtwrdmZMc",
-   "builtAt": "2026-09-28T15:11:09.778Z"
+   "builtAt": "2026-09-28T15:11:09.778Z",
+   "rebuiltAt": "2026-10-07T13:48:29.009Z"
   },
   {
    "id": "Ed_Davis_2022",
    "name": "Ed Davis",
    "team": "CLE17",
    "pos": "C",
-   "speed": 5,
-   "power": 9,
+   "speed": 4,
+   "power": 7,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": -5,
    "defBoost": 3,
-   "salary": 610,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -1420,7 +1440,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "3nK7OvvcwYL6iDZGBEDM",
-   "builtAt": "2026-09-29T16:31:33.020Z"
+   "builtAt": "2026-09-29T16:31:33.020Z",
+   "rebuiltAt": "2026-10-07T13:48:30.822Z"
   },
   {
    "id": "Richard_Jefferson",
@@ -1431,9 +1452,9 @@
    "power": 8,
    "shotLine": 14,
    "paintBoost": 1,
-   "threePtBoost": -1,
+   "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 570,
+   "salary": 460,
    "chart": [
     {
      "lo": 1,
@@ -1446,36 +1467,22 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 13,
-     "pts": 2,
-     "reb": 1,
+     "pts": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 14,
-     "hi": 19,
+     "hi": 99,
      "pts": 2,
      "reb": 1,
      "ast": 0
-    },
-    {
-     "lo": 20,
-     "hi": 27,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    },
-    {
-     "lo": 28,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
     }
    ],
    "season": 2016,
@@ -1486,12 +1493,13 @@
    "bbrefId": "jefferi01",
    "traded": false,
    "metrics": {},
-   "provisional": true,
+   "provisional": false,
    "playoffRun": true,
    "set": "summer-standouts",
    "requested": true,
    "requestId": "00Me0998HPaIDavksTGK",
-   "builtAt": "2026-09-30T11:30:40.914Z"
+   "builtAt": "2026-09-30T11:30:40.914Z",
+   "rebuiltAt": "2026-10-07T13:48:32.424Z"
   },
   {
    "id": "Tristan_Thompson",
@@ -1555,7 +1563,8 @@
    "set": "summer-standouts",
    "requested": true,
    "requestId": "OOKtPCYigJmNfUILJURP",
-   "builtAt": "2026-09-30T12:20:34.941Z"
+   "builtAt": "2026-09-30T12:20:34.941Z",
+   "rebuiltAt": "2026-10-07T13:48:34.049Z"
   },
   {
    "id": "Rex_Chapman",
@@ -1617,7 +1626,8 @@
    "set": "super-season",
    "requested": true,
    "requestId": "H0lMlFYkhcTUBGerphOB",
-   "builtAt": "2026-10-01T15:53:21.153Z"
+   "builtAt": "2026-10-01T15:53:21.153Z",
+   "rebuiltAt": "2026-10-07T13:48:35.738Z"
   },
   {
    "id": "Chris_Kaman_2008",
@@ -1686,7 +1696,8 @@
    "set": "throwbacks",
    "requested": true,
    "requestId": "qWZhre9GLt2LP03Lbe8D",
-   "builtAt": "2026-10-01T15:53:30.666Z"
+   "builtAt": "2026-10-01T15:53:30.666Z",
+   "rebuiltAt": "2026-10-07T13:48:37.529Z"
   }
  ]
 }

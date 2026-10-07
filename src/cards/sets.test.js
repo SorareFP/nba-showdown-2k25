@@ -36,6 +36,8 @@ import {
   setPaths,
   setTreatment,
   showsSeason,
+  teamOverridesPath,
+  setLeague,
 } from './sets.js';
 
 describe('the declared set list', () => {
@@ -330,22 +332,36 @@ describe('every set owns a separate directory', () => {
   // because the faces differ (the trim, the pill, and soon the numbers).
   const OWN_ART = SET_IDS.filter(id => id !== LIVE_SET);
 
-  it('scopes photos, crops, team colours and exports by set id', () => {
+  it('scopes photos, crops and exports by set id', () => {
     const seen = new Set();
     for (const id of OWN_ART) {
       const paths = setPaths(id);
       expect(paths.root).toBe(`${ART_ROOT}/sets/${id}`);
       expect(paths.photos).toContain(`/${id}/`);
       expect(paths.crops).toContain(`/${id}/`);
-      expect(paths.teamOverrides).toContain(`/${id}/`);
       // NEVER public/cards/players/ — that is the finished set's hand-made art.
       expect(paths.cards).toBe(`public/cards/${id}`);
       expect(paths.cards).not.toBe('public/cards/players');
-      for (const p of [paths.photos, paths.crops, paths.teamOverrides, paths.cards]) {
+      for (const p of [paths.photos, paths.crops, paths.cards]) {
         expect(seen.has(p), `${id} collides on ${p}`).toBe(false);
         seen.add(p);
       }
     }
+  });
+
+  // TEAM COLOURS ARE THE LEAGUE'S, NOT THE SET'S (the user, 2026-10-07: "any
+  // changes I made to a player's team colors of a certain era can be
+  // batch-applied to all"). One file per league: the leagues reuse codes.
+  it('shares one team-colour file across every set of a league', () => {
+    const byLeague = {};
+    for (const id of SET_IDS) {
+      const league = setLeague(id);
+      expect(setPaths(id).teamOverrides).toBe(teamOverridesPath(league));
+      (byLeague[league] ??= new Set()).add(setPaths(id).teamOverrides);
+    }
+    expect(Object.keys(byLeague).sort()).toEqual(['NBA', 'WNBA']);
+    for (const files of Object.values(byLeague)) expect(files.size).toBe(1);
+    expect(teamOverridesPath('NBA')).not.toBe(teamOverridesPath('WNBA'));
   });
 
   it('points the Live Series at the base set\'s art and at an export of its own', () => {

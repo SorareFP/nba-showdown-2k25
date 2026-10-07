@@ -1,0 +1,34 @@
+{
+  "CLE95": {
+    "secondary": "#F94300",
+    "accent": "#000000"
+  },
+  "GSW": {
+    "primary": "#FFC72C",
+    "secondary": "#1D4289"
+  },
+  "GSW89": {
+    "primary": "#FFC72C",
+    "secondary": "#1D4289"
+  },
+  "HOU03": {
+    "primary": "#010101",
+    "secondary": "#CE1141"
+  },
+  "MIA": {
+    "secondary": "#862633",
+    "accent": "#E6ECF8"
+  },
+  "UTA": {
+    "primary": "#010101",
+    "secondary": "#330072"
+  },
+  "UTA16": {
+    "primary": "#FFA200",
+    "secondary": "#002144"
+  },
+  "WSB": {
+    "primary": "#E03A3E",
+    "secondary": "#002B5C"
+  }
+}

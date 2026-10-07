@@ -244,10 +244,11 @@ export default function Studio() {
   // ── Load persisted state, per SET ─────────────────────────────────────────
   //
   // Re-runs on every set change, and everything it loads is replaced rather
-  // than merged: each set owns its own photos/, crops.json and
-  // team-overrides.json under card-art/sets/{id}/, so carrying one set's crops
-  // into another would show the user framing that does not exist on disk and
-  // then save it there on the next keystroke.
+  // than merged: each set owns its own photos/ and crops.json under
+  // card-art/sets/{id}/, so carrying one set's crops into another would show
+  // the user framing that does not exist on disk and then save it there on
+  // the next keystroke. Team colours are the LEAGUE's file since 2026-10-07
+  // (teamOverridesPath), so a switch within a league reloads the same map.
   //
   // The dirty flags are cleared FIRST. Without that, the state this effect
   // loads counts as a user edit the moment it lands, and the debounced saver

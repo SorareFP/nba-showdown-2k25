@@ -103,6 +103,12 @@ export default function TeamEditor({ team: abbr, overrides, onChange, league = D
           {customised.length} of {teamCount} customised
         </span>
 
+        {/* Shared since 2026-10-07 (teamOverridesPath in sets.js): an edit here
+            recolours this era on every set of the league, not just this one. */}
+        <span className={styles.teamCount} data-colours-shared={league}>
+          · every {league} set
+        </span>
+
         <button
           type="button"
           className={styles.resetButton}

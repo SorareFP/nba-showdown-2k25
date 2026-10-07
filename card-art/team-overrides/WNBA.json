@@ -1,0 +1,23 @@
+{
+  "CHI06": {
+    "primary": "#FFFFFF",
+    "secondary": "#4891DC",
+    "accent": "#FFCC00"
+  },
+  "CON": {
+    "secondary": "#0C2340",
+    "accent": "#0C2340"
+  },
+  "DAL": {
+    "secondary": "#FFFFFF",
+    "accent": "#0C2340"
+  },
+  "GSV": {
+    "primary": "#AD96DC",
+    "secondary": "#010101"
+  },
+  "MIN11": {
+    "secondary": "#00B803",
+    "accent": "#FFFFFF"
+  }
+}

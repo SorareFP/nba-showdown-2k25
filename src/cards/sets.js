@@ -712,6 +712,18 @@ export function setLeague(id) {
 export const ART_ROOT = 'card-art';
 
 /**
+ * TEAM COLOURS ARE SHARED BY EVERY SET IN A LEAGUE (the user, 2026-10-07:
+ * "any changes I made to a player's team colors of a certain era can be
+ * batch-applied to all"). They were one file per set, so a colour chosen
+ * for an era on one set's card never reached the same era's cards in
+ * another set: the 2006-19 Sky printed yellow on a Super Season, white on
+ * the Throwbacks and the official sky blue on the rookies. A team code names
+ * one look wherever it appears, so one file holds it. ONE PER LEAGUE because
+ * the leagues reuse codes: DAL is the Mavericks and the Wings.
+ */
+export const teamOverridesPath = (league = DEFAULT_LEAGUE) => `${ART_ROOT}/team-overrides/${league}.json`;
+
+/**
  * Every path a set owns, project-root-relative and POSIX-separated.
  *
  * Returned as plain strings rather than resolved absolutes so the same helper
@@ -728,7 +740,8 @@ export function setPaths(set = CURRENT_SET) {
     root,
     photos: `${art}/photos`,
     crops: `${art}/crops.json`,
-    teamOverrides: `${art}/team-overrides.json`,
+    // Not the set's own: the league's, shared (teamOverridesPath above).
+    teamOverrides: teamOverridesPath(setLeague(set)),
     // Where a batch export of THIS set writes. Deliberately not
     // public/cards/players/ — see FINISHED_SET.
     cards: `public/cards/${set}`,

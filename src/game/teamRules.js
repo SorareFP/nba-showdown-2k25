@@ -18,6 +18,20 @@ export const MIN_TO_PLAY = 5;
 export const capSal = roster => roster.reduce((s, c) => s + (c.salary ?? 0), 0);
 
 /**
+ * ONE CARD A PLAYER ON A TEAM (the user, 2026-10-07: "Yeah should only be one").
+ * Two cards of one player share an id, and the engine keeps a roster's stat
+ * rows and fatigue by id. Both builders read these.
+ */
+export const playerOnRoster = (roster, card) => (roster ?? []).some(c => c && c !== card && c.id === card?.id);
+/** The names on a roster more than once — a team saved before the rule. */
+export function doubledPlayers(roster) {
+  const seen = new Set();
+  const twice = new Set();
+  for (const c of roster ?? []) { if (!c) continue; if (seen.has(c.id)) twice.add(c.name); seen.add(c.id); }
+  return [...twice];
+}
+
+/**
  * The player cards a collection actually contains, with how many of each.
  *
  * `collection` is the index loadCollection returns: `{ [cardKey]: { type,

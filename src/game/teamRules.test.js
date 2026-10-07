@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   ownedPlayers, ownedRoster, capSal, randomizeTeam, filterPool, sortPool, POOL_SORTS, POSITIONS,
-  DEFAULT_FILTERS, CAP, MAX, MIN_TO_PLAY, RANDOM_MIN_SAL, salaryOrder } from './teamRules.js';
+  DEFAULT_FILTERS, CAP, MAX, MIN_TO_PLAY, RANDOM_MIN_SAL, salaryOrder, playerOnRoster, doubledPlayers } from './teamRules.js';
 import { ALL_CARDS, BASE_SET, cardKey } from './cardSets.js';
 
 const base = ALL_CARDS.find(c => (!c.set || c.set === BASE_SET) && Number.isFinite(c.salary));
@@ -149,5 +149,31 @@ describe('salaryOrder', () => {
     const starters = [{ salary: 300 }, { salary: 950 }, { salary: 300 }, null, { salary: 600 }];
     expect(salaryOrder(starters)).toEqual([1, 4, 0, 2, 3]);
     expect(salaryOrder([])).toEqual([]);
+  });
+});
+
+// ONE CARD A PLAYER (the user, 2026-10-07: "Yeah should only be one"): the
+// rule both builders read.
+describe('one card a player', () => {
+  const twin = ALL_CARDS.find(c => c.set && c.set !== BASE_SET && ALL_CARDS.some(b => (!b.set || b.set === BASE_SET) && b.id === c.id));
+  const baseTwin = ALL_CARDS.find(b => (!b.set || b.set === BASE_SET) && b.id === twin.id);
+  const other = ALL_CARDS.find(c => (!c.set || c.set === BASE_SET) && c.id !== twin.id);
+
+  it('knows a second card of a player already on the roster, and not the card itself', () => {
+    expect(playerOnRoster([baseTwin], twin)).toBe(true);
+    expect(playerOnRoster([baseTwin], baseTwin)).toBe(false);
+    expect(playerOnRoster([], twin)).toBe(false);
+  });
+
+  it('names a player a saved team holds twice', () => {
+    expect(doubledPlayers([baseTwin, twin, other])).toEqual([twin.name]);
+    expect(doubledPlayers([baseTwin, other])).toEqual([]);
+  });
+
+  it('is the rule in both builders', async () => {
+    const { readFileSync } = await import('node:fs');
+    for (const f of ['../components/TeamEditor.jsx', '../components/TeamBuilderTab.jsx']) {
+      expect(readFileSync(new URL(f, import.meta.url), 'utf8'), f).toMatch(/playerOnRoster\(/);
+    }
   });
 });

@@ -41,6 +41,30 @@ const TIERS = [
 ];
 
 /** A goal's own team code, for logos — team goals only. */
+/**
+ * THE ORDER A TIER'S ROWS COME IN (Ryan, through the suggestion box,
+ * 2026-10-07: "Sorting collections by percentage like on Home Screen").
+ * `az` is the order the rows have always had (alphabetical, the user's
+ * 2026-09-06 call). `progress` is the most complete first: a finished one
+ * still to claim at the top, as on Home, then by share owned, then the
+ * fewest missing, then the name; one already claimed goes last, since
+ * there is nothing left to do there.
+ */
+export const GOAL_SORTS = { az: 'A–Z', progress: 'Most complete' };
+export function sortGoalRows(rows, mode = 'az', claims = {}) {
+  if (mode !== 'progress') return rows;
+  const rank = r => (claims[r.id] ? 2 : r.complete ? 0 : 1);
+  const share = r => (r.total ? r.owned / r.total : 0);
+  return [...rows].sort((a, b) => rank(a) - rank(b)
+    || share(b) - share(a)
+    || (a.total - a.owned) - (b.total - b.owned)
+    || String(a.label).localeCompare(String(b.label)));
+}
+
+const SORT_KEY = 'showdown.goalSort';
+const readSort = () => { try { const v = localStorage.getItem(SORT_KEY); return GOAL_SORTS[v] ? v : 'az'; } catch { return 'az'; } };
+const saveSort = v => { try { localStorage.setItem(SORT_KEY, v); } catch { /* a blocked store keeps the default */ } };
+
 function teamCodeOf(goal) {
   return goal.kind === 'team' ? goal.label : null;
 }
@@ -312,6 +336,8 @@ export default function CollectionGoals({ collection, claims, coins, onClaim, on
   const [league, setLeague] = useState('NBA');
   const [expanded, setExpanded] = useState(null);
   const [hideDone, setHideDone] = useState(false);
+  const [sort, setSortState] = useState(readSort);
+  const setSort = v => { setSortState(v); saveSort(v); };
 
   // COLLECTED cards, not owned ones — see collectedKeys. A spare in the box
   // shows in the roster as "owned · not collected" with a Collect button.
@@ -347,6 +373,12 @@ export default function CollectionGoals({ collection, claims, coins, onClaim, on
           <b>{completeCount}</b> complete
           {claimable > 0 && <span className={styles.badge}>{claimable} to claim</span>}
         </div>
+        <label className={styles.sortBy}>
+          Sort
+          <select value={sort} onChange={e => setSort(e.target.value)} aria-label="Sort collections">
+            {Object.entries(GOAL_SORTS).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+          </select>
+        </label>
         <label className={styles.hideDone}>
           <input type="checkbox" checked={hideDone} onChange={e => setHideDone(e.target.checked)} />
           Hide claimed
@@ -354,9 +386,9 @@ export default function CollectionGoals({ collection, claims, coins, onClaim, on
       </div>
 
       {TIERS.map(tier => {
-        const tierRows = rows
+        const tierRows = sortGoalRows(rows
           .filter(r => r.kind === tier.kind)
-          .filter(r => !hideDone || !claims[r.id]);
+          .filter(r => !hideDone || !claims[r.id]), sort, claims);
         if (tierRows.length === 0) return null;
         return (
           <section key={tier.kind} className={styles.tier}>

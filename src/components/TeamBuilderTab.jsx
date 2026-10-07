@@ -3,20 +3,20 @@ import { CARDS, CARD_MAP } from '../game/cards.js';
 import { cardKey } from '../game/cardSets.js';
 import { getPlayerRarity, RARITY_CONFIG } from '../game/rarity.js';
 // Shared with the collection-only editor in My Teams, so the two cannot drift.
-import { CAP, MAX, capSal, randomizeTeam, ownedRoster, ownedPlayers, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
+import { CAP, MAX, capSal, randomizeTeam, ownedRoster, ownedPlayers, playerOnRoster, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
 import PoolFilters from './PoolFilters.jsx';
 import PlayerCard from './PlayerCard.jsx';
 import { useLightbox } from './CardLightbox.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
 import { useAuth } from '../firebase/AuthProvider.jsx';
-import { saveTeam, loadTeams } from '../firebase/savedTeams.js';
+import { saveTeam, loadTeams, deleteTeam } from '../firebase/savedTeams.js';
 import styles from './TeamBuilderTab.module.css';
 
 
 export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame, collection, onOpenDecks }) {
   const { open } = useLightbox();
   const { user } = useAuth();
-  const { toast, askText } = useDialogs();
+  const { toast, askText, ask } = useDialogs();
   // SIGNED IN MEANS OWNED ONLY. This used to relax to the whole pool while the
   // collection was empty — a fresh account, or one just reset — which is the
   // one moment a new player is looking hardest, and it showed them every card
@@ -58,6 +58,16 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
     setLoadModal({ slot, teams });
   };
 
+  // DELETE WHERE THE SAVED TEAMS ARE LISTED (Ryan, through the suggestion
+  // box, 2026-10-07: "Option to delete created teams"). The same question
+  // My Teams asks; the list stays open, one team shorter.
+  const handleLoadDelete = async (savedTeam) => {
+    if (!await ask({ title: `Delete “${savedTeam.name}”?`, body: 'The cards stay in your collection.', confirmLabel: 'Delete', tone: 'danger' })) return;
+    await deleteTeam(user.uid, savedTeam.id);
+    setLoadModal(m => m && { ...m, teams: m.teams.filter(t => t.id !== savedTeam.id) });
+    toast(`Deleted “${savedTeam.name}”.`);
+  };
+
   const handleLoadSelect = (savedTeam) => {
     // Only the cards still owned — see ownedRoster in teamRules.js.
     const { roster: ids, dropped } = ownedRoster(savedTeam.players, enforceOwnership ? collection : null);
@@ -76,7 +86,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
     if (team.includes(card)) return;
     // One card a player: two cards of the same player share an id, and a
     // roster's stat rows and fatigue are kept by id.
-    if (team.some(c => c.id === card.id)) {
+    if (playerOnRoster(team, card)) {
       return toast(`${card.name} is already on this team — one card a player.`, { tone: 'error' });
     }
     if (team.length >= MAX) return toast(`Team full — ${MAX} players is the roster.`, { tone: 'error' });
@@ -185,6 +195,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
         <LoadTeamModal
           teams={loadModal.teams}
           onSelect={handleLoadSelect}
+          onDelete={handleLoadDelete}
           onClose={() => setLoadModal(null)}
         />
       )}
@@ -233,7 +244,7 @@ function RosterPanel({ name, color, sal, roster, onRemove, onRandomize, onView, 
   );
 }
 
-function LoadTeamModal({ teams, onSelect, onClose }) {
+export function LoadTeamModal({ teams, onSelect, onDelete, onClose }) {
   return (
     <div className={styles.loadModal} onClick={onClose}>
       <div className={styles.loadModalBox} onClick={e => e.stopPropagation()}>
@@ -241,10 +252,15 @@ function LoadTeamModal({ teams, onSelect, onClose }) {
         {teams.length === 0 && <div style={{ color: 'var(--text-dim)', fontSize: 13, fontStyle: 'italic', padding: '1rem', textAlign: 'center' }}>No saved teams yet</div>}
         <div className={styles.loadModalList}>
           {teams.map(t => (
-            <button key={t.id} className={styles.loadModalItem} onClick={() => onSelect(t)}>
-              <div className={styles.loadModalName}>{t.name}</div>
-              <div className={styles.loadModalMeta}>{t.players.length} players · ${t.salary}</div>
-            </button>
+            <div key={t.id} className={styles.loadModalRow}>
+              <button className={styles.loadModalItem} onClick={() => onSelect(t)}>
+                <div className={styles.loadModalName}>{t.name}</div>
+                <div className={styles.loadModalMeta}>{t.players.length} players · ${t.salary}</div>
+              </button>
+              {onDelete && (
+                <button className={styles.loadModalDelete} data-delete-team={t.id} title={`Delete ${t.name}`} onClick={() => onDelete(t)}>Delete</button>
+              )}
+            </div>
           ))}
         </div>
         <button className={styles.loadModalCancel} onClick={onClose}>Cancel</button>

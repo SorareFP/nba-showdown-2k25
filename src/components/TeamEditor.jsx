@@ -20,7 +20,7 @@ import { useAuth } from '../firebase/AuthProvider.jsx';
 import { saveTeam, updateTeam } from '../firebase/savedTeams.js';
 import { CARD_MAP } from '../game/cards.js';
 import { getPlayerRarity, RARITY_CONFIG } from '../game/rarity.js';
-import { CAP, MAX, MIN_TO_PLAY, capSal, ownedPlayers, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
+import { CAP, MAX, MIN_TO_PLAY, capSal, ownedPlayers, playerOnRoster, doubledPlayers, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
 import PoolFilters from './PoolFilters.jsx';
 import PlayerCard from './PlayerCard.jsx';
 import { useLightbox } from './CardLightbox.jsx';
@@ -64,14 +64,19 @@ export default function TeamEditor({ team, collection, onSaved, onCancel }) {
   const add = card => {
     setError(null);
     if (inRoster(card)) return;
+    // One card a player: the Team Builder's rule, now here too (2026-10-07).
+    if (playerOnRoster(roster, card)) return setError(`${card.name} is already on this team — one card a player.`);
     if (roster.length >= MAX) return setError(`Team full (max ${MAX})`);
     if (sal + card.salary > CAP) return setError(`Over the salary cap ($${CAP})`);
     setRoster([...roster, card]);
   };
   const remove = card => setRoster(roster.filter(c => c !== card));
 
+  // A team saved before the rule may hold one player twice: it cannot be saved
+  // again until one of them goes.
+  const twice = doubledPlayers(roster);
   const canSave =
-    !saving && name.trim().length > 0 && roster.length > 0 && !over && unowned.length === 0;
+    !saving && name.trim().length > 0 && roster.length > 0 && !over && unowned.length === 0 && twice.length === 0;
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -128,6 +133,11 @@ export default function TeamEditor({ team, collection, onSaved, onCancel }) {
               {unowned.length === 1
                 ? `${unowned[0].name} is no longer in your collection — remove it to save`
                 : `${unowned.length} players are no longer in your collection — remove them to save`}
+            </div>
+          )}
+          {twice.length > 0 && (
+            <div className={styles.empty} style={{ color: 'var(--red)' }} data-doubled-player="true">
+              {twice.join(', ')} {twice.length === 1 ? 'is' : 'are'} on this team twice — one card a player; remove one to save
             </div>
           )}
           {error && <div className={styles.empty} style={{ color: 'var(--red)' }}>{error}</div>}

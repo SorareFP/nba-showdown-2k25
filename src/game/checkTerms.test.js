@@ -6,7 +6,7 @@
 // banner now prints checkNeedFor, and the roll is taken with checkTerms — one
 // rule — so these pin the two against each other, answers and all.
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { newGame, getTeam } from './engine.js';
+import { newGame, getTeam, checkNeed, spendAssist, spendReboundBonus, reboundCheckBonus } from './engine.js';
 import { CARDS } from './cards.js';
 import { execCard, applyShotCheck } from './execCard.js';
 import { checkTerms, checkNeedFor } from './checkTerms.js';
@@ -86,5 +86,55 @@ describe('the shown target is the rolled target', () => {
     // Slot 1: card +2, 3PT +3, the wall's contest −3: 15 - 2 = 13.
     expect(checkNeedFor(g, psc, 1).need).toBe(13);
     expect(checkTerms(g, psc, 1).find(t => t.label.startsWith('contest'))).toMatchObject({ n: -3 });
+  });
+});
+
+// TWIN TOWERS ON EVERY PAINT CHECK (2026-10-07). The card: "Your opponent takes
+// every Paint Check at −2". The 5-assist and 5-rebound paint checks skipped it;
+// the user asked for them too. The shown target carries it as well.
+describe('Twin Towers on the spend paint checks', () => {
+  const towersUp = () => {
+    const A = [p('big', { paintBoost: 1 })];
+    const B = [p('guard', { defBoost: 1 })];
+    const g = game({ A, B });
+    g.standing = [{ teamKey: 'B', cardId: 'twin_towers' }];
+    return g;
+  };
+
+  it('the 5-assist paint check is two harder, and its button says so', () => {
+    const g = towersUp();
+    getTeam(g, 'A').assists = 6;
+    const shown = checkNeed(g, 'A', 0, 'paint').need;
+    const without = checkNeed({ ...g, standing: [] }, 'A', 0, 'paint').need;
+    expect(shown - without).toBe(2);
+    let rolled = null;
+    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const res = spendAssist(g, 'A', 'paint', 0);
+    expect(res.ok).toBe(true);
+    const line = res.game.log.at(-1).msg;
+    expect(line).toContain('−2 Twin Towers');
+    rolled = res.game.lastShotCheck.result;
+    expect(rolledAt(rolled)).toBe(shown);
+  });
+
+  it('the 5-rebound paint check is two harder, and its button says so', () => {
+    const g = towersUp();
+    const t = getTeam(g, 'A');
+    t.rebounds = 9; t.reboundsWon = 9;
+    getTeam(g, 'B').reboundsWon = 0;
+    g.reboundBonuses = { A: { paintCheck: true } };
+    const shown = checkNeed(g, 'A', 0, 'paint', { extra: reboundCheckBonus(g, 'A'), banked: false }).need;
+    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const res = spendReboundBonus(g, 'A', 'paint_check', 0);
+    expect(res.ok, res.msg).toBe(true);
+    expect(res.game.log.some(l => l.msg.includes('−2 Twin Towers'))).toBe(true);
+    expect(rolledAt(res.game.lastShotCheck.result)).toBe(shown);
+  });
+
+  it('a 3PT spend check and a team without the card standing are untouched', () => {
+    const g = towersUp();
+    expect(checkNeed(g, 'A', 0, '3pt').need).toBe(checkNeed({ ...g, standing: [] }, 'A', 0, '3pt').need);
+    // Twin Towers is the OTHER side's: B's own paint checks are not touched by B's card.
+    expect(checkNeed(g, 'B', 0, 'paint').need).toBe(checkNeed({ ...g, standing: [] }, 'B', 0, 'paint').need);
   });
 });

@@ -603,7 +603,18 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
                       {t.updatedAt?.toDate && ` · ${t.updatedAt.toDate().toLocaleDateString()}`}
                     </div>
                   </div>
-                  <span className={styles.chevron}>{expandedTeam === t.id ? '▾' : '▸'}</span>
+                  {/* DELETE ON THE ROW (Ryan, through the suggestion box, 2026-10-07:
+                      "Option to delete created teams. Unless I missed it."). It was
+                      only inside an opened team, so it read as missing. */}
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <button
+                      className={styles.deleteBtn}
+                      data-delete-team={t.id}
+                      title={`Delete ${t.name}`}
+                      onClick={e => { e.stopPropagation(); handleDeleteTeam(t.id); }}
+                    >Delete</button>
+                    <span className={styles.chevron}>{expandedTeam === t.id ? '▾' : '▸'}</span>
+                  </span>
                 </div>
                 {expandedTeam === t.id && (
                   <div className={styles.itemBody}>
@@ -637,7 +648,6 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
                       <button className={styles.loadBtn} onClick={() => onLoadTeam(t, 'A')}>Load as Team A</button>
                       <button className={styles.loadBtnB} onClick={() => onLoadTeam(t, 'B')}>Load as Team B</button>
                       <button className={styles.editBtn} onClick={() => setEditingTeam(t)}>Edit</button>
-                      <button className={styles.deleteBtn} onClick={() => handleDeleteTeam(t.id)}>Delete</button>
                     </div>
                   </div>
                 )}

@@ -62,7 +62,8 @@ export function checkPreview(g, check) {
     return { teamKey, idx, name: player.name, type, need, parts: [{ label: 'FT', n: 10 }, { label: 'card', n: card }, { label: markers > 0 ? '🔥' : '🧊', n: markers }].filter(p => p.n) };
   }
   const towers = type === 'paint' && standingEntry(g, other(teamKey), 'twin_towers') ? -2 : 0;
-  const { need } = checkNeed(g, teamKey, idx, type, { extra: card + towers, banked: false });
+  // checkNeed carries Twin Towers itself (towersPenalty); `towers` is only its line below.
+  const { need } = checkNeed(g, teamKey, idx, type, { extra: card, banked: false });
   const boost = type === '3pt' ? (player.threePtBoost || 0) : (player.paintBoost || 0);
   const contest = -matchupContest(g, teamKey, idx, type);
   const defender = contest ? defenderOf(g, teamKey, idx) : null;

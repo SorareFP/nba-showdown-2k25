@@ -963,6 +963,17 @@ function spendParts(astBonus, contest) {
 }
 
 /**
+ * TWIN TOWERS ON A PAINT CHECK: −2 while the OTHER side's stands, on EVERY paint
+ * check — the card's own words, "Your opponent takes every Paint Check at −2".
+ * Only the card-announced checks had it (checkTerms); the 5-assist and 5-rebound
+ * paint checks did not, and the user asked for them too (2026-10-07: "Yes
+ * please"). One reader, for the rolls and for checkNeed's number.
+ */
+export function towersPenalty(g, teamKey, type) {
+  return type === 'paint' && standingEntry(g, teamKey === 'A' ? 'B' : 'A', 'twin_towers') ? -2 : 0;
+}
+
+/**
  * THE DIE A SPEND CHECK NEEDS, before it is taken — so the button can say so
  * (the user, 2026-09-09: "show what roll a player would need to convert a
  * shot check next to the button"). The same sum shotCheck makes: the banked
@@ -981,7 +992,7 @@ export function checkNeed(g, teamKey, idx, type, { extra = 0, banked = true } = 
   const marker = ((ps.hot || 0) - (ps.cold || 0)) * 2;
   // The tracker's penalty, as shotCheck will apply it (free throws exempt).
   const fat = type === 'ft' ? 0 : getFatigue(g, teamKey, idx);
-  const bonus = astBonus - matchupContest(g, teamKey, idx, type) + boost + marker + fat;
+  const bonus = astBonus - matchupContest(g, teamKey, idx, type) + boost + marker + fat + towersPenalty(g, teamKey, type);
   const need = (player.shotLine || 99) - bonus;
   const pHit = Math.min(1, Math.max(0, (21 - need) / 20));
   return { need, pHit, bonus };
@@ -1162,7 +1173,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (myT.assists < SPEND_COSTS.assistPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.assistPaint} assists (have ${myT.assists})` };
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const partsP = spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint'));
+    const partsP = [...spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }];
     const r = shotCheck(player, 'paint', partsP, ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
@@ -1208,7 +1219,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     if (problem) return { game: ng, ok: false, msg: problem };
     const rebBonus = reboundCheckBonus(ng, teamKey);
     myT.rebounds -= SPEND_COSTS.reboundPaint;
-    const partsR = [{ label: 'REB', n: rebBonus }, { label: 'contest', n: -(matchupContest(ng, teamKey, playerIdx, 'paint') || 0) }];
+    const partsR = [{ label: 'REB', n: rebBonus }, { label: 'contest', n: -(matchupContest(ng, teamKey, playerIdx, 'paint') || 0) }, { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }];
     const r = shotCheck(player, 'paint', partsR, ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);

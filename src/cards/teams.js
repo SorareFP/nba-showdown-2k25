@@ -124,11 +124,14 @@ export const HISTORICAL_TEAMS = {
   DET96: { name: 'Pistons', city: 'Detroit',      primary: '#006271', secondary: '#9D2235', logo: '/logos/DET96.png', era: '1996-2001' },
   MIL06: { name: 'Bucks',   city: 'Milwaukee',    primary: '#195331', secondary: '#B80028', logo: '/logos/MIL06.png', era: '2006-2015' },
   NJN: { name: 'Nets',        city: 'New Jersey',  primary: '#002A60', secondary: '#CE1141', logo: '/logos/NJN.png', era: '1977-2012', unverifiedColors: true },
-  NOH: { name: 'Hornets',     city: 'New Orleans', primary: '#002B5C', secondary: '#B4975A', logo: '/logos/NOH.png', era: '2002-2013', unverifiedColors: true },
+  // NOH: teal, purple and gold, the installed hexagon's colours — the user's own
+  // Studio colours on JR Smith's rookie card, made the era's (2026-10-07: "The JR
+  // card is correct. Match that."). It had printed the 2008 rebrand's navy and gold.
+  NOH: { name: 'Hornets',     city: 'New Orleans', primary: '#00778B', secondary: '#280071', accent: '#FFC72C', logo: '/logos/NOH.png', era: '2002-2013' },
   NOK: { name: 'Hornets',     city: 'New Orleans/Oklahoma City', primary: '#002B5C', secondary: '#B4975A', logo: '/logos/NOK.png', era: '2005-2007', unverifiedColors: true },
   CHH: { name: 'Hornets',     city: 'Charlotte',   primary: '#00778B', secondary: '#280071', logo: '/logos/CHH.png', era: '1988-2002', unverifiedColors: true },
   CHB: { name: 'Bobcats',     city: 'Charlotte',   primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB.png', era: '2004-2014', unverifiedColors: true },
-  CHB04: { name: 'Bobcats',   city: 'Charlotte',   abbr: 'CHB', primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB04.png', era: '2005-2008', unverifiedColors: true },
+  CHB04: { name: 'Bobcats',   city: 'Charlotte',   abbr: 'CHB', primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB04.png', era: '2005-2008' },
   CHB08: { name: 'Bobcats',   city: 'Charlotte',   abbr: 'CHB', primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB08.png', era: '2009-2012', unverifiedColors: true },
   CHB13: { name: 'Bobcats',   city: 'Charlotte',   abbr: 'CHB', primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB13.png', era: '2013-2014', unverifiedColors: true },
   VAN: { name: 'Grizzlies',   city: 'Vancouver',   primary: '#00B2A9', secondary: '#BC7844', logo: '/logos/VAN.png', era: '1995-2001', unverifiedColors: true },
@@ -152,9 +155,11 @@ export const HISTORICAL_TEAMS = {
   // (sword C), DET02 (horsepower), LAC16 (2015 script), TOR96 (dino-ball),
   // ATL96 (hawk head), ATL08 (navy), WSB (Bullets), and the relocated
   // franchises above. Colours are from general knowledge, marked unverified.
-  DEN04: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#418FDE', secondary: '#FFC72C', logo: '/logos/DEN04.png', era: '2004-2012', unverifiedColors: true },
+  DEN04: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#418FDE', secondary: '#FFC72C', logo: '/logos/DEN04.png', era: '2004-2012' },
   SAC95: { name: 'Kings',    city: 'Sacramento',  abbr: 'SAC', primary: '#5A2D81', secondary: '#000000', logo: '/logos/SAC95.png', era: '1995-2016', unverifiedColors: true },
-  CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE04.png', era: '2004-2010', unverifiedColors: true },
+  // CLE04's gold is the logo's dark metallic one, sampled (2026-10-07): #FDBB30 is
+  // the bright gold the 2010 rebrand brought in.
+  CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#927046', logo: '/logos/CLE04.png', era: '2004-2010' },
   CLE16: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE16.png', era: '2011-2017', unverifiedColors: true },
   // THE WINE-AND-GOLD C, AFTER NAVY WAS DROPPED and before the 2022 rebrand —
   // the mark five cards were played under (Sexton 2019, Garland 2020, Okoro
@@ -180,7 +185,7 @@ export const HISTORICAL_TEAMS = {
   LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: '/logos/LAC16.png', era: '2016-2024', unverifiedColors: true },
   TOR96: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#753BBD', secondary: '#CE1141', logo: '/logos/TOR96.png', era: '1996-2006', unverifiedColors: true },
   TOR07: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#CE1141', secondary: '#000000', logo: '/logos/TOR07.png', era: '2007-2008', unverifiedColors: true },
-  TOR09: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#CE1141', secondary: '#A1A1A4', logo: '/logos/TOR09.png', era: '2009-2015', unverifiedColors: true },
+  TOR09: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#CE1141', secondary: '#A1A1A4', logo: '/logos/TOR09.png', era: '2009-2015' },
   // THE PAC-MAN HAWK, 1972-73 to 1994-95 (the user, 2026-09-25, for Dominique
   // Wilkins' Rookie and Super Season cards; saved as ATL73). SAMPLED FROM THE
   // FILE: the mark is one red, #CA0628, on white. public/logos/ATL73.png is
@@ -191,7 +196,7 @@ export const HISTORICAL_TEAMS = {
   // installLogos --force over it.
   ATL73: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#CA0628', secondary: '#FFFFFF', logo: '/logos/ATL73.png', era: '1973-1995' },
   ATL96: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#E03A3E', secondary: '#FDB927', logo: '/logos/ATL96.png', era: '1996-2007', unverifiedColors: true },
-  ATL08: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#002B5C', secondary: '#E03A3E', logo: '/logos/ATL08.png', era: '2008-2015', unverifiedColors: true },
+  ATL08: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#002B5C', secondary: '#E03A3E', logo: '/logos/ATL08.png', era: '2008-2015' },
   DAL80: { name: 'Mavericks', city: 'Dallas',     abbr: 'DAL', primary: '#00843D', secondary: '#0064B1', logo: '/logos/DAL80.png', era: '1981-2001', unverifiedColors: true },
   HOU72: { name: 'Rockets',  city: 'Houston',     abbr: 'HOU', primary: '#CE1141', secondary: '#FDB927', logo: '/logos/HOU72.png', era: '1972-1995', unverifiedColors: true },
   // THE SILVER ERA, 2003-04 through 2018-19. Added because two Summer Standouts
@@ -210,7 +215,7 @@ export const HISTORICAL_TEAMS = {
   // with a logoEra flag, which is why that field is absent now rather than
   // never having been here — logoFiles.test.js asserts the two states are
   // exclusive, so a row with its own era art must not claim one.
-  HOU03: { name: 'Rockets',  city: 'Houston',     abbr: 'HOU', primary: '#CE1141', secondary: '#C4CED4', logo: '/logos/HOU03.png', era: '2003-2019', unverifiedColors: true },
+  HOU03: { name: 'Rockets',  city: 'Houston',     abbr: 'HOU', primary: '#CE1141', secondary: '#C4CED4', logo: '/logos/HOU03.png', era: '2003-2019' },
   // THE 2019 MARK, FROZEN. Every Rockets card outside the base set is a
   // 2022-2025 season, and until now they all read the CURRENT HOU.png — which
   // is about to become the 2026 rebrand. A copy of today's file, so the
@@ -225,7 +230,7 @@ export const HISTORICAL_TEAMS = {
   // those three are the Timberwolves' documented 1996-2008 palette. It had
   // been carrying #0C2340 / #78BE20 — today's navy and today's lime — which
   // matched neither the art it sits beside nor the era it names.
-  MIN97: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#236192', secondary: '#00843D', logo: '/logos/MIN97.png', era: '1997-2017', unverifiedColors: true },
+  MIN97: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#236192', secondary: '#00843D', logo: '/logos/MIN97.png', era: '1997-2017' },
   // THE 2017 WOLF IN ITS FIRST COLOURWAY (the user, 2026-09-24: "Saved as
   // MIN18. It's the different wolf colorway. 2026, aka the base set cards and
   // live, are the first ones that should have MIN"). Installed from
@@ -234,7 +239,7 @@ export const HISTORICAL_TEAMS = {
   // #78BE20 aurora-green star — the palette the club wore 2017-18 to 2024-25.
   // MIN.png, the current colourway, begins with the 2025-26 base set.
   MIN18: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#0C2340', secondary: '#78BE20', logo: '/logos/MIN18.png', era: '2017-2025' },
-  MEM01: { name: 'Grizzlies', city: 'Memphis',    abbr: 'MEM', primary: '#00285E', secondary: '#6CACE4', logo: '/logos/MEM01.png', era: '2001-2004', unverifiedColors: true },
+  MEM01: { name: 'Grizzlies', city: 'Memphis',    abbr: 'MEM', primary: '#00285E', secondary: '#6CACE4', logo: '/logos/MEM01.png', era: '2001-2004' },
   // THE BEAR WITH THE WORDMARK, 2004-05 to 2017-18 (the user, 2026-09-25,
   // for Allen Iverson's Grizzlies Dissonance card). Installed from
   // card-art/logo-originals/MEM05.png, white ground stripped. SAMPLED FROM THE
@@ -254,20 +259,23 @@ export const HISTORICAL_TEAMS = {
   SAS90: { name: 'Spurs',     city: 'San Antonio', abbr: 'SAS', primary: '#010101', secondary: '#EF426F', accent: '#FFFFFF', logo: '/logos/SAS90.png', era: '1990-2002' },
   PHI97: { name: '76ers',    city: 'Philadelphia', abbr: 'PHI', primary: '#000000', secondary: '#C8102E', logo: '/logos/PHI97.png', era: '1998-2009', unverifiedColors: true },
   ORL89: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#000000', logo: '/logos/ORL89.png', era: '1989-2000', unverifiedColors: true },
-  ORL01: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#C4CED4', logo: '/logos/ORL01.png', era: '2001-2010', unverifiedColors: true },
+  ORL01: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#C4CED4', logo: '/logos/ORL01.png', era: '2001-2010' },
   // The lightning-bolt wordmark era, worn through Chris Webber's rookie year —
   // the Warriors' only card before 1998. Installed by the user 2026-09-07 as a
   // GIF (card-art/logo-originals/GSW89.gif) — the EXTENSION IS LOAD-BEARING:
   // logoFiles.test.js picks its header parser by it. Royal blue and gold, as
   // the GSW row carries today.
   GSW89: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#1D4289', secondary: '#FFC72C', logo: '/logos/GSW89.gif', era: '1989-1997', unverifiedColors: true },
-  GSW98: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#04529C', secondary: '#FFCC33', logo: '/logos/GSW98.png', era: '1998-2010', unverifiedColors: true },
-  LAC84: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#ED174C', secondary: '#006BB6', logo: '/logos/LAC84.png', era: '1985-2015', unverifiedColors: true },
+  // GSW98: orange-red and navy, the user's own Studio colours on the Throwbacks set
+  // made the era's (2026-10-07). Royal blue and gold were the 1989 and 2010 looks,
+  // not the thunderbolt era's, and not this logo's.
+  GSW98: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#F52A00', secondary: '#192344', accent: '#FFFFFF', logo: '/logos/GSW98.png', era: '1998-2010' },
+  LAC84: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#ED174C', secondary: '#006BB6', logo: '/logos/LAC84.png', era: '1985-2015' },
   PHX93: { name: 'Suns',     city: 'Phoenix',     abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX93.png', era: '1993-2000', unverifiedColors: true },
   PHX01: { name: 'Suns',     city: 'Phoenix',     abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX01.png', era: '2001-2013', unverifiedColors: true },
   SEA06: { name: 'SuperSonics', city: 'Seattle',  abbr: 'SEA', primary: '#00653A', secondary: '#FFC72C', logo: '/logos/SEA06.png', era: '2002-2008', unverifiedColors: true },
   DEN13: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#0E2240', secondary: '#FEC524', logo: '/logos/DEN13.png', era: '2013-2018', unverifiedColors: true },
-  DET06: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#ED174C', secondary: '#0058A6', logo: '/logos/DET06.png', era: '2006-2017', unverifiedColors: true },
+  DET06: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#ED174C', secondary: '#0058A6', logo: '/logos/DET06.png', era: '2006-2017' },
 
   // THE FIRST NBA ROW TO BORROW A LIVE MARK, on the WNBA table's convention:
   // `logoEra` says the art is right as to franchise and WRONG AS TO YEAR, and

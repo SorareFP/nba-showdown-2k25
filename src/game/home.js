@@ -23,6 +23,26 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'twin-towers-spend-checks', date: '2026-10-07', title: 'Twin Towers guards the paint checks you pay for',
+    body: "Twin Towers says the other team's paint checks are two harder while it stands. It only touched the paint checks a card calls for: the ones you buy with 5 assists or 5 rebounds ignored it. They now need two more on the die as well, and the banner itemises it before you pay.",
+    to: 'play', cta: 'Play',
+  },
+  {
+    id: 'collections-sort-and-team-delete', date: '2026-10-07', title: 'Sort collections by progress, and delete a team in one tap',
+    body: "Collections has a Sort menu beside Hide claimed: A–Z as before, or Most complete, which puts a finished collection still to claim on top, then the rest by the share you own. Your saved teams have a Delete button you can see: on each row in Collection → My Teams, and beside each team in the Team Builder's load list. Thanks to the player who suggested both.",
+    to: 'goals', cta: 'Collections',
+  },
+  {
+    id: 'my-teams-one-card-a-player', date: '2026-10-07', title: 'One card a player in My Teams too',
+    body: "The Team Builder already refused a second card of the same player. The editor in Collection → My Teams let one through, so a team could field two LeBrons. It now refuses as well, and a team saved with a player twice says so and asks you to remove one before it saves again.",
+    to: 'collection', cta: 'My Teams',
+  },
+  {
+    id: 'wnba-2026-awards', date: '2026-10-07', title: '2026 WNBA awards on the cards',
+    body: "Jessica Shepard's Most Improved Player and Janelle Salaün's Sixth Player of the Year are now printed on their 2026 cards, beside Angel Reese's Defensive Player of the Year.",
+    to: 'collection', cta: 'Collection',
+  },
+  {
     id: 'claim-reveals-the-card', date: '2026-10-07', title: 'Finishing a collection turns your reward card over',
     body: "Claiming a finished collection was meant to turn the reward card over on its own stage, with the flash, the stamp and the confetti, but it had been showing only the coins. The card now turns over first, at least with a super rare's celebration and with a legendary's when it is one, and the coins land in gold underneath. The card was always in your collection; it just never got its moment.",
     to: 'goals', cta: 'Collections',

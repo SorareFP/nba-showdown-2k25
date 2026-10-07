@@ -500,7 +500,9 @@ export const claimGoal = onCall({ region: 'us-central1' }, async request => {
     }
     if (coins > 0) tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(coins) }, { merge: true });
 
-    return { goalId, reward: rewardKey, coins };
+    // `card` as well as `reward`: the screen read `card`, which only the
+    // direct route sent, so no live claim ever turned its card over (2026-10-07).
+    return { goalId, reward: rewardKey, card: rewardKey, coins };
   });
 });
 

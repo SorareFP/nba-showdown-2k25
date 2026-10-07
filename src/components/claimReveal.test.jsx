@@ -6,7 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 vi.mock('../firebase/CardStatsProvider.jsx', () => ({ useCardStats: () => ({ stats: {} }) }));
 
-import ClaimReveal, { goalTitle, fanfareTierFor } from './ClaimReveal.jsx';
+import ClaimReveal, { goalTitle, fanfareTierFor, claimRevealFrom } from './ClaimReveal.jsx';
 import { allGoalProgress } from '../game/collections.js';
 
 const html = el => renderToStaticMarkup(el);
@@ -47,5 +47,31 @@ describe('ClaimReveal', () => {
     expect(fanfareTierFor('super-rare')).toBe('super-rare');
     expect(fanfareTierFor('legendary')).toBe('legendary');
     expect(fanfareTierFor(null)).toBe('super-rare');
+  });
+});
+
+// THE CARD REACHES THE REVEAL FROM EITHER ROUTE (2026-10-07). The server's
+// claimGoal answered `{ reward, coins }` and the screen read `res.card`, so
+// every live claim played the coins-only reveal and never turned its card.
+describe('what a claim hands the reveal', () => {
+  it("reads the server's `reward`, the direct route's `card`, and both at once", () => {
+    expect(claimRevealFrom('g', { goalId: 'g', reward: 'super-season:Larry_Bird', coins: 490 }))
+      .toEqual({ goalId: 'g', cardKey: 'super-season:Larry_Bird', coins: 490 });
+    expect(claimRevealFrom('g', { goalId: 'g', coins: 490, card: 'Jayson_Tatum' }))
+      .toEqual({ goalId: 'g', cardKey: 'Jayson_Tatum', coins: 490 });
+    expect(claimRevealFrom('g', { reward: 'a', card: 'a', coins: 1 }).cardKey).toBe('a');
+  });
+
+  it('is a coins-only reveal only when there really is no card', () => {
+    expect(claimRevealFrom('g', { reward: null, coins: 300 })).toEqual({ goalId: 'g', cardKey: null, coins: 300 });
+    expect(claimRevealFrom('g', undefined)).toEqual({ goalId: 'g', cardKey: null, coins: 0 });
+  });
+
+  it('is what the Collection tab and the server both use', async () => {
+    const { readFileSync } = await import('node:fs');
+    const tab = readFileSync(new URL('./CollectionTab.jsx', import.meta.url), 'utf8');
+    const server = readFileSync(new URL('../../functions/index.js', import.meta.url), 'utf8');
+    expect(tab).toContain('setClaimReveal(claimRevealFrom(goalId, res))');
+    expect(server).toMatch(/return \{ goalId, reward: rewardKey, card: rewardKey, coins \}/);
   });
 });

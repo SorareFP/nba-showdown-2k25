@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'claim-reveals-the-card', date: '2026-10-07', title: 'Finishing a collection turns your reward card over',
+    body: "Claiming a finished collection was meant to turn the reward card over on its own stage, with the flash, the stamp and the confetti, but it had been showing only the coins. The card now turns over first, at least with a super rare's celebration and with a legendary's when it is one, and the coins land in gold underneath. The card was always in your collection; it just never got its moment.",
+    to: 'goals', cta: 'Collections',
+  },
+  {
     id: 'answered-checks-wait', date: '2026-10-05', title: 'See the coach\'s answer before you shoot',
     body: "When the coach answers one of your shot checks (Close Out, Drop Coverage, Rim Protector, Hustle Play, Smothering Defense, Denial), the check now waits instead of rolling at once. The banner shows the new target, what it needs on the die and every term behind it, and you press Resolve. The log names each term too (\"−2 Drop Coverage\", \"−1 contest (Gobert)\") where it used to fold them into one number. A check the coach lets go still rolls straight away.",
     to: 'play', cta: 'Play',

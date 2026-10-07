@@ -34,6 +34,21 @@ export function goalTitle(goalId) {
   return team?.city ? `${team.city} ${team.name}` : goal.label;
 }
 
+/**
+ * WHAT A CLAIM HANDS THE REVEAL, from either route's answer (2026-10-07).
+ *
+ * The user: "When someone finishes a collection, I want the card reward to
+ * have as much fanfare as the coin reward." It was built to — but the server's
+ * claimGoal answered `{ reward, coins }` and the screen read `res.card`, which
+ * only the direct route (localhost) sends. So every live claim reached the
+ * reveal with no card, and played the coins-only reveal: the big gold number,
+ * the flash and the stamp, and the reward card never turned over at all.
+ * Either name is read now, and the server sends both.
+ */
+export function claimRevealFrom(goalId, res) {
+  return { goalId, cardKey: res?.card ?? res?.reward ?? null, coins: res?.coins ?? 0 };
+}
+
 /** The fanfare's band: the reward's, and never less than a super-rare's. */
 export const fanfareTierFor = rarity => (rarity === 'legendary' ? 'legendary' : 'super-rare');
 
@@ -118,7 +133,8 @@ export default function ClaimReveal({ goalId, cardKey = null, coins = 0, onClose
               {RARITY_CONFIG[rarity]?.label}
             </div>
             <div className={styles.name}>{card.name}{card.seasonLabel ? ` · ${card.seasonLabel}` : ''}</div>
-            {coins > 0 && <div className={styles.sub}>and {Number(coins).toLocaleString('en-US')} coins</div>}
+            {/* The coins that come with a card get their moment too, after it. */}
+            {coins > 0 && <div className={styles.coinsLine} data-claim-coins={coins}>+ 🪙 {Number(coins).toLocaleString('en-US')} coins</div>}
           </>
         )}
         {card && !flipped && <div className={styles.sub}>Your reward card is in there.</div>}

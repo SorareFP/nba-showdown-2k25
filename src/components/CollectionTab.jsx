@@ -22,7 +22,7 @@ import { delistCard } from '../firebase/serverWrites.js';
 import MyCollection from './MyCollection.jsx';
 import Market from './Market.jsx';
 import CollectionGoals from './CollectionGoals.jsx';
-import ClaimReveal from './ClaimReveal.jsx';
+import ClaimReveal, { claimRevealFrom } from './ClaimReveal.jsx';
 import FavoriteTeamPicker, { teamForOption, favoriteTeamName } from './FavoriteTeamPicker.jsx';
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
@@ -413,7 +413,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     setBusyGoal(goalId);
     try {
       const res = await claimGoal(user.uid, goalId);
-      setClaimReveal({ goalId, cardKey: res.card ?? null, coins: res.coins ?? 0 });
+      setClaimReveal(claimRevealFrom(goalId, res));
       await refresh();
       onCollectionChange?.();
     } catch (e) {

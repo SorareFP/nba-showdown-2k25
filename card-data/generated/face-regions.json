@@ -16875,6 +16875,6 @@
       "badge": null
     }
   },
-  "generatedAt": "2026-10-02T14:20:05.372Z",
+  "generatedAt": "2026-10-07T13:56:36.413Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

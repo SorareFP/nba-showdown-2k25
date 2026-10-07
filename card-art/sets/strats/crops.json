@@ -33,5 +33,180 @@
     "x": 10.28,
     "y": 7.39,
     "zoom": 1
+  },
+  "you_stand_over_there": {
+    "x": 55.69,
+    "y": 9.95,
+    "zoom": 1
+  },
+  "verticality": {
+    "x": 0.63,
+    "y": 19.9,
+    "zoom": 1
+  },
+  "uncontested_layup": {
+    "x": 1.26,
+    "y": -4.26,
+    "zoom": 1
+  },
+  "transition_outlet": {
+    "x": 17.86,
+    "y": 2.67,
+    "zoom": 1
+  },
+  "this_is_my_house": {
+    "x": -23.74,
+    "y": 17.59,
+    "zoom": 1.15
+  },
+  "twin_towers": {
+    "x": 15.34,
+    "y": 29.5,
+    "zoom": 1
+  },
+  "turnover": {
+    "x": 45.91,
+    "y": 15.83,
+    "zoom": 1
+  },
+  "unsung_hero": {
+    "x": 75.76,
+    "y": 4.26,
+    "zoom": 1
+  },
+  "putback_dunk": {
+    "x": 49.74,
+    "y": 1.42,
+    "zoom": 1
+  },
+  "heat_check": {
+    "x": 82.27,
+    "y": 10.82,
+    "zoom": 1
+  },
+  "five_out": {
+    "x": 3.36,
+    "y": -6.03,
+    "zoom": 1
+  },
+  "foul_trouble": {
+    "x": 75.34,
+    "y": 7.09,
+    "zoom": 1
+  },
+  "from_way_downtown": {
+    "x": 47.85,
+    "y": 44.72,
+    "zoom": 1
+  },
+  "fight_over": {
+    "x": 2.94,
+    "y": 25.02,
+    "zoom": 1
+  },
+  "drop_coverage": {
+    "x": -20.94,
+    "y": 2.04,
+    "zoom": 1.62
+  },
+  "coaches_challenge": {
+    "x": 33.79,
+    "y": 7.45,
+    "zoom": 1
+  },
+  "dogged": {
+    "x": 1.65,
+    "y": 70.79,
+    "zoom": 1
+  },
+  "stretch_five": {
+    "x": 60.36,
+    "y": 3.55,
+    "zoom": 1
+  },
+  "strength_in_numbers": {
+    "x": 51.38,
+    "y": 4.05,
+    "zoom": 1
+  },
+  "blitz": {
+    "x": 1.84,
+    "y": 0.72,
+    "zoom": 1
+  },
+  "burst_of_momentum": {
+    "x": 48.08,
+    "y": 1.77,
+    "zoom": 1
+  },
+  "hammer_set": {
+    "x": -62.15,
+    "y": -1.44,
+    "zoom": 1.75
+  },
+  "help_defender": {
+    "x": 40.82,
+    "y": 6.93,
+    "zoom": 1
+  },
+  "high_screen_roll": {
+    "x": -29.36,
+    "y": 17.35,
+    "zoom": 1
+  },
+  "hustle_play": {
+    "x": 1.2,
+    "y": -2.4,
+    "zoom": 1
+  },
+  "ice_the_hot_hand": {
+    "x": 4.94,
+    "y": 0,
+    "zoom": 1
+  },
+  "kick_out_three": {
+    "x": 69.65,
+    "y": 7.73,
+    "zoom": 1
+  },
+  "lob_city": {
+    "x": 55.42,
+    "y": 2.03,
+    "zoom": 1
+  },
+  "offensive_foul": {
+    "x": 19.62,
+    "y": 2.66,
+    "zoom": 1
+  },
+  "point_god": {
+    "x": 81.18,
+    "y": 7.6,
+    "zoom": 1
+  },
+  "post_domination": {
+    "x": 43.14,
+    "y": 4.31,
+    "zoom": 1
+  },
+  "rimshaker": {
+    "x": 86.73,
+    "y": 5.83,
+    "zoom": 1
+  },
+  "smothering_defense": {
+    "x": 11.16,
+    "y": 40.36,
+    "zoom": 1
+  },
+  "three_point_barrage": {
+    "x": 0.45,
+    "y": 10.76,
+    "zoom": 1
+  },
+  "stagger_action": {
+    "x": -3.3,
+    "y": 26.34,
+    "zoom": 1
   }
 }

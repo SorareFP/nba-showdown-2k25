@@ -3,7 +3,7 @@
 // goes to depends on which player allows it to happen"). Points have gone
 // through scorePts since 2026-09-08; these are the assists and rebounds.
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { newGame, getTeam, doRoll, creditPaintScore } from './engine.js';
+import { newGame, getTeam, doRoll, creditPaintScore, noteAssists, lastAssister } from './engine.js';
 import { CARDS } from './cards.js';
 import { execCard, resolvePendingShotCheck, pinDownPasser } from './execCard.js';
 
@@ -132,16 +132,57 @@ describe('a card\'s assists go to the player who earned them', () => {
     expect(line(r.game, 'A', 'a1').ast).toBe(0);
   });
 
-  it('Passing Lane: the cancelled assists come off the roller\'s own line, and never below zero', () => {
-    const B = five('b'); B[1] = p('thief', 14, 10);              // faster than the roller: one more comes off
-    const g = game({ B, hand: ['passing_lane'], who: 'B' });
+  it('Passing Lane: the roll\'s assists come off the roller\'s own line', () => {
+    const g = game({ hand: ['passing_lane'], who: 'B' });         // no Speed edge: only the roll's
     getTeam(g, 'A').assists = 4;
-    line(g, 'A', 'a1').ast = 2;                                   // the two his roll just won
+    line(g, 'A', 'a1').ast = 3; noteAssists(g, 'A', 'a1', 3);     // one earlier, two from this roll
     g.lastRoll = { teamKey: 'A', idx: 1, reb: 0, ast: 2, pts: 3, boxed: false, deflected: false };
     const r = execCard(g, 'B', 'passing_lane', {});
     expect(r.ok).toBe(true);
-    expect(getTeam(r.game, 'A').assists).toBe(1);                 // 2 from the roll, 1 more for the Speed edge
-    expect(line(r.game, 'A', 'a1').ast).toBe(0);                  // 2 - 3, floored
+    expect(getTeam(r.game, 'A').assists).toBe(2);
+    expect(line(r.game, 'A', 'a1').ast).toBe(1);                  // his earlier assist stands
+  });
+
+  // THE EXTRA ONE (the user, 2026-10-07: "just whoever got the most recent
+  // assist"). It is not the roll's, so it comes off the latest assist still
+  // standing once the roll's are gone, not off the roller.
+  it('Passing Lane: the Speed edge\'s extra assist comes off whoever got the most recent assist before the roll', () => {
+    const B = five('b'); B[1] = p('thief', 14, 10);              // faster than the roller: one more comes off
+    const g = game({ B, hand: ['passing_lane'], who: 'B' });
+    getTeam(g, 'A').assists = 5;
+    // a1 passed first, then a3, then a1's roll won two.
+    line(g, 'A', 'a1').ast = 3; line(g, 'A', 'a3').ast = 1;
+    noteAssists(g, 'A', 'a1', 1); noteAssists(g, 'A', 'a3', 1); noteAssists(g, 'A', 'a1', 2);
+    g.lastRoll = { teamKey: 'A', idx: 1, reb: 0, ast: 2, pts: 3, boxed: false, deflected: false };
+    const r = execCard(g, 'B', 'passing_lane', {});
+    expect(r.ok).toBe(true);
+    expect(getTeam(r.game, 'A').assists).toBe(2);                 // 2 from the roll, 1 more for the Speed edge
+    expect(line(r.game, 'A', 'a1').ast).toBe(1);                  // the roll's two; his first stands
+    expect(line(r.game, 'A', 'a3').ast).toBe(0);                  // the most recent assist before it
+    expect(lastAssister(r.game, 'A')).toBe('a1');
+    expect(r.game.log.at(-1).msg).toContain('the extra one off a3');
+  });
+
+  it('Passing Lane: with no earlier assist on record the extra one leaves the team total only', () => {
+    const B = five('b'); B[1] = p('thief', 14, 10);
+    const g = game({ B, hand: ['passing_lane'], who: 'B' });
+    getTeam(g, 'A').assists = 4;
+    line(g, 'A', 'a1').ast = 2; noteAssists(g, 'A', 'a1', 2);     // the two his roll just won
+    g.lastRoll = { teamKey: 'A', idx: 1, reb: 0, ast: 2, pts: 3, boxed: false, deflected: false };
+    const r = execCard(g, 'B', 'passing_lane', {});
+    expect(getTeam(r.game, 'A').assists).toBe(1);
+    expect(line(r.game, 'A', 'a1').ast).toBe(0);                  // never below zero, never an assist he did not roll
+  });
+
+  it('a roll writes its assists into the order Passing Lane reads, and a card\'s assists do too', () => {
+    const g = game();
+    const rolled = dice(20, () => doRoll(g, 'A', 0));
+    const rr = rolled.rollResults.A[0];
+    expect(rr.ast).toBeGreaterThan(0);
+    expect((rolled.astLog?.A ?? []).filter(id => id === 'a0')).toHaveLength(rr.ast);
+    const A = five('a'); A[2] = p('slasher', 13, 10);
+    const made = dice(20, () => execCard(game({ A, hand: ['hammer_set'] }), 'A', 'hammer_set', { playerIdx: 2 }));
+    expect(lastAssister(made.game, 'A')).toBe('slasher');
   });
 
   it('Pin-Down Screen costs a discard: the engine takes one, and refuses with nothing to pay', () => {

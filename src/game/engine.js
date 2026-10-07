@@ -588,6 +588,31 @@ export const trackRebounds = team => team?.reboundsWon ?? team?.rebounds ?? 0;
 export const reboundTrackLead = (g, teamKey) =>
   trackRebounds(getTeam(g, teamKey)) - trackRebounds(getOpp(g, teamKey));
 
+/**
+ * WHO HAS THE MOST RECENT ASSIST (2026-10-07). The box score keeps totals, so
+ * it could not say who passed last; Passing Lane's extra assist needs exactly
+ * that (the user: "just whoever got the most recent assist"). One entry per
+ * assist on a player's line, newest last, per team: `g.astLog[teamKey]`. A
+ * cancelled assist takes that player's newest entries back off, so the end of
+ * the list is always the latest assist still standing. Kept short — only the
+ * end is ever read.
+ */
+export const AST_LOG_MAX = 30;
+export function noteAssists(g, teamKey, playerId, n) {
+  if (!g || !playerId || !n) return;
+  const log = [...(g.astLog?.[teamKey] ?? [])];
+  if (n > 0) {
+    for (let i = 0; i < n; i += 1) log.push(playerId);
+  } else {
+    for (let left = -n, i = log.length - 1; left > 0 && i >= 0; i -= 1) {
+      if (log[i] === playerId) { log.splice(i, 1); left -= 1; }
+    }
+  }
+  g.astLog = { ...(g.astLog ?? {}), [teamKey]: log.slice(-AST_LOG_MAX) };
+}
+/** The player id behind `teamKey`'s most recent standing assist, or null. */
+export const lastAssister = (g, teamKey) => (g?.astLog?.[teamKey] ?? []).at(-1) ?? null;
+
 /** `team` grabs `n` rebounds: onto the track and into the bank. */
 export function gainRebounds(team, n) {
   if (!team || !n) return;
@@ -1712,6 +1737,7 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   gainRebounds(nMyT, result.reb);
   const ps2 = nMyT.stats.find(s => s.id === nPlayer.id);
   if (ps2) { ps2.pts += result.pts; ps2.reb += result.reb; ps2.ast += result.ast; }
+  noteAssists(ng, teamKey, nPlayer.id, result.ast);
   creditAllowed(ng, teamKey, idx, result.pts, nDefPlayer?.id);
 
   // Analytics: chart scoring roll
@@ -1738,6 +1764,7 @@ export function doRoll(g, teamKey, idx, opts = {}) {
     nMyT.assists += 1;
     // The scorer's own line, like every stat a card pays (2026-10-01).
     if (ps2) ps2.ast += 1;
+    noteAssists(ng, teamKey, nPlayer.id, 1);
     ng.log = [...ng.log, { team: teamKey, msg: `Spain Pick & Roll: ${nPlayer.name} scores — +1 AST` }];
   }
   // Check assist bonus draw

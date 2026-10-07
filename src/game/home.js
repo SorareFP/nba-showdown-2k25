@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'passing-lane-last-passer', date: '2026-10-07', title: "Passing Lane's extra assist comes off the last passer",
+    body: "Passing Lane cancels the assists a roll just won, and those still come off the roller's line. The one extra assist it takes when your defender has the Speed edge was coming off the roller too, so he could lose an assist from an earlier roll. It now comes off whoever had the team's most recent assist before that roll, and the log names them.",
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'free-agents-rebuilt', date: '2026-10-07', title: 'Requested cards rebuilt on the current rules',
     body: "The 25 Free Agents cards were built the day they were signed, so the September 30 card rules (finer three-point lines, no scoring cut for seasons over 36 minutes a game, rebounds and assists read per scoring band) never reached them. They are rebuilt now like every other set. Most moved $30 or less. Jawad Williams 2010-11 drops to common, and anyone holding one gets the coin difference, the same way as the other rarity changes.",
     to: 'collection', cta: 'Collection',

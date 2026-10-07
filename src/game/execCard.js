@@ -3,7 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
-import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead } from './engine.js';
+import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister } from './engine.js';
 import { checkTerms } from './checkTerms.js';
 import { burstTargets, greenLightTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
@@ -42,7 +42,12 @@ function creditLine(g, teamKey, playerId, stat, n = 1) {
   // A CANCELLED STAT COMES OFF THE LINE TOO (the user, 2026-10-01, on Passing
   // Lane: "those two assists are technically turnovers now and were 'never'
   // assists"): a negative `n`, and a line never goes below zero.
-  if (ps) ps[stat] = Math.max(0, (ps[stat] || 0) + n);
+  if (ps) {
+    const before = ps[stat] || 0;
+    ps[stat] = Math.max(0, before + n);
+    // The order of assists, for whoever passed last (noteAssists, engine.js).
+    if (stat === 'ast') noteAssists(g, teamKey, playerId, ps[stat] - before);
+  }
 }
 
 /**
@@ -1941,10 +1946,20 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (rollerA && guardA && (guardA.speed || 0) > (rollerA.speed || 0)) takeA += 1;
       const beforeA = oppT.assists || 0;
       oppT.assists = Math.max(0, beforeA - takeA);
+      const cancelledA = beforeA - oppT.assists;
       // ...and off the roller's own line: passes that never arrived.
-      creditLine(g, lrA.teamKey, rollerA?.id, 'ast', -(beforeA - oppT.assists));
+      const fromRollA = Math.min(lrA.ast, cancelledA);
+      creditLine(g, lrA.teamKey, rollerA?.id, 'ast', -fromRollA);
+      // THE EXTRA ONE (the user, 2026-10-07: "just whoever got the most
+      // recent assist"): it is not this roll's, so it comes off whoever holds
+      // the latest assist still standing once the roll's are gone. It used to
+      // come off the roller too, who could lose an assist from an earlier roll.
+      const extraA = cancelledA - fromRollA;
+      const passerId = extraA > 0 ? lastAssister(g, lrA.teamKey) : null;
+      if (passerId) creditLine(g, lrA.teamKey, passerId, 'ast', -extraA);
+      const passer = passerId ? [...(oppT.starters || []), ...(oppT.roster || [])].find(p => p?.id === passerId) : null;
       lrA.deflected = true;
-      addLog(g, teamKey, `Passing Lane: ${guardA?.name || 'your defender'} jumps the pass to ${rollerA?.name || 'the roller'} — ${beforeA - oppT.assists} AST cancelled`);
+      addLog(g, teamKey, `Passing Lane: ${guardA?.name || 'your defender'} jumps the pass to ${rollerA?.name || 'the roller'} — ${cancelledA} AST cancelled${extraA > 0 && passer ? ` (the extra one off ${passer.name})` : ''}`);
       break;
     }
     case 'clamp_the_reserve': {

@@ -1444,10 +1444,12 @@ export function negotiate(d, teamId, key, offer) {
   const pid = traitOf(d, key);
   const rival = rivalFor(d, key, teamId);
   // Hometown Discount: the player weighs the coach's offer as if it were 10%
-  // bigger; the deal signs at what was actually offered.
+  // bigger; the deal signs at what was actually offered. The weighed offer
+  // stops at the max deal (2026-10-07): 32 DP read as 36 and judgeOffer threw,
+  // so re-signing your own max player with the Cap Strategist crashed.
   const discount = discountFor(d, teamId, key);
   const verdict = judgeOffer({
-    card: cardOf(key), pid, ctx: ctxFor(d, key, teamId), offer: { dp: Math.round(dp / discount), years },
+    card: cardOf(key), pid, ctx: ctxFor(d, key, teamId), offer: { dp: Math.min(MAX_DP, Math.round(dp / discount)), years },
     talk: d.talks?.[key] ?? null, day: marketDay(d), rivalRatio: rival?.ratio ?? 0,
   });
   let next = { ...d, talks: { ...(d.talks ?? {}), [key]: verdict.talk } };

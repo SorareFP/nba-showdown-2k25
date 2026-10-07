@@ -13,7 +13,7 @@ import {
   onClock, draftPick, passPick, simDraft, aiDraftChoice, draftAvailable, draftDone, finishDraft, closeResign, drawLottery,
   startSeason, endSeason, ageOf, retireChance, RETIRE_FROM, rookieTerms,
 } from './dynasty.js';
-import { APRON_DP, CAP_DP, MIN_DP } from './dynastyMarket.js';
+import { APRON_DP, CAP_DP, MIN_DP, MAX_DP } from './dynastyMarket.js';
 import { friendsAct, FRIEND_MOVES } from './dynastyFriends.js';
 import { buildAiLeague } from './aiTeams.js';
 import { roundFixtures, totalRounds, recordResult, advance, PHASE } from './season.js';
@@ -191,6 +191,23 @@ describe('the Cap Strategist', () => {
     // A free agent who is not his gets no discount.
     const stranger = Object.keys(d.contracts).find(k => d.contracts[k].teamId !== HUMAN_ID);
     expect(discountFor(staffed, HUMAN_ID, stranger)).toBe(1);
+  });
+});
+
+describe('the Cap Strategist at the max deal', () => {
+  // 2026-10-07: the discount weighs the coach's offer at dp / 0.9, so 32 DP
+  // for a 35 DP player read as 36, past the max deal, and judgeOffer threw.
+  it('re-signs the highest-paid player on the roster at his discounted ask, never past the max', () => {
+    const d = ownDynasty();
+    const expiring = k => ({ ...d, phase: DPHASE.resign, rights: { ...d.rights, [k]: { teamId: HUMAN_ID, kind: 'expiring' } }, contracts: Object.fromEntries(Object.entries(d.contracts).filter(([x]) => x !== k)) });
+    const [top] = rosterKeys(d, HUMAN_ID)
+      .map(k => ({ k, ask: quote(expiring(k), HUMAN_ID, k).ask }))
+      .sort((a, b) => b.ask - a.ask);
+    const staffed = { ...expiring(top.k), staff: { [HUMAN_ID]: { cap: 2 } } };
+    const cut = quote(staffed, HUMAN_ID, top.k);
+    expect(cut.ask).toBeLessThanOrEqual(MAX_DP);
+    const r = negotiate(staffed, HUMAN_ID, top.k, { dp: cut.ask, years: cut.years });
+    expect(r.result.accepted).toBe(true);
   });
 });
 

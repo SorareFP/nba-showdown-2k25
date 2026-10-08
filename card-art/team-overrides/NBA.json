@@ -5,7 +5,8 @@
   },
   "GSW": {
     "primary": "#FFC72C",
-    "secondary": "#1D4289"
+    "secondary": "#1D4289",
+    "accent": "#1D428A"
   },
   "GSW89": {
     "primary": "#FFC72C",

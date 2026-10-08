@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'glass-bonus-live', date: '2026-10-08', title: 'Lead the glass by 3 and your next paint check is +2, right away',
+    body: "The +2 for a rebound lead of 3 only arrived after a section ended that far ahead, and only on the 5-rebound paint check, while the scoreboard promised it the moment you went up 3. Now it is live: whenever you lead the rebound track by 3 or more, your next paint check of any kind is at +2, whether you bought it with rebounds or assists or a card called it. Once a section. The court's REB tile shows the +2 while you hold it, every paint button's target includes it, and the check's line names it as Glass.",
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'passing-lane-last-passer', date: '2026-10-07', title: "Passing Lane's extra assist comes off the last passer",
     body: "Passing Lane cancels the assists a roll just won, and those still come off the roller's line. The one extra assist it takes when your defender has the Speed edge was coming off the roller too, so he could lose an assist from an earlier roll. It now comes off whoever had the team's most recent assist before that roll, and the log names them.",
     to: 'play', cta: 'Play',

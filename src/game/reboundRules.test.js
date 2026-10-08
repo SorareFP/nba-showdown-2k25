@@ -5,8 +5,8 @@
 // gate itself; the board and the coach read the same predicate.
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import {
-  newGame, getTeam, endSection, spendReboundBonus, checkNeed, SPEND_COSTS,
-  REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundCheckProblem,
+  newGame, getTeam, endSection, spendReboundBonus, spendAssist, checkNeed, SPEND_COSTS,
+  REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundCheckProblem, glassBonus,
   gainRebounds, loseRebounds, trackRebounds, reboundTrackLead, doRoll,
 } from './engine.js';
 import { aiSpendDecision } from './ai.js';
@@ -28,6 +28,8 @@ function game() {
   g.teamA.hand = []; g.teamB.hand = [];
   return g;
 }
+/** Rebounds WON by each side: the track the glass bonus reads. */
+const glassGame = (a, b) => { const g = game(); gainRebounds(g.teamA, a); gainRebounds(g.teamB, b); return g; };
 const DEFAULTS = { ...REBOUND_RULES };
 const DEFAULT_COST = SPEND_COSTS.reboundPaint;
 afterEach(() => { Object.assign(REBOUND_RULES, DEFAULTS); SPEND_COSTS.reboundPaint = DEFAULT_COST; });
@@ -39,11 +41,12 @@ describe('the rule shipped 2026-09-23', () => {
     expect(SPEND_COSTS.reboundPaint).toBe(SPEND_COSTS.assistPaint);
   });
 
-  it('says so in the section-end log', () => {
+  it('the section-end log pays the +1 AST and no longer promises a +2 (it is live now)', () => {
     const g = game();
     g.teamA.rebounds = 14; g.teamB.rebounds = 10;
     const lines = endSection(g).log.map(l => l.msg);
-    expect(lines.some(m => /Rebound Track lead → .* \+1 AST · next rebound paint check \+2/.test(m))).toBe(true);
+    expect(lines.some(m => /Rebound Track lead → .* \+1 AST$/.test(m))).toBe(true);
+    expect(lines.some(m => /paint check \+2/.test(m))).toBe(false);
   });
 });
 
@@ -82,7 +85,7 @@ describe('the track and the bank are split (2026-09-24)', () => {
     const ng = endSection(g);
     expect(ng.teamA.assists).toBe(1);
     expect(ng.reboundBonuses.A).toMatchObject({ diff: 3 });
-    expect(ng.log.some(l => /Rebound Track lead → .* \+1 AST · next rebound paint check \+2/.test(l.msg))).toBe(true);
+    expect(ng.log.some(l => /Rebound Track lead → .* \+1 AST/.test(l.msg))).toBe(true);
   });
 
   it('a cancel comes off the track too, since the rebounds were never won', () => {
@@ -164,18 +167,18 @@ describe('the open check', () => {
     expect(getTeam(second.game, 'A').rebounds).toBe(0);
   });
 
-  it('carries the flat bonus on every check and the glass winner\'s extra once, itemised as REB', () => {
+  it('carries the flat bonus on every rebound check, itemised as REB, and the glass lead\'s +2 once, itemised as Glass', () => {
     Object.assign(REBOUND_RULES, { paintGate: 0, oncePerSection: false, paintBonus: 1, leadBonus: 2, leadGate: 3 });
-    const g = game();
-    g.teamA.rebounds = 20;
+    const g = glassGame(20, 17);                          // a live lead of 3
     expect(reboundCheckBonus(g, 'A')).toBe(1);
-    g.reboundBonuses = { A: { diff: 3, paintCheck: true } };
-    expect(reboundCheckBonus(g, 'A')).toBe(3);
+    expect(glassBonus(g, 'A', 'paint')).toBe(2);
     const spy = vi.spyOn(Math, 'random').mockReturnValue(0.2);   // a 5
     const first = spendReboundBonus(g, 'A', 'paint_check', 0);
     spy.mockRestore();
-    expect(first.game.log.at(-1).msg).toContain('+3 REB');
+    expect(first.game.log.at(-1).msg).toContain('+1 REB');
+    expect(first.game.log.at(-1).msg).toContain('+2 Glass');
     expect(reboundCheckBonus(first.game, 'A')).toBe(1);
+    expect(glassBonus(first.game, 'A', 'paint')).toBe(0);        // had it this section
   });
 });
 
@@ -205,5 +208,46 @@ describe('the button and the coach ask the check the spend will take', () => {
     expect(aiSpendDecision(g, 'A')).toBeNull();
     g.teamA.rebounds = SPEND_COSTS.reboundPaint + 3;
     expect(aiSpendDecision(g, 'A')).toMatchObject({ type: 'spend_rebound' });
+  });
+});
+
+// THE GLASS BONUS IS LIVE (the user, 2026-10-08: "It doesn't look like the
+// rebound advantage +2 is factoring into paint shot checks"). It waited for a
+// section's end while the scoreboard promised it at a lead of 3; now a lead of
+// 3+ puts the team's next paint check OF ANY KIND at +2, once a section.
+describe('the glass lead\'s +2 (2026-10-08)', () => {
+  const lead = glassGame;
+
+  it('is up the moment the lead reaches 3, mid-section, and only on paint', () => {
+    expect(glassBonus(lead(12, 10), 'A', 'paint')).toBe(0);
+    expect(glassBonus(lead(13, 10), 'A', 'paint')).toBe(2);
+    expect(glassBonus(lead(13, 10), 'B', 'paint')).toBe(0);
+    expect(glassBonus(lead(13, 10), 'A', '3pt')).toBe(0);
+    expect(glassBonus(lead(13, 10), 'A', 'ft')).toBe(0);
+  });
+
+  it('is in the target every button asks: checkNeed', () => {
+    const g = lead(13, 10);
+    const up = checkNeed(g, 'A', 0, 'paint', { banked: false }).need;
+    g.glassUsed = { A: true };
+    expect(checkNeed(g, 'A', 0, 'paint', { banked: false }).need).toBe(up + 2);
+  });
+
+  it('rides the 5-AST paint check too, and then it is spent for the section', () => {
+    const g = lead(13, 10);
+    g.teamA.assists = 10;
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.2);
+    const r = spendAssist(g, 'A', 'paint', 0);
+    spy.mockRestore();
+    expect(r.ok).toBe(true);
+    expect(r.game.log.at(-1).msg).toContain('+2 Glass');
+    expect(glassBonus(r.game, 'A', 'paint')).toBe(0);
+  });
+
+  it('comes back at the section end', () => {
+    const g = lead(13, 10);
+    g.glassUsed = { A: true };
+    const ng = endSection(g);
+    expect(ng.glassUsed).toEqual({});
   });
 });

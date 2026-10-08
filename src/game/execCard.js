@@ -3,7 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
-import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister } from './engine.js';
+import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass } from './engine.js';
 import { checkTerms } from './checkTerms.js';
 import { burstTargets, greenLightTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
@@ -2053,6 +2053,8 @@ export function applyShotCheck(g, psc) {
   let astTo = null;
 
   const r = shotCheck(player, psc.type, bonus, ps, getFatigue(g, psc.teamKey, psc.playerIdx));
+  // A paint check that carried the glass lead's +2 has had it this section.
+  spendGlass(g, psc.teamKey, bonus);
   recordShot(g, psc.teamKey, player?.id, psc.type, r.hit);
   if (creditCheckDefended(g, psc.teamKey, psc.playerIdx, psc.type, r, matchupContest(g, psc.teamKey, psc.playerIdx, psc.type))) r.blk = true;
   trackShotCheck(g, psc.teamKey, r, psc.type, psc.playerIdx);

@@ -18,7 +18,7 @@
 // (his Defensive Bonus: matchupContest), and Twin Towers on a paint check.
 // shotCheck then adds the player's 3PT or Paint Bonus (a free throw's +10),
 // hot and cold markers, and fatigue.
-import { getTeam, getOpp, getPS, getFatigue, matchupContest, standingEntry } from './engine.js';
+import { getTeam, getOpp, getPS, getFatigue, matchupContest, standingEntry, glassBonus, GLASS_LABEL } from './engine.js';
 
 const other = k => (k === 'A' ? 'B' : 'A');
 
@@ -41,6 +41,8 @@ export function checkTerms(g, psc, idx = psc.playerIdx) {
     parts.push({ label: defender ? `contest (${defender.name})` : 'contest', n: -contest });
   }
   if (psc.type === 'paint' && standingEntry(g, other(teamKey), 'twin_towers')) parts.push({ label: 'Twin Towers', n: -2 });
+  // The glass lead's +2, on any paint check while it is up (glassBonus).
+  parts.push({ label: GLASS_LABEL, n: glassBonus(g, teamKey, psc.type) });
   return parts.filter(p => p.n);
 }
 

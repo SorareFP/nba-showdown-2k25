@@ -7,7 +7,7 @@ import {
   getTeam, endSection, doRoll, matchupAdv, getPS, restMinutes, getFatigue, checkNeed, rollGate, CRUNCH_MARGIN, passTurn,
   crunchSearchOptions, clutchAvailable, clutchDiceFor, returnCardToDeck, undoReturnCard, lastReturnedCard,
   fatigueForMinutes, MAX_STRAIGHT_MINUTES, REST_CLEARS_AT, REST_RECOVERY, newGame, pendingRolls, canRollSlot,
-  reboundCheckBonus,
+  reboundCheckBonus, glassBonus,
 } from './engine.js';
 import {
   TUTORIAL_TOOLTIPS, TUTORIAL_ROSTER_A_IDS, TUTORIAL_ROSTER_B_IDS, restRuleText, SECTION_MINUTES, HOT_FROM, COLD_TO,
@@ -298,8 +298,8 @@ describe('the rest rule, computed', () => {
     expect(detail('s2_draft_reminder', g)).toContain(restRuleText());
   });
 
-  it('the glass winner\'s bonus on the REB paint check comes at the lead the lessons quote', () => {
-    const at = lead => { const g = toRolling(tutorialGame()); g.teamA.rebounds = 10 + lead; g.teamB.rebounds = 10; return reboundCheckBonus(endSection(g), 'A'); };
+  it('the glass lead\'s bonus on a paint check comes at the lead the lessons quote', () => {
+    const at = lead => { const g = toRolling(tutorialGame()); g.teamA.rebounds = 10 + lead; g.teamB.rebounds = 10; return glassBonus(g, 'A', 'paint'); };
     expect(REB_LEAD_BONUS).toBeGreaterThan(0);
     expect(at(REB_LEAD_FOR_BONUS)).toBe(REB_LEAD_BONUS);
     expect(at(REB_LEAD_FOR_BONUS - 1)).toBe(0);

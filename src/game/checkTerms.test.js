@@ -138,3 +138,35 @@ describe('Twin Towers on the spend paint checks', () => {
     expect(checkNeed(g, 'B', 0, 'paint').need).toBe(checkNeed({ ...g, standing: [] }, 'B', 0, 'paint').need);
   });
 });
+
+// THE GLASS LEAD'S +2 ON A CARD'S PAINT CHECK (the user, 2026-10-08: every
+// paint check, not only the 5-REB one). Shown in the target, rolled at it,
+// and spent for the section once taken.
+describe('the glass lead on a card-called paint check', () => {
+  const leading = () => {
+    const g = game({ A: [p('big', { paintBoost: 1 })] });
+    getTeam(g, 'A').reboundsWon = 8; getTeam(g, 'B').reboundsWon = 5;
+    return g;
+  };
+
+  it('the target and the roll both carry Glass +2, and it is spent for the section', () => {
+    const g = leading();
+    const psc = { teamKey: 'A', playerIdx: 0, type: 'paint', bonus: 0, cardLabel: 'test' };
+    g.pendingShotCheck = psc;
+    const shown = checkNeedFor(g, psc);
+    expect(shown.parts).toEqual(expect.arrayContaining([{ label: 'Glass', n: 2 }]));
+    const after = structuredClone(g);
+    const r = applyShotCheck(after, psc);
+    expect(rolledAt(r)).toBe(shown.need);
+    expect(r.parts.map(x => x.label)).toContain('Glass');
+    expect(checkTerms(after, psc).map(x => x.label)).not.toContain('Glass');
+  });
+
+  it('a 3PT check from the same card does not take it, so it is still there for the paint', () => {
+    const g = leading();
+    const psc = { teamKey: 'A', playerIdx: 0, type: '3pt', bonus: 0, cardLabel: 'test' };
+    expect(checkTerms(g, psc).map(x => x.label)).not.toContain('Glass');
+    applyShotCheck(g, psc);
+    expect(checkTerms(g, { ...psc, type: 'paint' }).map(x => x.label)).toContain('Glass');
+  });
+});

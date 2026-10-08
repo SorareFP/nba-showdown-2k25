@@ -177,10 +177,10 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
           <ul>
             <li><strong>5 REB:</strong> a paint check for any player, any time. Their Paint Bonus rides on the die; the button shows the roll he needs.</li>
           </ul>
-          <p>A card that <strong>cancels</strong> rebounds (Box Out, Cold Spell, Offensive Foul) takes them off the track too, since they were never won. At the end of a section, the <strong>track</strong> pays:</p>
+          <p>A card that <strong>cancels</strong> rebounds (Box Out, Cold Spell, Offensive Foul) takes them off the track too, since they were never won. The <strong>track</strong> pays two ways:</p>
           <ul>
-            <li><strong>Leading:</strong> +1 stored assist.</li>
-            <li><strong>Leading by 3 or more:</strong> your next rebound paint check is at <strong>+2</strong>.</li>
+            <li><strong>Leading by 3 or more, at any moment:</strong> your next paint check is at <strong>+2</strong>, whether you bought it with rebounds or assists or a card called it. Once a section.</li>
+            <li><strong>Leading at the end of a section:</strong> +1 stored assist.</li>
           </ul>
           <p>A <strong>strategy card that spends rebounds</strong> needs your team to lead the track by at least what it spends.</p>
         </AccordionSection>

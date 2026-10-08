@@ -32,7 +32,7 @@ export default function Scoreboard({ game, pvpMode = false, myTeamKey = null, is
         {turnDetail && <div className={styles.turnDetail}>{turnDetail}</div>}
         <div className={styles.tracks}>
           <Track label="AST" val={ga.assists} col="var(--orange)" />
-          <ReboundDiff diff={rebDiff} aReb={aWon} bReb={bWon} />
+          <ReboundDiff diff={rebDiff} aReb={aWon} bReb={bWon} used={Boolean(game.glassUsed?.[rebDiff > 0 ? 'A' : 'B'])} />
           <Track label="AST" val={gb.assists} col="var(--blue)" />
         </div>
       </div>
@@ -93,16 +93,18 @@ function Track({ label, val, col }) {
   );
 }
 
-function ReboundDiff({ diff, aReb, bReb }) {
+function ReboundDiff({ diff, aReb, bReb, used = false }) {
   const absDiff = Math.abs(diff);
   const leadCol = diff > 0 ? 'var(--orange)' : diff < 0 ? 'var(--blue)' : '#94A3B8';
   const sign = diff > 0 ? '+' : diff < 0 ? '' : '';
 
-  // Threshold markers. A lead of leadGate+ at the section's end puts the
-  // leader's next rebound check at +leadBonus. The check itself is bought
-  // from the bank, not the track, so the track marks it only with the
-  // lead-to-spend dial on. This read "+3: Paint Check" from the gated rule
-  // before 2026-09-23 and still did on 2026-09-24.
+  // Threshold markers. A lead of leadGate+ puts the leader's next paint
+  // check, of any kind, at +leadBonus once a section — LIVE since 2026-10-08
+  // (glassBonus, engine.js): this marker promised it the moment the lead
+  // reached 3 while the engine waited for the section's end. The check itself
+  // is bought from the bank, not the track, so the track marks it only with
+  // the lead-to-spend dial on. This read "+3: Paint Check" from the gated
+  // rule before 2026-09-23 and still did on 2026-09-24.
   const cost = SPEND_COSTS.reboundPaint;
   const canBuy = REBOUND_RULES.leadToSpend && absDiff >= cost;
   const hasGate = REBOUND_RULES.leadBonus > 0 && absDiff >= REBOUND_RULES.leadGate;
@@ -135,7 +137,9 @@ function ReboundDiff({ diff, aReb, bReb }) {
             the scoreboard was still promising it. */}
         {canBuy
           ? <span className={styles.rebThresh} style={{ color: leadCol }}>+{cost}: Paint Check</span>
-          : hasGate && <span className={styles.rebThresh} style={{ color: leadCol }}>+{REBOUND_RULES.leadGate}: next check +{REBOUND_RULES.leadBonus}</span>}
+          : hasGate && (used
+            ? <span className={styles.rebThresh} style={{ color: '#94A3B8' }} title="The leader has had this section's +2; it comes back next section">+{REBOUND_RULES.leadBonus} used this section</span>
+            : <span className={styles.rebThresh} style={{ color: leadCol }} title="While a team leads the glass by this much, its next paint check (5 REB, 5 AST or a card's) is at the bonus, once a section">+{REBOUND_RULES.leadGate}: next paint check +{REBOUND_RULES.leadBonus}</span>)}
       </div>
     </div>
   );

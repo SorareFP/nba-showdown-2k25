@@ -538,8 +538,20 @@ export const SPEND_COSTS = {
  *
  * So the bank is a currency like the assists: 5 REB buys a paint check for
  * any player at any time, the same price as the assist paint check. The
- * net +/- still pays at a section's end: the leader's +1 AST as before, and
- * a lead of 3+ puts the next rebound check at +2.
+ * net +/- still pays at a section's end: the leader's +1 AST as before.
+ *
+ * THE GLASS BONUS IS LIVE (the user, 2026-10-08). A lead of 3+ used to put
+ * the next REBOUND paint check at +2, but only once a section had ENDED that
+ * far ahead, while the scoreboard promised it the moment the lead reached 3
+ * ("It doesn't look like the rebound advantage +2 is factoring into paint
+ * shot checks"). The user's rule: whenever the team leads the track by 3+,
+ * its next paint check of ANY kind (5 REB, 5 AST, or a card's) is +2, once a
+ * section — glassBonus below. Measured the same day, 400 games, seed 11, the
+ * shipped dials (hybrid5), per team-game:
+ *                            REB pts  AST pts  REB chks  score  win/REBsd  win/ASTsd
+ *   +2 after a section end    6.38     9.02     6.76    124.8    0.112      0.064
+ *   +2 live, any paint check  6.31     9.37     6.78    124.5    0.175      0.051
+ * Scoring holds; the glass weighs more in winning.
  */
 export const REBOUND_RULES = {
   /** Section-end lead on the Rebound Track that opens the check; 0 opens it whenever the bank covers the cost. */
@@ -548,7 +560,7 @@ export const REBOUND_RULES = {
   oncePerSection: false,
   /** On every rebound paint check. */
   paintBonus: 0,
-  /** On the first check after winning a section's glass by `leadGate` or more. */
+  /** On the team's next paint check of any kind while it leads the track by `leadGate` or more, once a section (glassBonus). */
   leadBonus: 2,
   leadGate: 3,
   /**
@@ -652,12 +664,32 @@ export function reboundCheckOpen(g, teamKey) {
   return reboundCheckProblem(g, teamKey) === null;
 }
 
-/** The bonus the next rebound paint check carries: the flat one, and the glass winner's once a section. */
+/** The flat bonus every REBOUND paint check carries (0 today). The glass lead's +2 is glassBonus, on every paint check. */
 export function reboundCheckBonus(g, teamKey) {
-  const rb = g.reboundBonuses?.[teamKey];
-  const lead = REBOUND_RULES.leadBonus && rb && !rb.leadUsed && (rb.diff ?? 0) >= REBOUND_RULES.leadGate
-    ? REBOUND_RULES.leadBonus : 0;
-  return (REBOUND_RULES.paintBonus || 0) + lead;
+  return REBOUND_RULES.paintBonus || 0;
+}
+
+/** How a check's itemised terms name the glass lead's bonus. */
+export const GLASS_LABEL = 'Glass';
+
+/**
+ * THE GLASS LEAD'S BONUS on `teamKey`'s check of `type` right now: +leadBonus
+ * on a PAINT check while the team leads the Rebound Track by leadGate or more,
+ * if it has not had it yet this section (the user, 2026-10-08). Live: it
+ * reads the lead as the check is taken, not a lead published at a section's
+ * end. Every paint check takes it through one term, so the buttons, the
+ * banner, the coach and the roll agree (checkNeed, checkTerms, the spends).
+ */
+export function glassBonus(g, teamKey, type) {
+  if (type !== 'paint' || !REBOUND_RULES.leadBonus || g?.glassUsed?.[teamKey]) return 0;
+  return reboundTrackLead(g, teamKey) >= REBOUND_RULES.leadGate ? REBOUND_RULES.leadBonus : 0;
+}
+
+/** A check whose terms carried the glass bonus has had it for this section. */
+export function spendGlass(g, teamKey, parts) {
+  if (Array.isArray(parts) && parts.some(p => p?.label === GLASS_LABEL && p.n)) {
+    g.glassUsed = { ...(g.glassUsed ?? {}), [teamKey]: true };
+  }
 }
 
 // ── Shot Check ─────────────────────────────────────────────────────────────
@@ -1017,7 +1049,7 @@ export function checkNeed(g, teamKey, idx, type, { extra = 0, banked = true } = 
   const marker = ((ps.hot || 0) - (ps.cold || 0)) * 2;
   // The tracker's penalty, as shotCheck will apply it (free throws exempt).
   const fat = type === 'ft' ? 0 : getFatigue(g, teamKey, idx);
-  const bonus = astBonus - matchupContest(g, teamKey, idx, type) + boost + marker + fat + towersPenalty(g, teamKey, type);
+  const bonus = astBonus - matchupContest(g, teamKey, idx, type) + boost + marker + fat + towersPenalty(g, teamKey, type) + glassBonus(g, teamKey, type);
   const need = (player.shotLine || 99) - bonus;
   const pHit = Math.min(1, Math.max(0, (21 - need) / 20));
   return { need, pHit, bonus };
@@ -1198,8 +1230,9 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (myT.assists < SPEND_COSTS.assistPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.assistPaint} assists (have ${myT.assists})` };
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const partsP = [...spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }];
+    const partsP = [...spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }, { label: GLASS_LABEL, n: glassBonus(ng, teamKey, 'paint') }];
     const r = shotCheck(player, 'paint', partsP, ps, getFatigue(ng, teamKey, playerIdx));
+    spendGlass(ng, teamKey, partsP);
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
     // Recorded after the make is paid, so the record knows the assist it paid.
@@ -1244,8 +1277,9 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     if (problem) return { game: ng, ok: false, msg: problem };
     const rebBonus = reboundCheckBonus(ng, teamKey);
     myT.rebounds -= SPEND_COSTS.reboundPaint;
-    const partsR = [{ label: 'REB', n: rebBonus }, { label: 'contest', n: -(matchupContest(ng, teamKey, playerIdx, 'paint') || 0) }, { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }];
+    const partsR = [{ label: 'REB', n: rebBonus }, { label: 'contest', n: -(matchupContest(ng, teamKey, playerIdx, 'paint') || 0) }, { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }, { label: GLASS_LABEL, n: glassBonus(ng, teamKey, 'paint') }];
     const r = shotCheck(player, 'paint', partsR, ps, getFatigue(ng, teamKey, playerIdx));
+    spendGlass(ng, teamKey, partsR);
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
     let paintAstR = 0;
@@ -1263,13 +1297,10 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     });
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
-    // Mark as used: the published check (with a gate, once a section) and the
-    // glass winner's bonus (always once).
+    // Mark as used: the published check, with a gate, once a section. The
+    // glass lead's +2 is spent above (spendGlass), as on every paint check.
     const rbUsed = ng.reboundBonuses?.[teamKey];
-    if (rbUsed) {
-      if (REBOUND_RULES.oncePerSection) rbUsed.paintCheck = false;
-      if (REBOUND_RULES.leadBonus) rbUsed.leadUsed = true;
-    }
+    if (rbUsed && REBOUND_RULES.oncePerSection) rbUsed.paintCheck = false;
     ng.log = [...ng.log, { team: teamKey, msg: `Rebound Paint Check (−${SPEND_COSTS.reboundPaint} REB): ${player.name} ${checkLine(r)}` }];
     return { game: ng, ok: true };
   }
@@ -1800,8 +1831,10 @@ export const CROWD_FAVORITE_PTS = 2;
 export function endSection(g) {
   let ng = deepClone(g);
 
-  // Clear previous section's rebound bonuses before calculating new ones
+  // Clear previous section's rebound bonuses before calculating new ones,
+  // and give each team its glass bonus back for the next one (glassBonus).
   ng.reboundBonuses = {};
+  ng.glassUsed = {};
 
   // +/- and minutes
   const segPtsA = (ng.rollResults.A || []).reduce((s, r) => s + (r?.pts || 0), 0);
@@ -1846,12 +1879,10 @@ export function endSection(g) {
     const wk = rd > 0 ? 'A' : 'B';
     const wTeam = getTeam(ng, wk);
 
-    // Winning the rebound track at section end → +1 stored assist, and a
-    // big enough lead puts the next rebound paint check at +2 (REBOUND_RULES).
+    // Winning the rebound track at section end → +1 stored assist. The +2 for
+    // a lead of 3+ is live now and needs no section end (glassBonus).
     wTeam.assists++;
-    const edge = REBOUND_RULES.leadBonus && absRd >= REBOUND_RULES.leadGate
-      ? ` · next rebound paint check +${REBOUND_RULES.leadBonus}` : '';
-    ng.log = [...ng.log, { team: wk, msg: `Rebound Track lead → ${wTeam.name} +1 AST${edge}` }];
+    ng.log = [...ng.log, { team: wk, msg: `Rebound Track lead → ${wTeam.name} +1 AST` }];
 
     // Track rebound bonuses earned this section for UI display
     if (!ng.reboundBonuses) ng.reboundBonuses = {};

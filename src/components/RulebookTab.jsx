@@ -161,7 +161,7 @@ export default function RulebookTab() {
           <li>A player sent off by <strong>Foul Trouble</strong> is not in the pool for the next section — the whole section, both ends of the floor — and they are back the section after.</li>
           <li>All temporary effects clear (boosts, ghosts, blocks, standing cards whose players left the floor).</li>
           <li>Each starter adds <strong>4 minutes</strong>; a section on the bench <strong>clears</strong> a tracker at 8 minutes or under and takes <strong>4 minutes</strong> off above that.</li>
-          <li>The rebound track (rebounds won, not what is left to spend) pays: the leader gains +1 stored assist, and a lead of 3 or more puts its next rebound paint check at +2.</li>
+          <li>The rebound track (rebounds won, not what is left to spend) pays: the leader gains +1 stored assist. Each team's once-a-section +2 on a paint check comes back.</li>
           <li>Both hands refill to <strong>7</strong>.</li>
           <li>At halftime (start of Q3) all fatigue and all hot and cold markers reset.</li>
           <li>Entering the final section, Crunch Time arms if the margin is 20 or less.</li>
@@ -238,10 +238,10 @@ export default function RulebookTab() {
         <ul>
           <li><strong>5 REB:</strong> a paint check for any player, at any time; their Paint Bonus applies.</li>
         </ul>
-        <p>At section end the <strong>track</strong> pays:</p>
+        <p>The <strong>track</strong> pays:</p>
         <ul>
-          <li><strong>Leading:</strong> +1 stored assist.</li>
-          <li><strong>Leading by 3 or more:</strong> the next rebound paint check is at <strong>+2</strong>.</li>
+          <li><strong>Leading by 3 or more, at any moment:</strong> the team's next paint check of any kind (5 REB, 5 AST, or one a card calls) is at <strong>+2</strong>, once a section.</li>
+          <li><strong>Leading at section end:</strong> +1 stored assist.</li>
         </ul>
         <p>A strategy card that spends rebounds needs a lead on the track at least as big as what it spends.</p>
       </Section>

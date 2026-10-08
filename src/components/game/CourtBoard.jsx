@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
+import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
 import { canPlayCard, burstTargets, greenLightTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
 import { checkNeedFor } from '../../game/checkTerms.js';
@@ -2110,9 +2110,10 @@ function TrackPanel({ game, side }) {
   return (
     <div className={`${styles.trackPanel} ${side==='left'?styles.trackL:styles.trackR}`}>
       <Track l="AST" v={team.assists} col={col} max={10} bonus={team.assists>=5}/>
-      {/* ✓ when the bank buys a rebound paint check; the glass winner's +2 beside it. */}
+      {/* ✓ when the bank buys a rebound paint check; the glass lead's +2 beside it
+          while it is up (glassBonus: a lead of 3+, the next paint check of any kind). */}
       <Track l="REB" v={rebDiff===0?'0':`+${absDiff}`} col={leadCol} max={10} raw={team.rebounds} rawTitle="Rebounds to spend"
-        bonus={reboundCheckOpen(game, teamKey)} extra={reboundCheckBonus(game, teamKey) ? `+${reboundCheckBonus(game, teamKey)}` : null}/>
+        bonus={reboundCheckOpen(game, teamKey)} extra={glassBonus(game, teamKey, 'paint') ? `+${glassBonus(game, teamKey, 'paint')}` : null}/>
     </div>
   );
 }
@@ -2127,7 +2128,7 @@ function Track({l,v,col,max,bonus,raw,rawTitle,extra}){
       <div className={styles.tv} style={{color:col}}>{v}</div>
       {raw !== undefined && <div className={styles.traw} title={rawTitle}>({raw})</div>}
       {bonus&&<div className={styles.tbonus}>✓</div>}
-      {extra&&<div className={styles.tbonus} title="The next rebound paint check's bonus, for winning the glass">{extra}</div>}
+      {extra&&<div className={styles.tbonus} title="Your next paint check's bonus (5 REB, 5 AST or a card's) for leading the glass by 3+, once a section">{extra}</div>}
     </div>
   );
 }

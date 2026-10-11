@@ -77,10 +77,14 @@ function CollectionDemo() {
     // A few strategy cards too, so their rows (a deck limit, no Burn) can be seen.
     ...STRATS.slice(0, 8).map((st, i) => [st.id, { type: 'strat', count: 1 + (i % 3) }]),
   ]), []);
+  // A made-up friend who needs two of the spares (friends, 2026-10-11): pick
+  // "Spare to sell or burn" to see the dot.
+  const friendWants = useMemo(() => new Map(PACKABLE.filter((c, i) => i % 3 === 0).slice(0, 2)
+    .map((c, i) => [cardKey(c), [{ uid: 'demo', name: 'Sam', goalLabel: 'Atlanta Hawks collection', missing: i + 1 }]])), []);
   const noop = () => {};
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-      <MyCollection collection={collection} onBurn={noop} onList={noop} onCollect={noop} />
+      <MyCollection collection={collection} onBurn={noop} onList={noop} onCollect={noop} friendWants={friendWants} />
       <CollectionGoals collection={collection} claims={{}} coins={0} onClaim={noop} onCollect={noop} busyGoal={null} busyCard={null} />
       <PackShop currency={4321} onBuyPack={noop} />
     </div>

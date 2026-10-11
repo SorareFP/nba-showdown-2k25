@@ -35,18 +35,18 @@ we can have a direct trade function too."
 | Path | Written by | Read by | Holds |
 | --- | --- | --- | --- |
 | `friendCodes/{code}` | server | server only | `{ uid }` — the account a code belongs to |
-| `friends/{uid}` | server | the owner | `{ uids: [...], code }` — the friend list and the owner's own code |
+| `friends/{uid}` | server | server only (through `myFriends`) | `{ code, uids: [...], names: { uid: name } }` |
 | `friendRequests/{id}` | server | `from` and `to` | `{ from, to, fromName, at }` |
-| `profiles/{uid}` | the owner (needs only) | the owner and their friends | `{ name, needs: [...], needsAt }` |
+| `profiles/{uid}` | the owner (`needs`, `needsAt` only) | the owner; friends through `myFriends` | `{ needs: [...], needsAt }` |
 | `users/{uid}/playedWith/{otherUid}` | server | the owner | `{ name, via: 'league' \| 'pvp', at }` |
 
 - **A code** is short and unambiguous (no 0/O/1/I), made on first visit to
   Friends, kept for good. Looking one up goes through a callable, so codes
   cannot be listed or guessed in bulk.
-- **`profiles` read rule:** the owner, or a uid in `friends/{uid}.uids`.
-  Removing a friend ends their read access at once. The owner may write only
-  `needs` and `needsAt`; `name` is the server's (set when the friendship
-  forms), so a client cannot rename itself to impersonate.
+- **`profiles` is owner-read;** a friend's needs reach you through the `myFriends` callable, which
+  checks the friendship, so no rule looks one up (refined 2026-10-11). The owner may write only
+  `needs` and `needsAt`; names live on the server-only `friends/{uid}.names`, set when the friendship
+  forms, so a client cannot rename itself to impersonate.
 - **Friends cap: 30** — the most a single Firestore `in` query takes, which is
   how Home finds friends' listings.
 

@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'friends', date: '2026-10-11', title: 'Friends, and the cards they need',
+    body: "Add friends in Collection → Friends: send your friend code, or tap anyone you've played in a league or head to head. When a friend is one or two cards from finishing a collection, any spare of those cards you could sell shows a note in My Collection under 'Spare to sell or burn': who needs it, for which collection, and a List it button that opens the usual sell form. A card you pack that a friend needs says so on the reveal. When a friend lists a card you need, it shows on Home and is tagged in the market. Listings stay public: anyone can still buy them.",
+    to: 'collection', cta: 'Friends',
+  },
+  {
     id: 'glass-bonus-live', date: '2026-10-08', title: 'Lead the glass by 3 and your next paint check is +2, right away',
     body: "The +2 for a rebound lead of 3 only arrived after a section ended that far ahead, and only on the 5-rebound paint check, while the scoreboard promised it the moment you went up 3. Now it is live: whenever you lead the rebound track by 3 or more, your next paint check of any kind is at +2, whether you bought it with rebounds or assists or a card called it. Once a section. The court's REB tile shows the +2 while you hold it, every paint button's target includes it, and the check's line names it as Glass.",
     to: 'play', cta: 'Play',

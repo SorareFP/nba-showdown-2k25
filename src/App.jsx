@@ -24,6 +24,7 @@ import { DialogProvider } from './ui/dialogs.jsx';
 import SoundToggle from './ui/SoundToggle.jsx';
 import ErrorBoundary from './ui/ErrorBoundary.jsx';
 import { CardStatsProvider } from './firebase/CardStatsProvider.jsx';
+import { FriendsProvider, usePublishNeeds } from './firebase/FriendsProvider.jsx';
 import { collectableKeys } from './game/collections.js';
 import { loadCollection, getUserData, updateUserFields } from './firebase/collection.js';
 import { ownedRoster } from './game/teamRules.js';
@@ -175,6 +176,8 @@ function AppInner() {
   }, [user]);
 
   useEffect(() => { refreshCollection(); }, [refreshCollection]);
+  // FRIENDS (2026-10-11): your near-complete collections, for your friends' dots.
+  usePublishNeeds(user, collection);
 
   useEffect(() => {
     const handler = (e) => {
@@ -491,6 +494,7 @@ export default function App() {
   return (
     <AuthProvider>
       <CardStatsProvider>
+      <FriendsProvider>
       <LightboxProvider>
         <DialogProvider>
           {/* `?demo=pack` in a dev build shows a pack opening with no account
@@ -502,6 +506,7 @@ export default function App() {
             : <AppInner />}
         </DialogProvider>
       </LightboxProvider>
+      </FriendsProvider>
       </CardStatsProvider>
     </AuthProvider>
   );

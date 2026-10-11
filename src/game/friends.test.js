@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import {
   FRIENDS_MAX, NEED_WITHIN, NEEDS_MAX, CODE_LENGTH, CODE_ALPHABET,
   makeFriendCode, normalizeCode, goalName, needsFromCollection, sameNeeds, cleanNeeds,
-  wantsByCard, wantText, friendNoteFor, listJoin, chunk,
+  wantsByCard, wantText, friendNoteFor, listJoin, chunk, syncNeeds,
 } from './friends.js';
 import { GOALS } from './collections.js';
 import { KEY_ALIASES, canonicalKey } from './cardSets.js';
@@ -109,5 +109,32 @@ describe('who wants a card, and what the dot says', () => {
     expect(chunk([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]]);
     expect(chunk([], 30)).toEqual([]);
     expect(FRIENDS_MAX).toBe(30);
+  });
+});
+
+// PUBLISHING YOUR NEEDS: on the first look and whenever they move, never
+// when they did not, and nothing at all for an account that needs nothing
+// and never published.
+describe('publishing your needs', () => {
+  const run = (collection, published, writes) =>
+    syncNeeds({ collection, claimedIds: new Set(), published, publish: async n => { writes.push(n); } });
+
+  it('writes the first time, skips an unchanged list, writes a change', async () => {
+    const writes = [];
+    const c = collected(team.requires.slice(1));
+    const first = await run(c, null, writes);
+    expect(first.wrote).toBe(true);
+    expect(ofGoal(first.last, team.id)).toHaveLength(1);
+    expect((await run(c, first.last, writes)).wrote).toBe(false);
+    const done = await run(collected(team.requires), first.last, writes);
+    expect(done.wrote).toBe(true);
+    expect(ofGoal(writes[1], team.id)).toEqual([]);
+    expect(writes).toHaveLength(2);
+  });
+
+  it('writes nothing for an account that needs nothing and never published', async () => {
+    const writes = [];
+    expect(await run({}, null, writes)).toEqual({ wrote: false, last: [] });
+    expect(writes).toEqual([]);
   });
 });

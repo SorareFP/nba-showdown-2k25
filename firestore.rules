@@ -182,6 +182,20 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // FRIENDS (2026-10-11). A player's NEEDS — the cards 1 or 2 short of a
+    // collection they have not claimed — written by their own app and read by
+    // nobody but them: friends read them through the myFriends callable, which
+    // checks the friendship. Only `needs` and `needsAt`; a client cannot write
+    // a name here. friends/, friendCodes/ and friendRequests/ are server-only
+    // through the closing match below.
+    match /profiles/{uid} {
+      allow read: if isSelf(uid);
+      allow create, update: if isSelf(uid)
+        && request.resource.data.keys().hasOnly(['needs', 'needsAt'])
+        && request.resource.data.needs is list
+        && request.resource.data.needs.size() <= 60;
+      allow delete: if false;
+    }
     // Anything not named above is closed. New collections have to be considered
     // rather than inheriting a default.
     match /{document=**} {

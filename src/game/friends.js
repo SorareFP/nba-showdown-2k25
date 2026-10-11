@@ -137,3 +137,16 @@ export function chunk(list, n) {
   for (let i = 0; i < (list ?? []).length; i += n) out.push(list.slice(i, i + n));
   return out;
 }
+
+/**
+ * PUBLISH YOUR NEEDS, IF THEY MOVED. `published` is what the profile holds
+ * (null: never written). Writes the first time and on any change; an account
+ * that needs nothing and never published writes nothing at all.
+ * Returns `{ wrote, last }`, `last` being what the profile now holds.
+ */
+export async function syncNeeds({ collection, claimedIds, published, publish }) {
+  const next = needsFromCollection(collection, claimedIds);
+  if (published == null ? next.length === 0 : sameNeeds(published, next)) return { wrote: false, last: published ?? next };
+  await publish(next);
+  return { wrote: true, last: next };
+}

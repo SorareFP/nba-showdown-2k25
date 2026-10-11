@@ -17,7 +17,8 @@ import TeamEditor from './TeamEditor.jsx';
 import PackShop from './PackShop.jsx';
 import PackOpening from './PackOpening.jsx';
 import { getStrat } from '../game/strats.js';
-import { myListings } from '../firebase/market.js';
+import { myListings, loadListingsBy } from '../firebase/market.js';
+import { canonicalKey } from '../game/cardSets.js';
 import { delistCard } from '../firebase/serverWrites.js';
 import MyCollection from './MyCollection.jsx';
 import Market from './Market.jsx';
@@ -27,7 +28,7 @@ import FavoriteTeamPicker, { teamForOption, favoriteTeamName } from './FavoriteT
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
 import { useFriends } from '../firebase/FriendsProvider.jsx';
-import { friendNoteFor } from '../game/friends.js';
+import { friendNoteFor, needsFromCollection } from '../game/friends.js';
 import Skeleton from '../ui/Skeleton.jsx';
 import FreeAgentsPanel from './FreeAgentsPanel.jsx';
 import FriendsPanel from './FriendsPanel.jsx';
@@ -52,11 +53,11 @@ const VIEWS = [
   { key: 'friends', label: 'Friends' },
 ];
 
-export default function CollectionTab({ onLoadTeam, onCollectionChange, initialView = null }) {
+export default function CollectionTab({ onLoadTeam, onCollectionChange, initialView = null, initialMarketSearch = '' }) {
   const { user } = useAuth();
   const { ask } = useDialogs();
-  // Friends (2026-10-11): which of your spares a friend needs.
-  const { wants: friendWants } = useFriends();
+  // Friends (2026-10-11): which of your spares a friend needs, and their names for the market's tag.
+  const { wants: friendWants, overview: friendsOverview, friendNames } = useFriends();
   // The home page opens a section directly (the Pack Shop, the collections).
   const [view, setView] = useState(() => (VIEWS.some(v => v.key === initialView) ? initialView : 'teams'));
   const [teams, setTeams] = useState([]);
@@ -70,6 +71,14 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
   const [editingTeam, setEditingTeam] = useState(null); // null | 'new' | team
   const [openingPack, setOpeningPack] = useState(null);
   const [claims, setClaims] = useState({});
+  // Your own needs, for the market's "you need this", and your friends' open listings.
+  const myNeedKeys = useMemo(() => new Set(needsFromCollection(collection, new Set(Object.keys(claims ?? {}))).map(n => canonicalKey(n.cardKey))), [collection, claims]);
+  const [friendListings, setFriendListings] = useState([]);
+  useEffect(() => {
+    const uids = (friendsOverview?.friends ?? []).map(f => f.uid);
+    if (!uids.length) { setFriendListings([]); return; }
+    loadListingsBy(uids).then(setFriendListings).catch(() => setFriendListings([]));
+  }, [friendsOverview]);
   const [busyGoal, setBusyGoal] = useState(null);
   const [busyCard, setBusyCard] = useState(null);
   const [toast, setToast] = useState(null);
@@ -741,6 +750,10 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
           coins={userData?.currency ?? 0}
           collection={collection}
           onTraded={() => { refresh(); onCollectionChange?.(); }}
+          friendNames={friendNames}
+          needKeys={myNeedKeys}
+          initialSearch={initialMarketSearch}
+          friendListings={friendListings}
         />
       )}
 

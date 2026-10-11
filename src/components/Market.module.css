@@ -152,3 +152,6 @@
 @media (min-width: 2200px) {
   .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 }
+
+/* A friend's listing (2026-10-11): still public, just tagged. */
+.friendTag { font-size: 11px; font-weight: 700; color: #fbbf24; margin-top: 2px; }

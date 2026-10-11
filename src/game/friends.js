@@ -150,3 +150,13 @@ export async function syncNeeds({ collection, claimedIds, published, publish }) 
   await publish(next);
   return { wrote: true, last: next };
 }
+
+/** Listings by your friends of cards you need: `{ listing, friendName, goalLabel }`, cheapest first. */
+export function friendListingsYouNeed(listings, friendNames, myNeeds) {
+  const need = new Map();
+  for (const n of myNeeds ?? []) if (!need.has(canonicalKey(n.cardKey))) need.set(canonicalKey(n.cardKey), n);
+  return (listings ?? [])
+    .filter(l => friendNames?.has(l.seller) && need.has(canonicalKey(l.cardKey)) && getCardByKey(l.cardKey))
+    .map(l => ({ listing: l, friendName: friendNames.get(l.seller), goalLabel: need.get(canonicalKey(l.cardKey)).goalLabel }))
+    .sort((a, b) => a.listing.price - b.listing.price);
+}

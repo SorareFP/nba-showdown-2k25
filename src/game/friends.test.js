@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import {
   FRIENDS_MAX, NEED_WITHIN, NEEDS_MAX, CODE_LENGTH, CODE_ALPHABET,
   makeFriendCode, normalizeCode, goalName, needsFromCollection, sameNeeds, cleanNeeds,
-  wantsByCard, wantText, friendNoteFor, listJoin, chunk, syncNeeds,
+  wantsByCard, wantText, friendNoteFor, listJoin, chunk, syncNeeds, friendListingsYouNeed,
 } from './friends.js';
 import { GOALS } from './collections.js';
 import { KEY_ALIASES, canonicalKey } from './cardSets.js';
@@ -136,5 +136,21 @@ describe('publishing your needs', () => {
     const writes = [];
     expect(await run({}, null, writes)).toEqual({ wrote: false, last: [] });
     expect(writes).toEqual([]);
+  });
+});
+
+describe('a friend listed a card you need', () => {
+  it('pairs listings by friends with your needs, cheapest first, and ignores the rest', () => {
+    const [oldKey, newKey] = Object.entries(KEY_ALIASES)[0];
+    const names = new Map([['alex', 'Alex']]);
+    const needs = [{ cardKey: newKey, goalId: 'g', goalLabel: 'Super Season set', missing: 1 }];
+    const rows = friendListingsYouNeed([
+      { id: 'l1', seller: 'alex', cardKey: oldKey, price: 300 },
+      { id: 'l2', seller: 'alex', cardKey: newKey, price: 120 },
+      { id: 'l3', seller: 'stranger', cardKey: newKey, price: 50 },
+      { id: 'l4', seller: 'alex', cardKey: 'Nobody_Real', price: 10 },
+    ], names, needs);
+    expect(rows.map(r => r.listing.id)).toEqual(['l2', 'l1']);
+    expect(rows[0]).toMatchObject({ friendName: 'Alex', goalLabel: 'Super Season set' });
   });
 });

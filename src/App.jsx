@@ -129,8 +129,11 @@ function AppInner() {
   const [seasonOpen, setSeasonOpen] = useState(null);   // { seasonId } | { leagueId }
   useEffect(() => { if (tab !== 'collection') setCollectionView(null); }, [tab]);
   useEffect(() => { if (tab !== 'season') setSeasonOpen(null); }, [tab]);
+  // The market search Home's "From your friends" opens with (friends, 2026-10-11).
+  const [marketSearch, setMarketSearch] = useState('');
   const homeGo = (to, opts = {}) => {
-    const section = { shop: 'shop', goals: 'goals', mycards: 'collection', freeagents: 'freeagents' }[to];
+    if (to === 'market') setMarketSearch(opts.search ?? '');
+    const section = { shop: 'shop', goals: 'goals', mycards: 'collection', freeagents: 'freeagents', market: 'market' }[to];
     if (section) { setCollectionView(section); goTab('collection'); return; }
     // `action`: Dynasty's One season buttons open straight into new / newShared / join.
     if (to === 'season') setSeasonOpen(opts.seasonId || opts.leagueId || opts.action ? opts : null);
@@ -383,7 +386,7 @@ function AppInner() {
                 onOpenDecks={() => { setCollectionView('decks'); goTab('collection'); }}
               />
             )}
-            {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} initialView={collectionView} />}
+            {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} initialView={collectionView} initialMarketSearch={collectionView === 'market' ? marketSearch : ''} />}
             {tab === 'season' && (
               <SeasonTab
                 openSeasonId={seasonOpen?.seasonId ?? null}

@@ -20,7 +20,7 @@
 // listing says.
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Skeleton from '../ui/Skeleton.jsx';
-import { getCardByKey, cardKey } from '../game/cardSets.js';
+import { getCardByKey, cardKey, canonicalKey } from '../game/cardSets.js';
 import { getPlayerRarity, RARITY_CONFIG, getMarketPrice } from '../game/rarity.js';
 import Holo from './HoloSheen.jsx';
 import { holoRegionsFor } from '../cards/faceRegions.js';
@@ -29,6 +29,21 @@ import { loadListings } from '../firebase/market.js';
 import { buyListing, delistCard } from '../firebase/serverWrites.js';
 import styles from './Market.module.css';
 import { ZoomImg } from './CardLightbox.jsx';
+
+/** "Your friend Alex", or "Your friend Alex · you need this" (2026-10-11). Still a public listing. */
+export function FriendTag({ listing, friendNames = new Map(), needKeys = new Set() }) {
+  const name = friendNames.get(listing.seller);
+  if (!name) return null;
+  return (
+    <div className={styles.friendTag} data-friend-listing={listing.id}>
+      Your friend {name}{needKeys.has(canonicalKey(listing.cardKey)) ? ' · you need this' : ''}
+    </div>
+  );
+}
+
+const NO_LISTINGS = [];
+const NO_NAMES = new Map();
+const NO_KEYS = new Set();
 
 const SORTS = {
   price: { label: 'Cheapest', cmp: (a, b) => a.price - b.price },
@@ -79,23 +94,25 @@ const HIDE_MINE_KEY = 'market.hideMine';
 const readHideMine = () => { try { return localStorage.getItem(HIDE_MINE_KEY) === '1'; } catch { return false; } };
 const writeHideMine = on => { try { localStorage.setItem(HIDE_MINE_KEY, on ? '1' : '0'); } catch { /* not kept */ } };
 
-export default function Market({ uid, coins, onTraded, collection = {} }) {
+export default function Market({ uid, coins, onTraded, collection = {}, friendNames = NO_NAMES, needKeys = NO_KEYS, initialSearch = '', friendListings = NO_LISTINGS }) {
   const [listings, setListings] = useState(null);
   const [busy, setBusy] = useState(null);
   const [toast, setToast] = useState(null);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(initialSearch);
   const [sort, setSort] = useState('price');
   const [mineOnly, setMineOnly] = useState(false);
   const [hideMine, setHideMine] = useState(readHideMine);
 
   const refresh = useCallback(async () => {
     try {
-      setListings(await loadListings({ limit: 200 }));
+      const rows = await loadListings({ limit: 200 });
+      const seen = new Set(rows.map(r => r.id));
+      setListings([...rows, ...friendListings.filter(l => !seen.has(l.id))]);
     } catch (e) {
       setToast(e.message);
       setListings([]);
     }
-  }, []);
+  }, [friendListings]);
 
   useEffect(() => { refresh(); }, [refresh]);
 
@@ -234,6 +251,7 @@ export default function Market({ uid, coins, onTraded, collection = {} }) {
                 {l.card.team} · ${l.card.salary}
                 {open > 1 && <span className={styles.open}> · {open} listed</span>}
               </div>
+              <FriendTag listing={l} friendNames={friendNames} needKeys={needKeys} />
               <div className={styles.price}>
                 {l.price.toLocaleString()} <span className={styles.priceUnit}>coins</span>
               </div>

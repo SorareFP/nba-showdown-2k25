@@ -29,6 +29,10 @@ import Skeleton from '../ui/Skeleton.jsx';
 import SuggestionBox from './SuggestionBox.jsx';
 import { mySuggestions } from '../firebase/suggestions.js';
 import { SUGGESTION_KIND_LABELS, SUGGESTION_STATUS_LABELS } from '../game/suggestions.js';
+import { useFriends } from '../firebase/FriendsProvider.jsx';
+import { loadListingsBy } from '../firebase/market.js';
+import { friendListingsYouNeed, needsFromCollection } from '../game/friends.js';
+import { getCardByKey } from '../game/cardSets.js';
 import s from './HomeTab.module.css';
 
 const NEWS_SHOWN = 4;
@@ -79,6 +83,17 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
   }, [uid]);
 
   const owned = useMemo(() => collectedKeys(collection), [collection]);
+  const { overview: friendsOverview, friendNames } = useFriends();
+  const [fromFriends, setFromFriends] = useState([]);
+  useEffect(() => {
+    const uids = (friendsOverview?.friends ?? []).map(f => f.uid);
+    if (!uids.length || !claimed) { setFromFriends([]); return undefined; }
+    let live = true;
+    loadListingsBy(uids)
+      .then(ls => { if (live) setFromFriends(friendListingsYouNeed(ls, friendNames, needsFromCollection(collection, claimed)).slice(0, 4)); })
+      .catch(() => { if (live) setFromFriends([]); });
+    return () => { live = false; };
+  }, [friendsOverview, friendNames, collection, claimed]);
   const waiting = useMemo(() => collectableKeys(collection ?? {}).size, [collection]);
   const goals = useMemo(() => (claimed ? closestGoals(owned, { claimed, limit: 4 }) : null), [owned, claimed]);
   const leaders = useMemo(() => careerLeaders(stats), [stats]);
@@ -220,6 +235,27 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
         </section>
 
         {/* ── Closest collections ── */}
+        {/* FROM YOUR FRIENDS (2026-10-11): a friend listed a card you need. A
+            public listing like any other — the tag just tells you it is there. */}
+        {fromFriends.length > 0 && (
+          <section className={s.panel} aria-labelledby="home-friends">
+            <div className={s.panelHead}>
+              <h2 id="home-friends" className={s.panelTitle}>From your friends</h2>
+            </div>
+            <ul className={s.list}>
+              {fromFriends.map(({ listing, friendName, goalLabel }) => {
+                const card = getCardByKey(listing.cardKey);
+                return (
+                  <li key={listing.id} className={s.goal} data-from-friend={listing.id}>
+                    <span>{friendName} listed {card?.name ?? listing.cardKey}, which you need for the {goalLabel}: {listing.price.toLocaleString()} coins</span>{' '}
+                    <button className={s.inlineLink} onClick={() => onGo('market', { search: card?.name ?? '' })}>View →</button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
         <section className={s.panel} aria-labelledby="home-goals">
           <div className={s.panelHead}>
             <h2 id="home-goals" className={s.panelTitle}>Closest collections</h2>

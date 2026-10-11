@@ -41,6 +41,7 @@ import {
   runTransaction, serverTimestamp, writeBatch, increment,
 } from 'firebase/firestore';
 import { COPY_STATE, isProtected } from './collection.js';
+import { chunk } from '../game/friends.js';
 
 const listingsRef = () => collection(db, 'listings');
 const copiesRef = uid => collection(db, 'users', uid, 'copies');
@@ -223,4 +224,14 @@ export async function buyListing(uid, listingId) {
     // SUPPLY IS NOT TOUCHED. A trade moves a copy; it does not make one.
     return { cardKey: listing.cardKey, price: listing.price };
   });
+}
+
+/** Open listings by these sellers — your friends — in Firestore's 30-a-query `in` chunks. */
+export async function loadListingsBy(sellerUids) {
+  const out = [];
+  for (const part of chunk([...new Set(sellerUids ?? [])], 30)) {
+    const snap = await getDocs(query(listingsRef(), where('seller', 'in', part)));
+    snap.forEach(d => out.push({ id: d.id, ...d.data() }));
+  }
+  return out;
 }

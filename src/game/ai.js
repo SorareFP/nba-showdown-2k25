@@ -872,9 +872,14 @@ export function aiSpendDecision(game, teamKey, opts = {}) {
   const surplus = ast - reserve;
   const three = bestChance('3pt');
   const paint = bestChance('paint');
+  // NEVER A CHECK THAT CANNOT GO IN (the user, 2026-10-11: "The AI is playing a
+  // lot of shot checks that they can't make … it's happening on Deity"). At
+  // three times the cost the floor below was zero, and a misplaying rung spent
+  // on anything it could afford: both took the best check even when it needed
+  // a 21. A check with no chance is not a choice at any rung; the currency waits.
   const choices = [];
-  if (three) choices.push({ spendType: '3pt', idx: three.idx, ev: three.pHit * 3, cost: SPEND_COSTS.assistThree });
-  if (paint) choices.push({ spendType: 'paint', idx: paint.idx, ev: paint.pHit * 2, cost: SPEND_COSTS.assistPaint });
+  if (three?.pHit > 0) choices.push({ spendType: '3pt', idx: three.idx, ev: three.pHit * 3, cost: SPEND_COSTS.assistThree });
+  if (paint?.pHit > 0) choices.push({ spendType: 'paint', idx: paint.idx, ev: paint.pHit * 2, cost: SPEND_COSTS.assistPaint });
   choices.sort((a, b) => b.ev - a.ev);
   // LEVER FOUR — THE CURRENCY. A lower level spends the moment it can afford
   // anything, keeping nothing back for the cards in its hand.
@@ -893,6 +898,8 @@ export function aiSpendDecision(game, teamKey, opts = {}) {
     // keep what the cards in hand need, and spend the rest in the same tiers.
     // The shooter is chosen on the check this spend takes: its own bonus, no banked assist.
     const best = bestChanceWith('paint', { extra: reboundCheckBonus(game, teamKey), banked: false });
+    // The same rule as the assists: no rebounds thrown at a check that needs a 21.
+    if (!(best?.pHit > 0)) return null;
     if (REBOUND_RULES.paintGate > 0) return { type: 'spend_rebound', rebType: 'paint_check', playerIdx: best.idx };
     // With the lead-to-spend dial on, the LEAD caps what the check may take,
     // so the surplus is counted on the smaller of the two.

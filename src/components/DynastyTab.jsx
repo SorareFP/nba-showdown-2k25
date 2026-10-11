@@ -738,7 +738,11 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon, collect
       {/* The AI's offers to you (2026-09-18): each turn of the offseason. */}
       <TradeInbox d={d} moves={moves} />
       {isOffseason(d) && <TradeDesk d={d} moves={moves} />}
-      {d.phase !== DPHASE.done && <FrontOffice d={d} moves={moves} />}
+      {/* Your account and collection, as the season screen gives it: without
+          them the offseason Front Office had no Bring in a player and no deck
+          picker, in the only phases a player can come in (the user, 2026-10-11:
+          "I never saw the ability to do that"). */}
+      {d.phase !== DPHASE.done && <FrontOffice d={d} moves={moves} uid={uid} collection={collection} />}
       <HistoryPanel d={d} uid={uid} commit={commit} />
       <NewsFeed d={d} />
     </>

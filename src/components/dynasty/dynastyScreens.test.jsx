@@ -369,6 +369,18 @@ describe('the Front Office brings players in, and picks a deck', () => {
     expect(html(<ImportPanel d={room} moves={solo} collection={null} />)).toBe('');
   });
 
+  // THE OFFSEASON IS WHEN IT OPENS (the user, 2026-10-11: "I am being told
+  // that players come in during the off-season after the draft, but I never
+  // saw the ability to do that"). The solo dynasty's offseason screen mounted
+  // the Front Office without your collection, so the panel hid itself in the
+  // only phases it works in; the season screen showed it, every button off.
+  it('the solo dynasty shows Bring in a player, live, in the offseason', () => {
+    const out = html(<DynastyView d={room} uid="u1" commit={() => {}} onPlayFixture={() => {}} onBack={() => {}} onAbandon={() => {}} collection={{ [key]: { count: 1 } }} />);
+    expect(out).toContain('Bring in a player');
+    expect(out).toMatch(/<button[^>]*title="Bring them in"[^>]*>\s*Bring in/);
+    expect(out).toContain('Strategy deck');
+  });
+
   it('shows the points on the payroll bar and the deck picker in the Front Office', () => {
     const out = html(<FrontOffice d={setTeamDeck(room, HUMAN_ID, { high_screen_roll: 4 }, 'Screens')} moves={solo} uid="u1" collection={{ [key]: { count: 1 } }} />);
     expect(out).toContain(`⭐ ${cost} Franchise Points`);

@@ -42,3 +42,23 @@ describe('the friend dot', () => {
     expect(render({ [key]: { type: 'player', count: 2, collected: true } }, { initialCopiesFilter: 'all' })).not.toContain('data-friend-want');
   });
 });
+
+// YOUR OWN FIRST COPY (the user, 2026-10-11): "You can just show it, just make
+// sure the collect button is still very evident." On a card not yet collected
+// the note shows, but quiet and after Burn and Sell; Collect stays first.
+describe('the friend note beside Collect', () => {
+  it('shows on an uncollected copy, quiet, with Collect still first', () => {
+    const html = render({ [key]: { type: 'player', count: 1 } });
+    expect(html).toContain(`data-friend-want="${key}"`);
+    expect(html).toContain('data-friend-want-quiet="true"');
+    expect(html.indexOf('>Collect<')).toBeGreaterThan(-1);
+    expect(html.indexOf('>Collect<')).toBeLessThan(html.indexOf('data-friend-want='));
+  });
+
+  it('is the full note on a true extra, where there is nothing to collect', () => {
+    const html = render({ [key]: { type: 'player', count: 2, collected: true } });
+    expect(html).not.toContain('data-friend-want-quiet');
+    expect(html).not.toContain('>Collect<');
+  });
+});
+

@@ -366,8 +366,11 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
                     const w = friendWants.get(canonicalKey(c.key));
                     return (
                       <button
-                        className={styles.friendNeed}
+                        // YOUR OWN FIRST COPY (the user, 2026-10-11): still shown, but
+                        // quiet and after Burn and Sell, so Collect stays the obvious move.
+                        className={`${styles.friendNeed} ${canCollect ? styles.friendNeedQuiet : ''}`}
                         data-friend-want={c.key}
+                        {...(canCollect ? { 'data-friend-want-quiet': 'true' } : {})}
                         title={wantText(w)}
                         aria-label={wantText(w)}
                         onClick={() => { setSelling(c.key); setAskPrice(String(c.suggested)); setSellQty(1); }}

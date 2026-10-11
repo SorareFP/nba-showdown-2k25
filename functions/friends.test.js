@@ -15,7 +15,10 @@ function apply(prev, data) {
   return out;
 }
 const snap = path => ({ exists: docs.has(path), id: path.split('/').pop(), data: () => docs.get(path) });
-const ref = path => ({ path, id: path.split('/').pop(), get: async () => snap(path) });
+const ref = path => ({
+  path, id: path.split('/').pop(), get: async () => snap(path),
+  set: async (data, opts) => { docs.set(path, opts?.merge ? apply(docs.get(path), data) : apply(null, data)); },
+});
 const coll = (path, filters = []) => ({
   doc: id => ref(`${path}/${id}`),
   where: (field, _op, value) => coll(path, [...filters, d => d?.[field] === value]),
@@ -168,5 +171,40 @@ describe('what a friend can see', () => {
     expect(await requestFriend(sam({ uid: 'alex' }))).toEqual({ sent: true });
     expect((await myFriends(sam())).outgoing).toEqual([{ id: 'sam_alex', to: 'alex', label: 'Bench Mob (Fall League)' }]);
     await expect(requestFriend(sam({ uid: 'jo' }))).rejects.toThrow(/friend code/);
+  });
+});
+describe('who you have played', () => {
+  it('records a PvP opponent when the game is claimed, by the name the room showed', async () => {
+    const { claimGameReward } = await import('./index.js');
+    docs.set('users/sam', { currency: 0, dailyMilestoneDate: new Date().toISOString().split('T')[0], dailyMilestoneCoins: 1e9, dailyFirstWin: true });
+    rooms['rooms/ROOM1/meta'] = { hostUid: 'sam', guestUid: 'alex', hostName: 'Sam Example', guestName: 'Alex Example' };
+    await claimGameReward(sam({ won: true, margin: 5, milestoneIds: [], pvp: true, gameId: 'pvp:ROOM1:123' }));
+    expect(docs.get('users/sam/playedWith/alex')).toMatchObject({ label: 'Alex Example', via: 'pvp' });
+  });
+
+  it('records every human coach in a started league as played, by team name and league', async () => {
+    const { startLeague } = await import('./index.js');
+    const L = await import('../src/game/modes/league.js');
+    const { CARDS } = await import('../src/game/cards.js');
+    const { cardKey } = await import('../src/game/cardSets.js');
+    const roster = CARDS.slice(0, 10).map(cardKey);
+    const coaches = [['sam', 'Bench Mob'], ['alex', 'Glass Cleaners'], ['jo', 'Pick and Roll'], ['kim', 'Zone Busters']];
+    let league = L.newLeague({ id: 'tour-1', kind: 'tournament', name: 'Fall Cup', hostUid: 'sam', settings: { size: 4, fee: 0 }, entrant: L.entrantFor('sam', { name: 'Bench Mob', roster }), joinCode: 'JOIN01', now: Date.now() });
+    for (const [uid, name] of coaches.slice(1)) league = L.addEntrant(league, L.entrantFor(uid, { name, roster }), Date.now());
+    docs.set('leagues/tour-1', league);
+    await startLeague(sam({ leagueId: 'tour-1' }));
+    expect(docs.get('users/sam/playedWith/alex')).toMatchObject({ label: 'Glass Cleaners (Fall Cup)', via: 'league' });
+    expect(docs.get('users/alex/playedWith/sam')).toMatchObject({ label: 'Bench Mob (Fall Cup)', via: 'league' });
+    expect(docs.has('users/sam/playedWith/sam')).toBe(false);
+    expect([...docs.keys()].filter(k => /^users\/[a-z]+\/playedWith\//.test(k))).toHaveLength(12);
+  });
+
+  it('records nothing for a room the claimer was not in, or a game that is not PvP', async () => {
+    const { claimGameReward } = await import('./index.js');
+    docs.set('users/jo', { currency: 0, dailyMilestoneDate: new Date().toISOString().split('T')[0], dailyMilestoneCoins: 1e9, dailyFirstWin: true });
+    rooms['rooms/ROOM2/meta'] = { hostUid: 'sam', guestUid: 'alex', hostName: 'Sam Example', guestName: 'Alex Example' };
+    await claimGameReward(jo({ won: true, margin: 5, milestoneIds: [], pvp: true, gameId: 'pvp:ROOM2:9' }));
+    await claimGameReward(jo({ won: true, margin: 5, milestoneIds: [], gameId: 'game:x' }));
+    expect([...docs.keys()].some(k => k.startsWith('users/jo/playedWith/'))).toBe(false);
   });
 });

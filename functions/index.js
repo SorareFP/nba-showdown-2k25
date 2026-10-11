@@ -845,7 +845,7 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
   const claimKey = claimKeyOf(d.gameId);
   const receiptRef = claimKey ? db.doc(`users/${uid}/gameReceipts/${claimKey}`) : null;
 
-  return db.runTransaction(async tx => {
+  const result = await db.runTransaction(async tx => {
     const userSnap = await tx.get(userRef);
     if (!userSnap.exists) throw new HttpsError('failed-precondition', 'No such player');
     const user = userSnap.data();
@@ -974,6 +974,23 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
       breakdown: settled.breakdown,
     };
   });
+  // WHO YOU PLAYED (friends, 2026-10-11): a PvP claim names its room, and the
+  // room names both players, so the opponent can be offered as a friend later.
+  // Best effort: a room already cleaned up just records nothing.
+  if (claim.pvp && claimKey?.startsWith('pvp:')) {
+    try {
+      const code = claimKey.split(':')[1];
+      const { meta } = await readRoom(code);
+      const other = meta?.hostUid === uid ? meta?.guestUid : meta?.guestUid === uid ? meta?.hostUid : null;
+      const otherName = meta?.hostUid === uid ? meta?.guestName : meta?.hostName;
+      if (other && other !== uid && safeUid(other)) {
+        await playedWithRef(uid, other).set({ label: String(otherName ?? 'A player').slice(0, 60), via: 'pvp', at: FieldValue.serverTimestamp() }, { merge: true });
+      }
+    } catch (e) {
+      console.warn('playedWith (pvp) not recorded', e?.message ?? e);
+    }
+  }
+  return result;
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1586,6 +1603,16 @@ export const startLeague = onCall({ region: 'us-central1' }, async request => {
     tx.set(ref, next);
     tx.set(joinCodeRef(league.joinCode), { status: next.status }, { merge: true });
     writeLeagueIndexes(tx, next);
+    // WHO YOU PLAYED (friends, 2026-10-11): every human coach in a started
+    // league, offered to every other as a friend — by TEAM name, since a
+    // league never stored the people's own names.
+    const humans = (next.entrants ?? []).filter(e => e?.uid && safeUid(e.uid));
+    for (const a of humans) {
+      for (const b of humans) {
+        if (a.uid === b.uid) continue;
+        tx.set(playedWithRef(a.uid, b.uid), { label: `${String(b.name ?? 'A team').slice(0, 40)} (${String(next.name ?? 'a league').slice(0, 40)})`, via: 'league', at: FieldValue.serverTimestamp() }, { merge: true });
+      }
+    }
     return summarizeLeague(next, uid);
   });
 });

@@ -52,6 +52,18 @@ export function fwdTargets(g, teamKey) {
  * Momentum does. Slot indices, for the card check, the picker, the engine and
  * the coach alike.
  */
+/**
+ * PICK UP FULL COURT, ONCE A PLAYER A SECTION (the user, 2026-10-11: "should
+ * not be able to be played on the same player twice"). The opposing starters
+ * not hounded yet this section, as slot indexes. The record lives in the
+ * hounded side's tempEff, which clears at the section's end.
+ */
+export function pickUpTargets(g, teamKey) {
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const had = new Set(g.tempEff?.[oppKey]?.houndedIds || []);
+  return (getTeam(g, oppKey)?.starters || []).map((p, i) => (p && !had.has(p.id) ? i : null)).filter(i => i != null);
+}
+
 export function greenLightTargets(g, teamKey) {
   const had = new Set(g.tempEff?.[teamKey]?.greenLightIds || []);
   return fwdTargets(g, teamKey).filter(({ p }) => !had.has(p.id)).map(({ idx }) => idx);
@@ -482,7 +494,10 @@ function cardVerdict(g, teamKey, cardId) {
 
     if (cardId === 'high_screen_roll') return ok('Swap which defenders guard your players');
 
-    if (cardId === 'pick_up_full_court') return ok('Hound one opposing player: −1 roll + 4 minutes of fatigue');
+    if (cardId === 'pick_up_full_court') {
+      if (!pickUpTargets(g, teamKey).length) return no('Every opposing player has been hounded this section');
+      return ok('Hound one opposing player: −1 roll + 4 minutes of fatigue');
+    }
 
     if (cardId === 'stagger_action') {
       if (!staggerPair(myT.starters)) return no('Need a Speed 13+ player and a different player with a positive 3PT Bonus');

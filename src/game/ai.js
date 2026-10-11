@@ -5,7 +5,7 @@
 
 import { challengeTarget, getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions, timeoutProblem } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, burstTargets, greenLightTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
 import { checkNeedFor } from './checkTerms.js';
@@ -1854,9 +1854,11 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     case 'pick_up_full_court': {
       // Hound the star with the most tired legs: minutes weigh double so the
       // press pushes someone over a fatigue threshold, chart ceiling breaks ties.
-      let best = { i: 0, score: -1 };
+      // Only someone not hounded yet this section (pickUpTargets).
+      const open = new Set(pickUpTargets(game, teamKey));
+      let best = { i: [...open][0] ?? 0, score: -1 };
       (oppT.starters || []).forEach((p, i) => {
-        if (!p) return;
+        if (!p || !open.has(i)) return;
         const ps = getPS(game, oppKey, p.id);
         const min = ps?.minutes || 0;
         const top = p.chart?.length ? p.chart[p.chart.length - 1].pts : 0;

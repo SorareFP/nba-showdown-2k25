@@ -5,7 +5,7 @@
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass, noteCheckMiss } from './engine.js';
 import { checkTerms } from './checkTerms.js';
-import { burstTargets, greenLightTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
+import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -441,7 +441,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const pufcOpp = teamKey === 'A' ? 'B' : 'A';
       const hounded = oppT.starters[opts.targetIdx];
       if (!hounded) return fail('Choose an opposing player to pressure');
+      // Once a player a section (pickUpTargets, canPlay.js).
+      if (!pickUpTargets(g, teamKey).includes(opts.targetIdx)) return fail(`${hounded.name} has already been hounded this section`);
       if (!g.tempEff[pufcOpp]) g.tempEff[pufcOpp] = {};
+      g.tempEff[pufcOpp].houndedIds = [...(g.tempEff[pufcOpp].houndedIds || []), hounded.id];
       g.tempEff[pufcOpp]['r' + opts.targetIdx] = (g.tempEff[pufcOpp]['r' + opts.targetIdx] || 0) - 1;
       // The press taxes the legs in the same currency Second Wind's penalty
       // uses: 4 extra minutes on the fatigue tracker. Rest still clears it.

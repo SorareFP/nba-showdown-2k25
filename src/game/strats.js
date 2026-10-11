@@ -12,7 +12,7 @@ export const STRATS = [
   { id:'defensive_stopper',   name:'Defensive Stopper',  phase:'matchup',  side:'def', copies:2, locked:false, color:'#1D4ED8', rarity:'common',
     desc:'Choose a player who was benched last segment. They gain +5 Speed and +5 Power on defense this segment.' },
   { id:'pick_up_full_court',  name:'Pick Up Full Court', phase:'matchup',  side:'def', copies:2, locked:false, color:'#475569', rarity:'common',
-    desc:'Hound one opposing player the length of the floor: −1 to their scoring roll this segment, and they gain 4 minutes of fatigue.' },
+    desc:'Hound one opposing player the length of the floor: −1 to their scoring roll this segment, and they gain 4 minutes of fatigue. Once per player per section.' },
 
   // ── PRE-ROLL ──
   { id:'switch_the_screen',   name:'Switch the Screen',  phase:'matchup',  side:'def', copies:3, locked:false, color:'#1D4ED8', rarity:'common',

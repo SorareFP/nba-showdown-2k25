@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
-import { canPlayCard, burstTargets, greenLightTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer } from '../../game/canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer } from '../../game/canPlay.js';
 import { checkNeedFor } from '../../game/checkTerms.js';
 import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
@@ -1091,13 +1091,15 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
 
   // ── Pick Up Full Court: choose which opposing player to hound ──────────
   if (cardId === 'pick_up_full_court') {
-    const minsInfo = oppT.starters.map(p => {
-      const ps = getPS(game, oppKey, p.id);
+    // Only players not hounded yet this section (pickUpTargets).
+    const targets = pickUpTargets(game, teamKey);
+    const minsInfo = targets.map(i => {
+      const ps = getPS(game, oppKey, oppT.starters[i].id);
       return `${ps?.minutes || 0} min on the fatigue tracker`;
     });
-    const pick = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: 'Hound which opponent? (−1 roll + 4 min fatigue)', extraInfo: minsInfo, preview: previewWith(i => ({ targetIdx: i })) });
+    const pick = await openModal({ teamKey: oppKey, cardId, players: targets.map(i => oppT.starters[i]), label: 'Hound which opponent? (−1 roll + 4 min fatigue · once a player a section)', extraInfo: minsInfo, preview: previewWith(k => ({ targetIdx: targets[k] })) });
     if (pick === null) return null;
-    opts.targetIdx = pick;
+    opts.targetIdx = targets[pick];
   }
 
   // ── Double Team: pick the opposing player to trap ──────────────────────

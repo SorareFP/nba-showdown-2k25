@@ -28,6 +28,7 @@ import { logoSrc } from '../cards/CardTemplate.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
 import Skeleton from '../ui/Skeleton.jsx';
 import FreeAgentsPanel from './FreeAgentsPanel.jsx';
+import FriendsPanel from './FriendsPanel.jsx';
 import { collectableKeys } from '../game/collections.js';
 import styles from './CollectionTab.module.css';
 
@@ -45,6 +46,8 @@ const VIEWS = [
   { key: 'market', label: 'Market' },
   // Requested cards: ask for any archived season (FreeAgentsPanel).
   { key: 'freeagents', label: 'Free Agents' },
+  // Friends (2026-10-11): codes, requests, and who needs what.
+  { key: 'friends', label: 'Friends' },
 ];
 
 export default function CollectionTab({ onLoadTeam, onCollectionChange, initialView = null }) {
@@ -735,6 +738,8 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
           onTraded={() => { refresh(); onCollectionChange?.(); }}
         />
       )}
+
+      {view === 'friends' && <FriendsPanel />}
 
       {view === 'freeagents' && (
         <FreeAgentsPanel uid={user.uid} onChanged={() => { refresh(); onCollectionChange?.(); }} />

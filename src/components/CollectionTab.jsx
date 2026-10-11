@@ -17,7 +17,7 @@ import TeamEditor from './TeamEditor.jsx';
 import PackShop from './PackShop.jsx';
 import PackOpening from './PackOpening.jsx';
 import { getStrat } from '../game/strats.js';
-import { myListings, loadListingsBy } from '../firebase/market.js';
+import { myListings } from '../firebase/market.js';
 import { canonicalKey } from '../game/cardSets.js';
 import { delistCard } from '../firebase/serverWrites.js';
 import MyCollection from './MyCollection.jsx';
@@ -71,14 +71,10 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
   const [editingTeam, setEditingTeam] = useState(null); // null | 'new' | team
   const [openingPack, setOpeningPack] = useState(null);
   const [claims, setClaims] = useState({});
-  // Your own needs, for the market's "you need this", and your friends' open listings.
+  // Your own needs, for the market's "you need this", and who your friends are:
+  // the Market reads their listings itself, fresh on every refresh.
   const myNeedKeys = useMemo(() => new Set(needsFromCollection(collection, new Set(Object.keys(claims ?? {}))).map(n => canonicalKey(n.cardKey))), [collection, claims]);
-  const [friendListings, setFriendListings] = useState([]);
-  useEffect(() => {
-    const uids = (friendsOverview?.friends ?? []).map(f => f.uid);
-    if (!uids.length) { setFriendListings([]); return; }
-    loadListingsBy(uids).then(setFriendListings).catch(() => setFriendListings([]));
-  }, [friendsOverview]);
+  const friendUids = useMemo(() => (friendsOverview?.friends ?? []).map(f => f.uid), [friendsOverview]);
   const [busyGoal, setBusyGoal] = useState(null);
   const [busyCard, setBusyCard] = useState(null);
   const [toast, setToast] = useState(null);
@@ -753,7 +749,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
           friendNames={friendNames}
           needKeys={myNeedKeys}
           initialSearch={initialMarketSearch}
-          friendListings={friendListings}
+          friendUids={friendUids}
         />
       )}
 

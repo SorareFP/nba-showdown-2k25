@@ -2296,7 +2296,7 @@ export const myFriends = onCall({ region: 'us-central1' }, async request => {
   return {
     code,
     friends: friends.sort((a, b) => a.name.localeCompare(b.name)),
-    incoming: incoming.docs.map(d => ({ id: d.id, from: d.data().from, name: d.data().fromName ?? 'A player' })),
+    incoming: incoming.docs.map(d => ({ id: d.id, from: d.data().from, name: d.data().fromName ?? 'A player', via: d.data().via ?? 'code' })),
     outgoing: outgoing.docs.map(d => ({ id: d.id, to: d.data().to, label: d.data().toLabel ?? null })),
     playedWith: played.docs
       .map(d => ({ uid: d.id, label: d.data().label ?? 'A player', via: d.data().via ?? null }))
@@ -2310,6 +2310,10 @@ export const requestFriend = onCall({ region: 'us-central1' }, async request => 
   const { code: rawCode, uid: rawUid } = request.data ?? {};
   let to;
   let toLabel;
+  // HOW IT ARRIVED, stored on the request and shown to the person asked: a
+  // token name is the client's to set, so the name alone proves nothing
+  // (final review, 2026-10-11).
+  let via;
   if (rawCode != null) {
     const code = normalizeCode(rawCode);
     if (!code) throw new HttpsError('invalid-argument', 'That is not a friend code');
@@ -2317,11 +2321,16 @@ export const requestFriend = onCall({ region: 'us-central1' }, async request => 
     if (!c.exists) throw new HttpsError('not-found', 'No player has that code');
     to = c.data().uid;
     toLabel = `code ${code}`;
+    via = 'code';
   } else if (safeUid(rawUid)) {
-    const pw = await playedWithRef(uid, rawUid).get();
-    if (!pw.exists) throw new HttpsError('permission-denied', 'Add them with their friend code');
+    // BOTH SIDES MUST HAVE PLAYED. A PvP room can be written naming anyone and
+    // its claim records the opponent on the claimer's side only; a real game
+    // records both players (each claims), and a league writes both at start.
+    const [pw, back] = await Promise.all([playedWithRef(uid, rawUid).get(), playedWithRef(rawUid, uid).get()]);
+    if (!pw.exists || !back.exists) throw new HttpsError('permission-denied', 'Add them with their friend code');
     to = rawUid;
     toLabel = pw.data().label ?? null;
+    via = pw.data().via === 'pvp' ? 'pvp' : 'league';
   } else {
     throw new HttpsError('invalid-argument', 'No friend given');
   }
@@ -2342,7 +2351,7 @@ export const requestFriend = onCall({ region: 'us-central1' }, async request => 
       tx.delete(friendRequestRef(to, uid));
       return { friends: true };
     }
-    tx.set(friendRequestRef(uid, to), { from: uid, to, fromName: nameOf(request), toLabel, at: FieldValue.serverTimestamp() });
+    tx.set(friendRequestRef(uid, to), { from: uid, to, fromName: nameOf(request), toLabel, via, at: FieldValue.serverTimestamp() });
     return { sent: true };
   });
 });

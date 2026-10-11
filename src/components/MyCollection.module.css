@@ -234,3 +234,6 @@
 }
 .friendNeed:hover { background: rgba(251, 191, 36, 0.18); }
 .friendDotMark { font-size: 9px; line-height: 1; }
+/* Which collection and how close, on its own line: no hover on a phone (final review, 2026-10-11). */
+.friendNeedText { display: flex; flex-direction: column; gap: 1px; }
+.friendNeedWhy { font-weight: 500; opacity: 0.85; }

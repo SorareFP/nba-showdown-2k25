@@ -27,6 +27,13 @@ describe('the friend dot', () => {
     expect(html).toContain('Sam needs this for the Atlanta Hawks collection (1 to go). List it?');
   });
 
+  // ON A PHONE THERE IS NO HOVER (final review, 2026-10-11): which collection
+  // and how close are printed on the note itself, not only in its title.
+  it('prints the collection and how close on the note, for touch screens', () => {
+    const html = render({ [key]: { type: 'player', count: 2, collected: true } });
+    expect(html).toMatch(/data-friend-want-why="[^"]*"[^>]*>Atlanta Hawks collection · 1 to go</);
+  });
+
   it('is not there when the only copy is the collected one', () => {
     expect(render({ [key]: { type: 'player', count: 1, collected: true } })).not.toContain('data-friend-want');
   });

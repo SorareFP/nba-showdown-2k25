@@ -97,7 +97,7 @@ describe('friend codes and requests', () => {
     const r = await requestFriend(sam({ code: code.toLowerCase() }));
     expect(r).toEqual({ sent: true });
     const theirs = await myFriends(alex());
-    expect(theirs.incoming).toEqual([{ id: 'sam_alex', from: 'sam', name: 'Sam Example' }]);
+    expect(theirs.incoming).toEqual([{ id: 'sam_alex', from: 'sam', name: 'Sam Example', via: 'code' }]);
     const mine = await myFriends(sam());
     expect(mine.outgoing).toEqual([{ id: 'sam_alex', to: 'alex', label: `code ${code}` }]);
     expect(JSON.stringify(mine)).not.toContain('Alex Example');
@@ -167,10 +167,21 @@ describe('what a friend can see', () => {
 
   it('lets you request someone you have played without a code, and nobody else', async () => {
     docs.set('users/sam/playedWith/alex', { label: 'Bench Mob (Fall League)', via: 'league' });
+    docs.set('users/alex/playedWith/sam', { label: 'Glass Cleaners (Fall League)', via: 'league' });
     expect((await myFriends(sam())).playedWith).toEqual([{ uid: 'alex', label: 'Bench Mob (Fall League)', via: 'league' }]);
     expect(await requestFriend(sam({ uid: 'alex' }))).toEqual({ sent: true });
     expect((await myFriends(sam())).outgoing).toEqual([{ id: 'sam_alex', to: 'alex', label: 'Bench Mob (Fall League)' }]);
     await expect(requestFriend(sam({ uid: 'jo' }))).rejects.toThrow(/friend code/);
+    expect((await myFriends(alex())).incoming).toEqual([{ id: 'sam_alex', from: 'sam', name: 'Sam Example', via: 'league' }]);
+  });
+
+  // A FORGED GAME (final review, 2026-10-11): anyone can write a PvP room that
+  // names any seller and claim it, which records them on ONE side only. The
+  // one-tap request needs both sides to have played, as a real game leaves.
+  it('refuses a one-tap request when only the asker has the other on record', async () => {
+    docs.set('users/sam/playedWith/alex', { label: 'Alex Example', via: 'pvp' });
+    await expect(requestFriend(sam({ uid: 'alex' }))).rejects.toThrow(/friend code/);
+    expect(docs.has('friendRequests/sam_alex')).toBe(false);
   });
 });
 describe('who you have played', () => {

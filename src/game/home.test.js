@@ -1,7 +1,7 @@
 // The home page's helpers (home.js): the news order, the closest collections,
 // where you stand in each season, and your lifetime leaders.
 import { describe, it, expect } from 'vitest';
-import { NEWS, STARTER_NEWS, newsFor, packForGoal, closestGoals, seasonGlance, seasonsInProgress, careerLeaders, careerTotals } from './home.js';
+import { NEWS, STARTER_NEWS, newsFor, packForGoal, closestGoals, seasonGlance, seasonsInProgress, careerLeaders, careerTotals, HOME_SECTIONS } from './home.js';
 import { GOALS_BY_ID } from './collections.js';
 import { CARDS } from './cards.js';
 import { cardKey, CARD_SETS } from './cardSets.js';
@@ -19,7 +19,8 @@ describe('news', () => {
 
   it('carries Unethical Hoops, and every button goes somewhere the app knows', () => {
     expect(NEWS.some(n => n.id === 'unethical-hoops')).toBe(true);
-    const places = ['play', 'season', 'dynasty', 'shop', 'goals', 'collection', 'howtoplay', 'builder', 'freeagents'];
+    // Tabs, plus the Collection pages Home opens by name (HOME_SECTIONS, App.jsx homeGo).
+    const places = ['play', 'season', 'dynasty', 'collection', 'howtoplay', 'builder', ...Object.keys(HOME_SECTIONS)];
     for (const n of [...NEWS, STARTER_NEWS]) {
       if (n.to) expect(places, n.id).toContain(n.to);
       if (n.to) expect(n.cta, n.id).toBeTruthy();
@@ -127,5 +128,15 @@ describe('career leaders', () => {
   it('is empty for an account that has not played', () => {
     expect(careerLeaders({})).toEqual([]);
     expect(careerLeaders(undefined)).toEqual([]);
+  });
+});
+
+// A NEWS BUTTON OPENS THE PAGE IT NAMES (final review, 2026-10-11): the
+// Friends item said "Friends" and opened My Teams, because Home had no way
+// to open the Friends page.
+describe('Home opens Collection pages by name', () => {
+  it('can open Friends, and the Friends news item goes there', () => {
+    expect(HOME_SECTIONS.friends).toBe('friends');
+    expect(NEWS.find(n => n.id === 'friends')?.to).toBe('friends');
   });
 });

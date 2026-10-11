@@ -36,9 +36,9 @@ we can have a direct trade function too."
 | --- | --- | --- | --- |
 | `friendCodes/{code}` | server | server only | `{ uid }` — the account a code belongs to |
 | `friends/{uid}` | server | server only (through `myFriends`) | `{ code, uids: [...], names: { uid: name } }` |
-| `friendRequests/{id}` | server | `from` and `to` | `{ from, to, fromName, at }` |
+| `friendRequests/{from}_{to}` | server | server only (through `myFriends`) | `{ from, to, fromName, toLabel, via: 'code' \| 'league' \| 'pvp', at }` |
 | `profiles/{uid}` | the owner (`needs`, `needsAt` only) | the owner; friends through `myFriends` | `{ needs: [...], needsAt }` |
-| `users/{uid}/playedWith/{otherUid}` | server | the owner | `{ name, via: 'league' \| 'pvp', at }` |
+| `users/{uid}/playedWith/{otherUid}` | server | server only (through `myFriends`) | `{ label, via: 'league' \| 'pvp', at }` — a league co-member's team name and league, a PvP opponent's room name |
 
 - **A code** is short and unambiguous (no 0/O/1/I), made on first visit to
   Friends, kept for good. Looking one up goes through a callable, so codes
@@ -52,20 +52,24 @@ we can have a direct trade function too."
 
 ### Server (callables)
 
-- `myFriendCode()` — makes the caller's code if missing; returns it.
+- `myFriends()` — makes the caller's code if missing; returns the code, friends with their needs (cleaned), requests in and out, and people played.
 - `requestFriend({ code } | { uid })` — by code, or one tap from played-with
-  (only a uid in the caller's `playedWith`). Refuses self, an existing friend,
-  a duplicate request, and the cap. The recipient sees the requester's name;
-  the requester learns the recipient's name only on accept.
+  (only a uid in the caller's `playedWith` AND with the caller in theirs: a
+  forged PvP room records one side only — final review, 2026-10-11). Refuses
+  self, an existing friend, a duplicate request, and the cap. A request back
+  to someone who asked you first is an acceptance. The recipient sees the
+  requester's name and how the request arrived (`via`: their code, a league,
+  a head-to-head game), since a token name is the client's to set; the
+  requester learns the recipient's name only on accept.
 - `answerFriendRequest({ id, accept })` — accept writes both friend lists and
-  both `profiles.name`; decline deletes the request.
+  each side's name for the other (`friends/{uid}.names`); decline deletes the request.
 - `removeFriend({ uid })` — both lists, one transaction.
 - **Played-with:** a league's members are recorded when it starts
   (`startLeague`); a PvP opponent when a PvP game's reward is claimed — the
   claim key names the room (`pvp:<code>:<createdAt>`), and the room's meta
   names both players. Past PvP games are not recoverable.
 
-### What counts as a need (`src/game/friendNeeds.js`, pure)
+### What counts as a need (`src/game/friends.js`, pure)
 
 `needsFromCollection(collection, claims)`: every goal not claimed and 1 or 2
 cards short (`goalProgress`), each missing card key the owner holds NO copy of
@@ -108,7 +112,7 @@ the collection and how many they are short, for the dot's text.
 
 ### Testing
 
-- `friendNeeds.js`: needs from a collection (1–2 short, claimed skipped, held
+- `friends.js`: needs from a collection (1–2 short, claimed skipped, held
   spares skipped), the want lookup and its text.
 - The dot: rendered only on sellable spares under the spare filter, names the
   friend and collection, opens the sell form.
@@ -116,8 +120,9 @@ the collection and how many they are short, for the dot's text.
   listings.
 - Callables: request by code and by played-with, accept/decline, remove, the
   cap, self and duplicate refusals (the functions test harness).
-- Rules: a stranger cannot read a profile; a friend can; an owner cannot write
-  `name`.
+- Rules: not covered by tests — the repo has no rules emulator harness. The
+  `profiles` rule is owner-only read and `needs`/`needsAt`-only write;
+  friends read needs through `myFriends`, which is tested.
 
 ### Deploy
 

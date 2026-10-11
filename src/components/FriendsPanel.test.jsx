@@ -11,7 +11,7 @@ const { default: FriendsPanel } = await import('./FriendsPanel.jsx');
 const overview = {
   code: 'ABC234',
   friends: [{ uid: 'alex', name: 'Alex Example', needs: [{ cardKey: 'x', goalId: 'g', goalLabel: 'Atlanta Hawks collection', missing: 1 }] }],
-  incoming: [{ id: 'jo_me', from: 'jo', name: 'Jo Example' }],
+  incoming: [{ id: 'jo_me', from: 'jo', name: 'Jo Example', via: 'code' }],
   outgoing: [{ id: 'me_kim', to: 'kim', label: 'code KKKKKK' }],
   playedWith: [{ uid: 'lee', label: 'Bench Mob (Fall League)', via: 'league' }],
 };
@@ -23,6 +23,8 @@ describe('the Friends page', () => {
     expect(html).toContain('ABC234');
     expect(html).toContain('data-incoming="jo_me"');
     expect(html).toContain('Jo Example');
+    // How it arrived, since a name alone proves nothing (final review, 2026-10-11).
+    expect(html).toContain('used your friend code');
     expect(html).toContain('code KKKKKK');
     expect(html).toContain('data-friend="alex"');
     expect(html).toContain('needs 1 card');

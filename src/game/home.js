@@ -21,11 +21,17 @@ import { teamIdFor } from './modes/league.js';
  * 'shop' / 'goals' for a Collection section. Add an item the day a feature
  * ships; the page shows the latest few and the rest behind "All news".
  */
+/**
+ * THE COLLECTION PAGES HOME CAN OPEN, by the name a NEWS item or a Home link
+ * uses (App.jsx homeGo). Anything else is a tab of its own.
+ */
+export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collection', freeagents: 'freeagents', market: 'market', friends: 'friends' };
+
 export const NEWS = [
   {
     id: 'friends', date: '2026-10-11', title: 'Friends, and the cards they need',
     body: "Add friends in Collection → Friends: send your friend code, or tap anyone you've played in a league or head to head. When a friend is one or two cards from finishing a collection, any spare of those cards you could sell shows a note in My Collection under 'Spare to sell or burn': who needs it, for which collection, and a List it button that opens the usual sell form. A card you pack that a friend needs says so on the reveal. When a friend lists a card you need, it shows on Home and is tagged in the market. Listings stay public: anyone can still buy them.",
-    to: 'collection', cta: 'Friends',
+    to: 'friends', cta: 'Friends',
   },
   {
     id: 'glass-bonus-live', date: '2026-10-08', title: 'Lead the glass by 3 and your next paint check is +2, right away',

@@ -25,7 +25,7 @@ import { getPlayerRarity, RARITY_CONFIG, getMarketPrice } from '../game/rarity.j
 import Holo from './HoloSheen.jsx';
 import { holoRegionsFor } from '../cards/faceRegions.js';
 import { getPlayerImageUrl, getPlayerThumbUrl, fallbackTo } from '../game/cardImages.js';
-import { loadListings } from '../firebase/market.js';
+import { loadListings, loadListingsBy } from '../firebase/market.js';
 import { buyListing, delistCard } from '../firebase/serverWrites.js';
 import styles from './Market.module.css';
 import { ZoomImg } from './CardLightbox.jsx';
@@ -41,7 +41,22 @@ export function FriendTag({ listing, friendNames = new Map(), needKeys = new Set
   );
 }
 
-const NO_LISTINGS = [];
+const NO_UIDS = [];
+
+/**
+ * WHAT THE MARKET SHOWS: the cheapest two hundred, and every open listing by
+ * a friend, BOTH read on each refresh (final review, 2026-10-11). Friends'
+ * listings used to be read once by the Collection page and appended to every
+ * refresh, so a listing you had just bought stayed up with a Buy button that
+ * could only fail. A failed friends read leaves the plain market.
+ */
+export async function loadMarketRows(friendUids, { load = () => loadListings({ limit: 200 }), loadBy = loadListingsBy } = {}) {
+  const rows = await load();
+  if (!friendUids?.length) return rows;
+  const seen = new Set(rows.map(r => r.id));
+  const theirs = await loadBy(friendUids).catch(() => []);
+  return [...rows, ...theirs.filter(l => !seen.has(l.id))];
+}
 const NO_NAMES = new Map();
 const NO_KEYS = new Set();
 
@@ -94,7 +109,7 @@ const HIDE_MINE_KEY = 'market.hideMine';
 const readHideMine = () => { try { return localStorage.getItem(HIDE_MINE_KEY) === '1'; } catch { return false; } };
 const writeHideMine = on => { try { localStorage.setItem(HIDE_MINE_KEY, on ? '1' : '0'); } catch { /* not kept */ } };
 
-export default function Market({ uid, coins, onTraded, collection = {}, friendNames = NO_NAMES, needKeys = NO_KEYS, initialSearch = '', friendListings = NO_LISTINGS }) {
+export default function Market({ uid, coins, onTraded, collection = {}, friendNames = NO_NAMES, needKeys = NO_KEYS, initialSearch = '', friendUids = NO_UIDS }) {
   const [listings, setListings] = useState(null);
   const [busy, setBusy] = useState(null);
   const [toast, setToast] = useState(null);
@@ -103,16 +118,17 @@ export default function Market({ uid, coins, onTraded, collection = {}, friendNa
   const [mineOnly, setMineOnly] = useState(false);
   const [hideMine, setHideMine] = useState(readHideMine);
 
+  // By value, not identity: the friends list refreshes on focus, and a new
+  // array of the same friends must not re-read the market.
+  const friendKey = friendUids.join(',');
   const refresh = useCallback(async () => {
     try {
-      const rows = await loadListings({ limit: 200 });
-      const seen = new Set(rows.map(r => r.id));
-      setListings([...rows, ...friendListings.filter(l => !seen.has(l.id))]);
+      setListings(await loadMarketRows(friendKey ? friendKey.split(',') : []));
     } catch (e) {
       setToast(e.message);
       setListings([]);
     }
-  }, [friendListings]);
+  }, [friendKey]);
 
   useEffect(() => { refresh(); }, [refresh]);
 

@@ -373,7 +373,13 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
                         onClick={() => { setSelling(c.key); setAskPrice(String(c.suggested)); setSellQty(1); }}
                       >
                         <span className={styles.friendDotMark} aria-hidden="true">●</span>
-                        {w.length === 1 ? `${w[0].name} needs this` : `${w.length} friends need this`} · List it?
+                        <span className={styles.friendNeedText}>
+                          {w.length === 1 ? `${w[0].name} needs this` : `${w.length} friends need this`} · List it?
+                          {/* No hover on a phone: which collection and how close, printed. */}
+                          <span className={styles.friendNeedWhy} data-friend-want-why={c.key}>
+                            {w.length === 1 ? `${w[0].goalLabel} · ${w[0].missing} to go` : w.map(x => x.name).join(', ')}
+                          </span>
+                        </span>
                       </button>
                     );
                   })()}

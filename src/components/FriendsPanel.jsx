@@ -8,6 +8,9 @@ import { useDialogs } from '../ui/dialogs.jsx';
 import s from './FriendsPanel.module.css';
 
 const plural = (n, one) => `${n} ${one}${n === 1 ? '' : 's'}`;
+// How a request arrived (final review, 2026-10-11): a name is the sender's to
+// set, so the page says what the server knows.
+const VIA = { code: 'used your friend code', league: 'played you in a league', pvp: 'played you head to head' };
 
 export default function FriendsPanel() {
   const { overview, error, refresh } = useFriends();
@@ -53,7 +56,7 @@ export default function FriendsPanel() {
           <h3 className={s.title}>Requests for you</h3>
           {incoming.map(r => (
             <div key={r.id} className={s.row} data-incoming={r.id}>
-              <span className={s.name}>{r.name}</span>
+              <span className={s.name}>{r.name} <span className={s.muted}>· {VIA[r.via] ?? VIA.code}</span></span>
               <button className={s.primary} disabled={busy === r.id} onClick={() => run(r.id, () => answerFriendRequest({ id: r.id, accept: true }), () => `You and ${r.name} are friends`)}>Accept</button>
               <button className={s.secondary} disabled={busy === r.id} onClick={() => run(r.id, () => answerFriendRequest({ id: r.id, accept: false }))}>Decline</button>
             </div>

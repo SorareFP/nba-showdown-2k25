@@ -25,6 +25,7 @@ import SoundToggle from './ui/SoundToggle.jsx';
 import ErrorBoundary from './ui/ErrorBoundary.jsx';
 import { CardStatsProvider } from './firebase/CardStatsProvider.jsx';
 import { FriendsProvider, usePublishNeeds } from './firebase/FriendsProvider.jsx';
+import { HOME_SECTIONS } from './game/home.js';
 import { collectableKeys } from './game/collections.js';
 import { loadCollection, getUserData, updateUserFields } from './firebase/collection.js';
 import { ownedRoster } from './game/teamRules.js';
@@ -133,7 +134,7 @@ function AppInner() {
   const [marketSearch, setMarketSearch] = useState('');
   const homeGo = (to, opts = {}) => {
     if (to === 'market') setMarketSearch(opts.search ?? '');
-    const section = { shop: 'shop', goals: 'goals', mycards: 'collection', freeagents: 'freeagents', market: 'market' }[to];
+    const section = HOME_SECTIONS[to];
     if (section) { setCollectionView(section); goTab('collection'); return; }
     // `action`: Dynasty's One season buttons open straight into new / newShared / join.
     if (to === 'season') setSeasonOpen(opts.seasonId || opts.leagueId || opts.action ? opts : null);

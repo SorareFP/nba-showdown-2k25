@@ -26,6 +26,7 @@ import ClaimReveal, { claimRevealFrom } from './ClaimReveal.jsx';
 import FavoriteTeamPicker, { teamForOption, favoriteTeamName } from './FavoriteTeamPicker.jsx';
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
+import { useFriends } from '../firebase/FriendsProvider.jsx';
 import Skeleton from '../ui/Skeleton.jsx';
 import FreeAgentsPanel from './FreeAgentsPanel.jsx';
 import FriendsPanel from './FriendsPanel.jsx';
@@ -53,6 +54,8 @@ const VIEWS = [
 export default function CollectionTab({ onLoadTeam, onCollectionChange, initialView = null }) {
   const { user } = useAuth();
   const { ask } = useDialogs();
+  // Friends (2026-10-11): which of your spares a friend needs.
+  const { wants: friendWants } = useFriends();
   // The home page opens a section directly (the Pack Shop, the collections).
   const [view, setView] = useState(() => (VIEWS.some(v => v.key === initialView) ? initialView : 'teams'));
   const [teams, setTeams] = useState([]);
@@ -713,7 +716,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
 
       {/* ── My Collection ── */}
       {view === 'collection' && (
-        <MyCollection collection={collection} onBurn={handleBurn} onList={handleList} onUnlist={handleUnlist} listedByCard={listedByCard} onCollect={handleCollect} onCollectAll={handleCollectAll} collectableCount={collectable} />
+        <MyCollection collection={collection} onBurn={handleBurn} onList={handleList} onUnlist={handleUnlist} listedByCard={listedByCard} onCollect={handleCollect} onCollectAll={handleCollectAll} collectableCount={collectable} friendWants={friendWants} />
       )}
 
       {/* ── Collections (the goal ladder) ── */}

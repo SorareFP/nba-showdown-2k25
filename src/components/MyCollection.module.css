@@ -76,7 +76,7 @@
 
 /* Two actions on a spare now: burn it for coins, or sell it to another player.
    They share a row so neither becomes the default by being bigger. */
-.spareActions { display: flex; gap: 4px; margin-top: 4px; }
+.spareActions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 .spareActions > button { flex: 1; }
 .sellRow { display: flex; gap: 3px; align-items: center; margin-top: 4px; flex-wrap: wrap; }
 /* The floor, shown only while the ask is under it: a listing never goes below the burn value. */
@@ -221,3 +221,16 @@
 @media (min-width: 2200px) {
   .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 }
+
+/* A friend needs this spare (2026-10-11). Its own line above Burn and Sell:
+   `.spareActions > button { flex: 1 }` would otherwise squeeze it. */
+.spareActions > .friendNeed { flex: 1 1 100%; }
+.friendNeed {
+  display: flex; align-items: center; gap: 5px;
+  font: inherit; font-size: 11px; font-weight: 700; text-align: left;
+  color: #fbbf24; background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.35); border-radius: 6px;
+  padding: 3px 7px; cursor: pointer;
+}
+.friendNeed:hover { background: rgba(251, 191, 36, 0.18); }
+.friendDotMark { font-size: 9px; line-height: 1; }

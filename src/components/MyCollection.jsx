@@ -31,7 +31,8 @@
 // deck limit instead; the server refuses the burn whatever the screen shows
 // (marketRules.js burnProblem).
 import { useState, useMemo, useCallback } from 'react';
-import { ALL_CARDS, cardKey, BASE_SET } from '../game/cardSets.js';
+import { ALL_CARDS, cardKey, BASE_SET, canonicalKey } from '../game/cardSets.js';
+import { wantText } from '../game/friends.js';
 import { STRATS } from '../game/strats.js';
 import { ZoomImg } from './CardLightbox.jsx';
 import {
@@ -61,7 +62,7 @@ const SET_LABELS = {
   'wnba-team-rewards': 'WNBA Team Rewards',
 };
 
-export default function MyCollection({ collection, onBurn, onList, onUnlist = null, listedByCard = {}, onCollect, onCollectAll = null, collectableCount = 0 }) {
+export default function MyCollection({ collection, onBurn, onList, onUnlist = null, listedByCard = {}, onCollect, onCollectAll = null, collectableCount = 0, friendWants = new Map(), initialCopiesFilter = 'all' }) {
   const [typeFilter, setTypeFilter] = useState('all');
   const [rarityFilter, setRarityFilter] = useState('all');
   const [setFilter, setSetFilter] = useState('ALL');
@@ -71,7 +72,7 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
   // still have nothing you can do with it, so the second option is the
   // actionable one: a spare that is neither collected nor already on the
   // market.
-  const [copiesFilter, setCopiesFilter] = useState('all');
+  const [copiesFilter, setCopiesFilter] = useState(initialCopiesFilter);
   const [search, setSearch] = useState('');
   const [confirmBurn, setConfirmBurn] = useState(null);
   // Which card is being priced, and at what. Selling needs a NUMBER from the
@@ -356,6 +357,26 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
                 </div>
               ) : (
                 <div className={styles.spareActions}>
+                  {/* A FRIEND NEEDS THIS (2026-10-11): only under the spare filter,
+                      only on a copy you could sell now, and it opens the same sell
+                      form — a public listing, never one reserved for the friend
+                      (the user: "I want the market to matter still"). Visible
+                      words, the full sentence in the title: no hover-only actions. */}
+                  {copiesFilter === 'spare' && onList && c.suggested && (friendWants.get(canonicalKey(c.key)) ?? []).length > 0 && (() => {
+                    const w = friendWants.get(canonicalKey(c.key));
+                    return (
+                      <button
+                        className={styles.friendNeed}
+                        data-friend-want={c.key}
+                        title={wantText(w)}
+                        aria-label={wantText(w)}
+                        onClick={() => { setSelling(c.key); setAskPrice(String(c.suggested)); setSellQty(1); }}
+                      >
+                        <span className={styles.friendDotMark} aria-hidden="true">●</span>
+                        {w.length === 1 ? `${w[0].name} needs this` : `${w.length} friends need this`} · List it?
+                      </button>
+                    );
+                  })()}
                   <button className={styles.burnBtn} onClick={() => setConfirmBurn(c.key)}>
                     Burn (+{burnVal})
                   </button>

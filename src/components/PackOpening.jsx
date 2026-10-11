@@ -92,7 +92,13 @@ export function setPillFor(card) {
   return { id: set, label: getSet(set)?.name ?? set };
 }
 
-export default function PackOpening({ cards, coins = null, onDone, onSaveRest = null, box = null, onRequestPack = null, packName = null }) {
+/** A FRIEND NEEDS THIS ONE (2026-10-11): the nameplate's line for a pulled card a friend needs. */
+export function FriendChip({ cardId, note }) {
+  if (!note) return null;
+  return <div className={styles.plateFriend} data-friend-note={cardId}>● {note}</div>;
+}
+
+export default function PackOpening({ cards, coins = null, onDone, onSaveRest = null, box = null, onRequestPack = null, packName = null, friendNote = null }) {
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [dismissed, setDismissed] = useState([]);
@@ -495,6 +501,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
               </div>
               <div className={styles.plateName}>{flipped ? currentCard.name : 'Tap the card'}</div>
               <div className={styles.plateSub}>{flipped ? currentCard.sub : `${remaining.length + 1} left in the pack`}</div>
+              {flipped && currentCard.type === 'player' && <FriendChip cardId={currentCard.id} note={friendNote?.(currentCard.id)} />}
             </div>
           )}
 

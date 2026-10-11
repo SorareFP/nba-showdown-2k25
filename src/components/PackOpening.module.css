@@ -241,6 +241,8 @@
 }
 .plateName { font-size: 17px; font-weight: 700; }
 .plateSub { font-size: 12px; color: var(--text-muted); }
+/* A friend needs this one (2026-10-11). */
+.plateFriend { font-size: 12px; font-weight: 700; color: #fbbf24; }
 
 .finale {
   display: flex; flex-direction: column; align-items: center; justify-content: center;

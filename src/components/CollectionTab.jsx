@@ -27,6 +27,7 @@ import FavoriteTeamPicker, { teamForOption, favoriteTeamName } from './FavoriteT
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
 import { useFriends } from '../firebase/FriendsProvider.jsx';
+import { friendNoteFor } from '../game/friends.js';
 import Skeleton from '../ui/Skeleton.jsx';
 import FreeAgentsPanel from './FreeAgentsPanel.jsx';
 import FriendsPanel from './FriendsPanel.jsx';
@@ -482,6 +483,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         box={openingPack.box ?? null}
         onRequestPack={handleRequestPack}
         packName={PACK_TYPES[openingPack.packType]?.name ?? null}
+        friendNote={key => friendNoteFor(friendWants, key)}
       />
     );
   }

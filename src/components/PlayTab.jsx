@@ -1,4 +1,5 @@
 import { useReducer, useCallback, useState, useEffect, useRef, useMemo } from 'react';
+import { answerWindow } from '../game/canPlay.js';
 import { newGame, doRoll, rollingOpen as diceOut, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, rollGate, coachCardWindow, searchCrunchCard } from '../game/engine.js';
 import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiChoice } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
@@ -481,6 +482,13 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         }
         return;
       }
+
+      // YOUR ANSWER WINDOW (the user, 2026-10-11: "the CPU plays so fast that I
+      // can't play things like glass cleaner"). While you hold a card that answers
+      // its last check or roll (canPlay.js answerWindow), the coach waits: the
+      // banner's Continue, or playing the card, lets it carry on. With nothing to
+      // answer with, it never opens and the pace is unchanged.
+      if (answerWindow(game, 'A').length) return;
 
       if (phase === 'matchup_strats' && (game.placementStep ?? 10) >= 10 && game.matchupTurn === 'B') {
         const action = aiTurn(game, 'B', { iq });

@@ -1111,6 +1111,27 @@ export function creditPaintScore(g, teamKey, playerIdx, player) {
  * them back from the pool and from those lines (the user, 2026-10-01: a
  * cancelled stat "never" happened).
  */
+/**
+ * THE MISS A POST-MISS CARD ANSWERS — Glass Cleaner and Rebound and Push
+ * (theirs), Putback Specialist and Kick-Out Three (yours): the latest miss,
+ * cleared by a make, gone at section end. EVERY check records it here. Only
+ * the card-called checks used to (execCard's trackShotCheck), so a missed
+ * 5-assist or 5-rebound check could never be answered (the user, 2026-10-11:
+ * "I can't play things like glass cleaner"). Free throws are not a shot
+ * anyone crashes for.
+ */
+export function noteCheckMiss(g, teamKey, type, playerIdx, hit) {
+  if (type === 'ft') return;
+  g.lastCheckMiss = hit ? null : { teamKey, type, playerIdx: playerIdx ?? null, claimed: false };
+}
+
+/**
+ * WHICH MOMENT IT IS, for the answer window (canPlay.js answerWindow): it
+ * moves with every check and every roll, so passing on one moment never
+ * passes on the next.
+ */
+export const answerEventKey = g => `${g?.checkSeq || 0}/${g?.rollSeq || 0}`;
+
 export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, label, bonus = 0, pool = 'card', specialRoll, onHit, closeOutApplied = false, astPaid = [] }) {
   g.checkSeq = (g.checkSeq || 0) + 1;
   // WHO GUARDED THE SHOT, as the check was taken (2026-09-30). A Challenge
@@ -1207,6 +1228,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
     const parts3 = spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt'));
     const r = shotCheck(player, '3pt', parts3, ps, getFatigue(ng, teamKey, playerIdx));
+    noteCheckMiss(ng, teamKey, '3pt', playerIdx, r.hit);
     if (creditCheckDefended(ng, teamKey, playerIdx, '3pt', r, matchupContest(ng, teamKey, playerIdx, '3pt'))) r.blk = true;
     noteLastCheck(ng, { teamKey, playerIdx, player, type: '3pt', result: r, label: `${SPEND_COSTS.assistThree}-AST 3PT check`, bonus: parts3, pool: 'assistSpend' });
     if (r.hit) {
@@ -1232,6 +1254,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
     const partsP = [...spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }, { label: GLASS_LABEL, n: glassBonus(ng, teamKey, 'paint') }];
     const r = shotCheck(player, 'paint', partsP, ps, getFatigue(ng, teamKey, playerIdx));
+    noteCheckMiss(ng, teamKey, 'paint', playerIdx, r.hit);
     spendGlass(ng, teamKey, partsP);
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
@@ -1279,6 +1302,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     myT.rebounds -= SPEND_COSTS.reboundPaint;
     const partsR = [{ label: 'REB', n: rebBonus }, { label: 'contest', n: -(matchupContest(ng, teamKey, playerIdx, 'paint') || 0) }, { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }, { label: GLASS_LABEL, n: glassBonus(ng, teamKey, 'paint') }];
     const r = shotCheck(player, 'paint', partsR, ps, getFatigue(ng, teamKey, playerIdx));
+    noteCheckMiss(ng, teamKey, 'paint', playerIdx, r.hit);
     spendGlass(ng, teamKey, partsR);
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
@@ -1790,6 +1814,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
 
   // The roll Box Out can answer, and Spain Pick & Roll's assist for a score.
   // `ast` and `deflected` for Passing Lane (2026-09-23), Box Out's twin.
+  // A new moment for the answer window (answerEventKey): Box Out and Passing Lane answer this roll.
+  ng.rollSeq = (ng.rollSeq || 0) + 1;
   ng.lastRoll = { teamKey, idx, reb: result.reb, ast: result.ast, pts: result.pts, boxed: false, deflected: false };
   if (te['astOnScore' + idx] && result.pts > 0) {
     nMyT.assists += 1;

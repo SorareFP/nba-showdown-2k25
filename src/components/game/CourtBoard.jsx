@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
-import { canPlayCard, burstTargets, greenLightTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer } from '../../game/canPlay.js';
 import { checkNeedFor } from '../../game/checkTerms.js';
 import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
@@ -178,6 +178,12 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
       {/* A Blitz's choice sits under the check it paused; Go Under's stands alone. */}
       {game.pendingChoice && (game.pendingChoice.kind === 'blitz' || !game.pendingShotCheck) && (
         <ChoiceBanner game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey} />
+      )}
+      {/* YOUR ANSWER WINDOW (the user, 2026-10-11: "the CPU plays so fast that I
+          can't play things like glass cleaner"). Against the coach only: while
+          you hold a card that answers its last check or roll, it waits here. */}
+      {coachTeam && (
+        <AnswerBanner cards={answerWindow(game, coachTeam === 'A' ? 'B' : 'A')} onPass={() => setGame(passAnswer(game))} />
       )}
 
       {game.phase === 'draft' ? (
@@ -2214,6 +2220,28 @@ function ChoiceBanner({ game, setGame, pvpMode = false, myTeamKey = null }) {
 // `readOnlyTeam`: the side the human only watches on this board (CourtBoard
 // watchOnlyTeam) — its Close Out and Challenge are the coach's to play, not
 // buttons for the human (2026-09-18).
+/**
+ * THE COACH IS WAITING ON YOU: the cards in your hand that answer what it just
+ * did (canPlay.js answerWindow), and Continue to let it carry on. Play the card
+ * from your hand as usual; the window shuts once it is used or passed.
+ */
+export function AnswerBanner({ cards, onPass }) {
+  if (!cards?.length) return null;
+  const names = cards.map(id => getStrat(id)?.name ?? id);
+  const list = names.length === 1 ? names[0] : `${names.slice(0, -1).join(', ')} or ${names.at(-1)}`;
+  return (
+    <div className={styles.pendingBanner} data-answer-window={cards.join(',')} role="status">
+      <div className={styles.pendingInfo}>
+        <div className={styles.pendingTitle}>⏸ The coach is waiting: you can answer with {list}</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Play it from your hand, or carry on.</div>
+      </div>
+      <div className={styles.pendingActions}>
+        <button className={styles.resolveBtn} data-answer-continue onClick={onPass}>Continue</button>
+      </div>
+    </div>
+  );
+}
+
 function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
   const { pendingShotCheck: psc } = game;
   const offP=getTeam(game,psc.teamKey).starters[psc.playerIdx];

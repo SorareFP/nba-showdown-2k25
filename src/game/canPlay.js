@@ -2,7 +2,7 @@
 // Returns { canPlay: bool, reason: string }
 
 import { CRUNCH_CARDS, TIMEOUT_RIDERS } from './strats.js';
-import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, reboundTrackLead, challengeTarget, rerollOdds } from './engine.js';
+import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, reboundTrackLead, challengeTarget, rerollOdds, answerEventKey } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
 const no = (r) => ({ canPlay: false, reason: r });
@@ -377,6 +377,31 @@ export function reboundLeadProblem(g, teamKey, cardId) {
   if (lead >= cost) return null;
   return `Lead the rebound battle by ${cost} to spend ${cost} REB (you ${lead > 0 ? `lead by ${lead}` : lead < 0 ? `trail by ${-lead}` : 'are level'})`;
 }
+
+/**
+ * THE CARDS THAT ANSWER A MOMENT JUST GONE BY: a check that missed (Glass
+ * Cleaner, Rebound and Push; Putback Specialist, Kick-Out Three for your own),
+ * a roll that won rebounds or assists (Box Out, Passing Lane).
+ */
+export const ANSWER_CARDS = ['glass_cleaner', 'rebound_and_push', 'putback_specialist', 'kick_out_three', 'box_out', 'passing_lane'];
+
+/**
+ * YOUR ANSWER WINDOW (the user, 2026-10-11: "the CPU plays so fast that I
+ * can't play things like glass cleaner"). The answer cards in `teamKey`'s
+ * hand that are playable NOW against the latest check or roll, unless you
+ * have passed on this moment (passAnswer). While it is open the coach waits
+ * (PlayTab's driver); with no answer in hand it never opens, and the coach
+ * keeps its pace.
+ */
+export function answerWindow(g, teamKey) {
+  if (g?.phase !== 'scoring' || g.done || g.pendingShotCheck || g.pendingChoice) return [];
+  if (g.answerPassed === answerEventKey(g)) return [];
+  const hand = getTeam(g, teamKey)?.hand ?? [];
+  return [...new Set(hand.filter(id => ANSWER_CARDS.includes(id) && canPlayCard(g, teamKey, id).canPlay))];
+}
+
+/** Let this moment go: the coach carries on, and the next check or roll is a new moment. */
+export const passAnswer = g => ({ ...g, answerPassed: answerEventKey(g) });
 
 export function canPlayCard(g, teamKey, cardId) {
   // The card's own conditions first (a wrong phase says so), then the lead.

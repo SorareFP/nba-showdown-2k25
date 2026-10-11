@@ -3,7 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
-import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass } from './engine.js';
+import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass, noteCheckMiss } from './engine.js';
 import { checkTerms } from './checkTerms.js';
 import { burstTargets, greenLightTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
@@ -99,7 +99,7 @@ function trackShotCheck(g, teamKey, r, type, playerIdx) {
   // Every check leaves the record Glass Cleaner and Putback Specialist read:
   // the latest miss (a hit clears it), gone at section end. Free throws are
   // not a shot anyone crashes for.
-  if (type !== 'ft') g.lastCheckMiss = r.hit ? null : { teamKey, type, playerIdx: playerIdx ?? null, claimed: false };
+  noteCheckMiss(g, teamKey, type, playerIdx, r.hit);
   if (!g.analytics?.[teamKey]) return;
   g.analytics[teamKey].totalShotChecks++;
   if (r.hit) {

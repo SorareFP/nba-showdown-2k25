@@ -65,6 +65,7 @@ import { createFriendsDynasty, friendsAct, bidProblem, FRIEND_MOVES } from './sh
 import { packDynasty, unpackDynasty } from './shared/src/game/modes/seasonPack.js';
 import { settleShifts, RARITY_SHIFTS } from './shared/src/game/rarityShift.js';
 import { checkSuggestion, sentToday, SUGGESTIONS_PER_DAY, SUGGESTION_STATUS, OUTCOME_MAX } from './shared/src/game/suggestions.js';
+import { normalizeCode, makeFriendCode, cleanNeeds, FRIENDS_MAX } from './shared/src/game/friends.js';
 
 initializeApp();
 const db = getFirestore();
@@ -2202,4 +2203,162 @@ export const setSuggestionTrust = onCall({ region: 'us-central1' }, async reques
   const trusted = Boolean(request.data?.trusted);
   await db.doc(`users/${target}`).set({ suggestionTrusted: trusted }, { merge: true });
   return { uid: target, trusted };
+});
+
+/**
+ * FRIENDS (2026-10-11) — docs/plans/2026-10-11-friends-design.md.
+ *
+ * Friendships, requests and codes are written here and nowhere else; the
+ * rules' closing match keeps all three from the client. A friend's needs are
+ * read HERE too (myFriends), from the profile their own app keeps, so no rule
+ * ever has to look a friendship up. Names: a requester's goes to the person
+ * asked; a friend's is stored on each side when the friendship forms. The
+ * name behind a code is never told to the person who typed it.
+ */
+const friendsRef = uid => db.doc(`friends/${uid}`);
+const friendCodeRef = code => db.doc(`friendCodes/${code}`);
+const friendRequestRef = (from, to) => db.doc(`friendRequests/${from}_${to}`);
+const playedWithRef = (uid, other) => db.doc(`users/${uid}/playedWith/${other}`);
+const safeUid = u => typeof u === 'string' && u.length > 0 && u.length <= 128 && !u.includes('/');
+const nameOf = request => String(request.auth?.token?.name ?? '').trim().slice(0, 60) || 'A player';
+
+async function ensureFriendCode(uid) {
+  const mine = await friendsRef(uid).get();
+  if (mine.exists && mine.data()?.code) return mine.data().code;
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const code = makeFriendCode();
+    const made = await db.runTransaction(async tx => {
+      const taken = await tx.get(friendCodeRef(code));
+      if (taken.exists) return false;
+      tx.set(friendCodeRef(code), { uid });
+      tx.set(friendsRef(uid), { code }, { merge: true });
+      return true;
+    });
+    if (made) return code;
+  }
+  throw new HttpsError('unavailable', 'Could not make a friend code. Try again.');
+}
+
+/** Both sides of a friendship, in the transaction that read both documents. */
+function befriend(tx, me, myName, myDoc, them, theirName, theirDoc) {
+  tx.set(friendsRef(me), { ...(myDoc ?? {}), uids: [...new Set([...(myDoc?.uids ?? []), them])], names: { ...(myDoc?.names ?? {}), [them]: theirName } });
+  tx.set(friendsRef(them), { ...(theirDoc ?? {}), uids: [...new Set([...(theirDoc?.uids ?? []), me])], names: { ...(theirDoc?.names ?? {}), [me]: myName } });
+}
+
+function capCheck(myDoc, theirDoc) {
+  if ((myDoc?.uids ?? []).length >= FRIENDS_MAX) throw new HttpsError('resource-exhausted', `${FRIENDS_MAX} friends is the most you can have`);
+  if ((theirDoc?.uids ?? []).length >= FRIENDS_MAX) throw new HttpsError('resource-exhausted', 'They already have the most friends they can have');
+}
+
+/** The whole picture: your code, friends (with their needs), requests and people you've played. */
+export const myFriends = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const code = await ensureFriendCode(uid);
+  const mine = (await friendsRef(uid).get()).data() ?? {};
+  const uids = (mine.uids ?? []).filter(safeUid);
+  const friends = await Promise.all(uids.map(async f => {
+    const p = (await db.doc(`profiles/${f}`).get()).data() ?? {};
+    return { uid: f, name: mine.names?.[f] ?? 'A friend', needs: cleanNeeds(p.needs) };
+  }));
+  const [incoming, outgoing, played] = await Promise.all([
+    db.collection('friendRequests').where('to', '==', uid).get(),
+    db.collection('friendRequests').where('from', '==', uid).get(),
+    db.collection(`users/${uid}/playedWith`).get(),
+  ]);
+  const known = new Set([...uids, uid]);
+  return {
+    code,
+    friends: friends.sort((a, b) => a.name.localeCompare(b.name)),
+    incoming: incoming.docs.map(d => ({ id: d.id, from: d.data().from, name: d.data().fromName ?? 'A player' })),
+    outgoing: outgoing.docs.map(d => ({ id: d.id, to: d.data().to, label: d.data().toLabel ?? null })),
+    playedWith: played.docs
+      .map(d => ({ uid: d.id, label: d.data().label ?? 'A player', via: d.data().via ?? null }))
+      .filter(p => !known.has(p.uid)),
+  };
+});
+
+/** Ask by friend code, or one tap to someone you've played (`{ uid }`, only from your played-with list). */
+export const requestFriend = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { code: rawCode, uid: rawUid } = request.data ?? {};
+  let to;
+  let toLabel;
+  if (rawCode != null) {
+    const code = normalizeCode(rawCode);
+    if (!code) throw new HttpsError('invalid-argument', 'That is not a friend code');
+    const c = await friendCodeRef(code).get();
+    if (!c.exists) throw new HttpsError('not-found', 'No player has that code');
+    to = c.data().uid;
+    toLabel = `code ${code}`;
+  } else if (safeUid(rawUid)) {
+    const pw = await playedWithRef(uid, rawUid).get();
+    if (!pw.exists) throw new HttpsError('permission-denied', 'Add them with their friend code');
+    to = rawUid;
+    toLabel = pw.data().label ?? null;
+  } else {
+    throw new HttpsError('invalid-argument', 'No friend given');
+  }
+  if (to === uid) throw new HttpsError('failed-precondition', 'That is your own code');
+  return db.runTransaction(async tx => {
+    const mineSnap = await tx.get(friendsRef(uid));
+    const theirsSnap = await tx.get(friendsRef(to));
+    const sent = await tx.get(friendRequestRef(uid, to));
+    const back = await tx.get(friendRequestRef(to, uid));
+    const myDoc = mineSnap.data() ?? {};
+    const theirDoc = theirsSnap.data() ?? {};
+    if ((myDoc.uids ?? []).includes(to)) throw new HttpsError('already-exists', 'You are already friends');
+    capCheck(myDoc, theirDoc);
+    if (sent.exists) throw new HttpsError('already-exists', 'Request already sent');
+    // They asked you first: asking back is saying yes.
+    if (back.exists) {
+      befriend(tx, uid, nameOf(request), myDoc, to, back.data().fromName ?? 'A friend', theirDoc);
+      tx.delete(friendRequestRef(to, uid));
+      return { friends: true };
+    }
+    tx.set(friendRequestRef(uid, to), { from: uid, to, fromName: nameOf(request), toLabel, at: FieldValue.serverTimestamp() });
+    return { sent: true };
+  });
+});
+
+/** Yes or no to a request sent to you. */
+export const answerFriendRequest = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const id = String(request.data?.id ?? '');
+  if (!id || id.includes('/')) throw new HttpsError('invalid-argument', 'No request given');
+  return db.runTransaction(async tx => {
+    const ref = db.doc(`friendRequests/${id}`);
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'That request is gone');
+    const r = snap.data();
+    if (r.to !== uid) throw new HttpsError('permission-denied', 'Not your request');
+    if (!request.data?.accept) {
+      tx.delete(ref);
+      return { declined: true };
+    }
+    const myDoc = (await tx.get(friendsRef(uid))).data() ?? {};
+    const theirDoc = (await tx.get(friendsRef(r.from))).data() ?? {};
+    capCheck(myDoc, theirDoc);
+    befriend(tx, uid, nameOf(request), myDoc, r.from, r.fromName ?? 'A friend', theirDoc);
+    tx.delete(ref);
+    return { friends: true, name: r.fromName ?? null };
+  });
+});
+
+/** Unfriend: both sides, at once. Their needs stop reaching you with the next myFriends. */
+export const removeFriend = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const other = request.data?.uid;
+  if (!safeUid(other)) throw new HttpsError('invalid-argument', 'No friend given');
+  return db.runTransaction(async tx => {
+    const myDoc = (await tx.get(friendsRef(uid))).data() ?? {};
+    const theirDoc = (await tx.get(friendsRef(other))).data() ?? {};
+    const strip = (doc, gone) => ({
+      ...doc,
+      uids: (doc.uids ?? []).filter(x => x !== gone),
+      names: Object.fromEntries(Object.entries(doc.names ?? {}).filter(([k]) => k !== gone)),
+    });
+    tx.set(friendsRef(uid), strip(myDoc, other));
+    tx.set(friendsRef(other), strip(theirDoc, uid));
+    return { removed: true };
+  });
 });

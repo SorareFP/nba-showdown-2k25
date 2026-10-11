@@ -81,6 +81,7 @@ const COPY = [
   'src/game/rarityShift.js',
   // The suggestion box's kinds, limits and check (submitSuggestion).
   'src/game/suggestions.js',
+  'src/game/friends.js',
 ];
 
 /** The generated card data those modules import. */

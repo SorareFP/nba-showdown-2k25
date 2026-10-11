@@ -29,6 +29,26 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'coach-waits-for-your-answer', date: '2026-10-11', title: 'The coach waits for your Glass Cleaner',
+    body: "The coach used to act again under a second after its own shot check or roll, so cards that answer one (Glass Cleaner, Rebound and Push, Box Out, Passing Lane, and Putback Specialist or Kick-Out Three for your own miss) were gone before you could reach them. Now, while you hold one that can answer, the coach waits, and a banner names the card with a Continue button. A miss on a check bought with 5 assists or 5 rebounds counts now too; those could never be answered before.",
+    to: 'play', cta: 'Play',
+  },
+  {
+    id: 'coach-no-impossible-checks', date: '2026-10-11', title: 'The coach stops throwing away shot checks',
+    body: "With a big bank of assists or rebounds, the coach spent them on its best check even when that check needed a 21 to go in, at every level up to Deity. It never takes a check it cannot make now; the assists and rebounds wait for one that can go in, or for a card.",
+    to: 'play', cta: 'Play',
+  },
+  {
+    id: 'pick-up-full-court-once', date: '2026-10-11', title: 'Pick Up Full Court: once per player per section',
+    body: "Pick Up Full Court can no longer hound the same player twice in a section. The picker offers only the players you have not pressed yet, the coach follows the same rule, and the card waits once all five have been hounded. Everyone is fair game again next section.",
+    to: 'play', cta: 'Play',
+  },
+  {
+    id: 'dynasty-import-offseason', date: '2026-10-11', title: 'Dynasty: Bring in a player now shows in the offseason',
+    body: "Franchise Points bring a card you own into your dynasty, from the draftee signing through the preseason. But the offseason screen left the Bring in a player panel (and the deck picker) out of the Front Office, so it only appeared during the season, where every button was off. It is on the offseason screen now, where it works.",
+    to: 'dynasty', cta: 'Dynasty',
+  },
+  {
     id: 'friends', date: '2026-10-11', title: 'Friends, and the cards they need',
     body: "Add friends in Collection → Friends: send your friend code, or tap anyone you've played in a league or head to head. When a friend is one or two cards from finishing a collection, any spare of those cards you could sell shows a note in My Collection under 'Spare to sell or burn': who needs it, for which collection, and a List it button that opens the usual sell form. A card you pack that a friend needs says so on the reveal. When a friend lists a card you need, it shows on Home and is tagged in the market. Listings stay public: anyone can still buy them.",
     to: 'friends', cta: 'Friends',

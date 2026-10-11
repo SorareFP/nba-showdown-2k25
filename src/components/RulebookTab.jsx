@@ -152,6 +152,7 @@ export default function RulebookTab() {
         <ul>
           <li>Rolling <strong>alternates</strong>, one player at a time, the human leading against the coach. A side with nobody left to roll stands aside.</li>
           <li>Between rolls either side may play <strong>pre-roll</strong> cards on a player who has not rolled, and <strong>reactions</strong> to what just happened.</li>
+          <li>Against the coach, while you hold a card that can answer its latest check or roll (Glass Cleaner, Rebound and Push, Box Out, Passing Lane; Putback Specialist and Kick-Out Three for your own miss), the coach waits until you play it or press Continue. Every check counts, including the ones bought with 5 assists or 5 rebounds.</li>
           <li>A player blocked by This Is My House or Hack-A-____ does not roll. A player whose roll a card replaced (You Stand Over There) counts as rolled.</li>
           <li>This Is My House needs the defender <strong>higher</strong> on both Speed and Power, counted as they guard: a minus Defense lowers both, and card effects count. A tie is not higher.</li>
         </ul>

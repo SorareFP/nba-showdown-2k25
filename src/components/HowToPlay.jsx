@@ -125,7 +125,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
 
         <AccordionSection {...sec('scoring')}>
           <p>The <strong>scoring card window</strong> follows, under the same play-or-pass rule. When both sides have passed, <strong>rolling opens</strong>; nobody rolls before then.</p>
-          <p>Rolling <strong>alternates</strong>: you roll one player, the coach rolls one, and you get the floor back before their next die. That gap is where reactions live — a card that answers a roll or an announced shot check is played there. A side with nobody left to roll stands aside and the other finishes.</p>
+          <p>Rolling <strong>alternates</strong>: you roll one player, the coach rolls one, and you get the floor back before their next die. That gap is where reactions live — a card that answers a roll or an announced shot check is played there. A side with nobody left to roll stands aside and the other finishes. And when you hold a card that answers what the coach just did — Glass Cleaner or Rebound and Push after its miss, Box Out or Passing Lane after its roll, Putback Specialist or Kick-Out Three after your own miss — <strong>the coach waits</strong>: play the card, or press Continue.</p>
           <h4>Roll Calculation</h4>
           <p className={s.formula}>Final Roll = D20 + Matchup Bonus + Fatigue + Hot/Cold + Card Bonuses</p>
           <p>The modified roll is looked up on the player's <strong>scoring chart</strong>: points, rebounds and assists. A roll that reaches the chart's <strong>last row</strong> is a "top tier" result, which cards like Heat Check key off.</p>

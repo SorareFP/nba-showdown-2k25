@@ -525,6 +525,7 @@ export default function CardTemplate({
             <div className={styles.photoPlaceholder}>NO PHOTO</div>
           )}
         </div>
+        <RecordPlaque record={card.record} />
       </div>
 
       {/* After the photo and before the sidebar, and that ORDER is the feature:
@@ -850,6 +851,34 @@ function LeagueMark({ league = 'NBA' }) {
       className={styles.leagueMark}
       fallback={<div className={leagueMarkFallbackClass(league)}>{league}</div>}
     />
+  );
+}
+
+/**
+ * THE LIT PLAQUE (2026-10-14, the user's pick of four mockups, "Lit plaque"):
+ * a platinum-rimmed LED panel on the photo's lower edge, the record's number in
+ * amber digits and its name beneath, RECORD BREAKER engraved on the rim. Any
+ * card with `record` wears it — a Record Breakers card, and a Super Season whose
+ * season set the record. Inside .photoOuter so it moves with the photo frame,
+ * and left of the window's cut corner (x 456 in the window's coordinates).
+ */
+function RecordPlaque({ record }) {
+  if (!record?.number) return null;
+  const label = record.label ?? '';
+  // 26px holds "ALL-TIME PTS"; a longer name steps down to fit the 380px plate.
+  const labelSize = label.length > 16 ? Math.max(16, Math.floor((26 * 16) / label.length)) : 26;
+  return (
+    <div className={styles.plaque} data-record-plaque="">
+      <div className={styles.plaqueRim}>RECORD BREAKER</div>
+      <div className={styles.plaquePanel}>
+        <div className={styles.plaqueNumber}>{record.number}</div>
+        {label && (
+          <div className={styles.plaqueLabel} data-record-label="" style={{ fontSize: `${labelSize}px` }}>
+            {label}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

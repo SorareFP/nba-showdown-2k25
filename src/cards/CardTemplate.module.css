@@ -430,6 +430,54 @@
   );
 }
 
+/* ── The lit plaque (Record Breakers, 2026-10-14) ────────────────────────────
+ * In .photoOuter's coordinates: the photo's bottom edge is y=785 and its cut
+ * corner starts at x=456, so a 380px plate from x=30 clears both. Tuned by eye
+ * in the Studio against LeBron's 2022-23 face; the numbers are the spec. Static
+ * on purpose, like the treatments: the export screenshots what is drawn. */
+.plaque {
+  position: absolute;
+  left: 30px;
+  bottom: 20px;
+  width: 380px;
+  padding: 0 8px 8px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #8C939C 0%, #F7F8FA 45%, #D9DCE1 70%, #8C939C 100%);
+  text-align: center;
+}
+.plaqueRim {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  line-height: 22px;
+  color: #3A3F46;
+}
+.plaquePanel {
+  padding: 10px 12px 12px;
+  border-radius: 4px;
+  background-color: #0B0B0C;
+  /* The LED's dot grid. */
+  background-image: radial-gradient(rgba(255, 138, 31, 0.14) 1px, transparent 1.4px);
+  background-size: 5px 5px;
+}
+.plaqueNumber {
+  font-size: 64px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  line-height: 1;
+  color: #FF8A1F;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 10px rgba(255, 138, 31, 0.55);
+}
+.plaqueLabel {
+  margin-top: 6px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  line-height: 1;
+  color: #FFB866;
+  white-space: nowrap;
+}
+
 /* ── The scrim behind the sidebar ────────────────────────────────────────── */
 
 /* The translucent bar down the right of the printed cards.

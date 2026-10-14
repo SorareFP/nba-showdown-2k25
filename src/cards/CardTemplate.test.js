@@ -2438,3 +2438,37 @@ describe('a reward wears its identity (2026-09-22)', () => {
     }
   });
 });
+
+// THE LIT PLAQUE (Record Breakers, 2026-10-14): the user's pick of four
+// mockups. Any card with a `record` wears it; a card without one never does.
+describe('the lit plaque (Record Breakers, 2026-10-14)', () => {
+  const card = { id: 'LeBron_James_2023', name: 'LeBron James', team: 'LAL', season: 2023, seasonLabel: '2022-23', record: { number: '38,388', label: 'ALL-TIME PTS' } };
+
+  it('prints the number, the record and the engraving on any card with a record', () => {
+    const html = render({ card, hasPhoto: true });
+    expect(html).toContain('data-record-plaque');
+    expect(html).toContain('38,388');
+    expect(html).toContain('ALL-TIME PTS');
+    expect(html).toContain('RECORD BREAKER');
+  });
+
+  it('prints nothing on a card without one', () => {
+    expect(render({ card: { ...card, record: undefined } })).not.toContain('data-record-plaque');
+  });
+
+  it('draws on a card with no photo too', () => {
+    const html = render({ card });
+    expect(html).toContain('NO PHOTO');
+    expect(html).toContain('data-record-plaque');
+  });
+
+  it('steps the label down when it is long', () => {
+    const long = render({ card: { ...card, record: { number: '182', label: 'ALL-TIME TRIPLE-DOUBLES' } } });
+    expect(long).toMatch(/data-record-label[^>]*font-size:\s*(1[0-9]|2[0-1])px/);
+  });
+
+  it('sits inside the photo, left of its cut corner', () => {
+    const plaque = cssBlock('.plaque');
+    expect(pxIn(plaque, 'left') + pxIn(plaque, 'width')).toBeLessThanOrEqual(456);
+  });
+});

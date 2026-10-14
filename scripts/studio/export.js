@@ -8,6 +8,7 @@
 //   npm run export:cards -- --all --stale              only faces older than their photos (new uploads)
 //   npm run export:cards -- --set rookie --only Buddy_Hield,Landry_Shamet
 //   npm run export:cards -- --set super-season --measure    boxes only, no PNGs
+//   npm run export:cards -- --all --jobs 6               six pages at once (a full run on one page is hours)
 //
 // The dev server must be running (npm run dev): the export drives a headless
 // browser through studio-export.html, which renders the SAME CardTemplate the
@@ -142,8 +143,13 @@ for (const set of sets) {
   }
 }
 
+// --jobs N        render on N pages at once (2026-10-14). One face is a full
+//                 page load against the dev server, about twelve seconds, so a
+//                 whole-library run took six hours on one page. The pages share
+//                 this process, so face-regions.json is still written once.
+const jobs = args.includes('--jobs') ? Math.max(1, Number(args[args.indexOf('--jobs') + 1]) || 1) : 1;
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: VIEWPORT });
+const pages = await Promise.all(Array.from({ length: jobs }, () => browser.newPage({ viewport: VIEWPORT })));
 
 for (const set of sets) {
   const cards = await cardsFor(set);
@@ -162,14 +168,38 @@ for (const set of sets) {
   if (staleOnly) console.log(`${set}: ${wanted.length} stale — ${wanted.map(c => c.id).join(', ')}`);
 
   let done = 0;
-  for (const card of wanted) {
+  let next = 0;
+  // Each page takes the next card until none are left.
+  await Promise.all(pages.map(async page => {
+    while (next < wanted.length) {
+      const card = wanted[next++];
+      if (await exportOne(page, set, card, out)) {
+        done += 1;
+        if (done % 25 === 0) console.log(`  ${set}: ${done}/${wanted.length}…`);
+      }
+    }
+  }));
+  console.log(`${set}: exported ${done}/${wanted.length} to public/cards/${set}/`);
+
+  if (prune && !only && !missingOnly && !staleOnly) {
+    const ids = new Set(cards.map(c => c.id));
+    const stale = readdirSync(out).filter(f => f.endsWith('.png') && !ids.has(f.slice(0, -4)));
+    for (const f of stale) rmSync(resolve(out, f));
+    if (stale.length) {
+      console.log(`  pruned ${stale.length}: ${stale.map(f => f.slice(0, -4)).join(', ')}`);
+    }
+  }
+}
+
+/** One face: load it, wait for it, measure it, screenshot it. False when it was skipped. */
+async function exportOne(page, set, card, out) {
     const url = `${BASE}/studio-export.html?set=${encodeURIComponent(set)}&id=${encodeURIComponent(card.id)}`;
     await page.goto(url, { waitUntil: 'networkidle' });
 
     const error = await page.$('#export-error');
     if (error) {
       console.warn(`SKIP ${set}/${card.id}: ${await error.textContent()}`);
-      continue;
+      return false;
     }
     // Ready = the photo painted (or the card has none). A hard timeout keeps
     // one broken image from hanging the whole run.
@@ -177,12 +207,12 @@ for (const set of sets) {
       await page.waitForSelector('#export-root[data-export-ready="1"]', { timeout: 15000 });
     } catch {
       console.warn(`SKIP ${set}/${card.id}: never became ready`);
-      continue;
+      return false;
     }
     const el = await page.$('#export-root > *');
     if (!el) {
       console.warn(`SKIP ${set}/${card.id}: card element did not render`);
-      continue;
+      return false;
     }
     // THE MOVABLE GOLD, measured. The band and the frame sit where the
     // template puts them (src/cards/faceRegions.js); the rotated name and the
@@ -204,19 +234,7 @@ for (const set of sets) {
       regions.faces[`${set}/${card.id}`] = measured;
     }
     if (!measureOnly) await el.screenshot({ path: resolve(out, `${card.id}.png`) });
-    done += 1;
-    if (done % 25 === 0) console.log(`  ${set}: ${done}/${wanted.length}…`);
-  }
-  console.log(`${set}: exported ${done}/${wanted.length} to public/cards/${set}/`);
-
-  if (prune && !only && !missingOnly && !staleOnly) {
-    const ids = new Set(cards.map(c => c.id));
-    const stale = readdirSync(out).filter(f => f.endsWith('.png') && !ids.has(f.slice(0, -4)));
-    for (const f of stale) rmSync(resolve(out, f));
-    if (stale.length) {
-      console.log(`  pruned ${stale.length}: ${stale.map(f => f.slice(0, -4)).join(', ')}`);
-    }
-  }
+    return true;
 }
 
 await browser.close();

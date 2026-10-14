@@ -80,3 +80,21 @@ describe('the committed Record Breakers', () => {
     expect(file.cards.filter(c => c.earn !== 'pack')).toHaveLength(8);
   });
 });
+
+// A ROW MUST SAY HOW ITS CARD IS EARNED (the final review, 2026-10-14):
+// isFeatCard treats a card with no `earn` as a pack card, so a forgotten field
+// would quietly put a feat card into the boosters. The builder refuses it.
+describe('a row\'s earn', () => {
+  it('is "pack" or a career-/season- feat id, and nothing else', async () => {
+    const { validateRow } = await import('./generateRecordBreakers.js');
+    const row = { bbrefId: 'x01', name: 'X', season: 2000, record: { number: '1', label: 'A' } };
+    expect(() => validateRow({ ...row, earn: 'pack' })).not.toThrow();
+    expect(() => validateRow({ ...row, earn: 'career-points' })).not.toThrow();
+    expect(() => validateRow({ ...row, earn: 'season-ft-pct' })).not.toThrow();
+    expect(() => validateRow({ ...row })).toThrow(/earn/);
+    expect(() => validateRow({ ...row, earn: '' })).toThrow(/earn/);
+    expect(() => validateRow({ ...row, earn: 'packs' })).toThrow(/earn/);
+    // A plaque-only row names an existing card and earns nothing.
+    expect(() => validateRow({ card: 'super-season:X', record: { number: '1', label: 'A' } })).not.toThrow();
+  });
+});

@@ -43,6 +43,19 @@ export function recordCard(built, row) {
   };
 }
 
+/**
+ * Throws unless a season row says how its card is earned: "pack", or a feat id
+ * (career-… or season-…). isFeatCard reads a card with no `earn` as a pack
+ * card, so a forgotten field would put a feat card in the boosters. A
+ * plaque-only row (`card`) earns nothing and is not asked.
+ */
+export function validateRow(row) {
+  if (row.card) return;
+  if (row.earn !== 'pack' && !/^(career|season)-[a-z0-9-]+$/.test(row.earn ?? '')) {
+    throw new Error(`${row.name} ${row.season}: earn must be "pack" or a career-/season- feat id, not ${JSON.stringify(row.earn)}`);
+  }
+}
+
 /** Throws when a row's `check` disagrees with the cached numbers. */
 export function checkRecord(row, { log = null, perPoss = null } = {}) {
   const c = row.check;
@@ -79,6 +92,7 @@ const perPossRow = (bbrefId, season) => {
 
 export async function main({ log = console.log } = {}) {
   const rows = readRows();
+  rows.forEach(validateRow);
   const cards = [];
   for (const row of rows.filter(r => !r.card)) {
     const built = await buildFreeAgent({ bbrefId: row.bbrefId, season: Number(row.season), playoffs: false, set: 'throwbacks', write: false });

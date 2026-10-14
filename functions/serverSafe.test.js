@@ -99,3 +99,24 @@ describe('the four functions added after reading the rules', () => {
     expect(b.milestoneCoins).toBe(0);
   });
 });
+
+// THE COPY IS CLOSED UNDER IMPORT (2026-10-14). packEngine.js and collections.js
+// began importing src/game/recordBreakers.js, which the list did not name; the
+// existence check above stayed green while prepare.mjs's own load check would
+// have aborted the deploy. Every relative .js import of a copied module must be
+// copied too.
+describe('what the server is given, imported', () => {
+  it('copies every module a copied module imports', () => {
+    const abs = rel => fileURLToPath(new URL(`../${rel}`, import.meta.url));
+    const copied = new Set(COPIED.map(abs));
+    const missing = [];
+    for (const rel of COPIED) {
+      const src = readFileSync(abs(rel), 'utf8');
+      for (const m of src.matchAll(/(?:import|export)[^'"]*?from\s+['"](\.{1,2}\/[^'"]+\.js)['"]/g)) {
+        const target = fileURLToPath(new URL(m[1], new URL(`../${rel}`, import.meta.url)));
+        if (!copied.has(target)) missing.push(`${rel} -> ${m[1]}`);
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+});

@@ -42,6 +42,9 @@ const COPY = [
   'src/game/rarity.js',
   'src/game/marketRules.js',
   'src/game/collections.js',
+  // Record Breakers (2026-10-14): isFeatCard and the goal switch, read by
+  // packEngine.js and collections.js.
+  'src/game/recordBreakers.js',
   'src/game/collectionDifficulty.js',
   'src/game/coinRewards.js',
   'src/game/boxScore.js',

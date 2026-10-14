@@ -59,6 +59,18 @@
   white-space: nowrap;
 }
 
+/* THE TOP BAR'S BUTTONS (Requests, Suggestions, Photo Hunt) wear the badge
+ * look, but a <button> brings the browser's own light grey fill, and the
+ * badge's muted text vanished into it (the user, 2026-10-14: "I can't read
+ * them"). So a button badge sets its own fill and full-strength text. */
+button.setBadge {
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  cursor: pointer;
+}
+button.setBadge:hover { background: var(--card-hover); }
+
 /* WRAPS INTERNALLY TOO, and that is a second fix rather than a repeat of the
  * top bar's. The bar wraps its ITEMS, and this group is one item: a group wider
  * than the bar has nowhere to wrap TO, so it just overflowed and `overflow:

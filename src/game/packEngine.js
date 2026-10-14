@@ -572,8 +572,16 @@ const NO_SUPPLY = Object.freeze({});
  * NOR A RECORD BREAKERS FEAT CARD (2026-10-14): earned by the feat, never pulled.
  */
 export function poolFor(def) {
-  return dealablePool(def).filter(c => !isUnsignedCard(c) && !isFeatCard(c));
+  return dealablePool(def).filter(dealable);
 }
+
+/**
+ * May a pack ever deal this card? The ONE test every path that builds a pool
+ * reads — poolFor, a team pack's franchise specials, franchiseHasLegendary —
+ * because a second path that forgot it is how a Lakers Team Rare Deluxe dealt
+ * LeBron's feat-only 2022-23 (the final review, 2026-10-14).
+ */
+export const dealable = c => !isUnsignedCard(c) && !isFeatCard(c);
 
 function dealablePool(def) {
   // Scoped packs name their pool; themed and team packs are NBA structures
@@ -854,7 +862,7 @@ export function generatePack(packType, options = {}) {
       ? (def.withLegends ? wnbaFranchiseLegends(options.team) : [])
       : SPECIAL_SETS_IN_PACKS
         .flatMap(id => CARD_SETS[id] ?? [])
-        .filter(c => leagueOfCard(c) === 'nba' && currentFranchise(c.team) === options.team);
+        .filter(c => dealable(c) && leagueOfCard(c) === 'nba' && currentFranchise(c.team) === options.team);
     if (def.withLegends && !wnbaTeamRareDeluxeTeams().includes(options.team)) {
       const info = getTeam(options.team, { league: 'WNBA' });
       throw new Error(`${def.name}: the ${info?.city ? `${info.city} ${info.name}` : options.team} do not have the cards for one yet (${WNBA_TEAM_RD_MIN} rare-or-better, a super rare among them)`);
@@ -1189,7 +1197,7 @@ export function franchiseHasLegendary(team, { league = 'NBA' } = {}) {
   const roster = (CARD_SETS[BASE_SET] ?? []).filter(c => c.team === team);
   const specials = SPECIAL_SETS_IN_PACKS
     .flatMap(id => CARD_SETS[id] ?? [])
-    .filter(c => leagueOfCard(c) === 'nba' && currentFranchise(c.team) === team);
+    .filter(c => dealable(c) && leagueOfCard(c) === 'nba' && currentFranchise(c.team) === team);
   return [...roster, ...specials].some(c => getPlayerRarity(c) === 'legendary');
 }
 

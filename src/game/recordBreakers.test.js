@@ -58,3 +58,20 @@ describe('the Record Breakers goal', () => {
     expect(COINS_ONLY_GOALS.has('set-record-breakers')).toBe(true);
   });
 });
+
+// TEAM PACKS TOO (the final review, 2026-10-14): a team pack takes its
+// franchise's special cards straight from SPECIAL_SETS_IN_PACKS, not through
+// poolFor, and 8 of 1,500 Lakers Team Rare Deluxes dealt LeBron's 2022-23. Every
+// path that builds a pool reads one predicate, dealable.
+describe('Record Breakers feat cards in team packs', () => {
+  it('never come out of a Lakers team pack or Team Rare Deluxe', () => {
+    for (let i = 0; i < 1500; i += 1) {
+      const pack = generatePack('team_rare_deluxe', { team: 'LAL' });
+      expect(pack.filter(c => featKeys.has(c.id)).map(c => c.id)).toEqual([]);
+    }
+    for (let i = 0; i < 500; i += 1) {
+      const pack = generatePack('team_pack', { team: 'LAL' });
+      expect(pack.filter(c => featKeys.has(c.id)).map(c => c.id)).toEqual([]);
+    }
+  });
+});

@@ -21,7 +21,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CARD_SETS, DORMANT_KEYS, PHOTO_WANTED_KEYS } from '../../src/game/cardSets.js';
+import { CARD_SETS, DORMANT_CARDS, DORMANT_KEYS, PHOTO_WANTED_KEYS } from '../../src/game/cardSets.js';
 import { IMAGE_EXTENSIONS } from '../../src/cards/sets.js';
 // The one rule the studio reads too (2026-09-24: "Photo hunt and card studio
 // aren't matching"): a placeholder is owed a photo, a dormant Throwback is not.
@@ -48,7 +48,8 @@ const SECTIONS = [
   ['wnba-set-rewards', 'WNBA Set Rewards', 'WNBA'],
   // The catch-alls, since 2026-09-24: a requested or curated Throwback is
   // live in packs and owed a photo like any card. The dormant ones are not in
-  // CARD_SETS at all, so they never appear.
+  // CARD_SETS at all, so they appear only when their photo is wanted
+  // (photoWanted on the curated entry, 2026-10-14: LeBron James 2022-23).
   ['throwbacks', 'Throwbacks', 'NBA'],
   ['wnba-throwbacks', 'WNBA Throwbacks', 'WNBA'],
 ];
@@ -79,7 +80,8 @@ function owed(setId, id, have, placeholders) {
 function rowsFor(setId, league) {
   const have = photoIds(setId);
   const placeholders = placeholderIds(setId);
-  const cards = (CARD_SETS[setId] ?? []).filter(c => owed(setId, c.id, have, placeholders));
+  const wanted = DORMANT_CARDS.filter(c => c.set === setId && PHOTO_WANTED_KEYS.has(`${c.set}:${c.id}`));
+  const cards = [...(CARD_SETS[setId] ?? []), ...wanted].filter(c => owed(setId, c.id, have, placeholders));
   cards.sort((a, b) => a.name.localeCompare(b.name));
   return cards.map(card => {
     // The season, the era-resolved team, its uniform era and the search —

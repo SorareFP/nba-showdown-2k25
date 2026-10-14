@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'record-breakers', date: '2026-10-14', title: 'Record Breakers',
+    body: "A new set for the seasons a record fell, in a platinum frame with the record lit up on a plaque across the photo. LeBron James' 2022-23 is the first (38,388, the night he passed Kareem), with Curry and Ray Allen's three-point marks, Westbrook's 182nd triple-double, Karl Malone's free throws, Stockton's 1,164 assists, Calderón's free throws and Korver's threes. Those are earned by matching the feat, which is coming soon, never from a pack. Four blocks and steals records (Hakeem, Stockton, Mark Eaton, Alvin Robertson) join the boosters as their photos are finished. Curry's 2015-16, Westbrook's 2016-17 and Stockton's 1994-95 already carry the plaque.",
+    to: 'shop', cta: 'Pack Shop',
+  },
+  {
     id: 'unsigned-players-free-agents', date: '2026-10-14', title: 'Unsigned players come off their teams',
     body: "Jordan Hawkins is a Bull now. And eight 2026-27 cards belong to players no NBA team has on its roster: Nicolas Batum, Sharife Cooper, Tyrese Martin, Gabe Vincent, Rob Dillingham, Gary Harris, Aaron Holiday and Jonas Valančiūnas. They are Free Agents now, on a plain FA card: no team, division, conference or set collection asks for them, and no pack deals them. A copy you own still plays, burns and sells. When one signs, he joins his new team, its collection and the packs again.",
     to: 'goals', cta: 'Collections',

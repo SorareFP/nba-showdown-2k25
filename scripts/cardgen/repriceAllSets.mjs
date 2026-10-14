@@ -70,6 +70,9 @@ const SPECIALS = [
   // Super Seasons, and the file generateCuratedCards writes them into.
   'demoted-wnba-super-seasons.json',
   'cards-wnba-throwbacks.json',
+  // Record Breakers (2026-10-14), built on the same line as the Throwbacks.
+  // repriceAllSets.test.js now fails on any priced card file left off this list.
+  'cards-record-breakers.json',
 ];
 for (const f of SPECIALS) {
   if (!fs.existsSync(path.join(GEN, f))) { console.log(`${f}: missing, skipped`); continue; }

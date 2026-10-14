@@ -378,6 +378,13 @@ function codesIn(raw, keep) {
  * is spelled, and the ONLY thing that can is the roster join.
  */
 export const AWARDS = [
+  // A FEAT, ENTERED BY HAND (2026-10-14). LeBron James passed Kareem
+  // Abdul-Jabbar's 38,387 points on 2023-02-07, and no column anywhere says so.
+  // `external` keeps every awards string from earning it, as with the ring;
+  // `manual` says where it comes from instead: card-data/manual-awards.json,
+  // which generateAwards.js joins by season and player. First in the row,
+  // because on the one card that holds it, it is the reason the card exists.
+  { code: 'REC', name: 'All-Time Scoring Record', file: 'Scoring_Record', external: true, manual: true },
   { code: 'MVP', name: 'Most Valuable Player' },
   {
     code: 'FMVP',

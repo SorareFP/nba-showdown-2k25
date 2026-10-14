@@ -1,4 +1,6 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, it, expect } from 'vitest';
 import {
   AWARDS_CACHE_KEY,
@@ -10,6 +12,7 @@ import {
   joinById,
   joinByName,
   loadSeasonAwards,
+  readManualAwards,
   seasonsNeeded,
   statsSeasonEndYear,
 } from './generateAwards.js';
@@ -631,5 +634,43 @@ describe('the committed file', () => {
     // miss: no rookie has won a Finals MVP in the 2004..2026 range, and only
     // Magic Johnson ever has.
     expect(AWARDS.counts[ROOKIE_SET].byCode.FMVP).toBe(0);
+  });
+});
+
+// MARKS ENTERED BY HAND (card-data/manual-awards.json, 2026-10-14): LeBron
+// James' All-Time Scoring Record on his 2022-23 Throwback.
+describe('hand-entered marks', () => {
+  const file = body => {
+    const path = join(mkdtempSync(join(tmpdir(), 'manual-awards-')), 'manual-awards.json');
+    writeFileSync(path, JSON.stringify(body));
+    return path;
+  };
+
+  it('joins a manual mark onto the player-season, beside what the column earned', () => {
+    const manual = readManualAwards(file({ _comment: 'x', 2023: { REC: { playerId: 'jamesle01', name: 'LeBron James' } } }));
+    const cards = [
+      { id: 'LeBron_James_2023', name: 'LeBron James', bbrefId: 'jamesle01', season: 2023 },
+      { id: 'Someone_2023', name: 'Someone', bbrefId: 'someone01', season: 2023 },
+    ];
+    const awards = new Map([[2023, new Map([['jamesle01', { playerId: 'jamesle01', awards: 'AS,NBA3' }]])]]);
+    const records = joinById(cards, awards, null, null, manual);
+    expect(records).toHaveLength(1);
+    expect(records[0]).toMatchObject({ id: 'LeBron_James_2023', manual: ['REC'], awards: ['REC', 'AS'] });
+  });
+
+  it('marks a season whose columns hold nothing at all', () => {
+    const manual = readManualAwards(file({ 2023: { REC: { playerId: 'jamesle01', name: 'LeBron James' } } }));
+    const cards = [{ id: 'LeBron_James_2023', name: 'LeBron James', bbrefId: 'jamesle01', season: 2023 }];
+    const [record] = joinById(cards, new Map([[2023, new Map()]]), null, null, manual);
+    expect(record).toMatchObject({ bbrefId: 'jamesle01', raw: null, awards: ['REC'] });
+  });
+
+  it('refuses a code that is not a manual mark (a typo, or a voted award typed in by hand)', () => {
+    expect(() => readManualAwards(file({ 2023: { MVP: { playerId: 'jamesle01', name: 'LeBron James' } } }))).toThrow(/not a manual mark/);
+    expect(() => readManualAwards(file({ 2023: { RECORD: { playerId: 'jamesle01', name: 'LeBron James' } } }))).toThrow(/not a manual mark/);
+  });
+
+  it('reads the committed file', () => {
+    expect(readManualAwards().get(2023)?.get('jamesle01')).toEqual(['REC']);
   });
 });

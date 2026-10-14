@@ -1,6 +1,6 @@
 {
  "set": "throwbacks",
- "generatedAt": "2026-10-01T13:10:16.987Z",
+ "generatedAt": "2026-10-14T13:51:32.934Z",
  "note": "CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json, plus demoted-super-seasons.json). Retired rewards that qualify for no other set, and Super Seasons that are no longer a Super Season (a Rookie card of the player's out-priced them, or the value pick chose another season). Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.",
  "cards": [
   {
@@ -534,6 +534,66 @@
     "set": "super-season",
     "id": "Luka_Doncic"
    }
+  },
+  {
+   "id": "LeBron_James_2023",
+   "name": "LeBron James",
+   "team": "LAL",
+   "pos": "PF",
+   "speed": 13,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 1970,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 38,
+   "games": 55,
+   "mpg": 35.5,
+   "bbrefId": "jamesle01",
+   "traded": false,
+   "metrics": {
+    "bpm": 6.1,
+    "vorp": 4,
+    "ws": 5.6,
+    "ws48": 0.138,
+    "per": 23.9
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "curated": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" Not a Dissonance card (that set is the wrong jersey, and the Lakers were his own); the user approved the record season as a Throwback (2026-10-14: \"These all work for me\"): 2022-23, when he passed Kareem Abdul-Jabbar's 38,387 on 2023-02-07. It carries a one-off All-Time Scoring Record mark (REC, card-data/manual-awards.json). Not his best season by the rule (2008-09 is) and not his rookie year (2003-04, carded)."
   },
   {
    "id": "Damian_Lillard_2020",

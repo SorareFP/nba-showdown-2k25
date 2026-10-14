@@ -63,6 +63,7 @@ import {
   CHAMPION_CODE,
   MAX_CARD_AWARDS,
   awardsEarned,
+  getAward,
   orderAwardCodes,
   postSeasonAwardsEarned,
   selectionsIn,
@@ -83,6 +84,36 @@ import {
 const GEN_DIR = path.resolve(CACHE_DIR, '..', 'generated');
 
 export const AWARDS_FILE = path.join(GEN_DIR, 'card-awards.json');
+
+/**
+ * MARKS ENTERED BY HAND (2026-10-14): a feat no Basketball-Reference column
+ * holds, LeBron James' All-Time Scoring Record the first. Season (end year) ->
+ * code -> { playerId, name }. Every card of that player-season gets the code;
+ * the base set, which carries no bbrefId and is one season, does not read it.
+ */
+export const MANUAL_AWARDS_FILE = path.join(GEN_DIR, '..', 'manual-awards.json');
+
+/**
+ * The file as `season -> playerId -> [code]`. A code not declared `manual` in
+ * src/cards/awards.js THROWS: a typo would otherwise print nothing and say
+ * nothing, and a voted award typed in here would bypass the -1 rule.
+ */
+export function readManualAwards(file = MANUAL_AWARDS_FILE) {
+  const out = new Map();
+  if (!fs.existsSync(file)) return out;
+  const { _comment, ...seasons } = JSON.parse(fs.readFileSync(file, 'utf8'));
+  for (const [season, byCode] of Object.entries(seasons)) {
+    for (const [code, { playerId }] of Object.entries(byCode)) {
+      if (getAward(code)?.manual !== true) {
+        throw new Error(`${path.basename(file)}: ${season} ${code} is not a manual mark in src/cards/awards.js`);
+      }
+      const players = out.get(Number(season)) ?? new Map();
+      players.set(playerId, [...(players.get(playerId) ?? []), code]);
+      out.set(Number(season), players);
+    }
+  }
+  return out;
+}
 
 /**
  * The cache key one season's awards column is stored under.
@@ -279,7 +310,7 @@ export function statsSeasonEndYear(set) {
  * countAwards is computed from it, and the header of src/cards/awards.js
  * quotes the result.
  */
-function awardRecord(card, row, season, championEntry = null, postRow = null) {
+function awardRecord(card, row, season, championEntry = null, postRow = null, manualCodes = []) {
   // THE RING IS A JERSEY FACT ON A SEASON CARD, AND A CHAMPION FACT ON A BASE
   // CARD. The champion join finds a player on the winning roster by id — which
   // was always enough while every card showed the team its whole season was
@@ -308,7 +339,9 @@ function awardRecord(card, row, season, championEntry = null, postRow = null) {
   // more: a Finals MVP need not have won anything in the regular season, and
   // Andre Iguodala's 2015 is exactly that card — no regular-season awards
   // string at all, and the Finals MVP.
-  if (!row && !championEntry && !postRow) return null;
+  // A hand-entered mark (manual-awards.json) is a fourth, for a season whose
+  // other three hold nothing.
+  if (!row && !championEntry && !postRow && manualCodes.length === 0) return null;
   const earned = awardsEarned(row?.awards);
   // THE PLAYOFF STRING GOES THROUGH ITS OWN DOOR, never through `awardsEarned`.
   // That is the whole guard: `postSeasonAwardsEarned` keeps only codes declared
@@ -329,7 +362,7 @@ function awardRecord(card, row, season, championEntry = null, postRow = null) {
     // they agree where both are present (the roster and the season table are
     // the same site's key for the same man); the awards row is preferred only
     // because it is the join this file was built around.
-    bbrefId: row?.playerId ?? championEntry?.playerId ?? postRow?.playerId ?? null,
+    bbrefId: row?.playerId ?? championEntry?.playerId ?? postRow?.playerId ?? card.bbrefId ?? null,
     // Null rather than absent when the only reason this card has a record is
     // the ring: `raw` is the EVIDENCE for the -1 rule, and a champion with no
     // awards string has no such evidence to record. An empty string would read
@@ -350,6 +383,9 @@ function awardRecord(card, row, season, championEntry = null, postRow = null) {
     // card have a ring" is the first question anyone will ask of the output,
     // and answering it from the file beats re-deriving it from a cache.
     champion: championEntry ? championEntry.team : null,
+    // What manual-awards.json gave this card, so the file says where a mark
+    // no column holds came from.
+    ...(manualCodes.length ? { manual: manualCodes } : {}),
     // Declared codes only — the file records what a card may PRINT, and `raw`
     // above is what it records for everything it does not. `awardsEarned` is
     // where the -1 rule and the declaration meet; `orderAwardCodes` is what
@@ -360,6 +396,7 @@ function awardRecord(card, row, season, championEntry = null, postRow = null) {
       ...earned,
       ...earnedInPlayoffs,
       ...(championEntry ? [CHAMPION_CODE] : []),
+      ...manualCodes,
     ]),
   };
 }
@@ -504,7 +541,8 @@ export function joinById(
   cards,
   awardsBySeason,
   championsBySeason = null,
-  postAwardsBySeason = null
+  postAwardsBySeason = null,
+  manualBySeason = null
 ) {
   const out = [];
   for (const card of cards) {
@@ -517,7 +555,8 @@ export function joinById(
       season.get(card.bbrefId),
       card.season,
       champions?.byId.get(card.bbrefId) ?? null,
-      post?.get(card.bbrefId) ?? null
+      post?.get(card.bbrefId) ?? null,
+      manualBySeason?.get(card.season)?.get(card.bbrefId) ?? []
     );
     if (record) out.push(record);
   }
@@ -651,6 +690,7 @@ async function main() {
     { set: THROWBACKS_SET, cards: throwbacks.cards },
   ];
   const seasons = seasonsNeeded(plan);
+  const manualBySeason = readManualAwards();
 
   const bySeason = new Map();
   const postBySeason = new Map();
@@ -723,7 +763,7 @@ async function main() {
       set,
       set === CURRENT_SET
         ? baseJoin.records
-        : joinById(cards, bySeason, championsBySeason, postBySeason),
+        : joinById(cards, bySeason, championsBySeason, postBySeason, manualBySeason),
     ])
   );
 

@@ -1,0 +1,9 @@
+{
+  "_comment": "NBA award marks entered by hand: a feat no Basketball-Reference column holds (generateAwards.js reads this; the WNBA's own file is wnba-manual-awards.json). Season (the end year), then the mark's code, then the player's Basketball-Reference id and name. Every card of that player-season prints the mark. A code here must be declared in src/cards/awards.js with `manual: true`. After an edit: node scripts/cardgen/generateAwards.js, then re-export the card's face.",
+  "2023": {
+    "REC": {
+      "playerId": "jamesle01",
+      "name": "LeBron James"
+    }
+  }
+}

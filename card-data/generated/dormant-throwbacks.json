@@ -1,6 +1,6 @@
 {
  "note": "DORMANT THROWBACKS — generator-owned Throwbacks with no photo, kept out of every set, pack and list by src/game/cardSets.js and offered to Free Agents requests instead. Written by scripts/studio/dormantThrowbacks.mjs; a photo plus an export brings a card back.",
- "count": 60,
+ "count": 61,
  "keys": [
   "throwbacks:Alperen_Sengun_2025",
   "throwbacks:Anfernee_Simons_2025",
@@ -36,6 +36,7 @@
   "throwbacks:Kyle_Kuzma_2022",
   "throwbacks:Kyle_Lowry_2016",
   "throwbacks:Larry_Bird_1985",
+  "throwbacks:LeBron_James_2023",
   "throwbacks:Lou_Williams_2020",
   "throwbacks:Luguentz_Dort_2025",
   "throwbacks:Luka_Doncic_2020",

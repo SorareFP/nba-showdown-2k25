@@ -987,3 +987,22 @@ describe('the throwback cup in team colours', () => {
     expect(field.scribble.toLowerCase()).not.toBe('#ffc72c');
   });
 });
+
+describe('the platinum treatment (Record Breakers, 2026-10-14)', () => {
+  const theme = deriveFieldTheme(TEAMS.LAL.primary, TEAMS.LAL.secondary);
+  const t = applyTreatment(theme, 'platinum');
+
+  it('keeps the team field and adds a metal frame, wider than the keyline', () => {
+    expect(t.field).toBe(theme.field);
+    expect(t.treatment.id).toBe('platinum');
+    expect(t.treatment.sheen).toBeNull();
+    expect(t.treatment.frameImage).toMatch(/linear-gradient/);
+    expect(t.treatment.frameWidth).toBeGreaterThan(7);
+  });
+
+  it('emits the frame width as a property, and 7px for every other treatment', () => {
+    expect(treatmentVars(t)['--treatment-frame-width']).toBe(`${t.treatment.frameWidth}px`);
+    expect(treatmentVars(applyTreatment(theme, 'gold-foil'))['--treatment-frame-width']).toBe('7px');
+    expect(treatmentVars(theme)).toEqual({});
+  });
+});

@@ -148,7 +148,7 @@
 .treatmentFrame {
   position: absolute;
   inset: 0;
-  border: 7px solid transparent;
+  border: var(--treatment-frame-width, 7px) solid transparent;
   border-image-source: var(--treatment-frame, none);
   border-image-slice: 1;
   pointer-events: none;

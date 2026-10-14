@@ -75,6 +75,11 @@ export const BLUE_LO = '#0B3C8C';
 // than of basketball — and it should read as its own thing at a glance.
 export const BRONZE = '#A4682F';
 export const BRONZE_LO = '#6B4220';
+// PLATINUM — the Record Breakers frame (2026-10-14, the user chose the "Lit
+// plaque" mockup: a platinum frame and pills, the record on a lit plate).
+export const PLATINUM = '#D9DCE1';
+export const PLATINUM_HI = '#F7F8FA';
+export const PLATINUM_LO = '#8C939C';
 
 /**
  * How far the FIELD's sheen is allowed to travel toward the highlight.
@@ -483,6 +488,31 @@ function blueAccent(theme) {
   };
 }
 
+/**
+ * PLATINUM — Record Breakers. The team's field, band and chart untouched, like
+ * the trims; what marks the set is a platinum frame, a metal sweep twice the
+ * keyline's width, and the platinum pill (badges.js). The record itself is the
+ * lit plaque on the photo (CardTemplate), which any card with a record wears.
+ */
+function platinumLook(theme) {
+  return {
+    ...theme,
+    frame: readableOn(PLATINUM, theme.field, MIN_DECOR_CONTRAST),
+    treatment: {
+      id: 'platinum',
+      fieldStops: [theme.field],
+      bandStops: [theme.bandTop, theme.bandBottom],
+      sheen: null,
+      band: null,
+      frameImage: foilSweep('135deg', PLATINUM, PLATINUM_HI, PLATINUM_LO),
+      frameWidth: 14,
+      bandEdge: readableOn(PLATINUM, theme.field, MIN_DECOR_CONTRAST),
+      source: PLATINUM,
+      sourceLow: PLATINUM_LO,
+    },
+  };
+}
+
 /** Every treatment, by the id a set declares in src/cards/sets.js. */
 export const TREATMENTS = {
   'gold-foil': goldFoil,
@@ -490,6 +520,7 @@ export const TREATMENTS = {
   'blue-accent': blueAccent,
   'bronze-accent': bronzeAccent,
   throwback: throwbackLook,
+  platinum: platinumLook,
 };
 
 /** The ids a set is allowed to declare. */
@@ -533,5 +564,6 @@ export function treatmentVars(theme) {
     '--treatment-band': t.band ?? 'none',
     '--treatment-frame': t.frameImage ?? 'none',
     '--treatment-band-edge': t.bandEdge ?? 'transparent',
+    '--treatment-frame-width': `${t.frameWidth ?? 7}px`,
   };
 }

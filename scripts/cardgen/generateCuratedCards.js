@@ -78,6 +78,9 @@ export function curatedCard(card, entry) {
   for (const field of REQUEST_ONLY_FIELDS) delete out[field];
   // The reason it is here travels with it, the way a legend's does.
   out.curated = entry.why;
+  // A PHOTO IS WANTED (2026-10-14): dormant like any photo-less Throwback,
+  // but listed in the Photo Hunt (PHOTO_WANTED_KEYS, src/studio/photoNeeds.js).
+  if (entry.photoWanted) out.photoWanted = true;
   return out;
 }
 

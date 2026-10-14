@@ -32,3 +32,26 @@ describe('does this card still need a photo', () => {
     expect(photoProgress(players, opts.photoIds)).toEqual({ withPhoto: 2, total: 4, missing: 2 });
   });
 });
+
+// A WANTED PHOTO (2026-10-14, the user: "add Lebron to Photo Hunt plz"): a
+// curated Throwback marked photoWanted is dormant (out of the packs) until its
+// photo lands, but the hunt owes it one.
+describe('a dormant card whose photo is wanted', () => {
+  it('is missing, so the hunt lists it; without the mark it stays dormant', () => {
+    const wanted = { ...opts, wantedKeys: new Set(['throwbacks:sleeper']) };
+    expect(photoState('throwbacks', 'sleeper', wanted)).toBe('missing');
+    expect(needsPhoto(photoState('throwbacks', 'sleeper', wanted))).toBe(true);
+    expect(photoState('throwbacks', 'sleeper', opts)).toBe('dormant');
+  });
+
+  it('is a photo like any other once one lands', () => {
+    const landed = { ...opts, photoIds: new Set(['sleeper']), wantedKeys: new Set(['throwbacks:sleeper']) };
+    expect(photoState('throwbacks', 'sleeper', landed)).toBe('photo');
+  });
+
+  it('is LeBron James 2022-23, dormant and wanted', async () => {
+    const { DORMANT_KEYS, PHOTO_WANTED_KEYS } = await import('../game/cardSets.js');
+    expect(PHOTO_WANTED_KEYS.has('throwbacks:LeBron_James_2023')).toBe(true);
+    expect(DORMANT_KEYS.has('throwbacks:LeBron_James_2023')).toBe(true);
+  });
+});

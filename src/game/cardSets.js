@@ -141,6 +141,12 @@ const REQUESTED = new Set((freeAgents.cards ?? []).map(c => `${c.set}:${c.id}`))
 const GENERATED_THROWBACKS = [...(throwbacks.cards ?? []), ...(wnbaThrowbacks.cards ?? [])]
   .filter(c => c?.set && !REQUESTED.has(`${c.set}:${c.id}`));
 export const DORMANT_KEYS = new Set(dormant.keys ?? []);
+/**
+ * Generator Throwbacks whose photo is WANTED (`photoWanted` on the curated
+ * entry, 2026-10-14: LeBron James' 2022-23). Dormant all the same until the
+ * photo lands, but the Photo Hunt lists them (photoNeeds.js).
+ */
+export const PHOTO_WANTED_KEYS = new Set(GENERATED_THROWBACKS.filter(c => c.photoWanted).map(c => `${c.set}:${c.id}`));
 export const DORMANT_CARDS = GENERATED_THROWBACKS
   .filter(c => DORMANT_KEYS.has(`${c.set}:${c.id}`) && !hasMigratedOut(c.set, c.id))
   .map(c => ({ ...c }));

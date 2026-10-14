@@ -1,5 +1,5 @@
 {
-  "_comment": "CURATED THROWBACKS (2026-09-22). A card that stops being a reward and qualifies for no other set — not a rookie year, not the career's best season, not a playoff run, not the current season — becomes a Throwback, by the user's rule (2026-09-18): \"If a card does not qualify for super season or rookie (or dissonance), 26-27, they should be throwbacks.\" These are built by scripts/cardgen/generateCuratedCards.js through the Free Agents builder into card-data/generated/cards-throwbacks.json, a GENERATOR-OWNED file — never into cards-free-agents.json, which the Card Studio writes whole. Throwbacks ids always carry the season (Bradley_Beal_2021). Rows: bbrefId, name, season (the end year), set, why.",
+  "_comment": "CURATED THROWBACKS (2026-09-22). A card that stops being a reward and qualifies for no other set — not a rookie year, not the career's best season, not a playoff run, not the current season — becomes a Throwback, by the user's rule (2026-09-18): \"If a card does not qualify for super season or rookie (or dissonance), 26-27, they should be throwbacks.\" These are built by scripts/cardgen/generateCuratedCards.js through the Free Agents builder into card-data/generated/cards-throwbacks.json, a GENERATOR-OWNED file — never into cards-free-agents.json, which the Card Studio writes whole. Throwbacks ids always carry the season (Bradley_Beal_2021). Rows: bbrefId, name, season (the end year), set, why, and optionally photoWanted: true to list a photo-less card in the Photo Hunt (it stays out of packs until the photo lands).",
   "cards": [
     {
       "bbrefId": "bealbr01",
@@ -133,7 +133,8 @@
       "name": "LeBron James",
       "season": 2023,
       "set": "throwbacks",
-      "why": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" Not a Dissonance card (that set is the wrong jersey, and the Lakers were his own); the user approved the record season as a Throwback (2026-10-14: \"These all work for me\"): 2022-23, when he passed Kareem Abdul-Jabbar's 38,387 on 2023-02-07. It carries a one-off All-Time Scoring Record mark (REC, card-data/manual-awards.json). Not his best season by the rule (2008-09 is) and not his rookie year (2003-04, carded)."
+      "why": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" Not a Dissonance card (that set is the wrong jersey, and the Lakers were his own); the user approved the record season as a Throwback (2026-10-14: \"These all work for me\"): 2022-23, when he passed Kareem Abdul-Jabbar's 38,387 on 2023-02-07. It carries a one-off All-Time Scoring Record mark (REC, card-data/manual-awards.json). Not his best season by the rule (2008-09 is) and not his rookie year (2003-04, carded).",
+      "photoWanted": true
     }
   ]
 }

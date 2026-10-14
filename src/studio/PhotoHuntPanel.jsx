@@ -11,14 +11,14 @@ import { useMemo, useState } from 'react';
 import { photoState, needsPhoto } from './photoNeeds.js';
 import { huntTarget, stratSearchUrl } from './photoSearch.js';
 import { uploadPhoto, isImageFile } from './api.js';
-import { DORMANT_KEYS } from '../game/cardSets.js';
+import { DORMANT_KEYS, PHOTO_WANTED_KEYS } from '../game/cardSets.js';
 import s from './PhotoHuntPanel.module.css';
 
 /**
  * The owed cards, grouped by source: every editable, primary source in
  * SOURCES order, each card once per set (two sources can share a folder).
  */
-export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dormantKeys = DORMANT_KEYS } = {}) {
+export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dormantKeys = DORMANT_KEYS, wantedKeys = PHOTO_WANTED_KEYS } = {}) {
   const seen = new Set();
   const groups = [];
   for (const src of Object.values(sources)) {
@@ -29,7 +29,7 @@ export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dorman
     for (const p of src.players) {
       const key = `${src.set}:${p.id}`;
       if (seen.has(key)) continue;
-      const state = photoState(src.set, p.id, { photoIds, placeholders, dormantKeys });
+      const state = photoState(src.set, p.id, { photoIds, placeholders, dormantKeys, wantedKeys });
       if (!needsPhoto(state)) continue;
       seen.add(key);
       if (src.template === 'strat') {

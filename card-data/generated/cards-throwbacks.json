@@ -1,6 +1,6 @@
 {
  "set": "throwbacks",
- "generatedAt": "2026-10-14T13:51:32.934Z",
+ "generatedAt": "2026-10-14T14:36:42.070Z",
  "note": "CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json, plus demoted-super-seasons.json). Retired rewards that qualify for no other set, and Super Seasons that are no longer a Super Season (a Rookie card of the player's out-priced them, or the value pick chose another season). Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.",
  "cards": [
   {
@@ -593,7 +593,8 @@
    },
    "provisional": false,
    "set": "throwbacks",
-   "curated": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" Not a Dissonance card (that set is the wrong jersey, and the Lakers were his own); the user approved the record season as a Throwback (2026-10-14: \"These all work for me\"): 2022-23, when he passed Kareem Abdul-Jabbar's 38,387 on 2023-02-07. It carries a one-off All-Time Scoring Record mark (REC, card-data/manual-awards.json). Not his best season by the rule (2008-09 is) and not his rookie year (2003-04, carded)."
+   "curated": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" Not a Dissonance card (that set is the wrong jersey, and the Lakers were his own); the user approved the record season as a Throwback (2026-10-14: \"These all work for me\"): 2022-23, when he passed Kareem Abdul-Jabbar's 38,387 on 2023-02-07. It carries a one-off All-Time Scoring Record mark (REC, card-data/manual-awards.json). Not his best season by the rule (2008-09 is) and not his rookie year (2003-04, carded).",
+   "photoWanted": true
   },
   {
    "id": "Damian_Lillard_2020",

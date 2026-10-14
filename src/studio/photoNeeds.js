@@ -17,14 +17,19 @@
 //                  every pack until someone requests it (dormantThrowbacks.mjs):
 //                  a photo would wake it, but none is owed — the user (same
 //                  day): "This is just too many new photos to find"
+//                  UNLESS ITS PHOTO IS WANTED (2026-10-14, the user: "add
+//                  Lebron to Photo Hunt plz"): a curated Throwback marked
+//                  `photoWanted` still sits out of the packs until it has one,
+//                  but it is 'missing', so the hunt lists it
 //
-// Pure: the caller brings the photo ids, the placeholder ids and the dormant
-// keys (`set:id`), so Node and the browser read it the same way.
+// Pure: the caller brings the photo ids, the placeholder ids, the dormant keys
+// and the wanted keys (`set:id`), so Node and the browser read it the same way.
 
 /** The state of one card's photo. */
-export function photoState(setId, id, { photoIds = new Set(), placeholders = new Set(), dormantKeys = new Set() } = {}) {
+export function photoState(setId, id, { photoIds = new Set(), placeholders = new Set(), dormantKeys = new Set(), wantedKeys = new Set() } = {}) {
   if (photoIds.has(id)) return placeholders.has(id) ? 'placeholder' : 'photo';
-  if (dormantKeys.has(`${setId}:${id}`)) return 'dormant';
+  const key = `${setId}:${id}`;
+  if (dormantKeys.has(key) && !wantedKeys.has(key)) return 'dormant';
   return 'missing';
 }
 

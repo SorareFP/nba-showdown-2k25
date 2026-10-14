@@ -49,7 +49,7 @@ import {
 import styles from './Studio.module.css';
 import { photoState, needsPhoto } from './photoNeeds.js';
 import { readSeen, writeSeen, markSeen, markAllSeen, unseenPhotos, flaggedPhotos } from './photoSeen.js';
-import { DORMANT_KEYS } from '../game/cardSets.js';
+import { DORMANT_KEYS, PHOTO_WANTED_KEYS } from '../game/cardSets.js';
 import RequestsPanel from './RequestsPanel.jsx';
 import SuggestionsPanel from './SuggestionsPanel.jsx';
 import PhotoHuntPanel, { huntRows } from './PhotoHuntPanel.jsx';
@@ -194,7 +194,7 @@ export default function Studio() {
       const have = new Set(allPhotos[src.set] ?? []);
       if (!have.size || !src.players.length) continue;
       const ph = new Set(allPlaceholders[src.set] ?? []);
-      const owed = p => needsPhoto(photoState(src.set, p.id, { photoIds: have, placeholders: ph, dormantKeys: DORMANT_KEYS }));
+      const owed = p => needsPhoto(photoState(src.set, p.id, { photoIds: have, placeholders: ph, dormantKeys: DORMANT_KEYS, wantedKeys: PHOTO_WANTED_KEYS }));
       if (!src.players.some(owed)) done.push(src.key);
     }
     return done;
@@ -218,7 +218,7 @@ export default function Studio() {
   // THE SHARED RULE for this set's rows (photoNeeds.js): what the Photo Hunt lists.
   const stateOf = useMemo(() => {
     const ph = new Set(placeholders);
-    return id => photoState(activeSet, id, { photoIds, placeholders: ph, dormantKeys: DORMANT_KEYS });
+    return id => photoState(activeSet, id, { photoIds, placeholders: ph, dormantKeys: DORMANT_KEYS, wantedKeys: PHOTO_WANTED_KEYS });
   }, [activeSet, photoIds, placeholders]);
   const visible = useMemo(
     () => filterPlayers(players, { query, missingOnly, photoIds, stateOf }),

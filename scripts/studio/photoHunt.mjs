@@ -21,7 +21,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CARD_SETS, DORMANT_KEYS } from '../../src/game/cardSets.js';
+import { CARD_SETS, DORMANT_KEYS, PHOTO_WANTED_KEYS } from '../../src/game/cardSets.js';
 import { IMAGE_EXTENSIONS } from '../../src/cards/sets.js';
 // The one rule the studio reads too (2026-09-24: "Photo hunt and card studio
 // aren't matching"): a placeholder is owed a photo, a dormant Throwback is not.
@@ -73,7 +73,7 @@ function placeholderIds(set) {
 
 /** Owed a photo, by the rule the studio shares (src/studio/photoNeeds.js). */
 function owed(setId, id, have, placeholders) {
-  return needsPhoto(photoState(setId, id, { photoIds: have, placeholders, dormantKeys: DORMANT_KEYS }));
+  return needsPhoto(photoState(setId, id, { photoIds: have, placeholders, dormantKeys: DORMANT_KEYS, wantedKeys: PHOTO_WANTED_KEYS }));
 }
 
 function rowsFor(setId, league) {

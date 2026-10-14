@@ -41,9 +41,10 @@ import styles from '../SeasonTab.module.css';
 import dy from './Dynasty.module.css';
 
 const cardOf = key => getCardByKey(key) ?? null;
-const SET_WORD = {
+export const SET_WORD = {
   rookie: 'Rookie', 'super-season': 'Super Season', 'summer-standouts': 'Standouts', dissonance: 'Dissonance',
   'team-rewards': 'Team Reward', 'set-rewards': 'Set Reward', throwbacks: 'Throwback',
+  'record-breakers': 'Record Breaker',
 };
 const HOW = { imported: 'brought in', brought: 'brought', draft: 'drafted', resign: 're-signed', fa: 'free agent', rookie: 'rookie scale', fill: 'minimum', waivers: 'off waivers' };
 const YEARS = Array.from({ length: CONTRACT_YEARS.max - CONTRACT_YEARS.min + 1 }, (_, i) => CONTRACT_YEARS.min + i);

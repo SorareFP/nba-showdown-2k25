@@ -32,6 +32,7 @@
 // (marketRules.js burnProblem).
 import { useState, useMemo, useCallback } from 'react';
 import { ALL_CARDS, cardKey, BASE_SET, canonicalKey } from '../game/cardSets.js';
+import { SETS } from '../cards/sets.js';
 import { wantText } from '../game/friends.js';
 import { STRATS } from '../game/strats.js';
 import { ZoomImg } from './CardLightbox.jsx';
@@ -49,18 +50,13 @@ const RARITIES = ['all', ...RARITY_ORDER];
 const TYPES = ['all', 'player', 'strat'];
 
 /** Set id -> the label shown in the filter, in ladder order. */
-const SET_LABELS = {
-  [BASE_SET]: '2026-27 Base',
-  'super-season': 'Super Season',
-  rookie: 'Rookie',
-  'summer-standouts': 'Summer Standouts',
-  dissonance: 'Dissonance',
-  'team-rewards': 'Team Rewards',
-  wnba: 'WNBA',
-  'wnba-super-season': 'WNBA Super Season',
-  'wnba-rookie': 'WNBA Rookie',
-  'wnba-team-rewards': 'WNBA Team Rewards',
-};
+/**
+ * Every set's name, from the set registry (sets.js) — a hand-kept table here
+ * never learned Throwbacks, Set Rewards or Record Breakers, so an owned card of
+ * one showed its raw id and the set filter left it out (2026-10-14). The base
+ * set keeps its longer name.
+ */
+export const SET_LABELS = Object.fromEntries(SETS.map(s => [s.id, s.id === BASE_SET ? '2026-27 Base' : s.name]));
 
 export default function MyCollection({ collection, onBurn, onList, onUnlist = null, listedByCard = {}, onCollect, onCollectAll = null, collectableCount = 0, friendWants = new Map(), initialCopiesFilter = 'all' }) {
   const [typeFilter, setTypeFilter] = useState('all');

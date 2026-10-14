@@ -100,7 +100,7 @@
 // every live and defunct franchise, on treated AND untreated fields, in
 // src/cards/treatments.test.js.
 import { MIN_ACCENT_CONTRAST, pickInkFor, readableOn } from './fieldTheme.js';
-import { GOLD, BLUE } from './treatments.js';
+import { GOLD, BLUE, PLATINUM } from './treatments.js';
 
 /**
  * The badge ids.
@@ -122,6 +122,8 @@ export const SET_REWARD_BADGE = 'set-reward';
 export const THROWBACK_BADGE = 'throwback';
 /** The Live Series (2026-09-23): a 2026-27 card whose numbers move with the season. */
 export const LIVE_BADGE = 'live';
+/** Record Breakers (2026-10-14): a season a record was set. */
+export const RECORD_BREAKERS_BADGE = 'record-breakers';
 
 /**
  * The salary at which a best season is a SUPER season.
@@ -351,6 +353,14 @@ export const BADGES = [
     id: LIVE_BADGE,
     text: 'LIVE',
     fill: theme => readableOn(BLUE, theme.field, MIN_ACCENT_CONTRAST),
+  },
+  {
+    // The RECORD BREAKERS pill — the user's words, on two lines because the
+    // 127px pill holds about eleven characters. The second pill (after LIVE)
+    // that IS its set's colour: platinum, as the frame is.
+    id: RECORD_BREAKERS_BADGE,
+    text: 'RECORD\nBREAKERS',
+    fill: theme => readableOn(PLATINUM, theme.field, MIN_ACCENT_CONTRAST),
   },
 ];
 

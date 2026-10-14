@@ -729,7 +729,9 @@
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 1px;
-  white-space: nowrap;
+  /* pre, not nowrap: identical for a one-line label, and it keeps the break
+   * in RECORD / BREAKERS (badges.js), the one two-line pill. */
+  white-space: pre;
   border-radius: 4px;
   background: var(--badge-fill, var(--accent-on-field));
   color: var(--badge-ink, var(--field-ink));

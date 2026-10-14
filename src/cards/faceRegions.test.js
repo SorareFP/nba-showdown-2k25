@@ -40,7 +40,9 @@ describe('faceRegions', () => {
   it('puts the gold band where .topBand is and the ring where the treatment frame is', () => {
     expect(BAND_POLYGON[2][1]).toBeCloseTo(rule('topBand', 'height') / FACE_H, 4);
     expect(FRAME_RING.inner[0][0]).toBeCloseTo(7 / FACE_W, 4);
-    expect(css).toMatch(/\.treatmentFrame \{[^}]*border: 7px solid transparent/);
+    // 7px is the frame's default; only Record Breakers' platinum widens it, and
+    // a platinum face has no gold ring for the foil to trace.
+    expect(css).toMatch(/\.treatmentFrame \{[^}]*border: var\(--treatment-frame-width, 7px\) solid transparent/);
   });
 
   it('emits clip-paths in percentages, even-odd for the ring', () => {

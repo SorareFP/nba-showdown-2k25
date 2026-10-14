@@ -44,7 +44,9 @@ import {
   SUPER_SEASON_MIN_SALARY,
   badgeColors,
   badgeLabels,
+  badgeLabel,
   getBadge,
+  RECORD_BREAKERS_BADGE,
 } from './badges.js';
 import {
   CURRENT_SET,
@@ -1608,10 +1610,19 @@ describe('the season and the card-type badge', () => {
     const labels = badgeLabels(SETS.map(s => s.statsSeason));
     expect(labels.length).toBeGreaterThan(BADGES.length); // non-vacuous, and dated
     expect(labels).toContain('25-26 ROOKIE');
+    expect(labels).toContain('RECORD\nBREAKERS');
     for (const label of labels) {
-      const width = label.length * (0.7 * size + tracking);
+      // A two-line pill (RECORD / BREAKERS) is measured by its longest line.
+      const longest = Math.max(...label.split('\n').map(line => line.length));
+      const width = longest * (0.7 * size + tracking);
       expect(width, `${label} at ${size}px`).toBeLessThanOrEqual(inner);
     }
+  });
+
+  it('declares RECORD BREAKERS on two lines (the user\'s words, 2026-10-14)', () => {
+    expect(badgeLabel(getBadge(RECORD_BREAKERS_BADGE))).toBe('RECORD\nBREAKERS');
+    // pre keeps the line break and never wraps a one-line label.
+    expect(cssBlock('.badge')).toMatch(/white-space:\s*pre;/);
   });
 
   it('stays inside the bar, clear of the card frame', () => {

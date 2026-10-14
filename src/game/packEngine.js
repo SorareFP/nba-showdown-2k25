@@ -18,6 +18,7 @@ import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
 import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
 import { currentFranchise, currentFranchiseFor, WNBA_HISTORICAL_TEAMS, WNBA_TEAMS, wnbaFranchiseOf, getTeam, isUnsignedCard } from '../cards/teams.js';
 import { getPlayerRarity, getStratRarity, PACK_WEIGHTS, RARITY_ORDER } from './rarity.js';
+import { isFeatCard } from './recordBreakers.js';
 
 // NBA divisions and conferences for themed packs
 const CONFERENCES = {
@@ -356,6 +357,9 @@ export const PACK_TYPES = {
 // WNBA twins are earned, not pulled, and that was already symmetric.
 export const SPECIAL_SETS_IN_PACKS = [
   'super-season', 'rookie', 'summer-standouts', 'dissonance',
+  // Record Breakers (2026-10-14): only its pack cards (blocks and steals) are
+  // ever dealt; poolFor drops the feat cards, which are earned, not pulled.
+  'record-breakers',
   'wnba-super-season', 'wnba-rookie',
   // The Live Series joins the boosters at the special share once the season
   // is on (2026-09-23; LIVE_SERIES_ON in liveSeries.js is the switch).
@@ -565,9 +569,10 @@ const NO_SUPPLY = Object.freeze({});
  * NO PACK DEALS AN UNSIGNED PLAYER (the user, 2026-10-14: "Out of packs until
  * he signs"). His card stays in its set, so a copy someone holds still plays,
  * burns and sells, but every pack's pool passes through here and leaves him out.
+ * NOR A RECORD BREAKERS FEAT CARD (2026-10-14): earned by the feat, never pulled.
  */
 export function poolFor(def) {
-  return dealablePool(def).filter(c => !isUnsignedCard(c));
+  return dealablePool(def).filter(c => !isUnsignedCard(c) && !isFeatCard(c));
 }
 
 function dealablePool(def) {

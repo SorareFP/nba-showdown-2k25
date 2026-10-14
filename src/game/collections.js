@@ -35,6 +35,7 @@ import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
 import { CONFERENCES } from './packEngine.js';
 import { notionalPrice } from './rarity.js';
 import { isUnsignedCard } from '../cards/teams.js';
+import { RECORD_BREAKERS_GOAL_ON } from './recordBreakers.js';
 
 export const REWARD_SET = 'team-rewards';
 export const WNBA_REWARD_SET = 'wnba-team-rewards';
@@ -117,6 +118,9 @@ export const SPECIAL_SETS = [
   { id: 'rookie',            label: 'Rookie',            league: 'NBA' },
   { id: 'summer-standouts',  label: 'Summer Standouts',  league: 'NBA' },
   { id: 'dissonance',        label: 'Dissonance',        league: 'NBA' },
+  // Record Breakers (2026-10-14): its feat cards count too — earned, not
+  // pulled — so its goal opens with the feats (RECORD_BREAKERS_GOAL_ON).
+  ...(RECORD_BREAKERS_GOAL_ON ? [{ id: 'record-breakers', label: 'Record Breakers', league: 'NBA' }] : []),
   // The Live Series' goal opens with the season (2026-09-23, LIVE_SERIES_ON).
   ...(LIVE_SERIES_ON ? [{ id: 'live', label: 'Live Series', league: 'NBA' }] : []),
   { id: 'wnba-super-season', label: 'WNBA Super Season', league: 'WNBA' },
@@ -230,7 +234,9 @@ export const GOAL_CARD_KEYS = new Set(GOALS.flatMap(g => g.requires));
  * difficulty band for those and none for these, because a rarity chip on a goal
  * that will never mint a card advertises something that is not coming.
  */
-export const COINS_ONLY_GOALS = new Set(['wnba-team-TOR', 'wnba-team-GSV']);
+// Record Breakers too, by the user's word (2026-10-14): "Does not need to have a
+// reward card."
+export const COINS_ONLY_GOALS = new Set(['wnba-team-TOR', 'wnba-team-GSV', ...(RECORD_BREAKERS_GOAL_ON ? ['set-record-breakers'] : [])]);
 
 /**
  * Progress on one goal.

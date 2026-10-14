@@ -16873,8 +16873,26 @@
         0.5999
       ],
       "badge": null
+    },
+    "super-season/Cole_Anthony": {
+      "name": [
+        0.0252,
+        0.1544,
+        0.1253,
+        0.6531
+      ],
+      "badge": null
+    },
+    "throwbacks/LeBron_James_2023": {
+      "name": [
+        0.0252,
+        0.1464,
+        0.1253,
+        0.6692
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-10-11T16:21:15.046Z",
+  "generatedAt": "2026-10-14T14:10:31.784Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

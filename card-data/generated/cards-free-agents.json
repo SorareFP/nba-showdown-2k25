@@ -1698,6 +1698,68 @@
    "requestId": "qWZhre9GLt2LP03Lbe8D",
    "builtAt": "2026-10-01T15:53:30.666Z",
    "rebuiltAt": "2026-10-07T13:48:37.529Z"
+  },
+  {
+   "id": "Cole_Anthony",
+   "name": "Cole Anthony",
+   "team": "ORL",
+   "pos": "PG",
+   "speed": 11,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 680,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 22,
+   "games": 60,
+   "mpg": 25.9,
+   "bbrefId": "anthoco01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.3,
+    "vorp": 1.3,
+    "ws": 3.7,
+    "ws48": 0.116,
+    "per": 16
+   },
+   "provisional": false,
+   "set": "super-season",
+   "requested": true,
+   "requestId": "ic2Oll505002z7oJDeSo",
+   "builtAt": "2026-10-14T13:03:20.465Z"
   }
  ]
 }

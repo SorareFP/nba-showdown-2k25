@@ -13,7 +13,7 @@
 // and not to a group shows up in "More" instead of vanishing, so the two can
 // not silently drift apart again.
 import { useMemo, useState } from 'react';
-import { PACK_TYPES, CONFERENCES, DIVISIONS, franchiseHasLegendary } from '../game/packEngine.js';
+import { PACK_TYPES, CONFERENCES, DIVISIONS, franchiseHasLegendary, wnbaTeamRareDeluxeTeams } from '../game/packEngine.js';
 import { TEAM_CODES, WNBA_TEAM_CODES } from '../game/collections.js';
 import { getTeam } from '../cards/teams.js';
 import { useDialogs } from '../ui/dialogs.jsx';
@@ -41,6 +41,8 @@ export const PACK_COPY = {
   conference_rare_deluxe: { group: 'Targeted', desc: '3 players from one conference, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine', pick: 'conference' },
   team_rare_deluxe:       { group: 'Targeted', desc: '3 players from ONE franchise, its special sets included, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine', pick: 'team' },
   wnba_rare_deluxe:       { group: 'Targeted', desc: '3 WNBA players, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine' },
+  // Its own picker: only the franchises with three rare-or-better cards to deal (wnbaTeamRareDeluxeTeams).
+  wnba_team_rare_deluxe:  { group: 'Targeted', desc: '3 players from ONE WNBA franchise, its legends included, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine', pick: 'wnbaTeamRD' },
 
   rare_deluxe:    { group: 'Premium', desc: '3 players, every one rare or better (a super rare one time in three) · a Legendary about one pack in nine' },
   super_deluxe:   { group: 'Premium', desc: '1 guaranteed super rare + 2 more rare or better (a super rare one time in three) · a Legendary about one pack in four' },
@@ -76,6 +78,9 @@ export default function PackShop({ currency, onBuyPack }) {
   const [div, setDiv] = useState('Atlantic');
   const [team, setTeam] = useState(TEAM_CODES[0]);
   const [wnbaTeam, setWnbaTeam] = useState(WNBA_TEAM_CODES[0]);
+  // The WNBA Team Rare Deluxe keeps its own pick: its list is shorter than the Team Pack's.
+  const rdTeams = useMemo(wnbaTeamRareDeluxeTeams, []);
+  const [wnbaRdTeam, setWnbaRdTeam] = useState(() => rdTeams[0]);
 
   const packs = useMemo(shopPacks, []);
   const coins = currency ?? 0;
@@ -90,14 +95,18 @@ export default function PackShop({ currency, onBuyPack }) {
     if (pack.pick === 'division') opts.division = div;
     if (pack.pick === 'team') opts.team = team;
     if (pack.pick === 'wnbaTeam') opts.team = wnbaTeam;
+    if (pack.pick === 'wnbaTeamRD') opts.team = wnbaRdTeam;
     if (pack.def.price > 0) {
-      const detail = pack.pick === 'conference' ? ` (${conf})` : pack.pick === 'division' ? ` (${div})` : pack.pick === 'team' ? ` (${getTeam(team)?.name ?? team})` : pack.pick === 'wnbaTeam' ? ` (${getTeam(wnbaTeam, { league: 'WNBA' })?.name ?? wnbaTeam})` : '';
+      const detail = pack.pick === 'conference' ? ` (${conf})` : pack.pick === 'division' ? ` (${div})` : pack.pick === 'team' ? ` (${getTeam(team)?.name ?? team})` : pack.pick === 'wnbaTeam' ? ` (${getTeam(wnbaTeam, { league: 'WNBA' })?.name ?? wnbaTeam})` : pack.pick === 'wnbaTeamRD' ? ` (${getTeam(wnbaRdTeam, { league: 'WNBA' })?.name ?? wnbaRdTeam})` : '';
       const yes = await ask({
         title: `Buy ${pack.def.name}${detail}?`,
         // A franchise with no Legendary card is told before the coins move.
         body: `${pack.def.price.toLocaleString()} coins. You have ${coins.toLocaleString()}.`
           + (pack.key === 'team_rare_deluxe' && !franchiseHasLegendary(team)
             ? ` The ${getTeam(team, { league: 'NBA' })?.name ?? team} have no Legendary card, so this pack's Legendary roll pays a super rare instead.`
+            : '')
+          + (pack.key === 'wnba_team_rare_deluxe' && !franchiseHasLegendary(wnbaRdTeam, { league: 'WNBA' })
+            ? ` The ${getTeam(wnbaRdTeam, { league: 'WNBA' })?.name ?? wnbaRdTeam} have no Legendary card, so this pack's Legendary roll pays a super rare instead.`
             : ''),
         confirmLabel: `Buy for ${pack.def.price.toLocaleString()}`,
       });
@@ -134,6 +143,16 @@ export default function PackShop({ currency, onBuyPack }) {
     // THE WNBA PICKER READS THE WNBA TABLE, and only it: seven codes name a
     // team in both leagues, so a shared picker would print the Hawks for
     // the Dream.
+    if (pack.pick === 'wnbaTeamRD') {
+      return (
+        <select className={styles.selector} value={wnbaRdTeam} onChange={e => setWnbaRdTeam(e.target.value)} title="Franchises with at least three rare-or-better cards to deal">
+          {rdTeams.map(t => {
+            const info = getTeam(t, { league: 'WNBA' });
+            return <option key={t} value={t}>{info?.city ? `${info.city} ${info.name}` : t}</option>;
+          })}
+        </select>
+      );
+    }
     if (pack.pick === 'wnbaTeam') {
       return (
         <select className={styles.selector} value={wnbaTeam} onChange={e => setWnbaTeam(e.target.value)}>

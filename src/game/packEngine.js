@@ -16,7 +16,7 @@
 import { STRATS } from './strats.js';
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
 import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
-import { currentFranchise, currentFranchiseFor, WNBA_HISTORICAL_TEAMS } from '../cards/teams.js';
+import { currentFranchise, currentFranchiseFor, WNBA_HISTORICAL_TEAMS, WNBA_TEAMS, wnbaFranchiseOf, getTeam } from '../cards/teams.js';
 import { getPlayerRarity, getStratRarity, PACK_WEIGHTS, RARITY_ORDER } from './rarity.js';
 
 // NBA divisions and conferences for themed packs
@@ -189,6 +189,15 @@ export const PACK_TYPES = {
   conference_rare_deluxe: { name: 'Conference Rare Deluxe', players: 3, strats: 1, price: 750,  themed: 'conference', allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true, requireScope: true },
   team_rare_deluxe:       { name: 'Team Rare Deluxe',       players: 3, strats: 1, price: 1875, needsTeam: true,      allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true, requireScope: true },
   wnba_rare_deluxe:       { name: 'WNBA Rare Deluxe',       players: 3, strats: 1, price: 750,  pool: 'wnba',         allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true },
+  // THE WNBA TEAM RARE DELUXE (the user, 2026-10-14: "We should have WNBA Team
+  // Rare Deluxes too"). The Team Rare Deluxe over ONE WNBA franchise, at its
+  // price: the 2026 roster and the franchise's legends in the WNBA special
+  // sets (`withLegends`), as the NBA pack takes its franchise's special sets.
+  // The WNBA Team Pack stays roster-only, as it was asked for. A franchise
+  // with fewer than WNBA_TEAM_RD_MIN rare-or-better cards is not stocked
+  // (wnbaTeamRareDeluxeTeams): Toronto, an expansion team with one, would
+  // deal that card three times.
+  wnba_team_rare_deluxe:  { name: 'WNBA Team Rare Deluxe',  players: 3, strats: 1, price: 1875, needsTeam: true, pool: 'wnba', withLegends: true, allRarePlus: true, srShare: RARE_PLUS_SR_SHARE, apexOdds: 0.115, distinct: true, requireScope: true },
   // ── THE SET PACKS EARN THEIR PRICE WITH A GUARANTEE, NOT WITH THEIR POOL ──
   //
   // Super Season is a genuinely elite pool — median salary $840 against the
@@ -824,9 +833,17 @@ export function generatePack(packType, options = {}) {
     // on this filter. The WNBA team pack deals the franchise's BASE cards
     // (the user's ask, "pool 'wnba' + team"); its legends stay in the WNBA
     // set packs and the boosters.
-    const specials = def.pool === 'wnba' ? [] : SPECIAL_SETS_IN_PACKS
-      .flatMap(id => CARD_SETS[id] ?? [])
-      .filter(c => leagueOfCard(c) === 'nba' && currentFranchise(c.team) === options.team);
+    const specials = def.pool === 'wnba'
+      // The WNBA Team Rare Deluxe takes the franchise's legends too, and only
+      // for a franchise with enough rare-or-better cards to fill it.
+      ? (def.withLegends ? wnbaFranchiseLegends(options.team) : [])
+      : SPECIAL_SETS_IN_PACKS
+        .flatMap(id => CARD_SETS[id] ?? [])
+        .filter(c => leagueOfCard(c) === 'nba' && currentFranchise(c.team) === options.team);
+    if (def.withLegends && !wnbaTeamRareDeluxeTeams().includes(options.team)) {
+      const info = getTeam(options.team, { league: 'WNBA' });
+      throw new Error(`${def.name}: the ${info?.city ? `${info.city} ${info.name}` : options.team} do not have the cards for one yet (${WNBA_TEAM_RD_MIN} rare-or-better, a super rare among them)`);
+    }
     playerPool = [...roster, ...specials];
     if (roster.length === 0) {
       throw new Error(
@@ -911,7 +928,10 @@ export function generatePack(packType, options = {}) {
   // pickInBand hands back a stray card when its band is empty, which never
   // happened while every apexOdds pack drew on a pool that has legendaries;
   // an aimed pool may not.
-  const apexBand = playerPool.some(c => getPlayerRarity(c) === 'legendary') ? 'legendary' : 'super-rare';
+  // And a pool with no super rare either (the Fire, the Sky and the Sparks in
+  // the WNBA Team Rare Deluxe, 2026-10-14) pays it in a rare: the best band the
+  // pool HAS, never pickInBand's stray card from below rare.
+  const apexBand = apexBandFor(playerPool);
   let apexDealt = false;
   const apexNow = () => apexHit && !apexDealt;
   const dealApex = () => {
@@ -1113,7 +1133,44 @@ export const MAX_DUPES_PER_PACK = 2;
  * Hornets do not, base or special, and a Team Rare Deluxe pays their legendary
  * roll in a super rare. The shop says so before the coins move.
  */
-export function franchiseHasLegendary(team) {
+/** A WNBA franchise's legends in the special sets the packs deal (wnbaFranchiseOf reads the era codes). */
+function wnbaFranchiseLegends(team) {
+  return SPECIAL_SETS_IN_PACKS.filter(id => id.startsWith('wnba'))
+    .flatMap(id => CARD_SETS[id] ?? [])
+    .filter(c => wnbaFranchiseOf(c.team) === team);
+}
+
+/** What a WNBA Team Rare Deluxe for `team` draws from: the 2026 roster and the franchise's legends. */
+export function wnbaFranchisePool(team) {
+  return [...(CARD_SETS.wnba ?? []).filter(c => c.team === team), ...wnbaFranchiseLegends(team)];
+}
+
+/** The band a pack's Legendary roll pays in: the best the pool HAS, legendary, else super rare, else rare. */
+export function apexBandFor(pool) {
+  return ['legendary', 'super-rare', 'rare'].find(b => (pool ?? []).some(c => getPlayerRarity(c) === b)) ?? 'super-rare';
+}
+
+/** The fewest different rare-or-better cards a WNBA franchise needs for its Team Rare Deluxe. */
+export const WNBA_TEAM_RD_MIN = 3;
+
+/**
+ * The WNBA franchises a Team Rare Deluxe is stocked for, in table order: three
+ * different rare-or-better cards AND a super rare. Measured 2026-10-14, Portland
+ * (all rares) dealt 1.05 value a coin and Seattle (a legendary, no super rare)
+ * 1.32, against 1.8-2.1 for every other franchise and for the NBA pack; neither
+ * can pay the super rare one time in three the shelf promises.
+ */
+export function wnbaTeamRareDeluxeTeams() {
+  const rarePlus = new Set(['rare', 'super-rare', 'legendary']);
+  return Object.keys(WNBA_TEAMS).filter(t => {
+    const pool = wnbaFranchisePool(t);
+    return new Set(pool.filter(c => rarePlus.has(getPlayerRarity(c))).map(c => cardKey(c))).size >= WNBA_TEAM_RD_MIN
+      && pool.some(c => getPlayerRarity(c) === 'super-rare');
+  });
+}
+
+export function franchiseHasLegendary(team, { league = 'NBA' } = {}) {
+  if (league === 'WNBA') return wnbaFranchisePool(team).some(c => getPlayerRarity(c) === 'legendary');
   const roster = (CARD_SETS[BASE_SET] ?? []).filter(c => c.team === team);
   const specials = SPECIAL_SETS_IN_PACKS
     .flatMap(id => CARD_SETS[id] ?? [])

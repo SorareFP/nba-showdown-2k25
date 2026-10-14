@@ -9,7 +9,7 @@
 // rares, and how often a legendary, with the spread and not only the mean.
 // Aimed packs are measured once per aim — every division, conference and
 // franchise — because their pools are not alike.
-import { generatePack, PACK_TYPES, CONFERENCES, DIVISIONS } from '../../src/game/packEngine.js';
+import { generatePack, PACK_TYPES, CONFERENCES, DIVISIONS, wnbaTeamRareDeluxeTeams } from '../../src/game/packEngine.js';
 import { CARD_SETS, BASE_SET, getCardByKey } from '../../src/game/cardSets.js';
 import { getStrat } from '../../src/game/strats.js';
 import { getPlayerRarity, getStratRarity, MARKET_PRICES, STRAT_BURN_VALUES, RARITY_ORDER } from '../../src/game/rarity.js';
@@ -84,5 +84,9 @@ if (process.argv[1] && process.argv[1].endsWith('packOdds.mjs')) {
     for (const d of Object.keys(DIVISIONS)) console.log(line(`Division RD: ${d}`, measure('division_rare_deluxe', { division: d })));
     const teams = [...new Set(CARD_SETS[BASE_SET].map(c => c.team))].sort();
     for (const t of teams) console.log(line(`Team RD: ${t}`, measure('team_rare_deluxe', { team: t }, Math.round(N / 4))));
+    // The WNBA Team Rare Deluxe (2026-10-14): every franchise it is stocked for.
+    if (PACK_TYPES.wnba_team_rare_deluxe) {
+      for (const t of wnbaTeamRareDeluxeTeams()) console.log(line(`WNBA Team RD: ${t}`, measure('wnba_team_rare_deluxe', { team: t }, Math.round(N / 4))));
+    }
   }
 }

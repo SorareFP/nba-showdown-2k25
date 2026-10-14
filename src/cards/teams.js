@@ -834,6 +834,30 @@ const ERA_OWNER = (() => {
  * leagues share codes (ATL, CHI, MIN, PHO, WAS all exist in both), so one
  * resolver across both would silently mix them.
  */
+/**
+ * THE WNBA FRANCHISE A CARD'S TEAM CODE BELONGS TO TODAY, or null for one that
+ * folded (the WNBA Team Rare Deluxe, 2026-10-14). An era spelling (CHI06,
+ * LAS97, MIN11) is its live franchise; the Shock are one franchise through
+ * Detroit, Tulsa and Dallas, the Starzz became the Silver Stars and then the
+ * Aces, the Miracle became the Sun. The Comets, Monarchs, Sting, Rockers, Sol
+ * and the first Fire ENDED, so their seasons belong to nobody today.
+ *
+ * The card generator keeps an older copy of these tables for the WNBA team
+ * rewards (scripts/cardgen/wnba/wnbaRewardCandidates.js franchiseOf), whose
+ * era rule misses CHI06 and LAS97; it is left alone because changing it would
+ * move reward picks. The game reads this one.
+ */
+const WNBA_RELOCATED = { DET: 'DAL', DET2: 'DAL', TUL: 'DAL', UTA: 'LVA', SAS: 'LVA', ORL: 'CON' };
+const WNBA_FOLDED = new Set(['HOU', 'CHA', 'CHA2', 'SAC', 'CLE', 'MIA', 'PORF']);
+export function wnbaFranchiseOf(team) {
+  const code = String(team ?? '').toUpperCase();
+  if (!code || WNBA_FOLDED.has(code)) return null;
+  if (Object.hasOwn(WNBA_RELOCATED, code)) return WNBA_RELOCATED[code];
+  if (Object.hasOwn(WNBA_TEAMS, code)) return code;
+  const era = /^([A-Z]{3})\d+$/.exec(code);
+  return era && Object.hasOwn(WNBA_TEAMS, era[1]) ? era[1] : null;
+}
+
 export function currentFranchise(team) {
   const code = String(team ?? '').toUpperCase();
   if (!code) return null;

@@ -2,16 +2,16 @@
 // seven of the packs the engine defines — including the team pack, the whole
 // answer to "collections take too many boosters". These cover the contract
 // between the two, plus the guarantees players are actually paying for.
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   generatePack, PACK_TYPES, CONFERENCES, DIVISIONS, MAX_DUPES_PER_PACK,
   SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE, parseFavoriteTeam, favoriteTeamOptions, normalizeFavoriteTeam, leagueOfCard,
-  tierScaleFor, RARE_PLUS_SR_SHARE, franchiseHasLegendary } from './packEngine.js';
+  tierScaleFor, RARE_PLUS_SR_SHARE, franchiseHasLegendary, wnbaTeamRareDeluxeTeams, wnbaFranchisePool, apexBandFor } from './packEngine.js';
 import { CARD_MAP } from './cards.js';
 import { TEAM_ROSTERS, WNBA_ROSTERS, WNBA_TEAM_CODES } from './collections.js';
 import { STRATS } from './strats.js';
 import { CARD_SETS, BASE_SET, cardKey, ALL_CARDS } from './cardSets.js';
-import { currentFranchise, currentFranchiseFor, getTeam } from '../cards/teams.js';
+import { currentFranchise, currentFranchiseFor, getTeam, wnbaFranchiseOf } from '../cards/teams.js';
 import { getPlayerRarity, RARITY_ORDER } from './rarity.js';
 import { shopPacks, PACK_COPY } from '../components/PackShop.jsx';
 
@@ -27,6 +27,8 @@ function optionsFor(def) {
 const players = cards => cards.filter(c => c.type === 'player');
 const rarityOf = pull => getPlayerRarity(CARD_MAP[pull.id]);
 const atLeast = (r, min) => RARITY_ORDER.indexOf(r) >= RARITY_ORDER.indexOf(min);
+/** One real card of each rarity, by its salary. */
+const CARDS_BY_RARITY = Object.fromEntries(RARITY_ORDER.map(r => [r, ALL_CARDS.find(c => getPlayerRarity(c) === r)]));
 
 const BUYABLE = Object.entries(PACK_TYPES).filter(([, def]) => !def.once);
 
@@ -810,5 +812,85 @@ describe('the aimed Rare Deluxes', () => {
     const odds = PACK_TYPES.conference_rare_deluxe.apexOdds;
     const sd = Math.sqrt((odds * (1 - odds)) / N);
     expect(Math.abs(hits / N - odds)).toBeLessThan(4 * sd + 0.004);
+  });
+});
+
+
+// THE WNBA TEAM RARE DELUXE (the user, 2026-10-14: "We should have WNBA Team
+// Rare Deluxes too"). The NBA Team Rare Deluxe's shape and price over ONE WNBA
+// franchise: its 2026 roster and its legends in the WNBA special sets, as the
+// NBA pack takes its franchise's special sets. A franchise with fewer than
+// three rare-or-better cards is not stocked: Toronto, an expansion team with
+// one, would deal that card three times.
+describe('the WNBA Team Rare Deluxe', () => {
+  const KEY = 'wnba_team_rare_deluxe';
+
+  it('reads a WNBA era code as its franchise today', () => {
+    expect(wnbaFranchiseOf('CHI06')).toBe('CHI');
+    expect(wnbaFranchiseOf('LAS97')).toBe('LAS');
+    expect(wnbaFranchiseOf('MIN11')).toBe('MIN');
+    expect(wnbaFranchiseOf('DET2')).toBe('DAL');   // Shock -> Wings
+    expect(wnbaFranchiseOf('UTA')).toBe('LVA');    // Starzz -> Aces
+    expect(wnbaFranchiseOf('HOU')).toBeNull();     // the Comets folded
+    expect(wnbaFranchiseOf('PORF')).toBeNull();    // the first Fire folded
+    expect(wnbaFranchiseOf('POR')).toBe('POR');    // the 2026 Fire
+  });
+
+  it('is the Team Rare Deluxe over a WNBA franchise: its shape and its price', () => {
+    const def = PACK_TYPES[KEY];
+    const team = PACK_TYPES.team_rare_deluxe;
+    expect(def).toMatchObject({ players: team.players, strats: team.strats, price: team.price, allRarePlus: true, apexOdds: team.apexOdds, srShare: team.srShare, distinct: true, requireScope: true, pool: 'wnba' });
+  });
+
+  // Measured 2026-10-14: Portland (all rares) dealt 1.05 value a coin and
+  // Seattle (a legendary, no super rare) 1.32, against 1.8-2.1 everywhere else
+  // and for the NBA pack — neither can pay the super rare one time in three
+  // the shelf promises. So a franchise needs a super rare as well.
+  it('stocks only franchises with three rare-or-better cards and a super rare', () => {
+    const teams = wnbaTeamRareDeluxeTeams();
+    expect(teams).toContain('MIN');
+    for (const thin of ['TOR', 'POR', 'SEA']) expect(teams).not.toContain(thin);
+    for (const t of teams) {
+      const pool = wnbaFranchisePool(t);
+      const rarePlus = new Set(pool.filter(c => atLeast(getPlayerRarity(c), 'rare')).map(c => cardKey(c)));
+      expect(rarePlus.size, t).toBeGreaterThanOrEqual(3);
+      expect(pool.some(c => getPlayerRarity(c) === 'super-rare'), `${t} has a super rare`).toBe(true);
+    }
+    expect(() => generatePack(KEY, {})).toThrow(/pick a team/);
+    expect(() => generatePack(KEY, { team: 'TOR' })).toThrow(/Toronto Tempo do not have the cards/);
+  });
+
+  it('deals three rare-or-better cards of that franchise, legends included, never an NBA card', () => {
+    for (const team of wnbaTeamRareDeluxeTeams()) {
+      const pool = wnbaFranchisePool(team);
+      const ids = new Set(pool.map(c => cardKey(c)));
+      for (let i = 0; i < 20; i += 1) {
+        const pulls = players(generatePack(KEY, { team }));
+        expect(pulls, team).toHaveLength(3);
+        for (const pull of pulls) {
+          const card = CARD_MAP[pull.id];
+          expect(atLeast(rarityOf(pull), 'rare'), `${team} ${pull.id}`).toBe(true);
+          expect(ids.has(pull.id), `${team} left its franchise: ${pull.id}`).toBe(true);
+          expect(leagueOfCard(card), pull.id).toBe('wnba');
+        }
+      }
+    }
+    // The franchise's legends are in it: Minnesota's pool reaches past the 2026 roster.
+    expect(wnbaFranchisePool('MIN').some(c => c.set !== 'wnba')).toBe(true);
+  });
+
+  // THE LEGENDARY ROLL PAYS THE BEST BAND THE POOL HAS — never a stray card
+  // from below rare, which pickInBand hands back for an empty band (a Portland
+  // pack dealt a common that way before it was taken off the shelf).
+  it('pays the Legendary roll in the best band a pool has', () => {
+    const card = r => ({ ...CARDS_BY_RARITY[r] });
+    expect(apexBandFor([card('legendary'), card('rare')])).toBe('legendary');
+    expect(apexBandFor([card('super-rare'), card('common')])).toBe('super-rare');
+    expect(apexBandFor([card('rare'), card('uncommon'), card('common')])).toBe('rare');
+  });
+
+  it('is on the shelf with its own words', () => {
+    expect(shopPacks().map(p => p.key)).toContain(KEY);
+    expect(PACK_COPY[KEY].desc).toBeTruthy();
   });
 });

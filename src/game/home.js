@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'wnba-team-rare-deluxe', date: '2026-10-14', title: 'WNBA Team Rare Deluxe',
+    body: "A new pack in the shop: three players from one WNBA franchise, its legends included, every one rare or better, with a super rare one time in three and the same one-in-nine shot at a Legendary as the NBA Team Rare Deluxe, at the same 1,875 coins. It is stocked for every franchise with the cards to fill it; Toronto, Portland and Seattle join once their pools grow.",
+    to: 'shop', cta: 'Pack Shop',
+  },
+  {
     id: 'coach-waits-for-your-answer', date: '2026-10-11', title: 'The coach waits for your Glass Cleaner',
     body: "The coach used to act again under a second after its own shot check or roll, so cards that answer one (Glass Cleaner, Rebound and Push, Box Out, Passing Lane, and Putback Specialist or Kick-Out Three for your own miss) were gone before you could reach them. Now, while you hold one that can answer, the coach waits, and a banner names the card with a Continue button. A miss on a check bought with 5 assists or 5 rebounds counts now too; those could never be answered before.",
     to: 'play', cta: 'Play',

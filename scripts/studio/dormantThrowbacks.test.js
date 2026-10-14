@@ -52,7 +52,7 @@ describe('a dormant Throwback', () => {
     const ROOKIE_YEARS = ['Michelle_Edwards_1997', 'Tamika_Catchings_2002'];
     const rows = quoteIndex.rows;
     const asRookie = [];
-    for (const card of DORMANT_CARDS) {
+    for (const card of DORMANT_CARDS.filter(c => c.set !== 'record-breakers')) {
       const row = rows.find(r => r[0] === card.bbrefId && r[2] === card.season && r[3] === 'r');
       expect(row, `${card.name} ${card.season}`).toBeTruthy();
       if (row[6] !== card.set) {
@@ -61,5 +61,18 @@ describe('a dormant Throwback', () => {
       }
     }
     expect(asRookie.sort()).toEqual(ROOKIE_YEARS);
+  });
+
+  // A RECORD BREAKERS SEASON IS NEVER REQUESTABLE (2026-10-14), photo or not:
+  // its feat cards are earned only by the feat, its pack cards only from packs.
+  // A dormant one waits for its photo, not for a Free Agents request.
+  it('never offers a Record Breakers season to Free Agents, dormant or not', () => {
+    const rows = quoteIndex.rows;
+    const dormantRecords = DORMANT_CARDS.filter(c => c.set === 'record-breakers');
+    expect(dormantRecords.length).toBeGreaterThan(0);
+    for (const card of dormantRecords) {
+      const offered = rows.find(r => r[0] === card.bbrefId && r[2] === card.season && r[3] === 'r');
+      expect(offered, `${card.name} ${card.season}`).toBeUndefined();
+    }
   });
 });

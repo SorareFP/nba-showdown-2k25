@@ -1,9 +1,65 @@
 {
- "generatedAt": "2026-10-14T17:58:08.355Z",
+ "generatedAt": "2026-10-14T18:54:07.350Z",
  "records": {
   "record-breakers:LeBron_James_2023": {
    "number": "38,388",
    "label": "ALL-TIME PTS"
+  },
+  "record-breakers:Stephen_Curry_2022": {
+   "number": "2,974",
+   "label": "ALL-TIME 3PM"
+  },
+  "record-breakers:Karl_Malone_2001": {
+   "number": "8,532",
+   "label": "ALL-TIME FTM"
+  },
+  "record-breakers:Hakeem_Olajuwon_1996": {
+   "number": "3,190",
+   "label": "ALL-TIME BLK"
+  },
+  "record-breakers:John_Stockton_1991": {
+   "number": "1,164",
+   "label": "AST"
+  },
+  "record-breakers:John_Stockton_1996": {
+   "number": "2,311",
+   "label": "ALL-TIME STL"
+  },
+  "record-breakers:Russell_Westbrook_2021": {
+   "number": "182",
+   "label": "ALL-TIME TRIPLE-DOUBLES"
+  },
+  "record-breakers:Alvin_Robertson_1986": {
+   "number": "301",
+   "label": "STL"
+  },
+  "record-breakers:Ray_Allen_2011": {
+   "number": "2,561",
+   "label": "ALL-TIME 3PM"
+  },
+  "record-breakers:Jose_Calderon_2009": {
+   "number": "98.1%",
+   "label": "FT"
+  },
+  "record-breakers:Kyle_Korver_2010": {
+   "number": "53.6%",
+   "label": "3PT"
+  },
+  "record-breakers:Mark_Eaton_1985": {
+   "number": "456",
+   "label": "BLK"
+  },
+  "set-rewards:Stephen_Curry": {
+   "number": "402",
+   "label": "3PM"
+  },
+  "super-season:Russell_Westbrook": {
+   "number": "42",
+   "label": "TRIPLE-DOUBLES"
+  },
+  "super-season:John_Stockton": {
+   "number": "9,922",
+   "label": "ALL-TIME AST"
   }
  }
 }

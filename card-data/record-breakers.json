@@ -9,6 +9,108 @@
       "earn": "career-points",
       "verifiedBy": "passed Kareem Abdul-Jabbar's 38,387 on 2023-02-07",
       "why": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" The user (2026-10-14) made it the first card of its own set, Record Breakers."
-    }
+    },
+    {
+      "bbrefId": "allenra02",
+      "name": "Ray Allen",
+      "season": 2011,
+      "record": { "number": "2,561", "label": "ALL-TIME 3PM" },
+      "earn": "career-threes-1",
+      "verifiedBy": "passed Reggie Miller's 2,560 on 2011-02-10",
+      "why": "The all-time three-point lead."
+    },
+    {
+      "bbrefId": "curryst01",
+      "name": "Stephen Curry",
+      "season": 2022,
+      "record": { "number": "2,974", "label": "ALL-TIME 3PM" },
+      "earn": "career-threes-2",
+      "verifiedBy": "passed Ray Allen's 2,973 on 2021-12-14",
+      "why": "The all-time three-point lead, from Ray Allen."
+    },
+    {
+      "bbrefId": "westbru01",
+      "name": "Russell Westbrook",
+      "season": 2021,
+      "record": { "number": "182", "label": "ALL-TIME TRIPLE-DOUBLES" },
+      "earn": "career-triple-doubles",
+      "verifiedBy": "182nd on 2021-05-10 at Atlanta, passing Oscar Robertson's 181 (NBC Washington, CBS Sports)",
+      "why": "The career triple-double record."
+    },
+    {
+      "bbrefId": "malonka01",
+      "name": "Karl Malone",
+      "season": 2001,
+      "record": { "number": "8,532", "label": "ALL-TIME FTM" },
+      "earn": "career-free-throws",
+      "verifiedBy": "passed Moses Malone's 8,531 on 2001-03-24 against Washington (ESPN recap; NBA.com Legends Profile)",
+      "why": "The career free-throws-made record."
+    },
+    {
+      "bbrefId": "stockjo01",
+      "name": "John Stockton",
+      "season": 1991,
+      "record": { "number": "1,164", "label": "AST" },
+      "earn": "season-assists",
+      "check": { "source": "log", "stat": "ast", "total": 1164 },
+      "why": "The single-season assists record."
+    },
+    {
+      "bbrefId": "caldejo01",
+      "name": "José Calderón",
+      "season": 2009,
+      "record": { "number": "98.1%", "label": "FT" },
+      "earn": "season-ft-pct",
+      "check": { "source": "perPoss", "field": "ftPct", "value": 0.981 },
+      "why": "The single-season free-throw percentage record."
+    },
+    {
+      "bbrefId": "korveky01",
+      "name": "Kyle Korver",
+      "season": 2010,
+      "record": { "number": "53.6%", "label": "3PT" },
+      "earn": "season-3pt-pct",
+      "check": { "source": "perPoss", "field": "fgPct3", "value": 0.536 },
+      "why": "The single-season three-point percentage record."
+    },
+    {
+      "bbrefId": "stockjo01",
+      "name": "John Stockton",
+      "season": 1996,
+      "record": { "number": "2,311", "label": "ALL-TIME STL" },
+      "earn": "pack",
+      "verifiedBy": "passed Maurice Cheeks' 2,310 on 1996-02-20 against Boston (Spokesman-Review, Tampa Bay Times)",
+      "why": "The career steals record."
+    },
+    {
+      "bbrefId": "olajuha01",
+      "name": "Hakeem Olajuwon",
+      "season": 1996,
+      "record": { "number": "3,190", "label": "ALL-TIME BLK" },
+      "earn": "pack",
+      "verifiedBy": "3,190th block on 1996-04-21 against Phoenix, passing Kareem's 3,189 (one source); his season totals reach 2,983 through 1994-95 and 3,190 through 1995-96 (242 and 207 confirmed by Statmuse)",
+      "why": "The career blocks record."
+    },
+    {
+      "bbrefId": "eatonma01",
+      "name": "Mark Eaton",
+      "season": 1985,
+      "record": { "number": "456", "label": "BLK" },
+      "earn": "pack",
+      "verifiedBy": "Basketball-Reference single-season blocks leaders",
+      "why": "The single-season blocks record."
+    },
+    {
+      "bbrefId": "roberal01",
+      "name": "Alvin Robertson",
+      "season": 1986,
+      "record": { "number": "301", "label": "STL" },
+      "earn": "pack",
+      "verifiedBy": "Basketball-Reference single-season steals leaders",
+      "why": "The single-season steals record."
+    },
+    { "card": "set-rewards:Stephen_Curry", "record": { "number": "402", "label": "3PM" } },
+    { "card": "super-season:Russell_Westbrook", "record": { "number": "42", "label": "TRIPLE-DOUBLES" } },
+    { "card": "super-season:John_Stockton", "record": { "number": "9,922", "label": "ALL-TIME AST" } }
   ]
 }

@@ -39,6 +39,9 @@ const SECTIONS = [
   ['super-season', 'Super Season', 'NBA'],
   ['rookie', 'Rookie', 'NBA'],
   ['dissonance', 'Dissonance', 'NBA'],
+  // Record Breakers (2026-10-14): every card is photoWanted, so the ones still
+  // without a photo are listed though dormant (see the throwbacks note below).
+  ['record-breakers', 'Record Breakers', 'NBA'],
   ['team-rewards', 'Team Rewards', 'NBA'],
   ['set-rewards', 'Set Rewards', 'NBA'],
   ['wnba', 'WNBA', 'WNBA'],

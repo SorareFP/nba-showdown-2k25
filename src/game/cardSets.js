@@ -83,8 +83,8 @@ const withoutMigrated = (setId, cards) => cards.filter(c => !hasMigratedOut(setI
 // the face directory under public/cards/<set>/<id>.png.
 /** Generator-owned cards with no photo yet (scripts/studio/dormantThrowbacks.mjs): Throwbacks and Record Breakers. */
 const DORMANT_KEY_SET = new Set(dormant.keys ?? []);
-/** The Record Breakers cards, each with its set, dormant ones included. */
-const RECORD_BREAKER_CARDS = (recordBreakers.cards ?? []).map(c => ({ ...c, set: 'record-breakers' }));
+/** The Record Breakers cards, each with its set, dormant ones included (freeAgentQuotes counts them all as carded). */
+export const RECORD_BREAKER_CARDS = (recordBreakers.cards ?? []).map(c => ({ ...c, set: 'record-breakers' }));
 
 export const CARD_SETS = Object.fromEntries(
   [

@@ -37,6 +37,9 @@ export function recordCard(built, row) {
     record: row.record,
     earn: row.earn,
     why: row.why,
+    // Every one is owed a photo: the Photo Hunt lists the ones without, and a
+    // card with none sits out of packs and goals until it lands (dormant).
+    photoWanted: true,
   };
 }
 

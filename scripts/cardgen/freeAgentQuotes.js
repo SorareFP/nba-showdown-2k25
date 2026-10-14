@@ -49,7 +49,7 @@ import { archiveBasis, requireArchive } from './epmArchive.js';
 import { priceCandidates } from './teamRewardCandidates.js';
 import { NEVER_CARD } from './generateTeamRewards.js';
 import * as A from './attributes.js';
-import { CARD_SETS } from '../../src/game/cardSets.js';
+import { CARD_SETS, RECORD_BREAKER_CARDS } from '../../src/game/cardSets.js';
 import { loadArchive as loadWnbaArchive, rateArchive as rateWnbaArchive, careerOf as wnbaCareerOf } from './wnba/generateWnbaLegends.js';
 import { bestLegendSeason } from './wnba/legends.js';
 import { fitRidge, predict } from './wnba/bpmModel.js';
@@ -259,7 +259,11 @@ export function main({ first = 1976, last = BASE_SEASON, write = true, wnba = tr
   for (const s of seasons) distributions[s] = seasonDistribution(advanced.filter(r => r.season === s));
   const careers = new Map();
   for (const r of advanced) (careers.get(r.playerId) ?? careers.set(r.playerId, []).get(r.playerId)).push(r);
-  const carded = cardedIndex(CARD_SETS);
+  // A RECORD BREAKERS SEASON IS CARDED WHETHER OR NOT ITS PHOTO HAS LANDED
+  // (2026-10-14): a dormant one waits for its photo, never for a request —
+  // its feat cards are earned only by the feat. CARD_SETS leaves dormant cards
+  // out, so the whole set is counted here.
+  const carded = cardedIndex({ ...CARD_SETS, 'record-breakers': RECORD_BREAKER_CARDS });
   // The requested cards themselves calibrate the next quotes (2026-09-21):
   // a built free agent is a real-log card in exactly the price zone the
   // requests come from, and the throwbacks set is where most of them land.

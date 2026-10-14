@@ -1,6 +1,6 @@
 {
  "set": "record-breakers",
- "generatedAt": "2026-10-14T17:58:08.355Z",
+ "generatedAt": "2026-10-14T18:54:07.350Z",
  "note": "RECORD BREAKERS — generator-owned (scripts/cardgen/generateRecordBreakers.js from card-data/record-breakers.json).",
  "cards": [
   {
@@ -66,7 +66,783 @@
     "label": "ALL-TIME PTS"
    },
    "earn": "career-points",
-   "why": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" The user (2026-10-14) made it the first card of its own set, Record Breakers."
+   "why": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" The user (2026-10-14) made it the first card of its own set, Record Breakers.",
+   "photoWanted": true
+  },
+  {
+   "id": "Stephen_Curry_2022",
+   "name": "Stephen Curry",
+   "team": "GSW",
+   "pos": "PG",
+   "speed": 19,
+   "power": 11,
+   "shotLine": 14,
+   "paintBoost": -4,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 1550,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2022,
+   "seasonLabel": "2021-22",
+   "age": 33,
+   "games": 64,
+   "mpg": 34.5,
+   "bbrefId": "curryst01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.8,
+    "vorp": 4.4,
+    "ws": 8,
+    "ws48": 0.173,
+    "per": 21.4
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "2,974",
+    "label": "ALL-TIME 3PM"
+   },
+   "earn": "career-threes-2",
+   "why": "The all-time three-point lead, from Ray Allen.",
+   "photoWanted": true
+  },
+  {
+   "id": "Karl_Malone_2001",
+   "name": "Karl Malone",
+   "team": "UTA96",
+   "pos": "PF",
+   "speed": 12,
+   "power": 17,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": -5,
+   "defBoost": 1,
+   "salary": 1470,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2001,
+   "seasonLabel": "2000-01",
+   "age": 37,
+   "games": 81,
+   "mpg": 35.7,
+   "bbrefId": "malonka01",
+   "traded": false,
+   "metrics": {
+    "bpm": 6.6,
+    "vorp": 6.3,
+    "ws": 13.1,
+    "ws48": 0.217,
+    "per": 24.7
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "8,532",
+    "label": "ALL-TIME FTM"
+   },
+   "earn": "career-free-throws",
+   "why": "The career free-throws-made record.",
+   "photoWanted": true
+  },
+  {
+   "id": "Hakeem_Olajuwon_1996",
+   "name": "Hakeem Olajuwon",
+   "team": "HOU",
+   "pos": "C",
+   "speed": 10,
+   "power": 17,
+   "shotLine": 16,
+   "paintBoost": 3,
+   "threePtBoost": -4,
+   "defBoost": 2,
+   "salary": 1340,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1996,
+   "seasonLabel": "1995-96",
+   "age": 33,
+   "games": 72,
+   "mpg": 38.8,
+   "bbrefId": "olajuha01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4.9,
+    "vorp": 4.9,
+    "ws": 9.7,
+    "ws48": 0.166,
+    "per": 25.5
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "3,190",
+    "label": "ALL-TIME BLK"
+   },
+   "earn": "pack",
+   "why": "The career blocks record.",
+   "photoWanted": true
+  },
+  {
+   "id": "John_Stockton_1991",
+   "name": "John Stockton",
+   "team": "UTA",
+   "pos": "PG",
+   "speed": 19,
+   "power": 11,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": -2,
+   "defBoost": 3,
+   "salary": 1190,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 2
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 1991,
+   "seasonLabel": "1990-91",
+   "age": 28,
+   "games": 82,
+   "mpg": 37.8,
+   "bbrefId": "stockjo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.3,
+    "vorp": 8.1,
+    "ws": 14,
+    "ws48": 0.217,
+    "per": 23.4
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "1,164",
+    "label": "AST"
+   },
+   "earn": "season-assists",
+   "why": "The single-season assists record.",
+   "photoWanted": true
+  },
+  {
+   "id": "John_Stockton_1996",
+   "name": "John Stockton",
+   "team": "UTA",
+   "pos": "PG",
+   "speed": 19,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 1110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 22,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 1996,
+   "seasonLabel": "1995-96",
+   "age": 33,
+   "games": 82,
+   "mpg": 35.5,
+   "bbrefId": "stockjo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 6.8,
+    "vorp": 6.4,
+    "ws": 13,
+    "ws48": 0.214,
+    "per": 21.9
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "2,311",
+    "label": "ALL-TIME STL"
+   },
+   "earn": "pack",
+   "why": "The career steals record.",
+   "photoWanted": true
+  },
+  {
+   "id": "Russell_Westbrook_2021",
+   "name": "Russell Westbrook",
+   "team": "WAS",
+   "pos": "PG",
+   "speed": 13,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 1070,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2021,
+   "seasonLabel": "2020-21",
+   "age": 32,
+   "games": 65,
+   "mpg": 36.4,
+   "bbrefId": "westbru01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.7,
+    "vorp": 3.4,
+    "ws": 3.7,
+    "ws48": 0.075,
+    "per": 19.5
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "182",
+    "label": "ALL-TIME TRIPLE-DOUBLES"
+   },
+   "earn": "career-triple-doubles",
+   "why": "The career triple-double record.",
+   "photoWanted": true
+  },
+  {
+   "id": "Alvin_Robertson_1986",
+   "name": "Alvin Robertson",
+   "team": "SAS",
+   "pos": "SG",
+   "speed": 16,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": -5,
+   "defBoost": 3,
+   "salary": 1030,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1986,
+   "seasonLabel": "1985-86",
+   "age": 23,
+   "games": 82,
+   "mpg": 35.1,
+   "bbrefId": "roberal01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4.7,
+    "vorp": 4.9,
+    "ws": 8.6,
+    "ws48": 0.143,
+    "per": 19.5
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "301",
+    "label": "STL"
+   },
+   "earn": "pack",
+   "why": "The single-season steals record.",
+   "photoWanted": true
+  },
+  {
+   "id": "Ray_Allen_2011",
+   "name": "Ray Allen",
+   "team": "BOS",
+   "pos": "SG",
+   "speed": 15,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": 1,
+   "salary": 880,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 35,
+   "games": 80,
+   "mpg": 36.1,
+   "bbrefId": "allenra02",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.9,
+    "vorp": 3.6,
+    "ws": 10,
+    "ws48": 0.166,
+    "per": 16.4
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "2,561",
+    "label": "ALL-TIME 3PM"
+   },
+   "earn": "career-threes-1",
+   "why": "The all-time three-point lead.",
+   "photoWanted": true
+  },
+  {
+   "id": "Jose_Calderon_2009",
+   "name": "José Calderón",
+   "team": "TOR09",
+   "pos": "PG",
+   "speed": 15,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 870,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 27,
+   "games": 68,
+   "mpg": 34.3,
+   "bbrefId": "caldejo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.8,
+    "vorp": 2.8,
+    "ws": 7.5,
+    "ws48": 0.154,
+    "per": 18.8
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "98.1%",
+    "label": "FT"
+   },
+   "earn": "season-ft-pct",
+   "why": "The single-season free-throw percentage record.",
+   "photoWanted": true
+  },
+  {
+   "id": "Kyle_Korver_2010",
+   "name": "Kyle Korver",
+   "team": "UTA04",
+   "pos": "SG",
+   "speed": 11,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": 0,
+   "salary": 540,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": 28,
+   "games": 52,
+   "mpg": 18.3,
+   "bbrefId": "korveky01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.4,
+    "vorp": 0.8,
+    "ws": 2.6,
+    "ws48": 0.13,
+    "per": 13.9
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "53.6%",
+    "label": "3PT"
+   },
+   "earn": "season-3pt-pct",
+   "why": "The single-season three-point percentage record.",
+   "photoWanted": true
+  },
+  {
+   "id": "Mark_Eaton_1985",
+   "name": "Mark Eaton",
+   "team": "UTA",
+   "pos": "C",
+   "speed": 8,
+   "power": 13,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 4,
+   "salary": 420,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 23,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 1985,
+   "seasonLabel": "1984-85",
+   "age": 28,
+   "games": 82,
+   "mpg": 34.3,
+   "bbrefId": "eatonma01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.2,
+    "vorp": 2.3,
+    "ws": 5.4,
+    "ws48": 0.093,
+    "per": 13.6
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "456",
+    "label": "BLK"
+   },
+   "earn": "pack",
+   "why": "The single-season blocks record.",
+   "photoWanted": true
   }
  ]
 }

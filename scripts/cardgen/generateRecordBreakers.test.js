@@ -39,3 +39,44 @@ describe('the committed awards file', () => {
     expect(lebron?.awards).toContain('AS');
   });
 });
+
+describe('the committed Record Breakers', () => {
+  const read = async rel => {
+    const { readFileSync } = await import('node:fs');
+    return JSON.parse(readFileSync(new URL(rel, import.meta.url), 'utf8'));
+  };
+
+  it('holds the twelve, every one with a plaque, a season in its id, and a photo wanted', async () => {
+    const file = await read('../../card-data/generated/cards-record-breakers.json');
+    const { records } = await read('../../card-data/generated/card-records.json');
+    expect(file.cards).toHaveLength(12);
+    for (const c of file.cards) {
+      expect(c.id).toMatch(/_\d{4}$/);
+      expect(c.record?.number, c.id).toBeTruthy();
+      expect(records[`record-breakers:${c.id}`]).toEqual(c.record);
+      expect(c.photoWanted, c.id).toBe(true);
+    }
+  });
+
+  // ON THE CARD THAT IS ACTUALLY HELD: Curry's 2015-16 Super Season moved into
+  // the set rewards (2026-09-30), and its old key only redirects there, so a
+  // plaque under the old key would never be drawn. Every plaque key must be a
+  // card its own set still holds.
+  it('puts the plaque on the three existing record seasons, where each card lives', async () => {
+    const { records } = await read('../../card-data/generated/card-records.json');
+    const { CARD_SETS } = await import('../../src/game/cardSets.js');
+    for (const key of ['set-rewards:Stephen_Curry', 'super-season:Russell_Westbrook', 'super-season:John_Stockton']) {
+      expect(records[key], key).toBeTruthy();
+    }
+    for (const key of Object.keys(records)) {
+      const [set, id] = key.split(':');
+      expect((CARD_SETS[set] ?? []).some(c => c.id === id) || set === 'record-breakers', key).toBe(true);
+    }
+  });
+
+  it('deals four by packs and earns eight by feats', async () => {
+    const file = await read('../../card-data/generated/cards-record-breakers.json');
+    expect(file.cards.filter(c => c.earn === 'pack')).toHaveLength(4);
+    expect(file.cards.filter(c => c.earn !== 'pack')).toHaveLength(8);
+  });
+});

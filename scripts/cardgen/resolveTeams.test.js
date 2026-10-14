@@ -6,7 +6,7 @@ import {
   isMultiTeamCode,
   TEAM_ALIASES,
 } from './resolveTeams.js';
-import { TEAM_ALIASES as CARD_ALIASES } from '../../src/cards/teams.js';
+import { TEAM_ALIASES as CARD_ALIASES, FREE_AGENT } from '../../src/cards/teams.js';
 
 describe('normalizeName', () => {
   it('strips diacritics, case, and punctuation', () => {
@@ -92,38 +92,33 @@ describe('resolvePlayerTeams', () => {
     expect(resolved[0]).toMatchObject({ pos: 'C', games: 70, mpg: 36.7 });
   });
 
-  it('keeps a real pool team when the player is absent from the roster', () => {
-    // Retired/unsigned players (Westbrook) aren't on an active roster, but their
-    // pool team is a real team — only 2TM/3TM codes are actually bad data.
-    const pool = [{ name: 'Russell Westbrook', team: 'SAC' }];
-    const { resolved, unresolved } = resolvePlayerTeams(pool, roster, {});
+  // UNSIGNED (the user, 2026-10-14: "If they're unlisted, you can remove them
+  // from their teams"). This used to keep the pool's team, which left a cut
+  // player on the club that let him go (Batum on the Clippers, Aaron Holiday
+  // on the Rockets).
+  it('makes a player on no roster a free agent, not his old team', () => {
+    const pool = [{ name: 'Russell Westbrook', team: 'SAC' }, { name: 'Nobody At All', team: '2TM' }];
+    const { resolved, unresolved, stats } = resolvePlayerTeams(pool, roster, {});
     expect(unresolved).toHaveLength(0);
-    expect(resolved[0]).toMatchObject({ team: 'SAC', personId: null });
+    expect(resolved.map(p => p.team)).toEqual([FREE_AGENT, FREE_AGENT]);
+    expect(resolved[0].personId).toBeNull();
+    expect(stats.freeAgent).toBe(2);
   });
 
-  it('reports as unresolved only when the pool team is ALSO a multi-team code', () => {
-    const pool = [{ name: 'Nobody At All', team: '2TM' }];
-    const { resolved, unresolved } = resolvePlayerTeams(pool, roster, {});
-    expect(resolved).toHaveLength(0);
-    expect(unresolved).toEqual(['Nobody At All']);
-  });
-
-  it('falls back to the pool team when the roster record has a null team', () => {
-    // nba.com lists unsigned free agents with TEAM_ABBREVIATION null (verified:
-    // DeMar DeRozan). Stamping null onto the card would be worse than keeping
-    // the pool's real, if slightly stale, team. The personId is still good, and
-    // it is what the headshot fallback needs.
+  it('makes a player listed with a null team a free agent, keeping his personId', () => {
+    // nba.com lists unsigned players with TEAM_ABBREVIATION null (verified:
+    // DeMar DeRozan, 2026-08-29). The personId is still good, and it is what
+    // the headshot fallback needs.
     const freeAgent = [{ fullName: 'DeMar DeRozan', team: null, personId: 201942 }];
     const pool = [{ name: 'DeMar DeRozan', team: 'SAC' }];
-    const { resolved, unresolved } = resolvePlayerTeams(pool, freeAgent, {});
-    expect(unresolved).toHaveLength(0);
-    expect(resolved[0]).toMatchObject({ team: 'SAC', personId: 201942 });
+    const { resolved } = resolvePlayerTeams(pool, freeAgent, {});
+    expect(resolved[0]).toMatchObject({ team: FREE_AGENT, personId: 201942 });
   });
 
-  it('canonicalizes a pool-team fallback to nba.com spelling', () => {
-    const pool = [{ name: 'Nobody At All', team: 'BRK' }];
-    const { resolved } = resolvePlayerTeams(pool, roster, {});
-    expect(resolved[0].team).toBe('BKN');
+  it('reads a name nba.com spells differently (Ron Holland is "Ronald Holland II")', () => {
+    const pool = [{ name: 'Ron Holland', team: 'DET' }];
+    const listed = [{ fullName: 'Ronald Holland II', team: 'DET', personId: 1641842 }];
+    expect(resolvePlayerTeams(pool, listed, {}).resolved[0]).toMatchObject({ team: 'DET', personId: 1641842 });
   });
 
   it('refuses to trust an ambiguous suffix-stripped match', () => {
@@ -131,7 +126,8 @@ describe('resolvePlayerTeams', () => {
       { fullName: 'Gary Payton', team: 'SEA', personId: 1 },
       { fullName: 'Gary Payton II', team: 'GSW', personId: 2 },
     ];
-    // Pool team is a multi-team code, so there's no safe fallback either.
+    // Two records fold onto his name, so "not found" proves nothing either:
+    // he is neither placed nor made a free agent.
     const pool = [{ name: 'Gary Payton II', team: '2TM' }];
     const { resolved, unresolved, stats } = resolvePlayerTeams(pool, collided, {});
     expect(resolved).toHaveLength(0);
@@ -156,22 +152,21 @@ describe('resolvePlayerTeams', () => {
     expect(resolved[0]).toMatchObject({ team: 'DEN', personId: null });
   });
 
-  it('treats a null manual entry as "still needs a human", not as a team', () => {
+  it('treats a null manual entry as no entry: the roster decides', () => {
     const pool = [{ name: 'Cam Thomas', team: '2TM' }];
-    const { resolved, unresolved } = resolvePlayerTeams(pool, roster, { 'Cam Thomas': null });
-    expect(resolved).toHaveLength(0);
-    expect(unresolved).toEqual(['Cam Thomas']);
+    const { resolved, stats } = resolvePlayerTeams(pool, roster, { 'Cam Thomas': null });
+    expect(resolved[0].team).toBe(FREE_AGENT);
+    expect(stats.manual).toBe(0);
   });
 
   it('counts each resolution path separately', () => {
     const pool = [
       { name: 'James Harden', team: '2TM' },     // roster
-      { name: 'Russell Westbrook', team: 'SAC' }, // pool fallback
-      { name: 'Nobody At All', team: '3TM' },     // unresolved
+      { name: 'Russell Westbrook', team: 'SAC' }, // free agent
       { name: 'Ghost Player', team: '2TM' },      // manual
     ];
     const { stats } = resolvePlayerTeams(pool, roster, { 'Ghost Player': 'MIA' });
-    expect(stats).toMatchObject({ roster: 1, poolFallback: 1, manual: 1, unresolved: 1 });
+    expect(stats).toMatchObject({ roster: 1, freeAgent: 1, manual: 1, unresolved: 0 });
   });
 
   it('leaves no multi-team code behind on any resolved player', () => {

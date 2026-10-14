@@ -34,6 +34,7 @@ import { CARD_SETS, BASE_SET, cardKey, canonicalKey } from './cardSets.js';
 import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
 import { CONFERENCES } from './packEngine.js';
 import { notionalPrice } from './rarity.js';
+import { isUnsignedCard } from '../cards/teams.js';
 
 export const REWARD_SET = 'team-rewards';
 export const WNBA_REWARD_SET = 'wnba-team-rewards';
@@ -83,7 +84,9 @@ export const TEAM_REWARDS = Object.fromEntries(
 
 function rostersOf(setId) {
   const out = {};
-  for (const card of CARD_SETS[setId] ?? []) (out[card.team] ??= []).push(cardKey(card));
+  // An unsigned player is on nobody's roster (isUnsignedCard), so no team,
+  // division or conference goal asks for him until he signs.
+  for (const card of CARD_SETS[setId] ?? []) if (!isUnsignedCard(card)) (out[card.team] ??= []).push(cardKey(card));
   for (const team of Object.keys(out)) out[team].sort();
   return out;
 }
@@ -127,7 +130,7 @@ export const SPECIAL_SETS = [
  * (the user, 2026-09-10, of Bob Sura's requested Rookie card) — so a request
  * never moves anyone's finish line, and nobody's finished set reopens.
  */
-const goalCards = setId => (CARD_SETS[setId] ?? []).filter(card => !card.requested).map(cardKey).sort();
+const goalCards = setId => (CARD_SETS[setId] ?? []).filter(card => !card.requested && !isUnsignedCard(card)).map(cardKey).sort();
 
 export const GOALS = (() => {
   const goals = [];
@@ -151,7 +154,9 @@ export const GOALS = (() => {
   goals.push({
     id: 'nba-set',
     kind: 'set', league: 'NBA', label: 'Complete 2026-27 Set',
-    requires: (CARD_SETS[BASE_SET] ?? []).map(cardKey).sort(),
+    // NO GOAL ASKS FOR A CARD NO PACK DEALS (the user, 2026-10-14: the set
+    // does not require an unsigned card; he rejoins it when he signs).
+    requires: (CARD_SETS[BASE_SET] ?? []).filter(card => !isUnsignedCard(card)).map(cardKey).sort(),
     reward: REWARD_BY_GOAL['nba-set'] ?? null,
   });
   // A COMPLETION GOAL FOR EVERY SPECIAL SET (2026-09-06). The Collection tab

@@ -13,6 +13,10 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fetchRoster } from './sources/nbaRoster.js';
 import { resolvePlayerTeams, isMultiTeamCode } from './resolveTeams.js';
+import { FREE_AGENT } from '../../src/cards/teams.js';
+
+/** More unsigned players than this and the run refuses to write (see below). */
+const MAX_FREE_AGENTS = 25;
 
 const root = new URL('../../', import.meta.url);
 const readJson = p => JSON.parse(readFileSync(new URL(p, root), 'utf-8'));
@@ -38,11 +42,21 @@ console.log('  resolution paths:');
 console.log(`    nba.com roster match : ${stats.roster}`);
 console.log(`    pool team (fallback) : ${stats.poolFallback}`);
 console.log(`    manual override      : ${stats.manual}`);
+console.log(`    free agent (FA)      : ${stats.freeAgent}`);
 console.log(`    unresolved           : ${stats.unresolved}`);
 console.log(`    ambiguous name keys  : ${stats.ambiguous}`);
 console.log(`multi-team codes before: ${before} | after: ${after}`);
 if (unresolved.length) {
   console.log('unresolved (need card-data/manual-teams.json entries):', unresolved);
+}
+const freeAgents = resolved.filter(p => p.team === FREE_AGENT).map(p => p.name);
+if (freeAgents.length) console.log('unsigned, so FA (no team goal, no pack):', freeAgents);
+// A player on no roster is now taken OFF his team (2026-10-14), so a partial
+// roster from nba.com would quietly strip dozens of cards. Eight were unsigned
+// the day the rule came in; a run that finds this many is a bad fetch.
+if (freeAgents.length > MAX_FREE_AGENTS) {
+  console.error(`FAILED: ${freeAgents.length} free agents (more than ${MAX_FREE_AGENTS}). Is nba.com's list complete? Nothing written.`);
+  process.exit(1);
 }
 
 writeFileSync(

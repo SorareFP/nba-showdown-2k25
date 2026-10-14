@@ -16,7 +16,7 @@
 import { STRATS } from './strats.js';
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
 import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
-import { currentFranchise, currentFranchiseFor, WNBA_HISTORICAL_TEAMS, WNBA_TEAMS, wnbaFranchiseOf, getTeam } from '../cards/teams.js';
+import { currentFranchise, currentFranchiseFor, WNBA_HISTORICAL_TEAMS, WNBA_TEAMS, wnbaFranchiseOf, getTeam, isUnsignedCard } from '../cards/teams.js';
 import { getPlayerRarity, getStratRarity, PACK_WEIGHTS, RARITY_ORDER } from './rarity.js';
 
 // NBA divisions and conferences for themed packs
@@ -559,8 +559,18 @@ export function decay(circulating) {
  */
 const NO_SUPPLY = Object.freeze({});
 
-/** The pool a pack draws from, before any team/conference/division filter. */
+/**
+ * The pool a pack draws from, before any team/conference/division filter.
+ *
+ * NO PACK DEALS AN UNSIGNED PLAYER (the user, 2026-10-14: "Out of packs until
+ * he signs"). His card stays in its set, so a copy someone holds still plays,
+ * burns and sells, but every pack's pool passes through here and leaves him out.
+ */
 export function poolFor(def) {
+  return dealablePool(def).filter(c => !isUnsignedCard(c));
+}
+
+function dealablePool(def) {
   // Scoped packs name their pool; themed and team packs are NBA structures
   // (divisions, conferences, franchises); everything else is both leagues.
   const scoped = def.pool || def.themed || def.needsTeam;

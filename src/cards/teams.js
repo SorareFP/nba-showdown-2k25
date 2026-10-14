@@ -860,7 +860,7 @@ export function wnbaFranchiseOf(team) {
 
 export function currentFranchise(team) {
   const code = String(team ?? '').toUpperCase();
-  if (!code) return null;
+  if (!code || code === FREE_AGENT) return null;
   const owner = Object.hasOwn(ERA_OWNER, code) ? ERA_OWNER[code] : canonicalTeam(code);
   return Object.hasOwn(RELOCATED_TO, owner) ? RELOCATED_TO[owner] : owner;
 }
@@ -911,6 +911,20 @@ export function leagueTeamCount(league) {
 const FALLBACK = { name: 'Unknown', city: '', primary: '#1B2A4A', secondary: '#C0C0C0', logo: null };
 
 /**
+ * UNSIGNED (the user, 2026-10-14: "If they're unlisted, you can remove them
+ * from their teams"). A 2026-27 card whose player is on no NBA roster wears
+ * FREE_AGENT: a neutral slate face with "FA" in the logo slot, nobody's
+ * franchise (currentFranchise is null), so no team, division or conference
+ * goal asks for him and no pack deals him (isUnsignedCard is the one test the
+ * goals and the packs read). Owned copies still play, burn and sell. When he
+ * signs, the next roster check (scripts/cardgen/generateTeams.js) puts him on
+ * the new team and back in the packs.
+ */
+export const FREE_AGENT = 'FA';
+const FREE_AGENT_TEAM = { name: 'Free Agent', city: '', primary: '#3B4252', secondary: '#C0C0C0', logo: null };
+export const isUnsignedCard = card => card?.team === FREE_AGENT;
+
+/**
  * Team record for an abbreviation, or a neutral fallback so cards still render.
  *
  * Current franchises first, then the defunct ones. The order is not arbitrary:
@@ -927,6 +941,7 @@ export function getTeam(abbr, { league } = {}) {
   // which is the correct signal, rather than an NBA team's identity.
   if (league === 'WNBA') return getWnbaTeam(abbr) ?? FALLBACK;
   const key = canonicalTeam(abbr);
+  if (key === FREE_AGENT) return FREE_AGENT_TEAM;
   if (Object.hasOwn(TEAMS, key)) return TEAMS[key];
   if (Object.hasOwn(HISTORICAL_TEAMS, key)) return HISTORICAL_TEAMS[key];
   return FALLBACK;

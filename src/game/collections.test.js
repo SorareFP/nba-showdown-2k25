@@ -15,6 +15,10 @@ import {
   COINS_ONLY_GOALS,
 } from './collections.js';
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
+import { isUnsignedCard } from '../cards/teams.js';
+
+/** The base cards a goal can ask for: an unsigned player's is on no team and in no goal (2026-10-14). */
+const SIGNED = CARD_SETS[BASE_SET].filter(card => !isUnsignedCard(card));
 import { CONFERENCES } from './packEngine.js';
 
 const own = (...keys) => new Set(keys.flat());
@@ -52,7 +56,7 @@ describe('the ladder', () => {
   });
 
   it('derives every requirement from the cards, so nothing can drift', () => {
-    const base = CARD_SETS[BASE_SET];
+    const base = SIGNED;
     expect(Object.values(TEAM_ROSTERS).reduce((n, r) => n + r.length, 0)).toBe(base.length);
     for (const card of base) {
       expect(TEAM_ROSTERS[card.team], card.name).toContain(cardKey(card));
@@ -196,7 +200,7 @@ describe('goalProgress', () => {
     // A set-sized goal has hundreds of missing keys and nobody reads them.
     const p = goalProgress('nba-set', own(), { missingLimit: 5 });
     expect(p.missing).toHaveLength(5);
-    expect(p.missingCount).toBe(CARD_SETS[BASE_SET].length);
+    expect(p.missingCount).toBe(SIGNED.length);
   });
 
   it('completes only on the last card', () => {
@@ -281,11 +285,11 @@ describe('allGoalProgress and collectionSummary', () => {
     expect(allGoalProgress(own(), { kind: 'set' })).toHaveLength(8);
   });
 
-  it('summarises against the whole base set', () => {
+  it('summarises against the whole base set, less its unsigned players', () => {
     const s = collectionSummary(own(), 'NBA');
     expect(s.teams).toBe(30);
     expect(s.teamsComplete).toBe(0);
-    expect(s.totalCards).toBe(CARD_SETS[BASE_SET].length);
+    expect(s.totalCards).toBe(SIGNED.length);
     expect(s.claimable).toBe(0);
   });
 

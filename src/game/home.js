@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'unsigned-players-free-agents', date: '2026-10-14', title: 'Unsigned players come off their teams',
+    body: "Jordan Hawkins is a Bull now. And eight 2026-27 cards belong to players no NBA team has on its roster: Nicolas Batum, Sharife Cooper, Tyrese Martin, Gabe Vincent, Rob Dillingham, Gary Harris, Aaron Holiday and Jonas Valančiūnas. They are Free Agents now, on a plain FA card: no team, division, conference or set collection asks for them, and no pack deals them. A copy you own still plays, burns and sells. When one signs, he joins his new team, its collection and the packs again.",
+    to: 'goals', cta: 'Collections',
+  },
+  {
     id: 'collections-by-division', date: '2026-10-14', title: 'Collections by division',
     body: "A third sort on the Collections page: By division lays the NBA franchises out East then West, one heading per division, the way the Division and Conference packs are cut, so you can see which pack covers the teams you are closest to finishing. The WNBA, which has no divisions, stays A to Z.",
     to: 'goals', cta: 'Collections',

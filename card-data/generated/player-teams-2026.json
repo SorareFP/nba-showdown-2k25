@@ -2005,7 +2005,7 @@
     "pos": "SF",
     "games": 78,
     "mpg": 19.9,
-    "personId": null
+    "personId": 1641842
   },
   {
     "name": "Jose Alvarado",
@@ -2241,7 +2241,7 @@
   },
   {
     "name": "Nicolas Batum",
-    "team": "LAC",
+    "team": "FA",
     "pos": "PF",
     "games": 74,
     "mpg": 17.5,
@@ -2313,7 +2313,7 @@
   },
   {
     "name": "Sharife Cooper",
-    "team": "WAS",
+    "team": "FA",
     "pos": "PG",
     "games": 41,
     "mpg": 17.1,
@@ -2337,7 +2337,7 @@
   },
   {
     "name": "Tyrese Martin",
-    "team": "PHI",
+    "team": "FA",
     "pos": "SG",
     "games": 46,
     "mpg": 16.9,
@@ -2369,7 +2369,7 @@
   },
   {
     "name": "Gabe Vincent",
-    "team": "ATL",
+    "team": "FA",
     "pos": "PG",
     "games": 53,
     "mpg": 16.6,
@@ -2545,7 +2545,7 @@
   },
   {
     "name": "Rob Dillingham",
-    "team": "CHI",
+    "team": "FA",
     "pos": "PG",
     "games": 65,
     "mpg": 14.9,
@@ -2625,7 +2625,7 @@
   },
   {
     "name": "Gary Harris",
-    "team": "MIL",
+    "team": "FA",
     "pos": "SG",
     "games": 48,
     "mpg": 13.8,
@@ -2641,7 +2641,7 @@
   },
   {
     "name": "Aaron Holiday",
-    "team": "HOU",
+    "team": "FA",
     "pos": "PG",
     "games": 57,
     "mpg": 13.7,
@@ -2649,7 +2649,7 @@
   },
   {
     "name": "Jordan Hawkins",
-    "team": "MEM",
+    "team": "CHI",
     "pos": "SG",
     "games": 51,
     "mpg": 13.6,
@@ -2657,7 +2657,7 @@
   },
   {
     "name": "Jonas Valančiūnas",
-    "team": "DEN",
+    "team": "FA",
     "pos": "C",
     "games": 65,
     "mpg": 13.4,

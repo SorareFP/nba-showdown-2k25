@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-02T14:19:30.675Z",
+ "generatedAt": "2026-10-14T13:36:37.167Z",
  "provisional": false,
  "set": "2026-27",
  "statsSeason": 2026,
@@ -13652,7 +13652,7 @@
   {
    "id": "Nicolas_Batum",
    "name": "Nicolas Batum",
-   "team": "LAC",
+   "team": "FA",
    "pos": "PF",
    "speed": 6,
    "power": 7,
@@ -14111,7 +14111,7 @@
   {
    "id": "Sharife_Cooper",
    "name": "Sharife Cooper",
-   "team": "WAS",
+   "team": "FA",
    "pos": "PG",
    "speed": 7,
    "power": 4,
@@ -14278,7 +14278,7 @@
   {
    "id": "Tyrese_Martin",
    "name": "Tyrese Martin",
-   "team": "PHI",
+   "team": "FA",
    "pos": "SG",
    "speed": 7,
    "power": 5,
@@ -14489,7 +14489,7 @@
   {
    "id": "Gabe_Vincent",
    "name": "Gabe Vincent",
-   "team": "ATL",
+   "team": "FA",
    "pos": "PG",
    "speed": 8,
    "power": 5,
@@ -15639,7 +15639,7 @@
   {
    "id": "Rob_Dillingham",
    "name": "Rob Dillingham",
-   "team": "CHI",
+   "team": "FA",
    "pos": "PG",
    "speed": 5,
    "power": 3,
@@ -16135,7 +16135,7 @@
   {
    "id": "Gary_Harris",
    "name": "Gary Harris",
-   "team": "MIL",
+   "team": "FA",
    "pos": "SG",
    "speed": 7,
    "power": 5,
@@ -16237,7 +16237,7 @@
   {
    "id": "Aaron_Holiday",
    "name": "Aaron Holiday",
-   "team": "HOU",
+   "team": "FA",
    "pos": "PG",
    "speed": 10,
    "power": 6,
@@ -16288,7 +16288,7 @@
   {
    "id": "Jordan_Hawkins",
    "name": "Jordan Hawkins",
-   "team": "MEM",
+   "team": "CHI",
    "pos": "SG",
    "speed": 4,
    "power": 3,
@@ -16346,7 +16346,7 @@
   {
    "id": "Jonas_Valanciunas",
    "name": "Jonas Valančiūnas",
-   "team": "DEN",
+   "team": "FA",
    "pos": "C",
    "speed": 3,
    "power": 11,

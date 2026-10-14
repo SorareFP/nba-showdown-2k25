@@ -13,12 +13,13 @@
 //                    and the only one that also yields a personId (which is
 //                    what makes the NBA headshot fallback work for a player
 //                    with no curated photo yet).
-//   pool fallback  — nba.com can't help (retired, unsigned, or listed with a
-//                    null team), but the pool's own team is a REAL team, just
-//                    possibly stale. Keeping it beats dropping the player.
-//   unresolved     — no roster match AND the pool team is itself an aggregate
-//                    code. Reported, never guessed: a wrong team puts the wrong
-//                    logo and colors on a printed card.
+//   free agent     — on no active roster, or listed with a null team: he is
+//                    unsigned, and his card wears FREE_AGENT (2026-10-14; this
+//                    path used to keep the pool's stale team).
+//   unresolved     — two roster records fold onto his name, so the roster
+//                    proves nothing. Reported, never guessed: a wrong team puts
+//                    the wrong logo and colors on a printed card.
+// A manual-teams.json entry beats all three.
 
 // Basketball-Reference -> nba.com abbreviations. ALREADY IMPLEMENTED in
 // src/cards/teams.js, because card theming needs the same three pairs to avoid
@@ -26,7 +27,15 @@
 // redeclared — two copies of BRK/CHO/PHO drifting apart is a bug nobody would
 // spot until a Nets card came out grey.
 export { TEAM_ALIASES, canonicalTeam } from '../../src/cards/teams.js';
-import { canonicalTeam } from '../../src/cards/teams.js';
+import { canonicalTeam, FREE_AGENT } from '../../src/cards/teams.js';
+
+/**
+ * A pool name nba.com spells as a DIFFERENT name, not just differently: no
+ * normalising turns "Ron" into "Ronald". Matching by name is all the resolver
+ * does, and since an unmatched player is now a free agent, a miss here would
+ * take a rostered player off his team (Ron Holland, DET, 2026-10-14).
+ */
+const ROSTER_NAMES = { 'Ron Holland': 'Ronald Holland II' };
 
 const MULTI_TEAM_CODES = new Set(['2TM', '3TM', '4TM', 'TOT']);
 
@@ -75,7 +84,7 @@ export function normalizeName(name) {
  * @param roster   Array of { fullName, team, personId } from nbaRoster.js
  * @param manual   { [playerName]: teamAbbr | null } from manual-teams.json
  * @returns { resolved, unresolved, stats } — `unresolved` is an array of player
- *          names with no real team from any source. `stats` counts each
+ *          names the roster cannot place for certain (an ambiguous name). `stats` counts each
  *          resolution path so a regression in one is visible instead of hidden
  *          inside a single total.
  */
@@ -95,10 +104,10 @@ export function resolvePlayerTeams(pool, roster, manual = {}) {
 
   const resolved = [];
   const unresolved = [];
-  const stats = { roster: 0, manual: 0, poolFallback: 0, unresolved: 0, ambiguous: 0 };
+  const stats = { roster: 0, manual: 0, freeAgent: 0, unresolved: 0, ambiguous: 0 };
 
   for (const player of pool) {
-    const key = normalizeName(player.name);
+    const key = normalizeName(Object.hasOwn(ROSTER_NAMES, player.name) ? ROSTER_NAMES[player.name] : player.name);
     const collided = ambiguous.has(key);
     if (collided) stats.ambiguous += 1;
     const match = collided ? null : byName.get(key);
@@ -126,25 +135,22 @@ export function resolvePlayerTeams(pool, roster, manual = {}) {
       continue;
     }
 
-    // nba.com couldn't help. But the pool's OWN team is only wrong for the
-    // multi-team aggregate codes; for everyone else it is a real team, just
-    // possibly stale (their team as of the end of the season we pulled).
-    if (!isMultiTeamCode(player.team)) {
-      resolved.push({
-        ...player,
-        team: canonicalTeam(player.team),
-        // Still worth carrying: a null-team roster record (the free-agent case)
-        // has a perfectly good personId, and that is what the headshot fallback
-        // needs.
-        personId: match?.personId ?? null,
-      });
-      stats.poolFallback += 1;
+    // Two roster records fold onto this name, so "not found" proves nothing
+    // about him: a human decides (manual-teams.json), never a guess.
+    if (collided) {
+      unresolved.push(player.name);
+      stats.unresolved += 1;
       continue;
     }
 
-    // Genuinely stuck: an aggregate code AND no real-team source anywhere.
-    unresolved.push(player.name);
-    stats.unresolved += 1;
+    // ON NO ROSTER, OR LISTED WITH NO TEAM: UNSIGNED (the user, 2026-10-14:
+    // "If they're unlisted, you can remove them from their teams"). This used
+    // to keep the pool's team, his team at the end of the season we pulled,
+    // which left a cut player on a club that had let him go. FREE_AGENT is
+    // nobody's franchise; see isUnsignedCard in src/cards/teams.js. A null-team
+    // record still carries the personId the headshot fallback needs.
+    resolved.push({ ...player, team: FREE_AGENT, personId: match?.personId ?? null });
+    stats.freeAgent += 1;
   }
 
   return { resolved, unresolved, stats };

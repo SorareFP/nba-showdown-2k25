@@ -30,7 +30,7 @@ import { AWARD_CODES } from '../cards/awards.js';
 import { CARD_SETS } from '../game/cardSets.js';
 import { readLegends } from '../../scripts/cardgen/wnba/generateWnbaLegends.js';
 import { isSafePlayerId } from '../../scripts/studio/studioServerPlugin.js';
-import { getTeam } from '../cards/teams.js';
+import { getTeam, FREE_AGENT } from '../cards/teams.js';
 import {
   CURRENT_SET,
   STATS_SEASON,
@@ -223,7 +223,9 @@ describe('resolved teams overlaid on the pool', () => {
     // record whoever it reports in card-data/manual-teams.json.
     expect(stuck).toEqual([]);
     // And the count is exactly the league, which is the thing completion counts.
-    expect(new Set(POOL_PLAYERS.map(p => p.team)).size).toBe(30);
+    // FREE_AGENT is not a 31st franchise: an unsigned player is on no team
+    // and in no goal (isUnsignedCard, 2026-10-14).
+    expect(new Set(POOL_PLAYERS.map(p => p.team).filter(t => t !== FREE_AGENT)).size).toBe(30);
   });
 
   it('keeps every pool player, including the ones it could not resolve', async () => {

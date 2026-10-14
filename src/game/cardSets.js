@@ -13,6 +13,8 @@ import rookie from '../../card-data/generated/cards-rookie.json' with { type: 'j
 import live from '../../card-data/generated/cards-live.json' with { type: 'json' };
 import standouts from '../../card-data/generated/cards-summer-standouts.json' with { type: 'json' };
 import dissonance from '../../card-data/generated/cards-dissonance.json' with { type: 'json' };
+// Record Breakers (2026-10-14): generator-owned, scripts/cardgen/generateRecordBreakers.js.
+import recordBreakers from '../../card-data/generated/cards-record-breakers.json' with { type: 'json' };
 import teamRewards from '../../card-data/generated/cards-team-rewards.json' with { type: 'json' };
 import wnbaTeamRewards from '../../card-data/generated/cards-wnba-team-rewards.json' with { type: 'json' };
 import setRewards from '../../card-data/generated/cards-set-rewards.json' with { type: 'json' };
@@ -79,6 +81,11 @@ const withoutMigrated = (setId, cards) => cards.filter(c => !hasMigratedOut(setI
 
 // Set id -> cards, each card annotated with its set. The set id doubles as
 // the face directory under public/cards/<set>/<id>.png.
+/** Generator-owned cards with no photo yet (scripts/studio/dormantThrowbacks.mjs): Throwbacks and Record Breakers. */
+const DORMANT_KEY_SET = new Set(dormant.keys ?? []);
+/** The Record Breakers cards, each with its set, dormant ones included. */
+const RECORD_BREAKER_CARDS = (recordBreakers.cards ?? []).map(c => ({ ...c, set: 'record-breakers' }));
+
 export const CARD_SETS = Object.fromEntries(
   [
     [BASE_SET, base],
@@ -90,6 +97,11 @@ export const CARD_SETS = Object.fromEntries(
     ['rookie', rookie],
     ['summer-standouts', standouts],
     ['dissonance', dissonance],
+    // A Record Breakers card with no photo sits out like a photo-less
+    // Throwback (DORMANT_RECORD_BREAKERS below): no pack, no goal, until
+    // its photo lands. Feat cards are in the set but never in a pack
+    // (isFeatCard, packEngine poolFor).
+    ['record-breakers', { cards: (recordBreakers.cards ?? []).filter(c => !DORMANT_KEY_SET.has(`record-breakers:${c.id}`)) }],
     // EARNED, NOT PACKED. Registered so the reward cards can be looked up,
     // owned and shown like any other card; no pack in packEngine names this
     // pool, which is what keeps them unobtainable except by completing a team.
@@ -140,14 +152,15 @@ joinFreeAgents(CARD_SETS, freeAgents.cards);
 const REQUESTED = new Set((freeAgents.cards ?? []).map(c => `${c.set}:${c.id}`));
 const GENERATED_THROWBACKS = [...(throwbacks.cards ?? []), ...(wnbaThrowbacks.cards ?? [])]
   .filter(c => c?.set && !REQUESTED.has(`${c.set}:${c.id}`));
-export const DORMANT_KEYS = new Set(dormant.keys ?? []);
+export const DORMANT_KEYS = DORMANT_KEY_SET;
 /**
  * Generator Throwbacks whose photo is WANTED (`photoWanted` on the curated
  * entry, 2026-10-14: LeBron James' 2022-23). Dormant all the same until the
  * photo lands, but the Photo Hunt lists them (photoNeeds.js).
  */
-export const PHOTO_WANTED_KEYS = new Set(GENERATED_THROWBACKS.filter(c => c.photoWanted).map(c => `${c.set}:${c.id}`));
-export const DORMANT_CARDS = GENERATED_THROWBACKS
+export const PHOTO_WANTED_KEYS = new Set([...GENERATED_THROWBACKS, ...RECORD_BREAKER_CARDS]
+  .filter(c => c.photoWanted).map(c => `${c.set}:${c.id}`));
+export const DORMANT_CARDS = [...GENERATED_THROWBACKS, ...RECORD_BREAKER_CARDS]
   .filter(c => DORMANT_KEYS.has(`${c.set}:${c.id}`) && !hasMigratedOut(c.set, c.id))
   .map(c => ({ ...c }));
 joinFreeAgents(CARD_SETS, GENERATED_THROWBACKS.filter(c => !DORMANT_KEYS.has(`${c.set}:${c.id}`)));

@@ -38,7 +38,7 @@
 //                   or null — see src/cards/badges.js
 //   treatment       the set-level visual treatment, or null — see treatments.js
 
-import { LIVE_BADGE, DISSONANCE_BADGE, ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, TEAM_REWARD_BADGE, SET_REWARD_BADGE, THROWBACK_BADGE, tierBadge } from './badges.js';
+import { LIVE_BADGE, DISSONANCE_BADGE, RECORD_BREAKERS_BADGE, ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, TEAM_REWARD_BADGE, SET_REWARD_BADGE, THROWBACK_BADGE, tierBadge } from './badges.js';
 
 /** The set currently being built. Every studio write goes under this. */
 export const CURRENT_SET = '2026-27';
@@ -91,6 +91,8 @@ export const SUMMER_STANDOUTS_SET = 'summer-standouts';
  * by hand off the Weird Jersey List.
  */
 export const DISSONANCE_SET = 'dissonance';
+/** Record Breakers (2026-10-14): a season a record was set. */
+export const RECORD_BREAKERS_SET = 'record-breakers';
 export const TEAM_REWARDS_SET = 'team-rewards';
 export const SET_REWARDS_SET = 'set-rewards';
 
@@ -313,6 +315,20 @@ export const SETS = [
     showsSeason: true,
     badge: DISSONANCE_BADGE,
     treatment: null,
+  },
+  {
+    // RECORD BREAKERS (2026-10-14): a season a record was set, carded. The
+    // platinum frame and pill are the set; the record rides on the lit plaque
+    // (CardTemplate's RecordPlaque, from card.record).
+    id: RECORD_BREAKERS_SET,
+    name: 'Record Breakers',
+    statsSeason: 'the record season',
+    kind: 'special',
+    editable: true,
+    hidesEmptyRows: true,
+    showsSeason: true,
+    badge: RECORD_BREAKERS_BADGE,
+    treatment: 'platinum',
   },
   {
     id: TEAM_REWARDS_SET,

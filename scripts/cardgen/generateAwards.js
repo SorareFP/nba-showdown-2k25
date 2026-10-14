@@ -688,6 +688,9 @@ async function main() {
     // A retired reward that became a Throwback keeps its season's awards too —
     // Beal's 2020-21 All-Star nod travels with the card, not the set it left.
     { set: THROWBACKS_SET, cards: throwbacks.cards },
+    // Record Breakers (2026-10-14): a record season keeps that season's marks —
+    // LeBron's 2022-23 was an All-Star year as well as the scoring record.
+    { set: 'record-breakers', cards: readJson(path.join(GEN_DIR, 'cards-record-breakers.json')).cards },
   ];
   const seasons = seasonsNeeded(plan);
   const manualBySeason = readManualAwards();

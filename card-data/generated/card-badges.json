@@ -12,7 +12,8 @@
   "team-reward",
   "set-reward",
   "throwback",
-  "live"
+  "live",
+  "record-breakers"
  ],
  "counts": {
   "players": 177,
@@ -25,7 +26,8 @@
    "team-reward": 0,
    "set-reward": 0,
    "throwback": 0,
-   "live": 0
+   "live": 0,
+   "record-breakers": 0
   },
   "printed": {
    "rookie": 33,
@@ -36,7 +38,8 @@
    "team-reward": 0,
    "set-reward": 0,
    "throwback": 0,
-   "live": 0
+   "live": 0,
+   "record-breakers": 0
   },
   "multiple": 33
  },

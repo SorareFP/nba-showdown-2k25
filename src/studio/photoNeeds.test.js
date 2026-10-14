@@ -49,9 +49,12 @@ describe('a dormant card whose photo is wanted', () => {
     expect(photoState('throwbacks', 'sleeper', landed)).toBe('photo');
   });
 
-  it('is LeBron James 2022-23, dormant and wanted', async () => {
-    const { DORMANT_KEYS, PHOTO_WANTED_KEYS } = await import('../game/cardSets.js');
-    expect(PHOTO_WANTED_KEYS.has('throwbacks:LeBron_James_2023')).toBe(true);
-    expect(DORMANT_KEYS.has('throwbacks:LeBron_James_2023')).toBe(true);
+  // LeBron James 2022-23 was the first wanted card; his photo landed and the
+  // card moved to Record Breakers the same day (2026-10-14), so it is neither.
+  it('keeps LeBron James 2022-23 live in Record Breakers once its photo landed', async () => {
+    const { DORMANT_KEYS, PHOTO_WANTED_KEYS, getCardByKey } = await import('../game/cardSets.js');
+    expect(DORMANT_KEYS.has('record-breakers:LeBron_James_2023')).toBe(false);
+    expect(PHOTO_WANTED_KEYS.has('throwbacks:LeBron_James_2023')).toBe(false);
+    expect(getCardByKey('record-breakers:LeBron_James_2023')?.record?.number).toBe('38,388');
   });
 });

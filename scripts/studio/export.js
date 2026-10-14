@@ -59,6 +59,7 @@ const SET_FILES = {
   live: 'cards-live.json',
   'summer-standouts': 'cards-summer-standouts.json',
   dissonance: 'cards-dissonance.json',
+  'record-breakers': 'cards-record-breakers.json',
   // Registered when the team-completion set shipped. A set missing from this
   // map is not an error until someone names it — `--all` simply skips it — so
   // a new set has to be added here as well as to its generator.

@@ -318,9 +318,9 @@ describe('the externally-resolved championship mark', () => {
 
 // ── THE DECLARATION ─────────────────────────────────────────────────────────
 describe('the declared awards', () => {
-  it('is the six voted trophies, Finals MVP, the ring and All-Star, after one hand-entered feat', () => {
+  it('is the six voted trophies, Finals MVP, the ring and All-Star', () => {
     expect(AWARD_CODES).toEqual([
-      'REC', 'MVP', 'FMVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY', 'CHAMP', 'AS',
+      'MVP', 'FMVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY', 'CHAMP', 'AS',
     ]);
     // The four that stay out, named so this is a decision on the record rather
     // than an omission: All-NBA puts 15 more players on the list every season
@@ -350,10 +350,7 @@ describe('the declared awards', () => {
   });
 
   it('orders by standing, MVP first and All-Star last', () => {
-    // The hand-entered feat leads: on the one card that holds it, it is the
-    // reason the card exists. Of the marks a season can EARN, MVP is first.
-    expect(AWARD_CODES[0]).toBe('REC');
-    expect(AWARD_CODES.filter(code => !getAward(code).manual)[0]).toBe('MVP');
+    expect(AWARD_CODES[0]).toBe('MVP');
     expect(AWARD_CODES.indexOf('DPOY')).toBeLessThan(AWARD_CODES.indexOf('6MOY'));
     expect(AWARD_CODES.indexOf('ROY')).toBeLessThan(AWARD_CODES.indexOf('CPOY'));
     // LAST, and it has to be: 24+ players hold it every season against one for
@@ -393,7 +390,7 @@ describe('the marks a card prints', () => {
     // bottom of the priority order, so the MVP is never the one dropped.
     const all = pickCodes([...AWARD_CODES]);
     expect(all).toHaveLength(MAX_CARD_AWARDS);
-    expect(all).toEqual(['REC', 'MVP', 'FMVP', 'DPOY']);
+    expect(all).toEqual(['MVP', 'FMVP', 'DPOY', 'ROY']);
     expect(MAX_CARD_AWARDS).toBe(4);
   });
 
@@ -559,16 +556,12 @@ describe('the lettered chip', () => {
   });
 });
 
-// THE ALL-TIME SCORING RECORD (2026-10-14): a feat no column holds, entered by
-// hand in card-data/manual-awards.json for LeBron James' 2022-23. It is
-// `external` like the ring, so no awards string can ever earn it.
-describe('a hand-entered mark', () => {
-  it('is declared manual and external, with art of its own', () => {
-    expect(getAward('REC')).toMatchObject({ name: 'All-Time Scoring Record', manual: true, external: true });
-    expect(awardImagePath('REC')).toMatch(/Scoring_Record/);
-  });
-
-  it('cannot be earned from an awards string, however it is spelled', () => {
-    expect(awardsEarned('REC-1,REC,MVP-1')).toEqual(['MVP']);
+// REC WAS RETIRED (2026-10-14): LeBron James' scoring record went from a
+// one-off award mark to the Record Breakers set's lit plaque the same day.
+// The `manual` mechanism stays for the next one-off mark; none is declared.
+describe('hand-entered marks, after REC', () => {
+  it('declares no manual row, and REC is gone', () => {
+    expect(AWARDS.filter(a => a.manual)).toEqual([]);
+    expect(getAward('REC')).toBeNull();
   });
 });

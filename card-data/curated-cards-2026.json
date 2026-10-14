@@ -127,14 +127,6 @@
       "season": 2016,
       "set": "throwbacks",
       "why": "the user, 2026-09-30, on a photo left in the team-rewards folder from the first reward picks (2026-09-04): \"Can we re-assign that somewhere?\" and, shown the plan, \"Yeah go for it\". The photo is a Kings one; his Super Season (2016-17) wears New Orleans by the last-team rule, so the Sacramento years had no card. 2015-16, his All-NBA season."
-    },
-    {
-      "bbrefId": "jamesle01",
-      "name": "LeBron James",
-      "season": 2023,
-      "set": "throwbacks",
-      "why": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" Not a Dissonance card (that set is the wrong jersey, and the Lakers were his own); the user approved the record season as a Throwback (2026-10-14: \"These all work for me\"): 2022-23, when he passed Kareem Abdul-Jabbar's 38,387 on 2023-02-07. It carries a one-off All-Time Scoring Record mark (REC, card-data/manual-awards.json). Not his best season by the rule (2008-09 is) and not his rookie year (2003-04, carded).",
-      "photoWanted": true
     }
   ]
 }

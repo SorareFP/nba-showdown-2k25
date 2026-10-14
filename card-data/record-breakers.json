@@ -1,0 +1,14 @@
+{
+  "_comment": "RECORD BREAKERS (2026-10-14, docs/plans/2026-10-14-record-breakers-design.md). One row per record. A season row builds a card in the record-breakers set (scripts/cardgen/generateRecordBreakers.js) from its real game log; a row naming `card` puts the plaque on a card that already exists. `record` is what the lit plaque prints. `earn` is \"pack\" or a feat id (feats are part 2). `check` makes the builder verify the number from the cache ({source:'log',stat,total} or {source:'perPoss',field,value}); a record the cache cannot see names its source in `verifiedBy`.",
+  "rows": [
+    {
+      "bbrefId": "jamesle01",
+      "name": "LeBron James",
+      "season": 2023,
+      "record": { "number": "38,388", "label": "ALL-TIME PTS" },
+      "earn": "career-points",
+      "verifiedBy": "passed Kareem Abdul-Jabbar's 38,387 on 2023-02-07",
+      "why": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" The user (2026-10-14) made it the first card of its own set, Record Breakers."
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+ "set": "record-breakers",
+ "generatedAt": "2026-10-14T17:58:08.355Z",
+ "note": "RECORD BREAKERS — generator-owned (scripts/cardgen/generateRecordBreakers.js from card-data/record-breakers.json).",
+ "cards": [
+  {
+   "id": "LeBron_James_2023",
+   "name": "LeBron James",
+   "team": "LAL",
+   "pos": "PF",
+   "speed": 13,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 1970,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 38,
+   "games": 55,
+   "mpg": 35.5,
+   "bbrefId": "jamesle01",
+   "traded": false,
+   "metrics": {
+    "bpm": 6.1,
+    "vorp": 4,
+    "ws": 5.6,
+    "ws48": 0.138,
+    "per": 23.9
+   },
+   "provisional": false,
+   "set": "record-breakers",
+   "record": {
+    "number": "38,388",
+    "label": "ALL-TIME PTS"
+   },
+   "earn": "career-points",
+   "why": "Ryan, through the suggestion box (2026-10-11): \"Maybe a dissonance card for breaking lebrons all time scoring record.\" The user (2026-10-14) made it the first card of its own set, Record Breakers."
+  }
+ ]
+}

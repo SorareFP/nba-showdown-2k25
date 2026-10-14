@@ -41,11 +41,11 @@ import {
 } from './sets.js';
 
 describe('the declared set list', () => {
-  it('holds the fifteen sets the studio offers', () => {
+  it('holds the sixteen sets the studio offers', () => {
     expect(SET_IDS).toEqual([
       // The Live Series (2026-09-23) sits with the season it mirrors.
       '2026-27', 'live', '2025-26', 'super-season', 'rookie', 'summer-standouts',
-      'dissonance', 'team-rewards', 'set-rewards', 'wnba', 'wnba-super-season', 'wnba-rookie',
+      'dissonance', 'record-breakers', 'team-rewards', 'set-rewards', 'wnba', 'wnba-super-season', 'wnba-rookie',
       'wnba-team-rewards', 'wnba-set-rewards',
       // The Free Agents catch-all, one per league (2026-09-10).
       'throwbacks', 'wnba-throwbacks',

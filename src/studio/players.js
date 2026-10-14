@@ -43,6 +43,7 @@ import {
   SUPER_SEASON_SET,
   SUMMER_STANDOUTS_SET,
   DISSONANCE_SET,
+  RECORD_BREAKERS_SET,
   TEAM_REWARDS_SET,
   SET_REWARDS_SET,
   ROOKIE_SET,
@@ -247,6 +248,20 @@ export function awardsFor(set, id) {
   return awardsBySet.get(set)?.get(id) ?? [];
 }
 
+// ── The record plaques (Record Breakers, 2026-10-14) ───────────────────────
+//
+// card-records.json (scripts/cardgen/generateRecordBreakers.js) holds every
+// plaque by `set:id`: the set's own cards and the existing cards whose season
+// set a record (Curry's 2015-16 Super Season). Joined here like the awards,
+// so a plaque can sit on a card another generator owns.
+const recordModules = import.meta.glob('../../card-data/generated/card-records.json', { eager: true });
+const RECORDS = Object.values(recordModules)[0]?.default?.records ?? {};
+
+/** The record a card's plaque prints, or null. */
+export function recordFor(set, id) {
+  return RECORDS[`${set}:${id}`] ?? null;
+}
+
 // ── The WNBA marks, merged in beside the NBA file ───────────────────────────
 //
 // A separate file from a separate generator (scripts/cardgen/wnba/
@@ -340,7 +355,7 @@ export const CARD_PLAYERS = SHIPPED_CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{live,super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards,free-agents,throwbacks,wnba-throwbacks}.json',
+  '../../card-data/generated/cards-{live,super-season,rookie,summer-standouts,dissonance,record-breakers,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards,free-agents,throwbacks,wnba-throwbacks}.json',
   { eager: true }
 );
 
@@ -379,6 +394,7 @@ export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
 export const LIVE_FILE = loadSpecialSet(LIVE_SET);
 export const SUMMER_STANDOUTS_FILE = loadSpecialSet(SUMMER_STANDOUTS_SET);
 export const DISSONANCE_FILE = loadSpecialSet(DISSONANCE_SET);
+export const RECORD_BREAKERS_FILE = loadSpecialSet(RECORD_BREAKERS_SET);
 export const TEAM_REWARDS_FILE = loadSpecialSet(TEAM_REWARDS_SET);
 export const SET_REWARDS_FILE = loadSpecialSet(SET_REWARDS_SET);
 export const WNBA_FILE = loadSpecialSet(WNBA_SET);
@@ -425,6 +441,8 @@ function specialSource(id, file, { sub, hint, missingHint = HISTORY_MISSING_HINT
     .map(card => ({
       ...card,
       awards: awardsFor(id, card.id),
+      // The lit plaque, when this card's season set a record.
+      record: recordFor(id, card.id) ?? card.record ?? null,
       // Base-card badges, where a badge file names this set (the WNBA's
       // excluded rookies today; every other set's map is empty).
       ...(id === WNBA_SET && wnbaBadgesById.has(card.id)
@@ -619,6 +637,13 @@ export const SOURCES = {
       String.fromCharCode(39) + 's: Speed+Power trusts the whole year' +
       String.fromCharCode(39) + 's minutes, so a one-game stint carries a real stat line without ' +
       'pricing the man at replacement. Re-run `node scripts/cardgen/generateDissonance.js`.',
+  }),
+  [RECORD_BREAKERS_SET]: specialSource(RECORD_BREAKERS_SET, RECORD_BREAKERS_FILE, {
+    sub: 'records, carded',
+    missingHint: '`node scripts/cardgen/generateRecordBreakers.js`',
+    hint:
+      'A SEASON A RECORD WAS SET: the platinum frame, and the record on the lit plaque. Built by ' +
+      '`node scripts/cardgen/generateRecordBreakers.js` from card-data/record-breakers.json.',
   }),
   [TEAM_REWARDS_SET]: specialSource(TEAM_REWARDS_SET, TEAM_REWARDS_FILE, {
     sub: 'one per franchise · collection rewards',

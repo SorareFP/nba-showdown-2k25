@@ -2070,7 +2070,8 @@ describe('the generated award file, on the cards it belongs to', () => {
     // travels with the card into cards-throwbacks.json, not with the set it left.
     expect(Object.keys(AWARDS_FILE.sets).sort()).toEqual(
       // set-rewards since 2026-09-30 (the tiers and each set's top card moved there).
-      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET, 'dissonance', 'team-rewards', 'set-rewards', 'throwbacks'].sort()
+      // record-breakers since 2026-10-14: a record season keeps that season's marks.
+      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET, 'dissonance', 'team-rewards', 'set-rewards', 'throwbacks', 'record-breakers'].sort()
     );
     // The WNBA sets are absent, and that is a data gap rather than a decision:
     // Basketball-Reference serves that league under a different path and the
@@ -2470,5 +2471,19 @@ describe('the lit plaque (Record Breakers, 2026-10-14)', () => {
   it('sits inside the photo, left of its cut corner', () => {
     const plaque = cssBlock('.plaque');
     expect(pxIn(plaque, 'left') + pxIn(plaque, 'width')).toBeLessThanOrEqual(456);
+  });
+});
+
+// A RECORD BREAKERS CARD, WHOLE (2026-10-14): the set's platinum treatment, its
+// two-line pill and the plaque, together.
+describe('a Record Breakers card', () => {
+  it('renders platinum, the two-line pill and the plaque', () => {
+    const html = render({
+      card: { id: 'LeBron_James_2023', name: 'LeBron James', team: 'LAL', season: 2023, seasonLabel: '2022-23', salary: 1970, record: { number: '38,388', label: 'ALL-TIME PTS' } },
+      set: 'record-breakers',
+    });
+    expect(html).toContain('RECORD\nBREAKERS');
+    expect(html).toContain('--treatment-frame-width:14px');
+    expect(html).toContain('38,388');
   });
 });

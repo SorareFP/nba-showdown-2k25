@@ -34,7 +34,9 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const GEN = path.join(ROOT, 'card-data', 'generated');
 export const DORMANT_FILE = path.join(GEN, 'dormant-throwbacks.json');
-const THROWBACK_FILES = ['cards-throwbacks.json', 'cards-wnba-throwbacks.json'];
+// Record Breakers too (2026-10-14): a photo-less card of that set sits out of
+// every pack and goal until its photo lands, like a photo-less Throwback.
+const THROWBACK_FILES = ['cards-throwbacks.json', 'cards-wnba-throwbacks.json', 'cards-record-breakers.json'];
 const REWARD_FILES = ['cards-team-rewards.json', 'cards-set-rewards.json', 'cards-wnba-team-rewards.json', 'cards-wnba-set-rewards.json',
   'cards-super-season.json', 'cards-wnba-super-season.json'];
 

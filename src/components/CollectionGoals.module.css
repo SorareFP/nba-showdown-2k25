@@ -220,3 +220,9 @@
 @media (min-width: 1600px) {
   .goals { display: grid; grid-template-columns: repeat(auto-fill, minmax(640px, 1fr)); align-items: start; gap: 8px; }
 }
+
+/* A division's heading in the By division sort (2026-10-14). */
+.divisionHead {
+  grid-column: 1 / -1; margin: 10px 0 2px; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted);
+}

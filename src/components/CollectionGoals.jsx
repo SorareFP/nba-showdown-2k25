@@ -15,7 +15,8 @@
 // from the question. That is also the market's natural home: buying a random
 // card from a browse screen is a shopping trip, buying the one card between you
 // and a reward is a decision.
-import { useState, useMemo } from 'react';
+import { Fragment, useState, useMemo } from 'react';
+import { CONFERENCES, DIVISIONS } from '../game/packEngine.js';
 import { allGoalProgress, GOALS_BY_ID, COINS_ONLY_GOALS, collectedKeys } from '../game/collections.js';
 import { GOAL_DIFFICULTY, rewardBandFor } from '../game/collectionDifficulty.js';
 import { getCardByKey } from '../game/cardSets.js';
@@ -50,8 +51,43 @@ const TIERS = [
  * fewest missing, then the name; one already claimed goes last, since
  * there is nothing left to do there.
  */
-export const GOAL_SORTS = { az: 'A–Z', progress: 'Most complete' };
+export const GOAL_SORTS = { az: 'A–Z', progress: 'Most complete', division: 'By division' };
+
+/**
+ * BY DIVISION (Ryan, through the suggestion box, 2026-10-10: "sorting teams by
+ * division / conference to help w pack selection decisions"). An NBA team
+ * row's place: its conference, then its division, in the order the Division
+ * and Conference packs are cut. Null for anything else: the WNBA has no
+ * divisions, and the other tiers are not teams.
+ */
+const DIVISION_ORDER = Object.keys(DIVISIONS).sort((a, b) =>
+  (CONFERENCES.East.includes(DIVISIONS[a][0]) ? 0 : 1) - (CONFERENCES.East.includes(DIVISIONS[b][0]) ? 0 : 1));
+function divisionOf(row) {
+  if (row?.kind !== 'team' || row.league === 'WNBA') return null;
+  const division = DIVISION_ORDER.find(d => DIVISIONS[d].includes(row.label));
+  if (!division) return null;
+  const conference = CONFERENCES.East.includes(row.label) ? 'East' : 'West';
+  return { division, conference, rank: DIVISION_ORDER.indexOf(division) };
+}
+
+/** The heading each division gets, keyed by the id of its first row: `{ rowId: 'East · Atlantic' }`. */
+export function divisionHeads(rows) {
+  const out = {};
+  let last = null;
+  for (const r of rows ?? []) {
+    const d = divisionOf(r);
+    if (d && d.division !== last) out[r.id] = `${d.conference} · ${d.division}`;
+    last = d?.division ?? null;
+  }
+  return out;
+}
+
 export function sortGoalRows(rows, mode = 'az', claims = {}) {
+  if (mode === 'division') {
+    if (!rows.some(divisionOf)) return rows;
+    return [...rows].sort((a, b) => (divisionOf(a)?.rank ?? 99) - (divisionOf(b)?.rank ?? 99)
+      || String(a.label).localeCompare(String(b.label)));
+  }
   if (mode !== 'progress') return rows;
   const rank = r => (claims[r.id] ? 2 : r.complete ? 0 : 1);
   const share = r => (r.total ? r.owned / r.total : 0);
@@ -390,6 +426,7 @@ export default function CollectionGoals({ collection, claims, coins, onClaim, on
           .filter(r => r.kind === tier.kind)
           .filter(r => !hideDone || !claims[r.id]), sort, claims);
         if (tierRows.length === 0) return null;
+        const heads = sort === 'division' ? divisionHeads(tierRows) : {};
         return (
           <section key={tier.kind} className={styles.tier}>
             <h3 className={styles.tierHead}>
@@ -398,6 +435,10 @@ export default function CollectionGoals({ collection, claims, coins, onClaim, on
             </h3>
             <div className={styles.goals}>
               {tierRows.map(goal => (
+                <Fragment key={goal.id}>
+                {sort === 'division' && heads[goal.id] && (
+                  <div className={styles.divisionHead} data-division-head={heads[goal.id]}>{heads[goal.id]}</div>
+                )}
                 <GoalRow
                   key={goal.id}
                   goal={goal}
@@ -412,6 +453,7 @@ export default function CollectionGoals({ collection, claims, coins, onClaim, on
                   expanded={expanded === goal.id}
                   onToggle={() => setExpanded(expanded === goal.id ? null : goal.id)}
                 />
+                </Fragment>
               ))}
             </div>
           </section>

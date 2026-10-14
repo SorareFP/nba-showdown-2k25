@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'collections-by-division', date: '2026-10-14', title: 'Collections by division',
+    body: "A third sort on the Collections page: By division lays the NBA franchises out East then West, one heading per division, the way the Division and Conference packs are cut, so you can see which pack covers the teams you are closest to finishing. The WNBA, which has no divisions, stays A to Z.",
+    to: 'goals', cta: 'Collections',
+  },
+  {
     id: 'wnba-team-rare-deluxe', date: '2026-10-14', title: 'WNBA Team Rare Deluxe',
     body: "A new pack in the shop: three players from one WNBA franchise, its legends included, every one rare or better, with a super rare one time in three and the same one-in-nine shot at a Legendary as the NBA Team Rare Deluxe, at the same 1,875 coins. It is stocked for every franchise with the cards to fill it; Toronto, Portland and Seattle join once their pools grow.",
     to: 'shop', cta: 'Pack Shop',

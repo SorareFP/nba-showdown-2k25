@@ -109,3 +109,19 @@ describe('a run game\'s claim', () => {
     expect(buildGameClaim({ won: true, fixtureFrom: { runId: 'r1' }, claimId: 'fixture:climb:r1:1-0' })).toMatchObject({ runId: 'r1', gameId: 'fixture:climb:r1:1-0' });
   });
 });
+
+// THE CLIMB'S RESULTS SCREEN WAITS FOR ITS CLAIM (final review, 2026-10-18).
+// The run's ledger moves on the claim; a run that went on without it found
+// its won game still "open" and lost the run, or could never bank.
+describe('leaving a Climb game', () => {
+  it('waits for the claim, offers a retry on an error, and never holds a signed-out or ordinary game', async () => {
+    const { climbLeave } = await import('./gameClaim.js');
+    const climb = { runId: 'r1', stopId: '1-0', kind: 'game', floor: 1, rung: 'prince' };
+    expect(climbLeave({ climb, signedIn: true, applied: false })).toEqual({ canLeave: false, retry: false, waiting: true });
+    expect(climbLeave({ climb, signedIn: true, applied: true, error: 'deadline-exceeded' })).toEqual({ canLeave: false, retry: true, waiting: false });
+    expect(climbLeave({ climb, signedIn: true, applied: true })).toEqual({ canLeave: true, retry: false, waiting: false });
+    expect(climbLeave({ climb, signedIn: true, applied: false, paid: { coins: 0 } }).canLeave).toBe(true);
+    expect(climbLeave({ climb, signedIn: false, applied: false }).canLeave).toBe(true);
+    expect(climbLeave({ climb: null, signedIn: true, applied: false }).canLeave).toBe(true);
+  });
+});

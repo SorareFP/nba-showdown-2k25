@@ -47,7 +47,7 @@ import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game
 import { burnValueFor, burnProblem, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox, payFactorOf, AI_PAY } from './shared/src/game/coinRewards.js';
-import { generateMap, reachableGame, stopById, potOf, runClaimPreview } from './shared/src/game/modes/climbMap.js';
+import { generateMap, reachableGame, stopById, potOf, runClaimPreview, MAP_VERSION } from './shared/src/game/modes/climbMap.js';
 import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from './shared/src/game/modes/prizes.js';
 import { getDatabase } from 'firebase-admin/database';
 import { readFileSync } from 'node:fs';
@@ -1030,9 +1030,9 @@ export const climbStart = onCall({ region: 'us-central1' }, async request => {
   const seed = Math.floor(Math.random() * 2 ** 31);
   const ref = db.collection(`users/${uid}/runLedger`).doc();
   await db.runTransaction(async tx => {
-    tx.set(ref, { seed, rung, status: 'active', open: null, cleared: [], createdAt: FieldValue.serverTimestamp() });
+    tx.set(ref, { seed, rung, mapVersion: MAP_VERSION, status: 'active', open: null, cleared: [], createdAt: FieldValue.serverTimestamp() });
   });
-  return { runId: ref.id, seed };
+  return { runId: ref.id, seed, mapVersion: MAP_VERSION };
 });
 
 export const climbGame = onCall({ region: 'us-central1' }, async request => {
@@ -1045,14 +1045,19 @@ export const climbGame = onCall({ region: 'us-central1' }, async request => {
     const snap = await tx.get(ref);
     if (!snap.exists) throw new HttpsError('not-found', 'No such run');
     const run = snap.data();
-    if (run.status !== 'active') return { ok: false, status: run.status };
+    // A stop already won answers so (final review, 2026-10-18): a run whose
+    // claim landed but whose browser never recorded it catches up, rather
+    // than hitting a refusal it has no way past.
+    const wonHere = (run.cleared ?? []).includes(stopId);
+    if (run.status !== 'active') return { ok: false, status: run.status, cleared: wonHere };
     if (run.open === stopId) return { ok: true, status: 'active' };
+    if (wonHere) return { ok: false, status: 'active', cleared: true };
     if (run.open) {
       tx.update(ref, { status: 'lost', lostAt: run.open, open: null });
       return { ok: false, status: 'lost' };
     }
     const cleared = run.cleared ?? [];
-    if (!reachableGame(generateMap(run.seed), cleared.length ? cleared[cleared.length - 1] : null, stopId)) {
+    if (!reachableGame(generateMap(run.seed, run.mapVersion ?? 1), cleared.length ? cleared[cleared.length - 1] : null, stopId)) {
       throw new HttpsError('failed-precondition', 'That stop is not open');
     }
     tx.update(ref, { open: stopId, openedAt: FieldValue.serverTimestamp() });
@@ -1097,7 +1102,7 @@ async function climbClaim(uid, runId, claim, claimKey) {
       if (c.exists && (c.data()?.count ?? 0) > 0) owned.push(row);
     }
 
-    const map = generateMap(run.seed);
+    const map = generateMap(run.seed, run.mapVersion ?? 1);
     const stop = stopById(map, run.open);
     const cleared = claim.won ? [...(run.cleared ?? []), run.open] : (run.cleared ?? []);
     const status = !claim.won ? 'lost' : stop?.kind === 'boss' ? 'won' : 'active';
@@ -1146,7 +1151,7 @@ export const climbBank = onCall({ region: 'us-central1' }, async request => {
     // is still on its way is not lost to the bank that overtook it.
     if (run.status === 'active' && run.open) throw new HttpsError('failed-precondition', 'A game is still open: finish it first');
     if (run.status !== 'active' && run.status !== 'won') throw new HttpsError('failed-precondition', 'Nothing to bank');
-    const pot = potOf(generateMap(run.seed), run.cleared ?? [], run.rung);
+    const pot = potOf(generateMap(run.seed, run.mapVersion ?? 1), run.cleared ?? [], run.rung);
     if (pot.coins > 0) tx.update(userRef, { currency: FieldValue.increment(pot.coins) });
     if (pot.booster) {
       // The boss's Booster: a box of one, opened like any box (openBoxPack).

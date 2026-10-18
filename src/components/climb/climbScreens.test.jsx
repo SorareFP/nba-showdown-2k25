@@ -57,6 +57,12 @@ describe('the map', () => {
     expect(out).toContain('$2,200');
   });
 
+  // THE WAY OUT (final review, 2026-10-18): a run that disagrees with its
+  // ledger, or a bank that keeps refusing, must not lock a player out.
+  it('offers a way to give the run up', () => {
+    expect(html(<ClimbMap run={camped()} onGo={noop} onRetire={noop} onFreeRest={noop} onAbandon={noop} />)).toContain('Give up this run');
+  });
+
   it('shows a player\'s carried fatigue', () => {
     const r = { ...camped(), fatigue: { [FIVE[0].id]: 12 } };
     expect(html(<ClimbMap run={r} onGo={noop} onRetire={noop} onFreeRest={noop} />)).toContain('12 min');

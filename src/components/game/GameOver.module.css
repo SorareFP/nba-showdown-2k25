@@ -76,3 +76,7 @@
 .footer { text-align: center; }
 .playAgain { background: var(--orange); color: #fff; padding: 12px 32px; border-radius: var(--radius); font-size: 15px; font-weight: 600; }
 .playAgain:hover { background: #C2410C; }
+
+/* The Climb (2026-10-18): a claim that has to land before the run goes on. */
+.claimError { margin: 8px 0 0; color: var(--orange-light); font-size: 13px; text-align: center; }
+.playAgain:disabled { opacity: 0.55; cursor: default; }

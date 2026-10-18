@@ -152,3 +152,15 @@ describe('the pot', () => {
     expect(runClaimPreview({ kind: 'game', floor: 2 }, 'prince', false).breakdown[0].label).toMatch(/pot is lost/);
   });
 });
+
+// A RUN KEEPS THE MAP IT STARTED ON (final review, 2026-10-18): the server
+// rebuilds the map from the seed, so a later change to the generator would
+// reshape every run in flight. Each run carries the version it was drawn at.
+describe('the map version', () => {
+  it('is 1, draws the same map named or not, and refuses a version it does not know', async () => {
+    const { MAP_VERSION } = await import('./climbMap.js');
+    expect(MAP_VERSION).toBe(1);
+    expect(generateMap(11, 1)).toEqual(generateMap(11));
+    expect(() => generateMap(11, 99)).toThrow(/version/);
+  });
+});

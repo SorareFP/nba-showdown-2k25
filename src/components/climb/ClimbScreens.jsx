@@ -220,7 +220,7 @@ const yOf = floor => PAD + (FLOORS + 1 - floor) * ROW + ROW / 2;
 const xOf = lane => (lane + 0.5) * 100;
 
 /** The act: seven floors and the boss, the open stops tappable; your team, the pot and the way out beside it. */
-export function ClimbMap({ run, onGo, onRetire, onFreeRest, busy = false }) {
+export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, busy = false }) {
   const open = new Set(openStops(run).map(s => s.id));
   const stops = [...run.map.floors.flat(), run.map.boss];
   const height = (FLOORS + 1) * ROW + PAD * 2;
@@ -286,6 +286,7 @@ export function ClimbMap({ run, onGo, onRetire, onFreeRest, busy = false }) {
         <div className={styles.sideActions}>
           {run.freeRest > 0 && <button type="button" onClick={onFreeRest} disabled={busy}>Take the free Rest Day</button>}
           <button type="button" className={styles.danger} onClick={onRetire} disabled={busy}>Retire and bank the pot</button>
+          {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}
         </div>
       </aside>
     </div>
@@ -378,7 +379,7 @@ export function RestDay({ run, onRest, onSmith, busy = false, free = false }) {
 // ── The end ──────────────────────────────────────────────────────────────────
 
 /** Won, retired or lost: the pot, banked or gone. */
-export function RunOver({ run, onBank, onNew, busy = false }) {
+export function RunOver({ run, onBank, onNew, onAbandon = null, busy = false }) {
   const pot = potPreview(run);
   const lost = run.status === 'lost';
   const banked = run.banked;
@@ -394,7 +395,10 @@ export function RunOver({ run, onBank, onNew, busy = false }) {
       ) : (
         <>
           <p className={styles.lede}>The pot: {pot.coins.toLocaleString('en-US')} coins{pot.booster ? ' and a Booster' : ''}.</p>
-          <div className={styles.actions}><button type="button" className={styles.primary} onClick={onBank} disabled={busy}>Bank the pot</button></div>
+          <div className={styles.actions}>
+            <button type="button" className={styles.primary} onClick={onBank} disabled={busy}>Bank the pot</button>
+            {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}
+          </div>
         </>
       )}
       {(lost || banked) && <div className={styles.actions}><button type="button" className={styles.primary} onClick={onNew}>Start a new climb</button></div>}

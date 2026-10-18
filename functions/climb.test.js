@@ -238,3 +238,28 @@ describe('banking the pot', () => {
     expect(coins()).toBe(100);
   });
 });
+
+// RECONCILING (final review, 2026-10-18): a run whose game was claimed but
+// never recorded in the browser (the tab closed, another device) asks to open
+// that stop again. The answer says it was won, so the browser can catch up
+// instead of hitting "That stop is not open" or a dead end after the boss.
+describe('a stop the ledger already cleared', () => {
+  it('answers as cleared, without ending the run', async () => {
+    const { runId } = await started();
+    await winAt(runId, '1-0');
+    expect(await call(climbGame, { runId, stopId: '1-0' })).toMatchObject({ ok: false, status: 'active', cleared: true });
+    expect(ledger(runId).status).toBe('active');
+  });
+
+  it('answers the boss as cleared once the run is won', async () => {
+    const { runId } = await started();
+    docs.set(`users/${UID}/runLedger/${runId}`, { ...ledger(runId), cleared: ['1-0', 'boss'], status: 'won' });
+    expect(await call(climbGame, { runId, stopId: 'boss' })).toMatchObject({ ok: false, status: 'won', cleared: true });
+  });
+
+  it('stamps the map version the run was drawn at', async () => {
+    const { runId, mapVersion } = await call(climbStart, { rung: 'prince' });
+    expect(mapVersion).toBe(1);
+    expect(ledger(runId).mapVersion).toBe(1);
+  });
+});

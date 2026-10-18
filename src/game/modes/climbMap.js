@@ -23,6 +23,13 @@ export const LANES = 3;
 export const KIND_WEIGHTS = { game: 0.6, rivalry: 0.15, rest: 0.25 };
 /** What each stop adds to the pot, before the rung's pay factor. */
 export const POT = { gameBase: 30, gamePerFloor: 5, rivalry: 70, boss: 120 };
+/**
+ * THE GENERATOR'S VERSION, stamped on every run and ledger (final review,
+ * 2026-10-18): the server rebuilds a run's map from its seed, so a change to
+ * how maps are drawn would reshape every run in flight. A change bumps this
+ * and keeps the old draw for the runs drawn with it.
+ */
+export const MAP_VERSION = 1;
 /** Set on a map that came from the fixed fallback rather than the seed's draw. */
 export const FALLBACK_SEED_USE = 'fallback';
 const MAX_TRIES = 500;
@@ -192,8 +199,9 @@ function fallbackMap() {
   return { floors, boss: { id: 'boss', floor: FLOORS + 1, lane: 1, kind: 'boss', next: [] }, [FALLBACK_SEED_USE]: true };
 }
 
-/** The act for a seed — the same map every time, here and on the server. */
-export function generateMap(seed) {
+/** The act for a seed — the same map every time, here and on the server — at a generator version. */
+export function generateMap(seed, version = MAP_VERSION) {
+  if (version !== 1) throw new Error(`No act map version ${version}`);
   const rng = climbRng(seed, 'map');
   for (let i = 0; i < MAX_TRIES; i += 1) {
     const m = draw(rng);

@@ -47,6 +47,21 @@ export function buildGameClaim({ won, isPvp = false, margin = null, milestones =
   };
 }
 
+/**
+ * CAN A CLIMB GAME'S RESULTS SCREEN BE LEFT? Only once its claim has
+ * answered (final review, 2026-10-18): the run's ledger moves on that claim,
+ * and a run that went on without it found its won game still open — the next
+ * stop lost the run, and the bank refused for good. An error offers a retry.
+ * Signed out there is no ledger, and an ordinary game is never held.
+ */
+export function climbLeave({ climb = null, signedIn = false, applied = false, error = null, paid = null }) {
+  const free = { canLeave: true, retry: false, waiting: false };
+  if (!climb || !signedIn || paid) return free;
+  if (!applied) return { canLeave: false, retry: false, waiting: true };
+  if (error) return { canLeave: false, retry: true, waiting: false };
+  return free;
+}
+
 const ALREADY = { label: 'Already paid to your account', coins: 0, note: true };
 
 /** What a paid game's results screen shows: its stamp, and no claim. */

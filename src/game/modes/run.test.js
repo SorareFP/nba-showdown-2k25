@@ -312,3 +312,32 @@ describe('a finished game, as the run reads it', () => {
     expect(resultFromGame({ ...game, teamB: { score: 31, stats: [] } }, '2-1')).toMatchObject({ won: false, margin: 0 });
   });
 });
+
+// RECONCILING WITH THE LEDGER (final review, 2026-10-18).
+describe('a run that disagrees with its ledger', () => {
+  it('stamps the map version it was drawn at', () => {
+    const r = start({ mapVersion: 1 });
+    expect(r.mapVersion).toBe(1);
+  });
+
+  it('records a win the server already holds, assuming every player played the quarter', async () => {
+    const { recordServerWin } = await import('./run.js');
+    const r = chooseStop({ ...camped(), fatigue: { [FIVE[0].id]: 4 } }, '1-0');
+    const w = recordServerWin(r, '1-0');
+    expect(w.status).toBe('reward');
+    expect(w.cleared).toEqual(['1-0']);
+    expect(w.fatigue[FIVE[0].id]).toBe(4 + 12 - 10);
+    expect(w.fatigue[FIVE[1].id]).toBe(2);
+    expect(recordServerWin(r, '1-1')).toBe(r);
+  });
+
+  it('can be given up from any step short of its end, and not after', async () => {
+    const { abandon } = await import('./run.js');
+    for (const r of [camped(), chooseStop(camped(), '1-0'), win(camped(), '1-0')]) {
+      expect(abandon(r)).toMatchObject({ status: 'lost', abandoned: true, game: null });
+    }
+    expect(abandon({ ...camped(), status: 'retired' })).toMatchObject({ status: 'lost', abandoned: true });
+    expect(() => abandon({ ...camped(), status: 'lost' })).toThrow();
+    expect(() => abandon({ ...camped(), status: 'won', banked: { coins: 1, booster: true } })).toThrow();
+  });
+});

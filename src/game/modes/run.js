@@ -11,7 +11,7 @@
 //                       │                          └→ lost | won
 //                       ├─chooseStop(Rest Day)→ rest ─restDay→ map
 //                       └─retire→ retired
-import { generateMap, stopById, nextStops, potOf, climbRng } from './climbMap.js';
+import { generateMap, stopById, nextStops, potOf, climbRng, MAP_VERSION } from './climbMap.js';
 import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, KIT_CARD_IDS, kitDeck, leanOf, coachDeck } from './climbKits.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
 import { STRATS, STRAT_MAP, baseId, isPlus, plusId } from '../strats.js';
@@ -109,7 +109,7 @@ export function rosterCards(run) {
 const fitsOf = cards => PLAYBOOK_OF_ARCHETYPE[nearestArchetype(cards)?.id] ?? PLAYBOOKS[0];
 
 /** A new run: five owned players under the starting cap, at a rung. Opens on Training Camp. */
-export function newRun({ id, seed, rung, rosterKeys, now = Date.now() }) {
+export function newRun({ id, seed, rung, rosterKeys, now = Date.now(), mapVersion = MAP_VERSION }) {
   const keys = rosterKeys ?? [];
   if (keys.length !== 5) fail('A climb starts with five players');
   const cards = keys.map(k => getCardByKey(k));
@@ -119,9 +119,9 @@ export function newRun({ id, seed, rung, rosterKeys, now = Date.now() }) {
   if (sal > CLIMB.startCap) fail(`Those five cost ${dollars(sal)}; the starting cap is ${dollars(CLIMB.startCap)}`);
   const rng = climbRng(seed, 'camp');
   return {
-    id, seed, rung, createdAt: now,
+    id, seed, rung, createdAt: now, mapVersion,
     status: 'camp',
-    map: generateMap(seed),
+    map: generateMap(seed, mapVersion),
     cap: CLIMB.startCap,
     roster: cards.map(cardKey),
     deck: null,
@@ -310,6 +310,28 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {} }) 
     extraPicks: Math.max(0, run.extraPicks - 1),
     offers: { stopId, strats: stratOffer(next, stop, rng), picks, players },
   };
+}
+
+/**
+ * A WIN THE SERVER ALREADY HOLDS (final review, 2026-10-18): the game was
+ * claimed, but its result never reached this run (the tab closed, another
+ * device). Recorded as a win by nothing, with every player assumed to have
+ * played the whole quarter — the box score is gone, and a guess should not
+ * flatter the run.
+ */
+export function recordServerWin(run, stopId) {
+  if (run.status !== 'game' || run.game?.stopId !== stopId) return run;
+  const endMinutes = Object.fromEntries(rosterCards(run).cards.map(c => [c.id, (run.fatigue?.[c.id] ?? 0) + 12]));
+  return recordResult(run, { stopId, won: true, margin: 0, endMinutes });
+}
+
+/**
+ * GIVE THE RUN UP (final review, 2026-10-18) — the way out of a run that
+ * disagrees with its ledger or whose bank keeps refusing. Its pot is gone.
+ */
+export function abandon(run) {
+  if (run.status === 'lost' || run.banked) fail('That run is already over');
+  return { ...run, status: 'lost', abandoned: true, game: null };
 }
 
 /** Back to the map once nothing is left to take. */

@@ -7,7 +7,7 @@
 // A game goes out the way a season fixture does — App holds the preset and
 // hands the result back as `pendingResult`. `store` and `server` are swapped
 // for in-memory ones by the dev harness (?demo=climb).
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../firebase/AuthProvider.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import { saveRun, loadActiveRun } from '../../firebase/climb.js';
@@ -15,11 +15,22 @@ import { climbStart, climbGame, climbBank } from '../../firebase/serverWrites.js
 import { ownedPlayers } from '../../game/teamRules.js';
 import {
   newRun, chooseCamp, chooseStop, presetFor, recordResult, pickStrat, pickPlayer, skipOffers,
-  restDay, takeFreeRest, retire, rosterCards,
+  restDay, takeFreeRest, retire, rosterCards, recordServerWin, abandon,
 } from '../../game/modes/run.js';
 import { stopById } from '../../game/modes/climbMap.js';
 import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver } from './ClimbScreens.jsx';
 import styles from './Climb.module.css';
+
+/**
+ * ONE STEP AT A TIME, by a ref (final review, 2026-10-18): a flag in React
+ * state let two taps in one tick both through, and two different stops opened
+ * on the server end the run. Resolves true when `fn` ran, false when refused.
+ */
+export async function oneAtATime(gate, fn) {
+  if (gate.current) return false;
+  gate.current = true;
+  try { await fn(); return true; } finally { gate.current = false; }
+}
 
 export const FIREBASE_STORE = { loadActive: loadActiveRun, save: saveRun };
 export const FIREBASE_SERVER = { start: climbStart, openGame: climbGame, bank: climbBank };
@@ -30,6 +41,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   const { ask, toast } = useDialogs();
   const [run, setRun] = useState(undefined);
   const [busy, setBusy] = useState(false);
+  const gate = useRef(false);
   const [freeRest, setFreeRest] = useState(false);
   const needsAccount = store === FIREBASE_STORE && !uid;
 
@@ -47,11 +59,10 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   }, [store, uid, toast]);
 
   /** Every step: one at a time, a refusal said out loud. */
-  const act = useCallback(async fn => {
-    if (busy) return;
+  const act = useCallback(fn => oneAtATime(gate, async () => {
     setBusy(true);
     try { await fn(); } catch (e) { toast(e?.message ?? String(e), { tone: 'error' }); } finally { setBusy(false); }
-  }, [busy, toast]);
+  }), [toast]);
 
   // A RESULT BACK FROM THE PLAY TAB: only this run's, and only once.
   useEffect(() => {
@@ -64,12 +75,18 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   const owned = useMemo(() => ownedPlayers(collection), [collection]);
 
   const start = ({ rung, keys }) => act(async () => {
-    const { runId, seed } = await server.start(uid, { rung });
-    await commit(newRun({ id: runId, seed, rung, rosterKeys: keys }));
+    const { runId, seed, mapVersion } = await server.start(uid, { rung });
+    await commit(newRun({ id: runId, seed, rung, rosterKeys: keys, mapVersion: mapVersion ?? 1 }));
   });
 
   const play = async next => {
     const res = await server.openGame(uid, { runId: next.id, stopId: next.game.stopId });
+    // Won already: the claim landed but its result never reached this run.
+    if (!res?.ok && res?.cleared) {
+      await commit(recordServerWin(next, next.game.stopId));
+      toast('That game was already won. Its result is in.');
+      return;
+    }
     if (!res?.ok) {
       if (res?.status === 'lost') await commit({ ...run, status: 'lost', game: null });
       throw new Error(res?.status === 'lost' ? 'Your last game never reported, so the run is over.' : 'That run is over.');
@@ -101,6 +118,15 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
     await bank(r);
   };
 
+  const giveUp = async () => {
+    const yes = await ask({
+      title: 'Give up this run?',
+      body: 'The run ends here and its pot is lost.',
+      confirmLabel: 'Give up the run', cancelLabel: 'Keep it', tone: 'danger',
+    });
+    if (yes) await act(() => commit(abandon(run)));
+  };
+
   if (needsAccount) return <div className={styles.screen}><p className={styles.lede}>Sign in to climb: a run starts with players you own.</p></div>;
   if (run === undefined) return <div className={styles.screen}><p className={styles.muted}>Loading your climb…</p></div>;
   if (!run) return <ClimbStart owned={owned} onStart={start} busy={busy} />;
@@ -121,7 +147,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
       return (
         <>
           {rosterCards(run).blocked && <p className={styles.note}>Fewer than five of your players are still in the game&apos;s pool. Retire to bank the pot.</p>}
-          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} />
+          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} onAbandon={giveUp} />
         </>
       );
     case 'game': {
@@ -130,7 +156,10 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         <div className={styles.screen}>
           <h2 className={styles.title}>{run.game?.kind === 'boss' ? 'The boss' : run.game?.kind === 'rivalry' ? 'A Rivalry' : 'A Game'}{o ? `: ${o.classic ? 'Classic ' : ''}${o.city} ${o.name}` : ''}</h2>
           <p className={styles.lede}>One quarter from Q4. Your game is waiting on the Play tab.</p>
-          <div className={styles.actions}><button type="button" className={styles.primary} disabled={busy} onClick={() => act(() => play(run))}>Play it</button></div>
+          <div className={styles.actions}>
+            <button type="button" className={styles.primary} disabled={busy} onClick={() => act(() => play(run))}>Play it</button>
+            <button type="button" className={styles.danger} disabled={busy} onClick={giveUp}>Give up this run</button>
+          </div>
         </div>
       );
     }
@@ -152,6 +181,6 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         />
       );
     default:
-      return <RunOver run={run} busy={busy} onBank={() => bank(run)} onNew={() => setRun(null)} />;
+      return <RunOver run={run} busy={busy} onBank={() => bank(run)} onNew={() => setRun(null)} onAbandon={giveUp} />;
   }
 }

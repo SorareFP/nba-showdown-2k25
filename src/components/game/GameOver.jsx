@@ -6,7 +6,7 @@ import { claimGameReward } from '../../firebase/serverWrites.js';
 import { humanWon, humanTeamKey } from '../../game/outcome.js';
 import { boxScoreFor } from '../../game/boxScore.js';
 import { useCardStats } from '../../firebase/CardStatsProvider.jsx';
-import { buildGameClaim, paidView, readClaimAnswer } from '../../game/gameClaim.js';
+import { buildGameClaim, paidView, readClaimAnswer, climbLeave } from '../../game/gameClaim.js';
 import { runClaimPreview } from '../../game/modes/climbMap.js';
 import styles from './GameOver.module.css';
 
@@ -51,6 +51,10 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
   const [rewards, setRewards] = useState(null);
   const [rewardsApplied, setRewardsApplied] = useState(false);
   const appliedRef = useRef(false);
+  // A claim that failed can be sent again (a Climb game must not be left
+  // until its claim lands — climbLeave in gameClaim.js).
+  const [attempt, setAttempt] = useState(0);
+  const retryClaim = () => { appliedRef.current = false; setRewards(null); setRewardsApplied(false); setAttempt(a => a + 1); };
 
   useEffect(() => {
     if (!user || appliedRef.current) return;
@@ -120,7 +124,8 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
 
       setRewardsApplied(true);
     })();
-  }, [user, game, youWon, myKey, isPvp, aiLevel, refreshCardStats, paid, claimId, rungDraw, onPaid, climb]);
+  }, [user, game, youWon, myKey, isPvp, aiLevel, refreshCardStats, paid, claimId, rungDraw, onPaid, climb, attempt]);
+  const leave = climbLeave({ climb, signedIn: Boolean(user), applied: rewardsApplied, error: rewards?.error ?? null, paid });
 
   return (
     <div className={styles.wrap}>
@@ -168,8 +173,14 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
 
       <div className={styles.footer}>
         {onPlayAgain && <button className={styles.playAgain} onClick={onPlayAgain}>Play Again</button>}
-        {onLeave && <button className={styles.playAgain} onClick={onLeave}>{leaveLabel}</button>}
+        {onLeave && (
+          <button className={styles.playAgain} onClick={onLeave} disabled={!leave.canLeave}>
+            {leave.waiting ? 'Recording the result…' : leaveLabel}
+          </button>
+        )}
+        {leave.retry && <button className={styles.playAgain} onClick={retryClaim}>Try again</button>}
       </div>
+      {leave.retry && <p className={styles.claimError}>The result did not reach the server, so the run cannot go on yet. Try again; it will not count twice.</p>}
     </div>
   );
 }

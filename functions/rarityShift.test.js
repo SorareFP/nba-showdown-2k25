@@ -66,6 +66,7 @@ vi.mock('./shared/src/game/modes/seasonPack.js', () => import('../src/game/modes
 vi.mock('./shared/src/game/rarityShift.js', () => import('../src/game/rarityShift.js'));
 vi.mock('./shared/src/game/suggestions.js', () => import('../src/game/suggestions.js'));
 vi.mock('./shared/src/game/friends.js', () => import('../src/game/friends.js'));
+vi.mock('./shared/src/game/modes/climbMap.js', () => import('../src/game/modes/climbMap.js'));
 
 const { settleRarityShift } = await import('./index.js');
 const { RARITY_SHIFTS } = await import('../src/game/rarityShift.js');

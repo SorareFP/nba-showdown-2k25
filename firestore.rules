@@ -120,6 +120,16 @@ service cloud.firestore {
       // claim the same one twice. See claimSeasonReward in functions/index.js.
       match /seasons/{seasonId} { allow read, write: if isSelf(uid); }
 
+      // THE CLIMB (2026-10-18). A run is the player's own arrangement of a
+      // map, a deck and borrowed players, kept like a season. Its pot is not
+      // in it: the server-only LEDGER records the stops won and pays the pot
+      // once (climbStart, climbGame, climbBank in functions/index.js).
+      match /runs/{runId} { allow read, write: if isSelf(uid); }
+      match /runLedger/{runId} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
+
       // A DYNASTY IS TEN SEASONS OF THE SAME — contracts and drafts in Dynasty
       // Points, which never convert. Its coins are claimed through
       // claimDynastyReward into `claims/dynasty:{id}:{year}`, server-only.

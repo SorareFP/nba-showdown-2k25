@@ -46,7 +46,8 @@ import { getCardByKey } from './shared/src/game/cardSets.js';
 import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game/rarity.js';
 import { burnValueFor, burnProblem, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
-import { settleGameReward, todayKey, sanitizeBox, payFactorOf } from './shared/src/game/coinRewards.js';
+import { settleGameReward, todayKey, sanitizeBox, payFactorOf, AI_PAY } from './shared/src/game/coinRewards.js';
+import { generateMap, reachableGame, stopById, potOf, runClaimPreview } from './shared/src/game/modes/climbMap.js';
 import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from './shared/src/game/modes/prizes.js';
 import { getDatabase } from 'firebase-admin/database';
 import { readFileSync } from 'node:fs';
@@ -844,6 +845,10 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
   // paid as before, without a receipt; the rate limit is the bound there.
   const claimKey = claimKeyOf(d.gameId);
   const receiptRef = claimKey ? db.doc(`users/${uid}/gameReceipts/${claimKey}`) : null;
+  // THE CLIMB (2026-10-18): a run game pays nothing now; it is the run's
+  // ledger that moves (climbClaim, below).
+  const runId = safeRunId(d.runId);
+  if (runId) return climbClaim(uid, runId, claim, claimKey);
 
   const result = await db.runTransaction(async tx => {
     const userSnap = await tx.get(userRef);
@@ -991,6 +996,167 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
     }
   }
   return result;
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THE CLIMB (2026-10-18) — docs/plans/2026-10-18-the-climb-design.md.
+//
+// The browser keeps the run (users/{uid}/runs/{id}); the server keeps its
+// LEDGER (users/{uid}/runLedger/{id}, server-only): which game is open, which
+// stops were won, whether the pot was paid. The pot is priced HERE, from the
+// map rebuilt from the seed this server chose (climbMap.js), so the kind and
+// floor of every stop are the server's facts; the browser's numbers are never
+// read. Rules the ledger keeps:
+//   - a game must be opened before it is claimed, and only a stop the last
+//     win (through Rest Days) leads to can be opened;
+//   - opening another game over one that never reported is a loss;
+//   - a run game's claim pays nothing and moves the ledger: a win clears the
+//     stop, a loss (a tie too) ends the run and the pot with it;
+//   - the pot banks once, and never with a game open (that game is a loss).
+// ═══════════════════════════════════════════════════════════════════════════
+
+/** A run id as a document id, or null. */
+function safeRunId(raw) {
+  return typeof raw === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(raw) ? raw : null;
+}
+const runLedgerRef = (uid, runId) => db.doc(`users/${uid}/runLedger/${runId}`);
+/** A rung id the pay table knows, else Prince. */
+const climbRung = raw => (typeof raw === 'string' && AI_PAY[raw] ? raw : 'prince');
+
+export const climbStart = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const rung = climbRung(request.data?.rung);
+  const seed = Math.floor(Math.random() * 2 ** 31);
+  const ref = db.collection(`users/${uid}/runLedger`).doc();
+  await db.runTransaction(async tx => {
+    tx.set(ref, { seed, rung, status: 'active', open: null, cleared: [], createdAt: FieldValue.serverTimestamp() });
+  });
+  return { runId: ref.id, seed };
+});
+
+export const climbGame = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const runId = safeRunId(request.data?.runId);
+  const stopId = typeof request.data?.stopId === 'string' ? request.data.stopId.slice(0, 12) : null;
+  if (!runId || !stopId) throw new HttpsError('invalid-argument', 'Which run, which stop?');
+  const ref = runLedgerRef(uid, runId);
+  return db.runTransaction(async tx => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such run');
+    const run = snap.data();
+    if (run.status !== 'active') return { ok: false, status: run.status };
+    if (run.open === stopId) return { ok: true, status: 'active' };
+    if (run.open) {
+      tx.update(ref, { status: 'lost', lostAt: run.open, open: null });
+      return { ok: false, status: 'lost' };
+    }
+    const cleared = run.cleared ?? [];
+    if (!reachableGame(generateMap(run.seed), cleared.length ? cleared[cleared.length - 1] : null, stopId)) {
+      throw new HttpsError('failed-precondition', 'That stop is not open');
+    }
+    tx.update(ref, { open: stopId, openedAt: FieldValue.serverTimestamp() });
+    return { ok: true, status: 'active' };
+  });
+});
+
+/**
+ * A RUN GAME'S CLAIM (claimGameReward with a runId). Pays nothing; moves the
+ * ledger, writes the receipt (so a reload answers `already`), and writes the
+ * lifetime stats of the caller's OWNED cards only — a run's reward players
+ * are borrowed. A claim for anything but the open game under its own key
+ * changes nothing and answers with the run's status.
+ */
+async function climbClaim(uid, runId, claim, claimKey) {
+  const userRef = db.doc(`users/${uid}`);
+  const ref = runLedgerRef(uid, runId);
+  const receiptRef = claimKey ? db.doc(`users/${uid}/gameReceipts/${claimKey}`) : null;
+  return db.runTransaction(async tx => {
+    const userSnap = await tx.get(userRef);
+    if (!userSnap.exists) throw new HttpsError('failed-precondition', 'No such player');
+    const snap = await tx.get(ref);
+    const run = snap.exists ? snap.data() : null;
+    if (receiptRef) {
+      const receipt = await tx.get(receiptRef);
+      if (receipt.exists) {
+        const r = receipt.data() ?? {};
+        return { already: true, coins: 0, breakdown: Array.isArray(r.breakdown) ? r.breakdown : [], run: { status: run?.status ?? 'none' } };
+      }
+    }
+    if (!run || run.status !== 'active' || !run.open || claimKey !== `fixture:climb:${runId}:${run.open}`) {
+      return { coins: 0, breakdown: [], run: { status: run?.status ?? 'none' } };
+    }
+    const now = Date.now();
+    const user = userSnap.data();
+    const recent = (user.gameWindow?.at ?? 0) > now - 60_000 ? (user.gameWindow?.n ?? 0) : 0;
+    if (recent >= MAX_GAME_CLAIMS_PER_MINUTE) throw new HttpsError('resource-exhausted', 'Slow down a moment');
+    // Reads before writes: which of the box's cards the caller owns.
+    const owned = [];
+    for (const row of claim.box) {
+      const c = await tx.get(db.doc(`users/${uid}/collection/${row.key}`));
+      if (c.exists && (c.data()?.count ?? 0) > 0) owned.push(row);
+    }
+
+    const map = generateMap(run.seed);
+    const stop = stopById(map, run.open);
+    const cleared = claim.won ? [...(run.cleared ?? []), run.open] : (run.cleared ?? []);
+    const status = !claim.won ? 'lost' : stop?.kind === 'boss' ? 'won' : 'active';
+    tx.update(ref, claim.won ? { cleared, open: null, status } : { status, lostAt: run.open, open: null });
+    const { breakdown } = runClaimPreview(stop, run.rung, claim.won);
+    tx.update(userRef, { gameWindow: { at: now, n: recent + 1 } });
+    if (receiptRef) {
+      tx.set(receiptRef, {
+        claimedAt: FieldValue.serverTimestamp(),
+        expireAt: new Date(now + GAME_RECEIPT_DAYS * 86_400_000),
+        game: claimKey, coins: 0, breakdown, reward: null, run: runId,
+      });
+    }
+    for (const row of owned) {
+      tx.set(db.doc(`users/${uid}/cardStats/${row.key}`), {
+        games: FieldValue.increment(1),
+        wins: FieldValue.increment(claim.won ? 1 : 0),
+        pts: FieldValue.increment(row.pts),
+        reb: FieldValue.increment(row.reb),
+        ast: FieldValue.increment(row.ast),
+        min: FieldValue.increment(row.min),
+        tpm: FieldValue.increment(row.tpm),
+        tpa: FieldValue.increment(row.tpa),
+        lastPlayed: FieldValue.serverTimestamp(),
+      }, { merge: true });
+    }
+    return { coins: 0, breakdown, run: { status, pot: potOf(map, cleared, run.rung) } };
+  });
+}
+
+export const climbBank = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const runId = safeRunId(request.data?.runId);
+  if (!runId) throw new HttpsError('invalid-argument', 'Which run?');
+  const userRef = db.doc(`users/${uid}`);
+  const ref = runLedgerRef(uid, runId);
+  return db.runTransaction(async tx => {
+    const [userSnap, snap] = await Promise.all([tx.get(userRef), tx.get(ref)]);
+    if (!userSnap.exists) throw new HttpsError('failed-precondition', 'No such player');
+    if (!snap.exists) throw new HttpsError('not-found', 'No such run');
+    const run = snap.data();
+    if (run.status === 'banked') return { already: true, coins: run.paid?.coins ?? 0, booster: Boolean(run.paid?.booster) };
+    if (run.status === 'lost') throw new HttpsError('failed-precondition', 'A lost run has no pot');
+    if (run.status === 'active' && run.open) {
+      tx.update(ref, { status: 'lost', lostAt: run.open, open: null });
+      return { coins: 0, booster: false, lost: true };
+    }
+    if (run.status !== 'active' && run.status !== 'won') throw new HttpsError('failed-precondition', 'Nothing to bank');
+    const pot = potOf(generateMap(run.seed), run.cleared ?? [], run.rung);
+    if (pot.coins > 0) tx.update(userRef, { currency: FieldValue.increment(pot.coins) });
+    if (pot.booster) {
+      // The boss's Booster: a box of one, opened like any box (openBoxPack).
+      tx.set(db.collection(`users/${uid}/boxes`).doc(), {
+        packType: 'booster', bonus: null, left: 1, bonusLeft: 0, boughtAs: 'climb', options: {},
+        boughtAt: FieldValue.serverTimestamp(),
+      });
+    }
+    tx.update(ref, { status: 'banked', bankedAt: FieldValue.serverTimestamp(), paid: pot });
+    return { coins: pot.coins, booster: pot.booster };
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════════════════

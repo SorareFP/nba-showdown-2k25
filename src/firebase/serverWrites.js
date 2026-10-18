@@ -114,6 +114,10 @@ const server = {
   burnOverCap: () => call('burnOverCap', {}),
   claimGameReward: (uid, claim) => call('claimGameReward', claim),
   claimSeasonReward: (uid, seasonId) => call('claimSeasonReward', { seasonId }),
+  // The Climb (2026-10-18): the run's ledger lives on the server only.
+  climbStart: (uid, payload) => call('climbStart', payload),
+  climbGame: (uid, payload) => call('climbGame', payload),
+  climbBank: (uid, runId) => call('climbBank', { runId }),
   claimDynastyReward: (uid, dynastyId, year) => call('claimDynastyReward', { dynastyId, year }),
   settleRarityShift: () => call('settleRarityShift', {}),
   setFavoriteTeam: (uid, team) => call('setFavoriteTeam', { team }),
@@ -353,6 +357,10 @@ const direct = {
    */
   /** Leagues have no direct route at all. */
   async createLeague() { throw new Error('Leagues need the server route'); },
+  /** The Climb's ledger has no direct route: its pot is the server's to price. */
+  async climbStart() { throw new Error('The Climb needs the server route'); },
+  async climbGame() { throw new Error('The Climb needs the server route'); },
+  async climbBank() { throw new Error('The Climb needs the server route'); },
   async joinLeague() { throw new Error('Leagues need the server route'); },
   async leaveLeague() { throw new Error('Leagues need the server route'); },
   async cancelLeague() { throw new Error('Leagues need the server route'); },
@@ -443,6 +451,12 @@ export const burnOverCap = uid => impl.burnOverCap(uid);
 export const claimGameReward = (uid, claim) => impl.claimGameReward(uid, claim);
 /** Pay a finished season's title money, once. Returns `{ coins, label }`. */
 export const claimSeasonReward = (uid, seasonId) => impl.claimSeasonReward(uid, seasonId);
+/** The Climb: open a run's ledger at a rung. Returns `{ runId, seed }` — the map is the seed's. */
+export const climbStart = (uid, payload) => impl.climbStart(uid, payload);
+/** The Climb: open the game at a stop (`{ runId, stopId }`). Returns `{ ok, status }`. */
+export const climbGame = (uid, payload) => impl.climbGame(uid, payload);
+/** The Climb: bank the pot the server prices, once. Returns `{ coins, booster, already?, lost? }`. */
+export const climbBank = (uid, runId) => impl.climbBank(uid, runId);
 /** Pay a dynasty year's title money (`year` 1–10) or its ten-year bonus (`'complete'`), once. */
 export const claimDynastyReward = (uid, dynastyId, year) => impl.claimDynastyReward(uid, dynastyId, year);
 /** Settle this account's rarity changes once: `{ id, coins, net, lines, already? }` (rarityShift.js). */

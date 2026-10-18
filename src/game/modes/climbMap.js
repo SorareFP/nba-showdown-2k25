@@ -15,8 +15,12 @@ import { payFactorOf } from '../coinRewards.js';
 
 export const FLOORS = 7;
 export const LANES = 3;
-/** Floors 2-6 draw their kinds at these weights (starting values; Task 10 tunes them). */
-export const KIND_WEIGHTS = { game: 0.5, rivalry: 0.25, rest: 0.25 };
+/**
+ * Floors 2-6 draw their kinds at these weights. Rivalries were a quarter at
+ * first, and the repair (every path needs one) took them past a third of the
+ * fights; at 0.15 they are about a quarter (runClimbSim.js, 2026-10-18).
+ */
+export const KIND_WEIGHTS = { game: 0.6, rivalry: 0.15, rest: 0.25 };
 /** What each stop adds to the pot, before the rung's pay factor. */
 export const POT = { gameBase: 30, gamePerFloor: 5, rivalry: 70, boss: 120 };
 /** Set on a map that came from the fixed fallback rather than the seed's draw. */

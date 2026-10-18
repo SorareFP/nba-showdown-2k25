@@ -23,21 +23,33 @@ import { capSal } from '../teamRules.js';
 import { TEAMS } from '../../cards/teams.js';
 
 /**
- * THE NUMBERS — every one a starting value the simulated runs tune
- * (scripts/analysis/runClimbSim.js) before anyone plays.
- *   recovery   minutes off every tracker between games: by the win's margin
- *              (the user, 2026-10-18: "Maybe win margin helps recover things?")
+ * THE NUMBERS — set by simulated runs (scripts/analysis/runClimbSim.js,
+ * 2026-10-18, 400 runs a rung; the coach plays both sides and "you" draft
+ * simply): about 80% of Games and 70% of Rivalries won, a third of runs reach
+ * the boss. The spec's starting caps ($2,600 at floor 1) won a third of the
+ * first games.
+ *   floorCaps  the coach's cap at each floor: flat while your five has no
+ *              bench (your median team is $2,100 to floor 3, $3,100 at 4-5,
+ *              $4,000 at the boss), steeper once the rewards fill it
+ *   bossCap    1.2 x the median team at the boss ($4,000): the bottom of the
+ *              user's 1.2-1.4 (2026-10-18). Simulated drafters beat it 8-18%
+ *              of the time, by franchise — a wall for a run that coasted.
+ *   recovery   minutes off every tracker between games, by the win's margin
+ *              (the user: "Maybe win margin helps recover things?"). 10 lets
+ *              a full-quarter starter carry 2 minutes from a close win; at 8,
+ *              floors 2-6 were coin flips.
  */
+export const FLOOR_CAPS = [1600, 1650, 1700, 2100, 2200, 2450, 2700];
 export const CLIMB = {
   startCap: 2200,
   capPerFloor: 300,
-  floorCap: f => 2600 + Math.round((f - 1) * 1400 / 6),
-  rivalryExtra: 700,
-  bossCap: 5200,
+  floorCap: f => FLOOR_CAPS[Math.min(FLOOR_CAPS.length, Math.max(1, f)) - 1],
+  rivalryExtra: 250,
+  bossCap: 4800,
   oppSize: [5, 5, 6, 6, 7, 7],
   bossSize: 8,
   coachDeckSize: f => 15 + Math.round((f - 1) * 10 / 7),
-  recovery: { base: 8, by10: 10, by20: 12 },
+  recovery: { base: 10, by10: 12, by20: 14 },
   rareChance: f => 0.05 + 0.2 * (f - 1) / 6,
   maxRoster: 10,
 };

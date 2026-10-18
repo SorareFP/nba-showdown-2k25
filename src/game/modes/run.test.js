@@ -117,13 +117,14 @@ describe('the map and the games', () => {
   });
 
   it('raises the cap and carries fatigue less a recovery that grows with the win', () => {
-    expect([recoveryFor(1), recoveryFor(9), recoveryFor(10), recoveryFor(19), recoveryFor(20), recoveryFor(40)]).toEqual([8, 8, 10, 10, 12, 12]);
+    expect([recoveryFor(1), recoveryFor(9), recoveryFor(10), recoveryFor(19), recoveryFor(20), recoveryFor(40)]).toEqual([10, 10, 12, 12, 14, 14]);
     const id = FIVE[0].id;
-    const close = win(camped(), '1-0', 9, { [id]: 12 });
+    const close = win(camped(), '1-0', 9, { [id]: 16 });
     expect(close.cap).toBe(2500);
-    expect(close.fatigue[id]).toBe(4);
-    expect(win(camped(), '1-0', 10, { [id]: 12 }).fatigue[id]).toBe(2);
-    expect(win(camped(), '1-0', 20, { [id]: 12 }).fatigue[id] ?? 0).toBe(0);
+    expect(close.fatigue[id]).toBe(6);
+    expect(win(camped(), '1-0', 10, { [id]: 16 }).fatigue[id]).toBe(4);
+    expect(win(camped(), '1-0', 20, { [id]: 16 }).fatigue[id]).toBe(2);
+    expect(win(camped(), '1-0', 9, { [id]: 10 }).fatigue[id] ?? 0).toBe(0);
     expect(close.status).toBe('reward');
     expect(close.cleared).toEqual(['1-0']);
   });

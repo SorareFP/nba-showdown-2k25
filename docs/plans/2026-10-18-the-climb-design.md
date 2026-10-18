@@ -60,6 +60,16 @@ whole mode splits into four pieces, each its own spec and plan:
   its roster (deckFit.js) and grows with the floor: 15 cards at floor 1, 25 for
   the boss. Every number here ($2,200, the floor caps, +$700, the boss factor,
   the pot) is a starting value, set by the simulated runs before the user plays.
+- **Tuned 2026-10-18** (scripts/analysis/runClimbSim.js, 400 runs at Prince
+  and at King; the coach plays both sides, "you" draft simply). The starting
+  caps above won a third of first games, so: the coach's cap by floor is
+  **$1,600, 1,650, 1,700, 2,100, 2,200, 2,450, 2,700** (flat while your five
+  has no bench: the median team is $2,100 to floor 3, $3,100 at floors 4-5,
+  $4,000 at the boss), a Rivalry **+$250**, the boss **$4,800** (1.2 x $4,000,
+  the bottom of the user's range), Rivalries drawn at 0.15 (the repair had made
+  them a third of the fights). Result: about 80% of Games and 70% of Rivalries
+  won, a third of runs reach the boss, which simulated drafters beat 8-18% of
+  the time depending on the franchise.
 - **A game is one quarter:** it starts at Q4 section 1, so it is three
   sections with crunch time if within CRUNCH_MARGIN and overtime if tied. The
   rest is the normal engine; the coach plays at the run's rung.

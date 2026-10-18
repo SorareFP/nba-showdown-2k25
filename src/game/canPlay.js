@@ -1,7 +1,7 @@
 // NBA Showdown 2026 — Card playability rules
 // Returns { canPlay: bool, reason: string }
 
-import { CRUNCH_CARDS, TIMEOUT_RIDERS } from './strats.js';
+import { CRUNCH_CARDS, TIMEOUT_RIDERS, baseId } from './strats.js';
 import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, isOpeningSection, reboundTrackLead, challengeTarget, rerollOdds, answerEventKey } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
@@ -319,7 +319,7 @@ export function canAnswerCheck(g, check) {
   const hand = getTeam(g, defKey)?.hand ?? [];
   if (!hand.length) return false;
   const probe = { ...g, pendingShotCheck: check };
-  return SHOT_REACTIONS.some(id => hand.includes(id) && canPlayCard(probe, defKey, id).canPlay);
+  return hand.some(id => SHOT_REACTIONS.includes(baseId(id)) && canPlayCard(probe, defKey, id).canPlay);
 }
 
 function shotReaction(g, teamKey, cardId) {
@@ -346,7 +346,7 @@ function shotReaction(g, teamKey, cardId) {
       if (!(psc.bonus > 0)) return no('That check carries no card bonus to smother');
       return ok('Their card bonus −3 (min 0)');
     case 'denial':
-      if (myT.hand.filter(id => id !== 'denial').length === 0) return no('No card to discard');
+      if (myT.hand.filter(id => baseId(id) !== 'denial').length === 0) return no('No card to discard');
       return ok('They lose 2 AST, or the check is at −3');
     case 'hustle_play':
       if ((shooter?.salary || 0) <= 800) return no('The shooter must be paid above $800');
@@ -409,13 +409,15 @@ export function answerWindow(g, teamKey) {
   if (g?.phase !== 'scoring' || g.done || g.pendingShotCheck || g.pendingChoice) return [];
   if (g.answerPassed === answerEventKey(g)) return [];
   const hand = getTeam(g, teamKey)?.hand ?? [];
-  return [...new Set(hand.filter(id => ANSWER_CARDS.includes(id) && canPlayCard(g, teamKey, id).canPlay))];
+  return [...new Set(hand.filter(id => ANSWER_CARDS.includes(baseId(id)) && canPlayCard(g, teamKey, id).canPlay))];
 }
 
 /** Let this moment go: the coach carries on, and the next check or roll is a new moment. */
 export const passAnswer = g => ({ ...g, answerPassed: answerEventKey(g) });
 
-export function canPlayCard(g, teamKey, cardId) {
+export function canPlayCard(g, teamKey, handCardId) {
+  // A "+" copy (The Climb) is judged as its card.
+  const cardId = baseId(handCardId);
   // The card's own conditions first (a wrong phase says so), then the lead.
   const verdict = cardVerdict(g, teamKey, cardId);
   if (!verdict.canPlay) return verdict;
@@ -800,7 +802,7 @@ function cardVerdict(g, teamKey, cardId) {
     }
 
     // Pin-Down Screen costs a discard, so it needs another card to pay with.
-    if (cardId === 'pin_down_screen' && myT.hand.filter(id => id !== cardId).length === 0) return no('Need another card to discard');
+    if (cardId === 'pin_down_screen' && myT.hand.filter(id => baseId(id) !== cardId).length === 0) return no('Need another card to discard');
     // You Stand Over There and Pin-Down Screen: someone must still have a roll
     // to come, or the picker finds nobody. See preRollTargets.
     if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');
@@ -950,7 +952,7 @@ function cardVerdict(g, teamKey, cardId) {
         : 'Two paint checks at +2, and their paint checks go to −2');
     }
     case 'outside_pick':
-      if (myT.hand.filter(id => id !== 'outside_pick').length === 0) return no('No card to discard');
+      if (myT.hand.filter(id => baseId(id) !== 'outside_pick').length === 0) return no('No card to discard');
       return ok('A 3PT check at +5 — hit for 3 and an assist');
     case 'inside_out': {
       const ps = g.lastPaintScore;
@@ -959,7 +961,7 @@ function cardVerdict(g, teamKey, cardId) {
     }
     case 'lob_city':
       if (!myT.starters.some(p => p && ((p.speed || 0) >= 15 || (p.power || 0) >= 15))) return no('Need a player with Speed or Power 15+');
-      if (myT.hand.filter(id => id !== 'lob_city').length === 0) return no('No card to discard');
+      if (myT.hand.filter(id => baseId(id) !== 'lob_city').length === 0) return no('No card to discard');
       return ok('Speed 15+ players add an assist, Power 15+ players score 2');
     case 'stretch_five': {
       const big = myT.starters.some(p => p && String(p.pos || '').split(/[-/]/).some(t => t === 'C' || t === 'PF') && ((p.shotLine ?? 18) - (p.threePtBoost || 0)) <= 14);

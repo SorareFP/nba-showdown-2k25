@@ -7,7 +7,7 @@ import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore,
 import { checkTerms } from './checkTerms.js';
 import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
-import { getStrat } from './strats.js';
+import { getStrat, baseId, isPlus } from './strats.js';
 
 /**
  * POINTS A CARD SCORES GO ON THE SCOREBOARD AND ON THE PLAYER'S LINE, together.
@@ -232,7 +232,9 @@ function cardDraw(g, teamKey, n) {
  * driver, PvP) comes through here, so none of them can forget it.
  */
 export function execCard(game, teamKey, cardId, opts = {}) {
-  const res = resolveCard(game, teamKey, cardId, opts);
+  // A "+" copy (The Climb) resolves as its card, with `plus` for the effects
+  // that read it and `handId` so the copy played is the copy spent.
+  const res = resolveCard(game, teamKey, baseId(cardId), { ...opts, plus: isPlus(cardId), handId: cardId });
   if (!res.ok) return res;
   return { ...res, game: handOverPriority(game, res.game, teamKey) };
 }
@@ -246,6 +248,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
   // Set by a card that stays on the table instead of being spent — see the
   // note beside removeFromHand at the foot of this function.
   let keepInHand = false;
+  const handId = opts.handId ?? cardId;
 
   // Deep clone so we never mutate
   const g = deepClone(game);
@@ -757,7 +760,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     case 'from_way_downtown': {
       // Sets pendingShotCheck — resolved by resolvePendingShotCheck
-      removeFromHand(myT, cardId);
+      removeFromHand(myT, handId);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
       addLog(g, teamKey, `From Way Downtown: ${player?.name} announces 3PT check at +1.`);
       announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 1, cardLabel: 'From Way Downtown', specialRoll: 'fwd' });
@@ -778,7 +781,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     case 'catch_and_shoot': {
       if ((player?.speed || 0) < 12) return fail(player?.name + ' needs Speed 12+');
-      removeFromHand(myT, cardId);
+      removeFromHand(myT, handId);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
       addLog(g, teamKey, `Catch & Shoot: ${player?.name} announces 3PT check at +2.`);
       announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 2, cardLabel: 'Catch & Shoot', onHit: 'ast' });
@@ -787,7 +790,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     case 'elevator_doors': {
       if (!((player?.threePtBoost || 0) > 0)) return fail(player?.name + ' needs a 3PT Bonus');
-      removeFromHand(myT, cardId);
+      removeFromHand(myT, handId);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
       addLog(g, teamKey, `Elevator Doors: ${player?.name} announces 3PT check at +3.`);
       announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 3, cardLabel: 'Elevator Doors' });
@@ -800,7 +803,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // `discardIdx`, which nothing read, so the AI took a free three at +5.
       // Lob City's and Outside Pick's shape: no other card, no play; a named
       // card if it is in hand, else the last one.
-      const pdOthers = myT.hand.filter(id => id !== 'pin_down_screen');
+      const pdOthers = myT.hand.filter(id => baseId(id) !== 'pin_down_screen');
       if (pdOthers.length === 0) return fail('No card to discard');
       const pdDiscard = opts.discardId && pdOthers.includes(opts.discardId) ? opts.discardId : pdOthers[pdOthers.length - 1];
       removeFromHand(myT, pdDiscard);
@@ -1521,7 +1524,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
       if (!standing) {
         g.standing = [...(g.standing ?? []), {
-          cardId, teamKey, playerIds: eligible.map(({ pl }) => pl.id), lastSection: section,
+          cardId, handId, teamKey, playerIds: eligible.map(({ pl }) => pl.id), lastSection: section,
         }];
         addLog(g, teamKey, `${s?.name || cardId} stays in play until one of those players goes to the bench`);
       } else {
@@ -1565,7 +1568,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     // ── WAVE TWO ────────────────────────────────────────────────────────
     case 'outside_pick': {
-      const others = myT.hand.filter(id => id !== 'outside_pick');
+      const others = myT.hand.filter(id => baseId(id) !== 'outside_pick');
       if (others.length === 0) return fail('No card to discard');
       const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
       removeFromHand(myT, discard);
@@ -1639,7 +1642,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'lob_city': {
       const has15 = myT.starters.some(p => p && ((p.speed || 0) >= 15 || (p.power || 0) >= 15));
       if (!has15) return fail('Need a player with Speed or Power 15+');
-      const others = myT.hand.filter(id => id !== 'lob_city');
+      const others = myT.hand.filter(id => baseId(id) !== 'lob_city');
       if (others.length === 0) return fail('No card to discard');
       const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
       removeFromHand(myT, discard);
@@ -1826,7 +1829,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         psc.smother = 3;
         addLog(g, teamKey, `Smothering Defense: ${guard.name} smothers ${shooterName} — the check's card bonus −3 (min 0)`);
       } else if (cardId === 'denial') {
-        const others = myT.hand.filter(id => id !== 'denial');
+        const others = myT.hand.filter(id => baseId(id) !== 'denial');
         if (others.length === 0) return fail('No card to discard');
         const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
         removeFromHand(myT, discard);
@@ -1994,12 +1997,12 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
   }
 
   // Remove card from hand (cards that return early have already removed)
-  removeFromHand(myT, cardId);
+  removeFromHand(myT, handId);
   // A STANDING CARD DOES NOT LEAVE THE TABLE. "Stays in play until at least
   // one of these players goes to the bench" is, in a game made of hands, a
   // card that comes back rather than one that is spent. pruneStanding takes
   // it away when a named player sits.
-  if (keepInHand && !myT.hand.includes(cardId)) myT.hand = [...myT.hand, cardId];
+  if (keepInHand && !myT.hand.includes(handId)) myT.hand = [...myT.hand, handId];
 
   // Analytics: count cards played
   if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;

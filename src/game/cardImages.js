@@ -1,6 +1,7 @@
 // NBA Showdown 2026 — Card Image Mapping
 
 import { BASE_SET, getCardByKey } from './cardSets.js';
+import { baseId } from './strats.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -34,7 +35,7 @@ export function getPlayerThumbUrl(playerKey, set) {
 }
 
 export function getStratThumbPath(cardId) {
-  return `/nba-showdown-2k25/cards/thumbs/strats/${cardId}.webp`;
+  return `/nba-showdown-2k25/cards/thumbs/strats/${baseId(cardId)}.webp`;
 }
 
 /**
@@ -64,6 +65,7 @@ export function fallbackTo(fullUrl, then) {
  * `{id}.png` convention the player sets use, so nothing has to remember that
  * this one directory is spelled differently.
  */
+// A "+" copy (The Climb) wears its card's face.
 export function getStratImagePath(cardId) {
-  return `/nba-showdown-2k25/cards/strats/${cardId}.png`;
+  return `/nba-showdown-2k25/cards/strats/${baseId(cardId)}.png`;
 }

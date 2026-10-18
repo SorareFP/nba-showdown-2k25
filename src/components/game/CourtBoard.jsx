@@ -7,7 +7,7 @@ import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool, STARTERS } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
-import { getStrat } from '../../game/strats.js';
+import { getStrat, baseId, plusId } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick, forfeitNet, FORFEIT_CARDS } from '../../game/ai.js';
 import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName, submitSoloLineup, DEFAULT_ORDER, placingTeam } from '../../game/placement.js';
 import styles from './CourtBoard.module.css';
@@ -249,7 +249,9 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
  */
 // Exported for switchAnswers.test.jsx: every prompt a card raises goes through
 // `openModal`, so a test can count them and answer them.
-export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
+export async function buildOpts(game, teamKey, handCardId, base, openModal, ui = {}) {
+  // A "+" copy (The Climb) asks what its card asks.
+  const cardId = baseId(handCardId);
   const toast = ui.toast ?? (() => {});
   const ask = ui.ask ?? (async () => false);
   const opts = { ...base };
@@ -818,7 +820,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   }
   // ── Pin Down Screen, Lob City, Denial, Outside Pick: discard from hand ──
   if (cardId === 'pin_down_screen' || cardId === 'lob_city' || cardId === 'denial' || cardId === 'outside_pick') {
-    const handWithoutThis = myT.hand.filter(id => id !== cardId);
+    const handWithoutThis = myT.hand.filter(id => baseId(id) !== cardId);
     if (handWithoutThis.length === 0) { toast('No cards to discard.'); return null; }
     const discardDisplay = handWithoutThis.map((id, i) => ({ id: `${id}#${i}`, name: getStrat(id)?.name ?? id.replace(/_/g, ' ') }));
     const pick = await openModal({ teamKey, cardId, players: discardDisplay, label: `Discard a card for ${getStrat(cardId)?.name ?? cardId}`,
@@ -2249,15 +2251,21 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
   const offP=getTeam(game,psc.teamKey).starters[psc.playerIdx];
   const defKey=psc.teamKey==='A'?'B':'A';
   const defLive = defKey !== readOnlyTeam;
-  const hasCloseOut=getTeam(game,defKey).hand.includes('close_out');
-  const coPlay=hasCloseOut?canPlayCard(game,defKey,'close_out'):null;
+  // The copy in hand: a "+" copy (The Climb) before a plain one.
+  const defHand=getTeam(game,defKey).hand;
+  const copyOf=id=>defHand.includes(plusId(id))?plusId(id):defHand.includes(id)?id:null;
+  const closeOutId=copyOf('close_out');
+  const hasCloseOut=Boolean(closeOutId);
+  const coPlay=hasCloseOut?canPlayCard(game,defKey,closeOutId):null;
   // THE CHALLENGE NAMES ITS TARGET (challengeTarget, 2026-09-29): their best
   // made check of the section, not whichever check happened to come last.
   const target=defLive ? challengeTarget(game,defKey) : null;
-  const canChallenge=Boolean(target && getTeam(game,defKey).hand.includes('coaches_challenge') && canPlayCard(game,defKey,'coaches_challenge').canPlay);
+  const challengeId=copyOf('coaches_challenge');
+  const canChallenge=Boolean(target && challengeId && canPlayCard(game,defKey,challengeId).canPlay);
   // BLITZ beside Close Out (2026-09-25), and the Resolve that waits while a
   // blitzed check has no shooter yet.
-  const canBlitz=defLive && getTeam(game,defKey).hand.includes('blitz') && canPlayCard(game,defKey,'blitz').canPlay;
+  const blitzId=copyOf('blitz');
+  const canBlitz=defLive && Boolean(blitzId) && canPlayCard(game,defKey,blitzId).canPlay;
   const waitingOnBlitz=game.pendingChoice?.kind==='blitz';
   // THE TARGET, AS IT WILL BE ROLLED (2026-10-05). The user: "I just rolled
   // something that said 13+ and then it comped it against a 15 because of
@@ -2281,16 +2289,16 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
         <span style={{color:hasCloseOut&&coPlay?.canPlay?'var(--green)':'#94A3B8',fontSize:12}}>Team {defKey}: {hasCloseOut&&coPlay?.canPlay?'⚡ Close Out available!':'no Close Out'}</span>
       </div>
       <div className={styles.pendingActions}>
-        {defLive&&hasCloseOut&&coPlay?.canPlay&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,'close_out',{})}>Close Out −3</button>}
-        {canBlitz&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,'blitz',{})} title="The offense must give this check to another player on the floor">Blitz {offP?.name?.split(' ').slice(-1)[0]}</button>}
+        {defLive&&hasCloseOut&&coPlay?.canPlay&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,closeOutId,{})}>{getStrat(closeOutId)?.name ?? 'Close Out'} −3</button>}
+        {canBlitz&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,blitzId,{})} title="The offense must give this check to another player on the floor">Blitz {offP?.name?.split(' ').slice(-1)[0]}</button>}
         {/* COACH'S CHALLENGE, WHILE THE NEXT CHECK WAITS. A card that takes
             several checks in a row (Green Light) announces the next one the
             moment the last resolves (the user, 2026-09-08); this button is the
             defence's window on the ones already landed. The target is their
             best made check of the section (challengeTarget), named here. */}
         {canChallenge && (
-          <button className={styles.coBtn} onClick={()=>onExecCard(defKey,'coaches_challenge',{})}
-            title={canPlayCard(game,defKey,'coaches_challenge').reason}>
+          <button className={styles.coBtn} onClick={()=>onExecCard(defKey,challengeId,{})}
+            title={canPlayCard(game,defKey,challengeId).reason}>
             Challenge {getTeam(game,target.teamKey).starters[target.playerIdx]?.name?.split(' ').slice(-1)[0]}'s {target.cardLabel} ({target.pts} pts)
           </button>
         )}

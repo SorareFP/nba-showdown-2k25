@@ -6,7 +6,7 @@
 import { challengeTarget, getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions, timeoutProblem } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
-import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
+import { getStrat, STRATS, TIMEOUT_RIDERS, baseId, plusId } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
 import { checkNeedFor } from './checkTerms.js';
 
@@ -868,7 +868,7 @@ export function aiSpendDecision(game, teamKey, opts = {}) {
   // left in tiers — a good check at once, a fair one when the surplus is
   // twice the cost, anything at three times, so nothing sits forever.
   const ast = team.assists ?? 0;
-  const reserve = Math.max(0, ...(team.hand || []).map(id => ASSIST_COST[id] || 0));
+  const reserve = Math.max(0, ...(team.hand || []).map(id => ASSIST_COST[baseId(id)] || 0));
   const surplus = ast - reserve;
   const three = bestChance('3pt');
   const paint = bestChance('paint');
@@ -906,7 +906,7 @@ export function aiSpendDecision(game, teamKey, opts = {}) {
     const reb = REBOUND_RULES.leadToSpend
       ? Math.min(team.rebounds ?? 0, reboundTrackLead(game, teamKey))
       : (team.rebounds ?? 0);
-    const rebReserve = Math.max(0, ...(team.hand || []).map(id => REBOUND_COST[id] || 0));
+    const rebReserve = Math.max(0, ...(team.hand || []).map(id => REBOUND_COST[baseId(id)] || 0));
     const rebSurplus = reb - rebReserve;
     const cost = SPEND_COSTS.reboundPaint;
     const ev = best.pHit * 2;
@@ -1166,7 +1166,8 @@ export const BLITZ_MIN_SAVE = 0.35;
  * and what this canceller takes back net of its price (`saved`), both in
  * points a section. Zero when there is nothing to answer.
  */
-export function switchCancelValue(game, teamKey, cardId) {
+export function switchCancelValue(game, teamKey, handCardId) {
+  const cardId = baseId(handCardId);
   const lc = game.lastMatchupCard;
   if (!lc?.opts || lc.teamKey === teamKey) return { gain: 0, saved: 0 };
   const offKey = lc.teamKey;
@@ -1191,7 +1192,9 @@ export function switchCancelValue(game, teamKey, cardId) {
   return { gain, saved: after - left };
 }
 
-function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
+function evaluateCard(game, teamKey, handCardId, strat, opts = {}) {
+  // A "+" copy (The Climb) is valued as its card.
+  const cardId = baseId(handCardId);
   const phase = game.phase;
   if (cardId === 'switch_everything') {
     const { gain } = switchEverythingValue(game, teamKey);
@@ -1400,7 +1403,8 @@ const ASSIST_WORTH = 0.3;
  * he gives up — or null when he is not a legal target (already rolled,
  * blocked, or short of the card's condition).
  */
-export function forfeitNet(game, teamKey, idx, cardId) {
+export function forfeitNet(game, teamKey, idx, handCardId) {
+  const cardId = baseId(handCardId);
   const spec = FORFEIT_CARDS[cardId];
   if (!spec) return null;
   const myT = getTeam(game, teamKey);
@@ -1438,7 +1442,8 @@ export function bestForfeitTarget(game, teamKey, cardId) {
   return best;
 }
 
-export function aiBuildCardOpts(game, teamKey, cardId) {
+export function aiBuildCardOpts(game, teamKey, handCardId) {
+  const cardId = baseId(handCardId);
   const myT = getTeam(game, teamKey);
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const oppT = getOpp(game, teamKey);
@@ -1771,7 +1776,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
         return (p.threePtBoost || 0) > (b.boost || -99) ? { idx: i, boost: p.threePtBoost || 0 } : b;
       }, { idx: 0, boost: -99 });
       // The cheapest card in hand pays for it, as for Outside Pick.
-      const others = (myT.hand || []).filter(id => id !== cardId);
+      const others = (myT.hand || []).filter(id => baseId(id) !== cardId);
       return { playerIdx: bestShooter.idx, discardId: others[others.length - 1] };
     }
 
@@ -1973,7 +1978,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       return { playerIdx: cand[0]?.i ?? 0 };
     }
     case 'lob_city': case 'denial': {
-      const others = (myT.hand || []).filter(id => id !== cardId);
+      const others = (myT.hand || []).filter(id => baseId(id) !== cardId);
       return { discardId: others[others.length - 1] };
     }
 
@@ -1982,7 +1987,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       // The best shooter takes it; the cheapest card in hand pays for it.
       const shooters = starters.map((p, i) => ({ p, i })).filter(({ p }) => p)
         .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
-      const others = (myT.hand || []).filter(id => id !== cardId);
+      const others = (myT.hand || []).filter(id => baseId(id) !== cardId);
       return { playerIdx: shooters[0]?.i ?? 0, discardId: others[others.length - 1] };
     }
     case 'short_roll_playmaker': {
@@ -2253,6 +2258,8 @@ export function aiReactionDecision(game, teamKey, trigger, opts = {}) {
   if (misplays(opts.iq)) return null;
   const team = getTeam(game, teamKey);
   const hand = team.hand || [];
+  // The copy to play: a "+" copy (The Climb) before a plain one, or null.
+  const own = id => (hand.includes(plusId(id)) ? plusId(id) : hand.includes(id) ? id : null);
 
   // An announced shot check: one answer, the strongest legal one. Paint
   // checks have their own answers (Rim Protector, Drop Coverage); Close Out
@@ -2263,16 +2270,17 @@ export function aiReactionDecision(game, teamKey, trigger, opts = {}) {
     // BLITZ FIRST: it is its own answer (the others can still follow, on the
     // new shooter), so it goes in when the drop from this shooter to the
     // offence's best other one is worth the card.
-    if (!psc.blitzed && hand.includes('blitz') && canPlayCard(game, teamKey, 'blitz').canPlay
+    if (!psc.blitzed && own('blitz') && canPlayCard(game, teamKey, own('blitz')).canPlay
       && blitzSaves(game, teamKey) >= BLITZ_MIN_SAVE) {
-      return { type: 'play_card', cardId: 'blitz', opts: {} };
+      return { type: 'play_card', cardId: own('blitz'), opts: {} };
     }
     if (psc.reacted) return null;
     const order = psc.type === 'paint'
       ? ['rim_protector', 'drop_coverage', 'smothering_defense', 'hustle_play', 'denial']
       : ['close_out', 'smothering_defense', 'hustle_play', 'denial'];
-    for (const cardId of order) {
-      if (!hand.includes(cardId)) continue;
+    for (const id of order) {
+      const cardId = own(id);
+      if (!cardId) continue;
       if (canPlayCard(game, teamKey, cardId).canPlay) {
         return { type: 'play_card', cardId, opts: aiBuildCardOpts(game, teamKey, cardId) };
       }
@@ -2280,19 +2288,20 @@ export function aiReactionDecision(game, teamKey, trigger, opts = {}) {
   }
 
   // Cold Spell: always play on natural 1-2
-  if (trigger === 'cold_roll' && hand.includes('cold_spell')) {
-    const check = canPlayCard(game, teamKey, 'cold_spell');
+  if (trigger === 'cold_roll' && own('cold_spell')) {
+    const check = canPlayCard(game, teamKey, own('cold_spell'));
     if (check.canPlay) {
       const opts = aiBuildCardOpts(game, teamKey, 'cold_spell');
-      return { type: 'play_card', cardId: 'cold_spell', opts };
+      return { type: 'play_card', cardId: own('cold_spell'), opts };
     }
   }
 
   // Screen reactions: the canceller that takes back the most, if any is worth it.
   if (trigger === 'screen_card') {
     let best = null;
-    for (const cardId of CANCELLERS) {
-      if (!hand.includes(cardId) || !canPlayCard(game, teamKey, cardId).canPlay) continue;
+    for (const id of CANCELLERS) {
+      const cardId = own(id);
+      if (!cardId || !canPlayCard(game, teamKey, cardId).canPlay) continue;
       const { saved } = switchCancelValue(game, teamKey, cardId);
       if (saved >= SWITCH_FLOOR && (!best || saved > best.saved)) best = { cardId, saved };
     }
@@ -2300,11 +2309,11 @@ export function aiReactionDecision(game, teamKey, trigger, opts = {}) {
   }
 
   // Coach's Challenge: only a make is worth re-rolling, and challengeTarget offers nothing else
-  if (trigger === 'opp_scored' && hand.includes('coaches_challenge') && challengeTarget(game, teamKey)) {
-    const check = canPlayCard(game, teamKey, 'coaches_challenge');
+  if (trigger === 'opp_scored' && own('coaches_challenge') && challengeTarget(game, teamKey)) {
+    const check = canPlayCard(game, teamKey, own('coaches_challenge'));
     if (check.canPlay) {
       const opts = aiBuildCardOpts(game, teamKey, 'coaches_challenge');
-      return { type: 'play_card', cardId: 'coaches_challenge', opts };
+      return { type: 'play_card', cardId: own('coaches_challenge'), opts };
     }
   }
 

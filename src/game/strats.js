@@ -292,8 +292,36 @@ export const STRATS = [
 
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));
 
+// ── "+" COPIES (The Climb, 2026-10-18) ────────────────────────────────────────
+// A Rest Day's Smith upgrades ONE copy of a card (the user: "It should only be
+// each card, not all of one"), and that copy rides in the deck, the hand and
+// the discard as its id with a `+`, so it travels as itself through every
+// draw and undo. The engine compares ids as strings in ~40 places, so the
+// mark is read at the doors — execCard, canPlay, the AI, the board — and
+// nowhere inside: there a "+" copy is its card. Only a Climb deck holds one.
+export const PLUS_MARK = '+';
+/** The card a copy is: `close_out+` -> `close_out`. */
+export const baseId = id => (typeof id === 'string' && id.endsWith(PLUS_MARK) ? id.slice(0, -PLUS_MARK.length) : id);
+export const isPlus = id => typeof id === 'string' && id.endsWith(PLUS_MARK);
+export const plusId = id => (isPlus(id) ? id : `${id}${PLUS_MARK}`);
+
+/**
+ * THE "+" TEXT of each upgradable card, by its plain id. The effects read
+ * `opts.plus` in execCard.js. Empty until the user approves the batch in
+ * docs/plans/2026-10-18-the-climb-upgrades.md; a "+" with no text here plays
+ * as its plain card.
+ */
+export const PLUS = {};
+
+const PLUS_STRATS = new Map();
+/** A card by id — a "+" copy as its card, named with the "+" and its "+" text. */
 export function getStrat(id) {
-  return STRAT_MAP[id];
+  if (!isPlus(id)) return STRAT_MAP[id];
+  if (PLUS_STRATS.has(id)) return PLUS_STRATS.get(id);
+  const base = STRAT_MAP[baseId(id)];
+  const out = base ? { ...base, id, base: base.id, upgraded: true, name: `${base.name}${PLUS_MARK}`, desc: PLUS[base.id]?.desc ?? base.desc } : undefined;
+  PLUS_STRATS.set(id, out);
+  return out;
 }
 
 /**

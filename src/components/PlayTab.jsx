@@ -4,6 +4,7 @@ import { newGame, doRoll, rollingOpen as diceOut, endSection, spendAssist, spend
 import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiChoice } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck, resolveChoice } from '../game/execCard.js';
+import { baseId } from '../game/strats.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
 import { resultFromPlayed } from '../game/modes/season.js';
 import { AI_LEVELS, iqOf, capOf, samplesOf, loadAiLevel, saveAiLevel, payNote } from '../game/aiLevels.js';
@@ -467,7 +468,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         const psc = game.pendingShotCheck;
         if (psc.teamKey === 'A') {
           // Blitz is its own answer: it may still come after Close Out and the rest.
-          if (!psc.reacted || (!psc.blitzed && game.teamB.hand.includes('blitz'))) {
+          if (!psc.reacted || (!psc.blitzed && game.teamB.hand.some(id => baseId(id) === 'blitz'))) {
             const react = aiReactionDecision(game, 'B', 'shot_check', { iq });
             if (react?.type === 'play_card' && tryCard(react.cardId, react.opts)) return;
           }

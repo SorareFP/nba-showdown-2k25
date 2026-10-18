@@ -1,9 +1,8 @@
 // NBA Showdown 2026 — Core Game Engine
 // Pure functions — no React, no side effects. State is a plain object.
 
-import { CRUNCH_CARDS } from './strats.js';
+import { CRUNCH_CARDS, baseId } from './strats.js';
 // STRATS is imported below (the default-deck build); imports hoist, so this is safe here.
-const STRAT_NAMES = Object.fromEntries(STRATS.map(s => [s.id, s.name]));
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -73,7 +72,7 @@ export function drawCards(hand, deck, n, { overCap = false, crunchActive = null 
     if (!overCap && newHand.length >= 7) break;
     if (!newDeck.length) break; // deck exhausted
     const id = newDeck.pop();
-    if (crunchActive === false && CRUNCH_CARDS.includes(id)) {
+    if (crunchActive === false && CRUNCH_CARDS.includes(baseId(id))) {
       // Under it goes — and the draw looks again, bounded by maxLooks so a
       // deck of nothing but crunch cards ends with an empty draw, not a hang.
       newDeck.unshift(id);
@@ -91,7 +90,7 @@ export function drawCards(hand, deck, n, { overCap = false, crunchActive = null 
 export function bottomedLines(teamKey, teamName, bottomed) {
   return (bottomed || []).map(id => ({
     team: teamKey,
-    msg: `${teamName} drew ${STRAT_NAMES[id] ?? id.replace(/_/g, ' ')} outside Crunch Time — to the bottom of the deck`,
+    msg: `${teamName} drew ${getStrat(id)?.name ?? id.replace(/_/g, ' ')} outside Crunch Time — to the bottom of the deck`,
   }));
 }
 
@@ -942,7 +941,7 @@ export function spendTimeout(g, teamKey) {
 export function crunchSearchOptions(g, teamKey) {
   if (g.timeoutActive !== teamKey || g.crunch?.searched?.[teamKey]) return [];
   const deck = getTeam(g, teamKey)?.deck || [];
-  return [...new Set(deck.filter(id => CRUNCH_CARDS.includes(id)))];
+  return [...new Set(deck.filter(id => CRUNCH_CARDS.includes(baseId(id))))];
 }
 
 /**
@@ -954,7 +953,7 @@ export function crunchSearchOptions(g, teamKey) {
 export function searchCrunchCard(g, teamKey, cardId) {
   if (g.timeoutActive !== teamKey) return { game: g, ok: false, msg: 'Search the deck during your own timeout' };
   if (g.crunch?.searched?.[teamKey]) return { game: g, ok: false, msg: 'Already searched this timeout' };
-  if (!CRUNCH_CARDS.includes(cardId)) return { game: g, ok: false, msg: 'Only a crunch-time card can be searched for' };
+  if (!CRUNCH_CARDS.includes(baseId(cardId))) return { game: g, ok: false, msg: 'Only a crunch-time card can be searched for' };
   const t = getTeam(g, teamKey);
   const at = (t.deck || []).indexOf(cardId);
   if (at < 0) return { game: g, ok: false, msg: 'That card is not in your deck' };
@@ -970,7 +969,7 @@ export function searchCrunchCard(g, teamKey, cardId) {
   nt.hand = [...(nt.hand || []), cardId];
   if (!ng.crunch.searched) ng.crunch.searched = {};
   ng.crunch.searched[teamKey] = true;
-  const name = STRAT_NAMES[cardId] ?? cardId.replace(/_/g, ' ');
+  const name = getStrat(cardId)?.name ?? cardId.replace(/_/g, ' ');
   ng.log = [...ng.log, { team: teamKey, msg: `Timeout: ${nt.name} searched the deck for ${name} — deck shuffled` }];
   return { game: ng, ok: true };
 }
@@ -1510,7 +1509,8 @@ export function pruneStanding(g) {
   for (const entry of g.standing ?? []) {
     if ((entry.playerIds ?? []).every(id => onFloor(g, entry.teamKey, id))) { kept.push(entry); continue; }
     const team = getTeam(g, entry.teamKey);
-    const at = team.hand.indexOf(entry.cardId);
+    // The copy that was played (a "+" copy is its own entry in the hand).
+    const at = team.hand.indexOf(entry.handId ?? entry.cardId);
     if (at >= 0) team.hand = [...team.hand.slice(0, at), ...team.hand.slice(at + 1)];
     g.log = [...g.log, {
       team: entry.teamKey,

@@ -9,6 +9,8 @@
 // of any card, so the rule picked almost nothing. The user approves the kits
 // with their "+" versions before the upgrades ship.
 import { STRAT_MAP } from '../strats.js';
+import { nearestArchetype } from '../deckFit.js';
+import { ARCHETYPE_DECKS } from '../archetypeDecks.js';
 
 export const CORE = Object.freeze({
   high_screen_roll: 2,
@@ -95,4 +97,27 @@ export function leanOf(id) {
   if (/Power|Paint|Rebound/i.test(s.desc ?? '')) return 'paint';
   if (/Speed|3PT|Assist/i.test(s.desc ?? '')) return 'speed';
   return null;
+}
+
+/**
+ * THE COACH'S DECK at a stop: the playbook its roster sits nearest, grown to
+ * `size` (15 at the first floor, 25 for the boss) from that archetype's fitted
+ * fifty, drawn by its copies and never past a card's limit.
+ */
+export function coachDeck(roster, size, rng = Math.random) {
+  const near = nearestArchetype(roster);
+  const deck = kitDeck(PLAYBOOK_OF_ARCHETYPE[near?.id] ?? PLAYBOOKS[0]);
+  const fifty = ARCHETYPE_DECKS.find(a => a.id === near?.id)?.deck ?? {};
+  const bag = [];
+  for (const id of Object.keys(fifty).sort()) {
+    const room = Math.min(fifty[id], STRAT_MAP[id]?.copies ?? fifty[id]) - (deck[id] ?? 0);
+    for (let i = 0; i < room; i += 1) bag.push(id);
+  }
+  let count = Object.values(deck).reduce((t, n) => t + n, 0);
+  while (count < size && bag.length) {
+    const [id] = bag.splice(Math.floor(rng() * bag.length), 1);
+    deck[id] = (deck[id] ?? 0) + 1;
+    count += 1;
+  }
+  return deck;
 }

@@ -57,3 +57,20 @@ describe('the starter kits', () => {
     for (const pb of PLAYBOOKS) for (const id of Object.keys(kitDeck(pb))) expect(KIT_CARD_IDS.has(id), id).toBe(true);
   });
 });
+
+describe('the coach\'s deck', () => {
+  it('is the nearest playbook\'s fifteen, grown from its archetype\'s fifty', async () => {
+    const { coachDeck } = await import('./climbKits.js');
+    const { nearestArchetype } = await import('../deckFit.js');
+    const { CARDS } = await import('../cards.js');
+    const { climbRng } = await import('./climbMap.js');
+    const roster = CARDS.slice(0, 8);
+    const pb = PLAYBOOK_OF_ARCHETYPE[nearestArchetype(roster).id];
+    expect(coachDeck(roster, 15, climbRng(1, 'deck'))).toEqual(kitDeck(pb));
+    const big = coachDeck(roster, 25, climbRng(1, 'deck'));
+    expect(total(big)).toBe(25);
+    for (const [id, n] of Object.entries(kitDeck(pb))) expect(big[id], id).toBeGreaterThanOrEqual(n);
+    for (const [id, n] of Object.entries(big)) expect(n, id).toBeLessThanOrEqual(STRAT_MAP[id].copies);
+    expect(coachDeck(roster, 25, climbRng(1, 'deck'))).toEqual(big);
+  });
+});

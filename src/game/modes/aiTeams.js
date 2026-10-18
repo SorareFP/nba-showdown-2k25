@@ -15,6 +15,8 @@ import { CAP, RANDOM_MIN_SAL } from '../teamRules.js';
 // The roster size from teamRules rather than the engine, so a dynasty's AI
 // league can be built where the engine is not shipped (the Cloud Functions).
 import { MAX as ROSTER_SIZE } from '../teamRules.js';
+import { CARD_SETS, DORMANT_KEYS, cardKey } from '../cardSets.js';
+import { isFeatCard } from '../recordBreakers.js';
 
 /** The franchise a card plays for, following the three aliases (BRK/CHO/PHO). */
 export function franchiseOf(card) {
@@ -50,10 +52,15 @@ export function franchisePool(cards = CARDS, min = 3) {
 // user, 2026-09-16, on rubber-banding: "What I want when the difficulty goes
 // up is for the opposing team to be better/smarter." A person can see the
 // cards.
-export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Math.random, cap = CAP } = {}) {
+// `size` and `own` (The Climb, 2026-10-18): a run's opponents are sized like
+// the run's own team (five at the first floor), and `own` replaces "this
+// franchise's cards" as the first tier — the classic boss's core leftovers.
+export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Math.random, cap = CAP, size = ROSTER_SIZE, own = null } = {}) {
   const free = cards.filter(c => !taken.has(c.id));
-  const mine = free.filter(c => franchiseOf(c) === abbr);
-  const others = free.filter(c => franchiseOf(c) !== abbr);
+  const ownKeys = own ? new Set(own.map(cardKey)) : null;
+  const isMine = c => (ownKeys ? ownKeys.has(cardKey(c)) : franchiseOf(c) === abbr);
+  const mine = free.filter(isMine);
+  const others = free.filter(c => !isMine(c));
   // A little noise so two seasons with the same franchise are not the same
   // team: rank by salary, jittered.
   const rank = list => [...list].sort((a, b) => (b.salary ?? 0) * (0.85 + rng() * 0.3) - (a.salary ?? 0) * (0.85 + rng() * 0.3));
@@ -68,7 +75,7 @@ export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Ma
    * fixed floor let an expensive front-loaded roster strand itself at nine.
    */
   const fits = c => {
-    const spotsAfter = ROSTER_SIZE - roster.length - 1;
+    const spotsAfter = size - roster.length - 1;
     let reserve = 0;
     let counted = 0;
     for (const x of cheap) {
@@ -82,19 +89,19 @@ export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Ma
   };
   const take = c => { roster.push(c); ids.add(c.id); sal += c.salary ?? 0; };
   for (const c of rank(mine)) {
-    if (roster.length >= ROSTER_SIZE) break;
+    if (roster.length >= size) break;
     if (ids.has(c.id) || !fits(c)) continue;
     take(c);
   }
   for (const c of rank(others)) {
-    if (roster.length >= ROSTER_SIZE) break;
+    if (roster.length >= size) break;
     if (ids.has(c.id) || !fits(c)) continue;
     take(c);
   }
   // Whatever is left over goes to the cheapest cards that still fit, so the
-  // roster is always ten deep.
+  // roster is always full (ten deep, unless a size was asked for).
   for (const c of cheap) {
-    if (roster.length >= ROSTER_SIZE) break;
+    if (roster.length >= size) break;
     if (ids.has(c.id) || sal + (c.salary ?? 0) > cap) continue;
     take(c);
   }
@@ -150,4 +157,74 @@ export function buildAiLeague(count, { cards = CARDS, taken = new Set(), exclude
     });
   }
   return out;
+}
+
+// ── THE CLASSIC BOSS (The Climb, 2026-10-18) ─────────────────────────────────
+// The act's last stop is one franchise built from its own past: its Super
+// Seasons, Throwbacks and reward cards (docs/plans/2026-10-18-the-climb-design.md).
+// Those cards cost $900-1,400 apiece, so at the boss's cap a greedy draft
+// that takes the stars first runs out of room by its third card; the core is
+// picked with the rest of the roster's cost in view, then the usual draft
+// fills it.
+export const CLASSIC_SETS = ['super-season', 'throwbacks', 'set-rewards', 'team-rewards'];
+
+/** A franchise's live classic cards, one per player (his priciest). */
+export function classicCards(abbr) {
+  const best = new Map();
+  for (const set of CLASSIC_SETS) {
+    for (const c of CARD_SETS[set] ?? []) {
+      if (franchiseOf(c) !== abbr || DORMANT_KEYS.has(cardKey(c)) || isFeatCard(c)) continue;
+      const had = best.get(c.id);
+      if (!had || (c.salary ?? 0) > (had.salary ?? 0)) best.set(c.id, c);
+    }
+  }
+  return [...best.values()];
+}
+
+const salaryOf = c => c.salary ?? 0;
+const cheapest = (list, n) => list.map(salaryOf).sort((a, b) => a - b).slice(0, Math.max(0, n)).reduce((t, x) => t + x, 0);
+const coreSize = size => Math.ceil(size / 2);
+/** The other players a classic roster fills out with: the pool, less anyone it already has. */
+const fillPool = (classic, cards) => {
+  const ids = new Set(classic.map(c => c.id));
+  return cards.filter(c => !ids.has(c.id));
+};
+
+/** The franchises that can field half a classic roster of `size` under `cap`, A-Z. */
+export function classicFranchises({ cap = CAP, size = ROSTER_SIZE, cards = CARDS } = {}) {
+  const abbrs = new Set();
+  for (const set of CLASSIC_SETS) for (const c of CARD_SETS[set] ?? []) if (TEAMS[franchiseOf(c)]) abbrs.add(franchiseOf(c));
+  const k = coreSize(size);
+  return [...abbrs].sort().filter(abbr => {
+    const classic = classicCards(abbr);
+    return classic.length >= k && cheapest(classic, k) + cheapest(fillPool(classic, cards), size - k) <= cap;
+  });
+}
+
+/**
+ * A classic team of `size` under `cap`: at least half of it the franchise's
+ * classic cards (chosen priciest-first, jittered, never leaving too little
+ * for the rest), the rest drafted as any coach team is, its remaining classic
+ * cards first.
+ */
+export function buildClassicRoster(abbr, { cap = CAP, size = ROSTER_SIZE, rng = Math.random, cards = CARDS } = {}) {
+  const classic = classicCards(abbr);
+  const fill = fillPool(classic, cards);
+  const k = coreSize(size);
+  const ranked = [...classic].sort((a, b) => salaryOf(b) * (0.85 + rng() * 0.3) - salaryOf(a) * (0.85 + rng() * 0.3));
+  const core = [];
+  let sal = 0;
+  for (const c of ranked) {
+    if (core.length >= k) break;
+    const others = classic.filter(x => x !== c && !core.includes(x));
+    if (sal + salaryOf(c) + cheapest(others, k - core.length - 1) + cheapest(fill, size - k) > cap) continue;
+    core.push(c);
+    sal += salaryOf(c);
+  }
+  const left = classic.filter(c => !core.includes(c));
+  const rest = buildAiRoster(abbr, {
+    own: left, cards: [...left, ...fill], cap: cap - sal, size: size - core.length, rng,
+    taken: new Set(core.map(c => c.id)),
+  });
+  return [...core, ...rest];
 }

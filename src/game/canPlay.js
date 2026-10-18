@@ -2,7 +2,7 @@
 // Returns { canPlay: bool, reason: string }
 
 import { CRUNCH_CARDS, TIMEOUT_RIDERS } from './strats.js';
-import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, reboundTrackLead, challengeTarget, rerollOdds, answerEventKey } from './engine.js';
+import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, isOpeningSection, reboundTrackLead, challengeTarget, rerollOdds, answerEventKey } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
 const no = (r) => ({ canPlay: false, reason: r });
@@ -505,7 +505,8 @@ function cardVerdict(g, teamKey, cardId) {
     }
 
     if (cardId === 'second_wind') {
-      if (g.quarter === 1 && g.section === 1) return no('No one can be fatigued in the first segment');
+      // A Climb game's players can walk on tired (newGame's `fatigue`).
+      if (isOpeningSection(g) && !g.opening?.carried) return no('No one can be fatigued in the first segment');
       const fatigued = myT.starters.some((_, i) => getFatigue(g, teamKey, i) < 0);
       if (!fatigued) return no('No fatigued players in lineup (need 8+ min played)');
       return ok();
@@ -518,7 +519,7 @@ function cardVerdict(g, teamKey, cardId) {
     }
 
     if (cardId === 'defensive_stopper') {
-      if (g.quarter === 1 && g.section === 1) return no('Cannot play in the first segment — no one has sat out yet');
+      if (isOpeningSection(g)) return no('Cannot play in the first segment — no one has sat out yet');
       // A starter who SAT OUT last segment — the flag the engine writes at
       // every section end, not "zero minutes", which halftime hands to all.
       if (!myT.starters.some(p => satOutLast(g, teamKey, p))) return no('Need a starter who was benched last segment');

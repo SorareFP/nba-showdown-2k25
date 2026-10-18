@@ -269,12 +269,14 @@ function playSection(g, sectionIndex, brains = null) {
  * (null = the default deck). Returns
  * `{ scoreA, scoreB, winner: 'A'|'B', boxA, boxB, sections, game }`.
  */
-export function simulateGame(rosterA, rosterB, { deckA = null, deckB = null, rng = null, keepGame = false, brains = null } = {}) {
+// `gameOpts` go to newGame as they are: The Climb plays a one-quarter game
+// (`startQuarter: 4`) with the run's fatigue on the tracker.
+export function simulateGame(rosterA, rosterB, { deckA = null, deckB = null, rng = null, keepGame = false, brains = null, gameOpts = {} } = {}) {
   const realRandom = Math.random;
   if (rng) Math.random = rng;
   try {
     // A is the fixture's HOME side (simulateFixture), so the visitor, B, leads the snake.
-    let g = newGame(rosterA, rosterB, deckA, deckB, { clutchDice: CLUTCH_DICE, placementFirst: 'B' });
+    let g = newGame(rosterA, rosterB, deckA, deckB, { clutchDice: CLUTCH_DICE, placementFirst: 'B', ...gameOpts });
     g = draftStarters(g, brains);
     // Twelve sections, and overtime sections while it is tied (endSection).
     let played = 0;

@@ -171,6 +171,16 @@ export function periodLabel(g, { short = false } = {}) {
 export const ENGINE_STAMP = typeof __ENGINE_STAMP__ !== 'undefined' ? __ENGINE_STAMP__ : 'unstamped';
 
 export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
+  // THE CLIMB'S QUARTER (2026-10-18): a run game is the fourth quarter alone,
+  // and each player walks on with what the run has left on his tracker.
+  const startQuarter = opts.startQuarter ?? 1;
+  const teamA = makeTeam(rosterA, 'Team A', deckConfigA);
+  const teamB = makeTeam(rosterB, 'Team B', deckConfigB);
+  for (const [key, team] of [['A', teamA], ['B', teamB]]) {
+    const carried = opts.fatigue?.[key];
+    if (!carried) continue;
+    for (const ps of team.stats) if (carried[ps.id] > 0) ps.minutes = carried[ps.id];
+  }
   return {
     // Card id -> extra Clutch Possession dice (MVP and CPOY each add one —
     // the MLB Showdown icon system reborn). Injected rather than imported so
@@ -188,10 +198,14 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     standing: [],
     timeoutActive: null,
     pressArmed: {},
-    teamA: makeTeam(rosterA, 'Team A', deckConfigA),
-    teamB: makeTeam(rosterB, 'Team B', deckConfigB),
-    quarter: 1,
+    teamA,
+    teamB,
+    quarter: startQuarter,
     section: 1,
+    // Where this game began: isOpeningSection reads it, so "no one has sat
+    // out yet" means the game's own first section. `carried`: someone may
+    // already be tired in it.
+    opening: { quarter: startQuarter, section: 1, carried: Boolean(opts.fatigue) },
     phase: 'draft', // draft | matchup_strats | scoring | done
     draft: {
       aPool: rosterA.slice(),
@@ -353,7 +367,16 @@ export function satOutLast(g, teamKey, player) {
   const ps = player ? getPS(g, teamKey, player.id) : null;
   if (!ps) return false;
   if (ps.wasBenched != null) return Boolean(ps.wasBenched);
-  return (ps.minutes || 0) === 0 && !(g.quarter === 1 && g.section === 1);
+  return (ps.minutes || 0) === 0 && !isOpeningSection(g);
+}
+
+/**
+ * Is this the game's own first section? Q1's for a whole game; Q4's for a
+ * Climb game that starts there (newGame's `startQuarter`). A save from before
+ * `opening` existed began at Q1.
+ */
+export function isOpeningSection(g) {
+  return (g?.quarter ?? 1) === (g?.opening?.quarter ?? 1) && g?.section === 1 && !g?.overtime;
 }
 
 /**
@@ -1874,7 +1897,7 @@ export function endSection(g) {
   const secFor = ng.secStart
     ? { A: ng.teamA.score - (ng.secStart.A || 0), B: ng.teamB.score - (ng.secStart.B || 0) }
     : null;
-  const firstSection = ng.quarter === 1 && ng.section === 1;
+  const firstSection = isOpeningSection(ng);
   ['A', 'B'].forEach(k => {
     const segFor = k === 'A' ? segPtsA : segPtsB;
     const segAg  = k === 'A' ? segPtsB : segPtsA;

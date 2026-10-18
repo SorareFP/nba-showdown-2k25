@@ -20,7 +20,8 @@ describe('news', () => {
   it('carries Unethical Hoops, and every button goes somewhere the app knows', () => {
     expect(NEWS.some(n => n.id === 'unethical-hoops')).toBe(true);
     // Tabs, plus the Collection pages Home opens by name (HOME_SECTIONS, App.jsx homeGo).
-    const places = ['play', 'season', 'dynasty', 'collection', 'howtoplay', 'builder', ...Object.keys(HOME_SECTIONS)];
+    // 'climb' is The Climb's route (2026-10-18), reached from Play and from here.
+    const places = ['play', 'season', 'dynasty', 'climb', 'collection', 'howtoplay', 'builder', ...Object.keys(HOME_SECTIONS)];
     for (const n of [...NEWS, STARTER_NEWS]) {
       if (n.to) expect(places, n.id).toContain(n.to);
       if (n.to) expect(n.cta, n.id).toBeTruthy();
@@ -138,5 +139,12 @@ describe('Home opens Collection pages by name', () => {
   it('can open Friends, and the Friends news item goes there', () => {
     expect(HOME_SECTIONS.friends).toBe('friends');
     expect(NEWS.find(n => n.id === 'friends')?.to).toBe('friends');
+  });
+});
+
+// THE CLIMB (2026-10-18): its news item opens the run, newest first.
+describe('The Climb in the news', () => {
+  it('leads the news and opens the climb', () => {
+    expect(NEWS[0]).toMatchObject({ id: 'the-climb', to: 'climb', cta: 'Start a climb' });
   });
 });

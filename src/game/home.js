@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'the-climb', date: '2026-10-18', title: 'The Climb',
+    body: "A new way to play, from the Play tab: bring five of your players under a $2,200 cap and climb seven floors of one-quarter games to a classic team at the top, built from a franchise's Super Seasons, Throwbacks and reward cards. Pick a playbook at Training Camp, choose your path on the map, and after every win take a strategy card or a player for the run, or skip: a tight deck beats a big one. Fatigue carries from game to game; a Rest Day clears it, or upgrades one of your cards. Wins fill the pot, with a Booster for beating the boss. Retire between games to bank it. One loss and the pot is gone.",
+    to: 'climb', cta: 'Start a climb',
+  },
+  {
     id: 'record-breakers', date: '2026-10-14', title: 'Record Breakers',
     body: "A new set for the seasons a record fell, in a platinum frame with the record lit up on a plaque across the photo. LeBron James' 2022-23 is the first (38,388, the night he passed Kareem), with Curry and Ray Allen's three-point marks, Westbrook's 182nd triple-double, Karl Malone's free throws, Stockton's 1,164 assists, Calderón's free throws and Korver's threes. Those are earned by matching the feat, which is coming soon, never from a pack. Four blocks and steals records (Hakeem, Stockton, Mark Eaton, Alvin Robertson) join the boosters as their photos are finished. Curry's 2015-16, Westbrook's 2016-17 and Stockton's 1994-95 already carry the plaque.",
     to: 'shop', cta: 'Pack Shop',

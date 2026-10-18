@@ -212,15 +212,22 @@ describe('banking the pot', () => {
     expect(boxes[0]).toMatchObject({ packType: 'booster', left: 1, bonusLeft: 0, boughtAs: 'climb' });
   });
 
-  it('ends the run, paying nothing, when a game is still open', async () => {
+  // NOT A FORFEIT (2026-10-18). The boss game's claim goes out from its
+  // results screen; a bank that overtook it would have found the game open
+  // and ended the run. Refusing is as safe against "start a game, bank before
+  // it ends" (an unreported game never lets the pot bank) and cannot lose a
+  // won run to a slow claim.
+  it('refuses while a game is still open, and pays once it reports', async () => {
     const { runId } = await started();
     await winAt(runId, '1-0');
     const map = generateMap(ledger(runId).seed);
     const b = map.floors.flat().find(s => reachableGame(map, '1-0', s.id)).id;
     expect(await call(climbGame, { runId, stopId: b })).toMatchObject({ ok: true });
-    expect(await call(climbBank, { runId })).toMatchObject({ coins: 0, lost: true });
-    expect(ledger(runId).status).toBe('lost');
+    await expect(call(climbBank, { runId })).rejects.toThrow(/still open/);
+    expect(ledger(runId)).toMatchObject({ status: 'active', open: b });
     expect(coins()).toBe(100);
+    await claim(runId, b, true);
+    expect((await call(climbBank, { runId })).coins).toBe(potOf(map, ['1-0', b], 'prince').coins);
   });
 
   it('refuses a lost run', async () => {

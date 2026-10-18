@@ -1012,7 +1012,8 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
 //   - opening another game over one that never reported is a loss;
 //   - a run game's claim pays nothing and moves the ledger: a win clears the
 //     stop, a loss (a tie too) ends the run and the pot with it;
-//   - the pot banks once, and never with a game open (that game is a loss).
+//   - the pot banks once, and never while a game is open (it waits for the
+//     claim; a game that never reports never lets it bank).
 // ═══════════════════════════════════════════════════════════════════════════
 
 /** A run id as a document id, or null. */
@@ -1140,10 +1141,10 @@ export const climbBank = onCall({ region: 'us-central1' }, async request => {
     const run = snap.data();
     if (run.status === 'banked') return { already: true, coins: run.paid?.coins ?? 0, booster: Boolean(run.paid?.booster) };
     if (run.status === 'lost') throw new HttpsError('failed-precondition', 'A lost run has no pot');
-    if (run.status === 'active' && run.open) {
-      tx.update(ref, { status: 'lost', lostAt: run.open, open: null });
-      return { coins: 0, booster: false, lost: true };
-    }
+    // An open game blocks the pot until it reports: a game that never does
+    // never lets the pot bank. Not a forfeit, so a won boss game whose claim
+    // is still on its way is not lost to the bank that overtook it.
+    if (run.status === 'active' && run.open) throw new HttpsError('failed-precondition', 'A game is still open: finish it first');
     if (run.status !== 'active' && run.status !== 'won') throw new HttpsError('failed-precondition', 'Nothing to bank');
     const pot = potOf(generateMap(run.seed), run.cleared ?? [], run.rung);
     if (pot.coins > 0) tx.update(userRef, { currency: FieldValue.increment(pot.coins) });

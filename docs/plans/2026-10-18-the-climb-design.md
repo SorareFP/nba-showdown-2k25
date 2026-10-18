@@ -6,11 +6,12 @@ rewards of players and strats." Decided over the 2026-10-18 brainstorm; the
 whole mode splits into four pieces, each its own spec and plan:
 
 1. **The core loop (this spec):** start, Training Camp, one act, short games,
-   rewards, fatigue as health, Rest Day (rest / smith / cut), the pot, retire
+   rewards, fatigue as health, Rest Day (rest or smith), the pot, retire
    or lose, the server ledger. Upgrades for the starter-kit cards.
 2. Run-only cards: scaling cards (Gym Rat, Heat Check, Chemistry, Film Study,
    tag synergies), "+" upgrades for every other strat, the Film Room.
-3. The map's extras: Front Office shop, events, Front Office perks (relics),
+3. The map's extras: Front Office shop (where cutting a card lives — the user,
+   2026-10-18: "cut might be good for shops"), events, Front Office perks (relics),
    Neow's risky deals, the coin continue (one per run, price rising with the
    floor, no healing, payout cut by its cost).
 4. The full climb: Acts 2 and 3 with their bosses, the three game lengths
@@ -47,12 +48,18 @@ whole mode splits into four pieces, each its own spec and plan:
 - **Opponents:** a Game is a franchise team from buildAiRoster at the floor's
   cap (about $2,600 at floor 1 rising to about $4,000 at floor 7); a Rivalry is
   the same at +$700. **The boss is a classic team**: one franchise built from
-  its Super Season, Throwback and reward cards, at **your run cap at that point
-  plus about $500** (not a flat $5,500 — the user: "a boss team at 5500 when
-  you start lower might be crazy"). The coach's strat deck is fitted to its
-  roster (deckFit.js) and grows with the floor: 15 cards at floor 1, 25 for the
-  boss. Every number here ($2,200, the floor caps, +$700, +$500, the pot) is a
-  starting value, set by the simulated runs below before the user plays.
+  its Super Season, Throwback and reward cards, at a cap **set per act, not
+  from your team**: 20-40% above the team a typical run has by then (the user,
+  2026-10-18: "set at each act based on like 20-40% above what a normal run
+  through that act will give your team" — after "a boss team at 5500 when you
+  start lower might be crazy"). "Typical" is the median team salary at the boss
+  across the simulated runs; the boss cap is that times a factor from 1.2 to
+  1.4, tuned by the same runs (today's numbers: about $4,000 x 1.3, about
+  $5,200). The same bar for everyone, so a run that drafted well meets a fair
+  fight and one that coasted meets a wall. The coach's strat deck is fitted to
+  its roster (deckFit.js) and grows with the floor: 15 cards at floor 1, 25 for
+  the boss. Every number here ($2,200, the floor caps, +$700, the boss factor,
+  the pot) is a starting value, set by the simulated runs before the user plays.
 - **A game is one quarter:** it starts at Q4 section 1, so it is three
   sections with crunch time if within CRUNCH_MARGIN and overtime if tied. The
   rest is the normal engine; the coach plays at the run's rung.
@@ -99,9 +106,10 @@ whole mode splits into four pieces, each its own spec and plan:
 
 ## Rest Day and smithing
 
-- **A Rest Day offers one of three:** **Rest** (clear every player's fatigue),
-  **Smith** (upgrade one card in the deck to its "+" version), or **Cut**
-  (remove one card from the deck).
+- **A Rest Day offers one of two,** StS's campfire: **Rest** (clear every
+  player's fatigue) or **Smith** (upgrade one card in the deck to its "+"
+  version). **Cutting a card belongs to the shop** (piece 3); in piece 1 the
+  only cut is Training Camp's "cut 2 starter cards" boon.
 - **"+" versions** exist in piece 1 for the starter-kit cards (the core and the
   three signature sets, about 25 cards). Each is written for its card — not a
   formula — and **the user approves the batch before it ships** (the strategy
@@ -116,7 +124,7 @@ whole mode splits into four pieces, each its own spec and plan:
 - **src/game/modes/run.js** — the run's state (rung, cap, floor, map, roster,
   deck, fatigue, pot, status) and pure functions: new run, map generation,
   choose stop, set up a game, record a result into offers, pick or skip,
-  rest / smith / cut, retire. Seeded randomness, so tests replay exactly.
+  rest or smith, retire. Seeded randomness, so tests replay exactly.
 - **Engine:** an option to start a game at Q4 section 1 with each player's
   starting fatigue (the tutorial's stageCrunch already starts mid-game).
 - **Opponents:** buildAiRoster at the floor's cap; a new classic-team builder.
@@ -139,7 +147,7 @@ whole mode splits into four pieces, each its own spec and plan:
 - Unit tests (run.js): map rules (floor 1 a Game, Rest Day before the boss,
   every stop reachable, no crossings), the cap ramp, every player offer fits
   the cap, the rare chance by floor, pot math, run states (active, won, lost,
-  retired) and their transitions, rest / smith / cut, seeded replay.
+  retired) and their transitions, rest or smith, seeded replay.
 - Engine: a game started at Q4 section 1 plays three sections, arms crunch,
   goes to overtime when tied, and carries the given fatigue.
 - Server (functions harness): start, claim win, claim loss ends the run, bank
@@ -147,7 +155,8 @@ whole mode splits into four pieces, each its own spec and plan:
   lost run cannot bank, the browser's numbers are ignored.
 - Upgrades: each "+" card has a test of its stronger effect.
 - **Simulated runs** (coach against coach, the AI duel harness) to tune the
-  floor caps, the boss margin, reward odds and the pot before the user plays.
+  floor caps, the boss factor (from the median team at the boss), reward odds
+  and the pot before the user plays.
 - Deploy: rules (the runs rule) → functions → Pages; a NEWS item.
 
 ## Not in this piece

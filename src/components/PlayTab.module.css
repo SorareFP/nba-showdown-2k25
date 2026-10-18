@@ -71,3 +71,15 @@
 @media (min-width: 3000px) {
   .wideGame { --ui-zoom: 1.5; }
 }
+
+/* THE CLIMB'S DOOR (2026-10-18) on the start screen. */
+.climbDoor {
+  display: flex; flex-direction: column; gap: 4px; width: 100%; margin-bottom: 1rem; padding: 12px 14px;
+  text-align: left; cursor: pointer; color: var(--text); font: inherit;
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.18), rgba(245, 158, 11, 0.08));
+  border: 1px solid var(--orange); border-radius: var(--radius);
+  transition: transform var(--dur-quick) var(--ease-out), background var(--dur-quick) var(--ease-out);
+}
+.climbDoor:hover { transform: translateY(-1px); background: linear-gradient(135deg, rgba(234, 88, 12, 0.28), rgba(245, 158, 11, 0.12)); }
+.climbDoor strong { font-size: 16px; }
+.climbDoor span { font-size: 13px; color: var(--text-muted); }

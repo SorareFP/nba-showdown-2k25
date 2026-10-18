@@ -1,0 +1,100 @@
+/* THE CLIMB — screens for a run (ClimbScreens.jsx). Tokens from index.css and
+   motion.css; the one 768px breakpoint (docs: mobile_layout). */
+
+.screen { display: flex; flex-direction: column; gap: 12px; color: var(--text); }
+.title { margin: 0; font-size: 22px; }
+.lede { margin: 0; color: var(--text-muted); max-width: 70ch; line-height: 1.45; }
+.h3 { margin: 8px 0 0; font-size: 15px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.muted { color: var(--text-muted); font-weight: 400; }
+.over { color: var(--red); font-weight: 600; }
+.note { margin: 0; font-size: 12px; color: var(--orange-light); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.screen button {
+  background: var(--card-bg); color: var(--text); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 12px; cursor: pointer; font: inherit;
+  transition: background var(--dur-quick) var(--ease-out), border-color var(--dur-quick) var(--ease-out);
+}
+.screen button:hover:not(:disabled) { background: var(--card-hover); }
+.screen button:disabled { opacity: 0.45; cursor: default; }
+.screen .primary { background: var(--orange); border-color: var(--orange); font-weight: 700; }
+.screen .primary:hover:not(:disabled) { background: var(--orange-light); }
+.screen .danger { border-color: var(--red); color: #FCA5A5; }
+.on { border-color: var(--orange) !important; box-shadow: 0 0 0 1px var(--orange) inset; }
+
+/* Tiles: a card face that opens the whole card, and a button under it. */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.tile {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 8px; display: flex; flex-direction: column; gap: 4px;
+}
+.selected { border-color: var(--orange); }
+.face { width: 100%; aspect-ratio: 5 / 7; object-fit: cover; border-radius: var(--radius-sm); background: var(--navy-light); }
+.tileName { font-weight: 700; font-size: 13px; line-height: 1.2; }
+.tileMeta { font-size: 12px; color: var(--text-muted); text-transform: capitalize; }
+.tileBtn { margin-top: auto; }
+.stratTile[data-rarity='rare'] { border-color: var(--gold); }
+.stratTile[data-rarity='uncommon'] { border-color: var(--blue); }
+.stratText { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.35; }
+
+/* Start */
+.rungs { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.rung { display: flex; flex-direction: column; gap: 2px; text-align: left; }
+.rung span { font-size: 12px; color: var(--text-muted); }
+
+/* Training Camp */
+.playbooks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.playbook { display: flex; flex-direction: column; gap: 6px; text-align: left; align-items: flex-start; }
+.badge { background: var(--green); color: #fff; border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 700; }
+.cardList { margin: 0; padding-left: 16px; font-size: 12px; color: var(--text-muted); columns: 2; column-gap: 16px; }
+.boons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.boon { display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.boon span { font-size: 12px; color: var(--text-muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; padding: 4px 10px !important; }
+
+/* The map */
+.mapScreen { display: grid; grid-template-columns: minmax(280px, 520px) minmax(240px, 1fr); gap: 20px; align-items: start; }
+.mapWrap { position: relative; width: 100%; }
+.links { position: absolute; inset: 0; width: 100%; height: 100%; }
+.link { stroke: var(--border); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.linkLit { stroke: var(--orange); stroke-width: 3; vector-effect: non-scaling-stroke; }
+.stop {
+  position: absolute; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+  min-width: 76px; padding: 4px 8px !important; border-radius: var(--radius) !important;
+  background: var(--navy-light) !important; z-index: 1;
+}
+.stop:disabled { opacity: 0.55; }
+.stop.open { opacity: 1; border-color: var(--orange) !important; box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.35); }
+.stop.open:hover { transform: translate(-50%, -50%) scale(1.06); }
+.stop.done { opacity: 0.8; border-color: var(--green) !important; }
+.stopIcon { font-size: 18px; line-height: 1.1; }
+.stopName { font-size: 11px; font-weight: 700; }
+.stopCap { font-size: 10px; color: var(--text-muted); }
+.boss { min-width: 96px; border-color: var(--gold) !important; }
+.rivalry .stopName { color: var(--orange-light); }
+
+.side { display: flex; flex-direction: column; gap: 8px; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+.stat { display: flex; justify-content: space-between; gap: 12px; }
+.stat span { color: var(--text-muted); }
+.deckLine { margin: 0; font-size: 13px; color: var(--text-muted); }
+.roster { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.roster li { display: flex; justify-content: space-between; gap: 8px; }
+.tired { color: var(--orange-light); }
+.sideActions { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+
+/* Rest Day */
+.restChoice { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(280px, 2fr); gap: 12px; align-items: start; }
+.restCard { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.smithList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+.smithList li { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+.smithText { flex-basis: 100%; color: var(--text-muted); font-size: 12px; }
+
+@media (max-width: 768px) {
+  .mapScreen { grid-template-columns: 1fr; }
+  .playbooks, .boons, .restChoice { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .stop { min-width: 64px; }
+  .stopCap { display: none; }
+}

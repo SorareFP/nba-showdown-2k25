@@ -347,7 +347,7 @@ export function restDay(run, choice) {
 }
 
 /** Training Camp's free Rest Day, taken from the map without moving. */
-export function useFreeRest(run, choice) {
+export function takeFreeRest(run, choice) {
   if (run.status !== 'map' || !(run.freeRest > 0)) fail('No free Rest Day to use');
   return { ...applyRest(run, choice), freeRest: run.freeRest - 1 };
 }

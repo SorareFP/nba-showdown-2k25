@@ -22,6 +22,12 @@ import PackShop from './PackShop.jsx';
 import { STRATS } from '../game/strats.js';
 import PlayTab from './PlayTab.jsx';
 import DynastyTab from './DynastyTab.jsx';
+import ClimbTab from './climb/ClimbTab.jsx';
+import { packRun, unpackRun, isActiveRun } from '../firebase/climb.js';
+import { potOf } from '../game/modes/climbMap.js';
+import { resultFromGame } from '../game/modes/run.js';
+import { simulateGame } from '../game/modes/simulate.js';
+import { CARDS } from '../game/cards.js';
 import { listDynasties, saveDynasty } from '../firebase/dynasties.js';
 import { createDynasty, startSeason, fillRoster, HUMAN_ID, DPHASE } from '../game/modes/dynasty.js';
 import { buildAiLeague } from '../game/modes/aiTeams.js';
@@ -37,7 +43,7 @@ const PACKABLE = [BASE_SET, ...SPECIAL_SETS_IN_PACKS].flatMap(id => CARD_SETS[id
 export const demoKind = () => {
   if (!import.meta.env?.DEV || typeof window === 'undefined') return null;
   const kind = new URLSearchParams(window.location.search).get('demo');
-  return ['pack', 'claim', 'collection', 'play', 'dynasty'].includes(kind) ? kind : null;
+  return ['pack', 'claim', 'collection', 'play', 'dynasty', 'climb'].includes(kind) ? kind : null;
 };
 export const isPackDemo = () => demoKind() !== null;
 
@@ -153,6 +159,80 @@ function DynastyDemo() {
   );
 }
 
+/**
+ * ?demo=climb — The Climb and Play wired as App wires them, signed out: the
+ * run lives in localStorage and a stand-in for the server opens games and
+ * banks the pot from the run's own cleared stops (the real ledger learns
+ * them from the game's claim). You own every base-set card.
+ */
+const CLIMB_DEMO_KEY = 'showdown.climb.demo';
+const climbDemoStore = {
+  async loadActive() {
+    try {
+      const run = unpackRun(JSON.parse(globalThis.localStorage?.getItem(CLIMB_DEMO_KEY) ?? 'null'));
+      return isActiveRun(run) ? run : null;
+    } catch { return null; }
+  },
+  async save(_uid, run) {
+    try { globalThis.localStorage?.setItem(CLIMB_DEMO_KEY, JSON.stringify(packRun(run))); } catch { /* the sitting keeps it */ }
+  },
+};
+const climbDemoServer = {
+  async start() { return { runId: `demo${Date.now()}`, seed: Math.floor(Math.random() * 2 ** 31) }; },
+  async openGame() { return { ok: true, status: 'active' }; },
+  async bank() {
+    const run = unpackRun(JSON.parse(globalThis.localStorage?.getItem(CLIMB_DEMO_KEY) ?? 'null'));
+    return run ? potOf(run.map, run.cleared, run.rung) : { coins: 0, booster: false };
+  },
+};
+
+function ClimbDemo() {
+  const [tab, setTab] = useState('climb');
+  const [preset, setPreset] = useState(null);
+  const [result, setResult] = useState(null);
+  const playMounted = useRef(false);
+  if (tab === 'play') playMounted.current = true;
+  const collection = useMemo(() => Object.fromEntries(CARDS.map(c => [cardKey(c), { type: 'player', count: 1 }])), []);
+  const nav = { display: 'flex', gap: 8, marginBottom: 12 };
+  return (
+    <div>
+      <div style={nav}>
+        <button type="button" onClick={() => setTab('climb')} aria-pressed={tab === 'climb'}>The Climb</button>
+        <button type="button" onClick={() => setTab('play')} aria-pressed={tab === 'play'}>Play</button>
+        {/* The coach plays both sides of the waiting game, start to finish,
+            and the result goes back to the run as the Play tab would send it. */}
+        {preset?.climb && <button type="button" onClick={() => {
+          const r = simulateGame(preset.rosterA, preset.rosterB, { deckA: preset.deckA, deckB: preset.deckB, keepGame: true, gameOpts: preset.gameOpts });
+          setResult({ returnTab: 'climb', runId: preset.climb.runId, ...resultFromGame(r.game, preset.climb.stopId) });
+          setPreset(null);
+          setTab('climb');
+        }}>Simulate this game ({preset.climb.kind})</button>}
+      </div>
+      {tab === 'climb' && (
+        <ClimbTab
+          collection={collection}
+          store={climbDemoStore}
+          server={climbDemoServer}
+          pendingResult={result}
+          onResultConsumed={() => setResult(null)}
+          onPlayFixture={fixture => { setPreset(fixture); setTab('play'); }}
+        />
+      )}
+      {playMounted.current && (
+        <div style={{ display: tab === 'play' ? 'block' : 'none' }}>
+          <PlayTab
+            active={tab === 'play'}
+            teamA={[]}
+            teamB={[]}
+            preset={preset}
+            onPresetFinish={r => { setPreset(null); if (r) setResult(r); setTab(r?.returnTab ?? 'climb'); }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function PackOpeningDemo() {
   const cards = useMemo(demoPulls, []);
   if (demoKind() === 'claim') return <ClaimDemo />;
@@ -161,6 +241,7 @@ export default function PackOpeningDemo() {
   // and recovers exactly as a signed-in one does on this device.
   if (demoKind() === 'play') return <PlayTab teamA={[]} teamB={[]} active />;
   if (demoKind() === 'dynasty') return <DynastyDemo />;
+  if (demoKind() === 'climb') return <ClimbDemo />;
   return (
     <div style={{ padding: '16px 20px' }}>
       <PackOpening

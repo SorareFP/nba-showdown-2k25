@@ -6,6 +6,7 @@ import PlayTab from './components/PlayTab.jsx';
 import SeasonTab from './components/SeasonTab.jsx';
 import DynastyTab from './components/DynastyTab.jsx';
 import TournamentTab from './components/TournamentTab.jsx';
+import ClimbTab from './components/climb/ClimbTab.jsx';
 import HowToPlay from './components/HowToPlay.jsx';
 import WelcomeTab from './components/WelcomeTab.jsx';
 import HomeTab from './components/HomeTab.jsx';
@@ -203,7 +204,8 @@ function AppInner() {
 
   const tabs = user ? AUTH_TABS : GUEST_TABS;
   // The button a route lights: a season is part of Dynasty now.
-  const navTab = tab === 'season' ? 'dynasty' : tab;
+  // THE CLIMB (2026-10-18) is reached from the Play tab and lights it.
+  const navTab = tab === 'season' ? 'dynasty' : tab === 'climb' ? 'play' : tab;
   // Signing out from a signed-in-only tab lands on the front door.
   useEffect(() => {
     if (!user && !authLoading && !tabs.some(t => t.id === tab)) setTab('home');
@@ -411,6 +413,14 @@ function AppInner() {
                 onPlayFixture={fixture => { setSeasonPreset(fixture); setTab('play'); }}
               />
             )}
+            {tab === 'climb' && (
+              <ClimbTab
+                collection={collection}
+                pendingResult={seasonResult}
+                onResultConsumed={() => setSeasonResult(null)}
+                onPlayFixture={fixture => { setSeasonPreset(fixture); setTab('play'); }}
+              />
+            )}
             {tab === 'tournament' && <TournamentTab teamA={teamA} collection={collection} />}
             {tab === 'pvp' && !pvpGame && (
               <PvpLobby collection={collection} onGameStart={(roomCode, myRole) => setPvpGame({ roomCode, myRole })} />
@@ -430,6 +440,7 @@ function AppInner() {
                   teamA={teamA}
                   teamB={teamB}
                   preset={seasonPreset}
+                  onOpenClimb={() => goTab('climb')}
                   onPresetFinish={result => {
                     setSeasonPreset(null);
                     // A null result is a fixture left unplayed, not a 0-0.
@@ -506,7 +517,7 @@ export default function App() {
           {isPackDemo()
             // The collection demo sits in the app's own column, so the width
             // it is judging is the width the real tab gets.
-            ? (['collection', 'play', 'dynasty'].includes(demoKind()) ? <main className={styles.main}><ErrorBoundary><PackOpeningDemo /></ErrorBoundary></main> : <PackOpeningDemo />)
+            ? (['collection', 'play', 'dynasty', 'climb'].includes(demoKind()) ? <main className={styles.main}><ErrorBoundary><PackOpeningDemo /></ErrorBoundary></main> : <PackOpeningDemo />)
             : <AppInner />}
         </DialogProvider>
       </LightboxProvider>

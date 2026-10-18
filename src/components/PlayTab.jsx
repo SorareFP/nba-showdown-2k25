@@ -110,7 +110,8 @@ const AI_DELAY = 700;
  * is skipped entirely and the results screen leaves to the season instead of
  * offering Play Again — the schedule decides what comes next, not this tab.
  */
-export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null, onPresetFinish = null, active = true }) {
+// `onOpenClimb` (2026-10-18): The Climb's door, on the start screen.
+export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null, onPresetFinish = null, active = true, onOpenClimb = null }) {
   // The save, read once. Its preset is the one PlayTab uses when App has none
   // — which after a reload is always.
   const [saved] = useState(readLocalGame);
@@ -718,6 +719,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       opponent={opponent} setOpponent={setOpponent} aiLevel={aiLevel} setAiLevel={setAiLevel}
       onStart={startGame}
       recoverList={recoverList} onRecover={recover} onForget={forget}
+      onOpenClimb={onOpenClimb}
     />
   );
 
@@ -822,7 +824,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
           {livePreset ? livePreset.label : ''}
         </div>
         <button className={styles.btnSec} onClick={abandon} style={{ fontSize: 12, padding: '4px 12px' }}>
-          {livePreset ? (livePreset.returnTab === 'dynasty' ? '↩ Back to the dynasty (saved)' : '↩ Back to the season (saved)') : '✕ Abandon game'}
+          {livePreset ? (livePreset.climb ? '↩ Back to The Climb (saved)' : livePreset.returnTab === 'dynasty' ? '↩ Back to the dynasty (saved)' : '↩ Back to the season (saved)') : '✕ Abandon game'}
         </button>
       </div>
       {wide ? (
@@ -912,7 +914,7 @@ export function RecoverList({ list = [], onRecover, onForget }) {
   );
 }
 
-function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel, setAiLevel, onStart, recoverList = [], onRecover, onForget }) {
+function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel, setAiLevel, onStart, recoverList = [], onRecover, onForget, onOpenClimb = null }) {
   const { user } = useAuth();
   const [decks, setDecks] = useState([]);
   const [deckA, setDeckA] = useState('default');
@@ -966,6 +968,12 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel,
     <div className={styles.noGame}>
       <div className={styles.noGameCard}>
         <RecoverList list={recoverList} onRecover={onRecover} onForget={onForget} />
+        {user && onOpenClimb && (
+          <button type="button" className={styles.climbDoor} onClick={onOpenClimb}>
+            <strong>🧗 The Climb</strong>
+            <span>Five of your players, seven floors of one-quarter games, a classic team at the top. Wins fill the pot; one loss empties it.</span>
+          </button>
+        )}
         <div className={styles.noGameIcon}>🏀</div>
         <h2>NBA Showdown 2026</h2>
         <p>D20 Basketball Card Game — 306 Players · Strategy Deck System</p>

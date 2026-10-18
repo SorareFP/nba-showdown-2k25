@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   CLIMB, BOONS, recoveryFor, newRun, chooseCamp, openStops, chooseStop, gameSetup, presetFor,
-  recordResult, stratOffer, pickStrat, pickPlayer, skipOffers, restDay, useFreeRest, retire,
+  recordResult, stratOffer, pickStrat, pickPlayer, skipOffers, restDay, takeFreeRest, retire,
   rosterCards, deckLine, potPreview,
 } from './run.js';
 import { stopById, potOf, climbRng } from './climbMap.js';
@@ -245,12 +245,12 @@ describe('the Rest Day', () => {
 
   it('can be taken from the map with the free Rest Day, once', () => {
     const r = { ...camped(), freeRest: 1, fatigue: { x: 8 } };
-    const used = useFreeRest(r, { choice: 'rest' });
+    const used = takeFreeRest(r, { choice: 'rest' });
     expect(used.fatigue).toEqual({});
     expect(used.freeRest).toBe(0);
     expect(used.cap).toBe(r.cap);
     expect(used.status).toBe('map');
-    expect(() => useFreeRest(used, { choice: 'rest' })).toThrow();
+    expect(() => takeFreeRest(used, { choice: 'rest' })).toThrow();
   });
 });
 

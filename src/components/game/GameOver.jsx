@@ -7,6 +7,7 @@ import { humanWon, humanTeamKey } from '../../game/outcome.js';
 import { boxScoreFor } from '../../game/boxScore.js';
 import { useCardStats } from '../../firebase/CardStatsProvider.jsx';
 import { buildGameClaim, paidView, readClaimAnswer } from '../../game/gameClaim.js';
+import { runClaimPreview } from '../../game/modes/climbMap.js';
 import styles from './GameOver.module.css';
 
 /**
@@ -32,7 +33,9 @@ import styles from './GameOver.module.css';
  *              stamp the save — of THAT game only (gameClaim.js stampBelongs)
  *   `rungDraw` did the coach draw its own team at the rung (the pay terms)
  */
-export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, mode = 'ai', onLeave = null, leaveLabel = 'Leave Game', fixtureFrom = null, aiLevel = null, claimId = null, paid = null, onPaid = null, rungDraw = false }) {
+// `climb` (2026-10-18): a Climb game's stop, `{ kind, floor, rung, ... }` — it pays
+// into the run's pot, so its preview is the pot's line, not a game's coins.
+export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, mode = 'ai', onLeave = null, leaveLabel = 'Leave Game', fixtureFrom = null, aiLevel = null, claimId = null, paid = null, onPaid = null, rungDraw = false, climb = null }) {
   const { user } = useAuth();
   const { refresh: refreshCardStats } = useCardStats();
   const { teamA, teamB } = game;
@@ -87,7 +90,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
         aiLevel, rungDraw, claimId, fixtureFrom,
       });
       const today = todayKey();
-      const preview = settleGameReward(
+      const preview = climb ? runClaimPreview(climb, climb.rung, youWon) : settleGameReward(
         claim,
         { date: userData.dailyMilestoneDate, coins: userData.dailyMilestoneCoins, firstWin: userData.dailyFirstWin },
         today
@@ -117,7 +120,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
 
       setRewardsApplied(true);
     })();
-  }, [user, game, youWon, myKey, isPvp, aiLevel, refreshCardStats, paid, claimId, rungDraw, onPaid]);
+  }, [user, game, youWon, myKey, isPvp, aiLevel, refreshCardStats, paid, claimId, rungDraw, onPaid, climb]);
 
   return (
     <div className={styles.wrap}>

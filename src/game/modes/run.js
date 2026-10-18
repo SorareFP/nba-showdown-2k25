@@ -375,3 +375,14 @@ export function deckLine(run) {
 export function potPreview(run) {
   return potOf(run.map, run.cleared, run.rung);
 }
+
+/** A finished run game as recordResult takes it: you are Team A (presetFor); a tie is not a win. */
+export function resultFromGame(game, stopId) {
+  const margin = (game?.teamA?.score ?? 0) - (game?.teamB?.score ?? 0);
+  return {
+    stopId,
+    won: margin > 0,
+    margin,
+    endMinutes: Object.fromEntries((game?.teamA?.stats ?? []).map(s => [s.id, s.minutes ?? 0])),
+  };
+}

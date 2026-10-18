@@ -100,3 +100,12 @@ describe('the answer, and the stamp', () => {
     expect(stampBelongs(null, null)).toBe(false);
   });
 });
+
+// THE CLIMB (2026-10-18): a run game's claim names its run, which the server
+// reads to move the ledger instead of paying (functions/index.js climbClaim).
+describe('a run game\'s claim', () => {
+  it('carries the run id', async () => {
+    const { buildGameClaim } = await import('./gameClaim.js');
+    expect(buildGameClaim({ won: true, fixtureFrom: { runId: 'r1' }, claimId: 'fixture:climb:r1:1-0' })).toMatchObject({ runId: 'r1', gameId: 'fixture:climb:r1:1-0' });
+  });
+});

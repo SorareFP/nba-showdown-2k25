@@ -302,3 +302,12 @@ describe('a saved run', () => {
     expect(play()).toEqual(play());
   });
 });
+
+describe('a finished game, as the run reads it', () => {
+  it('is won by the home side\'s lead, by its margin, with each player\'s minutes', async () => {
+    const { resultFromGame } = await import('./run.js');
+    const game = { done: true, teamA: { score: 31, stats: [{ id: 'a', minutes: 12 }, { id: 'b', minutes: 4 }] }, teamB: { score: 27, stats: [] } };
+    expect(resultFromGame(game, '2-1')).toEqual({ stopId: '2-1', won: true, margin: 4, endMinutes: { a: 12, b: 4 } });
+    expect(resultFromGame({ ...game, teamB: { score: 31, stats: [] } }, '2-1')).toMatchObject({ won: false, margin: 0 });
+  });
+});

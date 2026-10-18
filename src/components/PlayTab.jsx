@@ -7,6 +7,7 @@ import { execCard, resolvePendingShotCheck, resolveChoice } from '../game/execCa
 import { baseId } from '../game/strats.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
 import { resultFromPlayed } from '../game/modes/season.js';
+import { resultFromGame } from '../game/modes/run.js';
 import { AI_LEVELS, iqOf, capOf, samplesOf, loadAiLevel, saveAiLevel, payNote } from '../game/aiLevels.js';
 import { boxScoreFor } from '../game/boxScore.js';
 // A REDUCER CANNOT HOLD A HOOK, and must not have side effects at all — so a
@@ -642,7 +643,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       // THE VISITOR PLACES FIRST. Leading a row gives information away, so
       // home court is answering the snake: when you are at home the coach
       // (B) leads; on the road you do (the user, 2026-09-09).
-      dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, preset.deckA ?? null, null, { clutchDice: CLUTCH_DICE, placementFirst: preset.humanIsHome ? 'B' : 'A' }) });
+      // A Climb game brings the coach's fitted deck and starts at Q4 with the
+      // run's fatigue (run.js presetFor); a season fixture brings neither.
+      dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, preset.deckA ?? null, preset.deckB ?? null, { clutchDice: CLUTCH_DICE, placementFirst: preset.humanIsHome ? 'B' : 'A', ...(preset.gameOpts ?? {}) }) });
     };
     // WHICH COPY TO PLAY (fixtureDecision): the newest copy of this fixture,
     // here or on the account, is simply played. The stale phone copy used to
@@ -731,6 +734,24 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       onPaid: stampPaid,
     };
     if (!livePreset) return <GameOver game={game} mode={claimTerms.opponent === 'human' ? 'hotseat' : 'ai'} aiLevel={claimTerms.opponent === 'ai' ? claimTerms.aiLevel : null} onPlayAgain={handlers.onPlayAgain} {...payProps} />;
+    // THE CLIMB (2026-10-18): the claim names the run, whose ledger the server
+    // moves instead of paying; the result goes back to the run (run.js
+    // recordResult) with your margin and each player's minutes.
+    if (livePreset.climb) {
+      const climbResult = { returnTab: 'climb', runId: livePreset.climb.runId, ...resultFromGame(game, livePreset.climb.stopId) };
+      return (
+        <GameOver
+          game={game}
+          mode="ai"
+          aiLevel={claimTerms.aiLevel ?? playedLevel}
+          {...payProps}
+          climb={livePreset.climb}
+          fixtureFrom={{ runId: livePreset.climb.runId }}
+          onLeave={() => { dispatch({ type: 'SET', game: null }); setRestoredPreset(null); setTerms(null); setPaid(null); onPresetFinish?.(climbResult); }}
+          leaveLabel="Back to The Climb →"
+        />
+      );
+    }
     // The score as the FIXTURE sees it — see resultFromPlayed for why the
     // home/away mapping is not written out here.
     // `returnTab`: a dynasty fixture goes back to the Dynasty tab, not Season.

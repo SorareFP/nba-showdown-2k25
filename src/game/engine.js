@@ -2,7 +2,6 @@
 // Pure functions — no React, no side effects. State is a plain object.
 
 import { CRUNCH_CARDS, baseId } from './strats.js';
-// STRATS is imported below (the default-deck build); imports hoist, so this is safe here.
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 

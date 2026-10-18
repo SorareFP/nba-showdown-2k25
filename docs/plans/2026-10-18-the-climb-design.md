@@ -71,8 +71,14 @@ whole mode splits into four pieces, each its own spec and plan:
 - **Fatigue is health.** Each player's fatigue tracker carries from game to
   game under the normal penalties. Every run game is a fourth quarter, where
   the forced-rest rule is already lifted, so nobody is benched — tired players
-  just play worse. Between games a player who did not play recovers one rest
-  step (the REST rule). A Rest Day can clear everyone.
+  just play worse. **Between games every player recovers a set amount, and a
+  bigger win recovers more** (the user, 2026-10-18: "a specific recovery
+  amount between games … Maybe win margin helps recover things?"): 8 minutes
+  off the tracker, 10 after a win by 10 or more, 12 after a win by 20 or more,
+  so a starter who played the whole quarter comes back fresh from a blowout and
+  carries 4 minutes from a close one. Starting values, tuned by the simulated
+  runs. A player benched during a game already rests on the bench as in any
+  game. A Rest Day can clear everyone.
 - **The deck:** 15 strats — a shared **core** of about 7 (the switching basics
   every deck carries) plus about 8 **signature** cards of the chosen playbook
   (the commons and uncommons its fitted deck in archetypeDecks.js uses most
@@ -118,6 +124,9 @@ whole mode splits into four pieces, each its own spec and plan:
 - An upgraded card is the same card with `upgraded: true`; its effect reads the
   flag in the engine, so the coach's simulation of it (choicePreview, the AI)
   is the real thing.
+- **Smith upgrades one copy** (the user, 2026-10-18: "It should only be each
+  card, not all of one"): a deck with two Close Outs can hold one Close Out and
+  one Close Out+.
 
 ## How it is built
 

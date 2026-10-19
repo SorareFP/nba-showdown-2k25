@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useRef, useState, useMemo } from 'react';
+import { useFillHeight } from '../ui/useFillHeight.js';
 import { CARDS, CARD_MAP } from '../game/cards.js';
 import { cardKey } from '../game/cardSets.js';
 import { getPlayerRarity, RARITY_CONFIG } from '../game/rarity.js';
@@ -16,6 +17,8 @@ import styles from './TeamBuilderTab.module.css';
 export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame, collection, onOpenDecks }) {
   const { open } = useLightbox();
   const { user } = useAuth();
+  const poolRef = useRef(null);
+  useFillHeight(poolRef);
   const { toast, askText, ask } = useDialogs();
   // SIGNED IN MEANS OWNED ONLY. This used to relax to the whole pool while the
   // collection was empty — a fresh account, or one just reset — which is the
@@ -160,7 +163,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
         <span className={styles.poolCount}>{pool.length} players</span>
       </div>
       <PoolFilters value={filters} onChange={setFilters} teams={allTeams} />
-      <div className={styles.pool}>
+      <div className={styles.pool} ref={poolRef}>
         {enforceOwnership && pool.length === 0 && (
           <div style={{ gridColumn: '1 / -1', padding: '28px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.6 }}>
             {Object.keys(collection || {}).length === 0

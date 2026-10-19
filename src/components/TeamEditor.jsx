@@ -15,7 +15,8 @@
 // roster, a name, a cap bar, save. It borrows the sandbox's stylesheet so the
 // two read as the same thing, and shares its rules through teamRules.js so
 // they cannot drift.
-import { useMemo, useState } from 'react';
+import { useRef, useMemo, useState } from 'react';
+import { useFillHeight } from '../ui/useFillHeight.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { saveTeam, updateTeam } from '../firebase/savedTeams.js';
 import { CARD_MAP } from '../game/cards.js';
@@ -36,6 +37,8 @@ export default function TeamEditor({ team, collection, onSaved, onCancel, limits
   const maxLimit = climb ? (limits?.size ?? CLIMB_FIVE.size) : MAX;
   const { user } = useAuth();
   const { open } = useLightbox();
+  const poolRef = useRef(null);
+  useFillHeight(poolRef);
 
   const owned = useMemo(() => ownedPlayers(collection), [collection]);
   const ownedByKey = useMemo(() => Object.fromEntries(owned.map(o => [o.key, o])), [owned]);
@@ -181,7 +184,7 @@ export default function TeamEditor({ team, collection, onSaved, onCancel, limits
         <div className={styles.empty}>No player cards yet — open a pack first.</div>
       )}
       <PoolFilters value={filters} onChange={setFilters} teams={teams} />
-      <div className={styles.pool}>
+      <div className={styles.pool} ref={poolRef}>
         {pool.map(({ key, card, count }) => {
           const cfg = RARITY_CONFIG[getPlayerRarity(card)];
           const picked = inRoster(card);

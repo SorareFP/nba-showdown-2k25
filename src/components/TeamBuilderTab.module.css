@@ -74,7 +74,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 8px;
-  max-height: 520px;
+  /* To the window's bottom (useFillHeight, 2026-10-19); 520px before it measures. */
+  max-height: var(--fill-h, 520px);
   overflow-y: auto;
   padding-right: 4px;
 }

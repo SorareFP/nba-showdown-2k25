@@ -23,6 +23,7 @@ import { STRATS } from '../game/strats.js';
 import PlayTab from './PlayTab.jsx';
 import DynastyTab from './DynastyTab.jsx';
 import ClimbTab from './climb/ClimbTab.jsx';
+import TeamEditor from './TeamEditor.jsx';
 import { packRun, unpackRun, isActiveRun } from '../firebase/climb.js';
 import { potOf } from '../game/modes/climbMap.js';
 import { resultFromGame } from '../game/modes/run.js';
@@ -43,7 +44,7 @@ const PACKABLE = [BASE_SET, ...SPECIAL_SETS_IN_PACKS].flatMap(id => CARD_SETS[id
 export const demoKind = () => {
   if (!import.meta.env?.DEV || typeof window === 'undefined') return null;
   const kind = new URLSearchParams(window.location.search).get('demo');
-  return ['pack', 'claim', 'collection', 'play', 'dynasty', 'climb'].includes(kind) ? kind : null;
+  return ['pack', 'claim', 'collection', 'play', 'dynasty', 'climb', 'team'].includes(kind) ? kind : null;
 };
 export const isPackDemo = () => demoKind() !== null;
 
@@ -77,6 +78,14 @@ function ClaimDemo() {
  * over a synthetic binder (every packable card, one copy, the base set
  * collected), for judging the layout at any width without an account.
  */
+// `?demo=team` (2026-10-19): the team editor with every packable card owned,
+// to judge its card list against the window's height (useFillHeight).
+function TeamDemo() {
+  const collection = useMemo(() => Object.fromEntries(PACKABLE.map(c => [cardKey(c), { type: 'player', count: 1, collected: true }])), []);
+  const noop = () => {};
+  return <TeamEditor team={null} collection={collection} onSaved={noop} onCancel={noop} />;
+}
+
 function CollectionDemo() {
   const collection = useMemo(() => Object.fromEntries([
     ...PACKABLE.map((c, i) => [cardKey(c), { type: 'player', count: 1 + (i % 3 === 0 ? 1 : 0), collected: c.set === BASE_SET }]),
@@ -255,6 +264,7 @@ export default function PackOpeningDemo() {
   if (demoKind() === 'play') return <PlayTab teamA={[]} teamB={[]} active />;
   if (demoKind() === 'dynasty') return <DynastyDemo />;
   if (demoKind() === 'climb') return <ClimbDemo />;
+  if (demoKind() === 'team') return <TeamDemo />;
   return (
     <div style={{ padding: '16px 20px' }}>
       <PackOpening

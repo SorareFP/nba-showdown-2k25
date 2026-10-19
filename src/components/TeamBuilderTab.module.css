@@ -67,6 +67,9 @@
 .poolHeader { display: flex; align-items: center; gap: 10px; margin-top: 0.5rem; }
 .poolHeader h3 { font-size: 15px; }
 .poolCount { font-size: 12px; color: var(--text-muted); }
+/* Under the cap bar: what is left, and that a spot (capRoom, 2026-10-19). */
+.capLeft { font-size: 13px; color: var(--text-muted); margin: 6px 0 2px; }
+.capLeft strong { color: var(--text); }
 
 .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
 

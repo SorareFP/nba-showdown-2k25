@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   ownedPlayers, ownedRoster, capSal, randomizeTeam, filterPool, sortPool, POOL_SORTS, POSITIONS,
-  DEFAULT_FILTERS, CAP, MAX, MIN_TO_PLAY, RANDOM_MIN_SAL, salaryOrder, playerOnRoster, doubledPlayers } from './teamRules.js';
+  DEFAULT_FILTERS, CAP, MAX, MIN_TO_PLAY, RANDOM_MIN_SAL, salaryOrder, playerOnRoster, doubledPlayers, capRoom } from './teamRules.js';
 import { ALL_CARDS, BASE_SET, cardKey } from './cardSets.js';
 
 const base = ALL_CARDS.find(c => (!c.set || c.set === BASE_SET) && Number.isFinite(c.salary));
@@ -175,5 +175,36 @@ describe('one card a player', () => {
     for (const f of ['../components/TeamEditor.jsx', '../components/TeamBuilderTab.jsx']) {
       expect(readFileSync(new URL(f, import.meta.url), 'utf8'), f).toMatch(/playerOnRoster\(/);
     }
+  });
+});
+
+describe('capRoom: what the cap leaves while building a team (2026-10-19)', () => {
+  const c = (id, salary) => ({ id, name: id, salary });
+  const pool = [c('a', 300), c('b', 400), c('c', 500), c('d', 900), c('e', 1500), c('f', 100), c('g', 150)];
+
+  it('says what is left and what that is a spot, to the five and then to the most', () => {
+    expect(capRoom([c('x', 1000)], 2200, { target: 5, max: 5, pool })).toMatchObject({ left: 1200, spots: 4, perSpot: 300 });
+    expect(capRoom([], 5500, { target: 5, max: 10, pool })).toMatchObject({ left: 5500, spots: 5, perSpot: 1100 });
+    const six = ['p', 'q', 'r', 's', 't', 'u'].map(id => c(id, 500));
+    expect(capRoom(six, 5500, { target: 5, max: 10, pool })).toMatchObject({ left: 2500, spots: 4, perSpot: 625 });
+    expect(capRoom(pool.slice(0, 5), 2200, { target: 5, max: 5, pool })).toMatchObject({ spots: 0, perSpot: 0 });
+  });
+
+  it('fits a card only if the cheapest others can still finish the five', () => {
+    const room = capRoom([], 2200, { target: 5, max: 5, pool });
+    // The four cheapest others (f, g, a, b) cost 950, so 1,250 is the most one card can be.
+    expect(room.fits(pool[4])).toBe(false);                // e 1500 + 950 = 2450
+    expect(room.fits(pool[3])).toBe(true);                 // d 900 + 950 = 1850
+    const nearlyDone = capRoom([c('x', 1000), c('y', 500), c('z', 300), c('w', 200)], 2200, { target: 5, max: 5, pool });
+    expect(nearlyDone.left).toBe(200);
+    expect(nearlyDone.fits(pool[0])).toBe(false);          // 300 > 200 left
+    expect(nearlyDone.fits(c('cheap', 150))).toBe(true);
+  });
+
+  it('never fits a player already on the team, or a full team', () => {
+    const room = capRoom([pool[0]], 5500, { target: 5, max: 10, pool });
+    expect(room.fits({ ...pool[0], salary: 10 })).toBe(false);
+    const full = Array.from({ length: 10 }, (_, i) => c(`f${i}`, 100));
+    expect(capRoom(full, 5500, { target: 5, max: 10, pool }).fits(pool[0])).toBe(false);
   });
 });

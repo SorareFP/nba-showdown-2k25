@@ -23,6 +23,43 @@ export const capSal = roster => roster.reduce((s, c) => s + (c.salary ?? 0), 0);
  * rows and fatigue by id. Both builders read these.
  */
 export const playerOnRoster = (roster, card) => (roster ?? []).some(c => c && c !== card && c.id === card?.id);
+/**
+ * WHAT THE CAP LEAVES (the user, 2026-10-19: "show remaining salary while
+ * building team, and only show players who can fit under the cap. Also maybe
+ * show average remaining"). `target` is the size the team must reach (a Climb
+ * five: 5; a team: MIN_TO_PLAY), `max` the most it may hold, `pool` the cards
+ * that could fill it.
+ *
+ *   left     the salary still under the cap
+ *   spots    the places still to fill: to `target`, then to `max`
+ *   perSpot  `left` shared over those places (0 with none)
+ *   fits     a card fits when it, plus the cheapest of `pool` for the places
+ *            `target` still needs after it, stays under the cap — so taking
+ *            it never leaves a five that cannot be finished (ClimbStart's rule)
+ */
+export function capRoom(roster, cap, { target = MIN_TO_PLAY, max = MAX, pool = [] } = {}) {
+  const n = roster.length;
+  const left = cap - capSal(roster);
+  const spots = Math.max(0, (n < target ? target : max) - n);
+  const perSpot = spots ? Math.floor(left / spots) : 0;
+  const onTeam = new Set(roster.map(c => c?.id));
+  const cheapest = [...pool].filter(c => c && !onTeam.has(c.id)).sort((a, b) => (a.salary ?? 0) - (b.salary ?? 0));
+  const fits = card => {
+    if (!card || n >= max || onTeam.has(card.id)) return false;
+    const after = Math.max(0, target - n - 1);
+    const used = new Set([card.id]);
+    let reserve = 0;
+    for (const c of cheapest) {
+      if (used.size > after) break;
+      if (used.has(c.id)) continue;
+      used.add(c.id);
+      reserve += c.salary ?? 0;
+    }
+    return used.size > after && (card.salary ?? 0) + reserve <= left;
+  };
+  return { left, spots, perSpot, fits };
+}
+
 /** The names on a roster more than once — a team saved before the rule. */
 export function doubledPlayers(roster) {
   const seen = new Set();

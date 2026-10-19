@@ -22,7 +22,7 @@ import { saveTeam, updateTeam } from '../firebase/savedTeams.js';
 import { CARD_MAP } from '../game/cards.js';
 import { getPlayerRarity, RARITY_CONFIG } from '../game/rarity.js';
 import { CLIMB_FIVE } from '../game/modes/run.js';
-import { CAP, MAX, MIN_TO_PLAY, capSal, ownedPlayers, playerOnRoster, doubledPlayers, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
+import { CAP, MAX, MIN_TO_PLAY, capSal, capRoom, ownedPlayers, playerOnRoster, doubledPlayers, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
 import PoolFilters from './PoolFilters.jsx';
 import PlayerCard from './PlayerCard.jsx';
 import { useLightbox } from './CardLightbox.jsx';
@@ -61,11 +61,22 @@ export default function TeamEditor({ team, collection, onSaved, onCancel, limits
 
   const teams = useMemo(() => [...new Set(owned.map(o => o.card.team))].sort(), [owned]);
 
+  // WHAT THE CAP LEAVES (the user, 2026-10-19: "show remaining salary while
+  // building team, and only show players who can fit under the cap. Also
+  // maybe show average remaining"): the list holds only the players who fit
+  // with room left to finish the five, and the roster's own cards.
+  const room = useMemo(
+    () => capRoom(roster, capLimit, { target: climb ? maxLimit : MIN_TO_PLAY, max: maxLimit, pool: owned.map(o => o.card) }),
+    [roster, capLimit, climb, maxLimit, owned],
+  );
+
   // Filter and sort the CARDS, then carry each row's key and count back.
-  const pool = useMemo(() => {
+  const filtered = useMemo(() => {
     const byCard = new Map(owned.map(o => [o.card, o]));
     return sortPool(filterPool(owned.map(o => o.card), filters), filters.sort).map(c => byCard.get(c));
   }, [owned, filters]);
+  const pool = filtered.filter(o => inRoster(o.card) || room.fits(o.card));
+  const wontFit = filtered.length - pool.length;
 
   const sal = capSal(roster);
   const over = sal > capLimit;
@@ -131,6 +142,11 @@ export default function TeamEditor({ team, collection, onSaved, onCancel, limits
           <div className={styles.capBar}>
             <div className={styles.capFill} style={{ width: pct + '%', background: over ? 'var(--red)' : 'var(--orange)' }} />
           </div>
+          <div className={styles.capLeft} data-cap-left="true" style={over ? { color: 'var(--red)' } : undefined}>
+            {over
+              ? `$${(-room.left).toLocaleString('en-US')} over the cap`
+              : <><strong>${room.left.toLocaleString('en-US')}</strong> left{room.spots ? <> · about <strong>${room.perSpot.toLocaleString('en-US')}</strong> a spot for {room.spots} more</> : ''}</>}
+          </div>
 
           {climb && roster.length < maxLimit && (
             <div className={styles.empty}>{`${maxLimit - roster.length} more for a Climb five`} · at most ${capLimit.toLocaleString('en-US')}</div>
@@ -178,7 +194,9 @@ export default function TeamEditor({ team, collection, onSaved, onCancel, limits
 
       <div className={styles.poolHeader}>
         <h3>Your Collection</h3>
-        <span className={styles.poolCount}>{pool.length} of {owned.length} players</span>
+        <span className={styles.poolCount}>
+          {pool.length} of {owned.length} players{wontFit > 0 ? ` · ${wontFit} more ${roster.length >= maxLimit ? 'once there is room' : "don't fit what's left"}` : ''}
+        </span>
       </div>
       {owned.length === 0 && (
         <div className={styles.empty}>No player cards yet — open a pack first.</div>

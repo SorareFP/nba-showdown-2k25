@@ -48,6 +48,9 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   const [busy, setBusy] = useState(false);
   const gate = useRef(false);
   const [freeRest, setFreeRest] = useState(false);
+  // A look at the map from a Rest Day (2026-10-19); a new step closes it.
+  const [peekMap, setPeekMap] = useState(false);
+  useEffect(() => { setPeekMap(false); }, [run?.status, run?.restAt]);
   const needsAccount = store === FIREBASE_STORE && !uid;
 
   useEffect(() => {
@@ -162,6 +165,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         return (
           <RestDay
             run={run} free busy={busy}
+            onViewMap={() => setFreeRest(false)}
             onRest={() => act(async () => { await commit(takeFreeRest(run, { choice: 'rest' })); setFreeRest(false); })}
             onPractice={cardId => act(async () => { await commit(takeFreeRest(run, { choice: 'practice', cardId })); setFreeRest(false); })}
           />
@@ -196,9 +200,11 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         />
       );
     case 'rest':
+      if (peekMap) return <ClimbMap run={run} onBack={() => setPeekMap(false)} />;
       return (
         <RestDay
           run={run} busy={busy}
+          onViewMap={() => setPeekMap(true)}
           onRest={() => act(() => commit(restDay(run, { choice: 'rest' })))}
           onPractice={cardId => act(() => commit(restDay(run, { choice: 'practice', cardId })))}
         />

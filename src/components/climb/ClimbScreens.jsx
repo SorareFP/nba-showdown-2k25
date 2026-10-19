@@ -13,7 +13,7 @@ import { capSal, playerOnRoster } from '../../game/teamRules.js';
 import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
-import { FLOORS, stopById } from '../../game/modes/climbMap.js';
+import { FLOORS, stopById, nextStops } from '../../game/modes/climbMap.js';
 import { PLAYBOOKS, KIT_CARD_IDS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
 import styles from './Climb.module.css';
 
@@ -265,9 +265,34 @@ const ROWS = FLOORS + 1;
 const yPct = floor => (ROWS - floor + 0.5) / ROWS * 100;
 const xPct = lane => (lane + 0.5) / 3 * 100;
 
-/** The act: seven floors and the boss, the open stops tappable; your team, the pot and the way out beside it. */
-export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, busy = false }) {
-  const open = new Set(openStops(run).map(s => s.id));
+/** Every stop a run standing at `fromId` (null: before floor 1) can still reach. */
+function reachableFrom(map, fromId) {
+  const seen = new Set();
+  const todo = nextStops(map, fromId);
+  while (todo.length) {
+    const s = todo.pop();
+    if (seen.has(s.id)) continue;
+    seen.add(s.id);
+    todo.push(...nextStops(map, s.id));
+  }
+  return seen;
+}
+
+/**
+ * The act: seven floors and the boss, the open stops tappable; your team, the
+ * pot and the way out beside it. Stops you can no longer reach fade.
+ *
+ * `onBack` makes it A LOOK FROM THE REST DAY (the user, 2026-10-19: "a way to
+ * return to the map and see what's coming up on the path"): nothing tappable,
+ * you marked at the Rest Day, the stops after it outlined, and one way back.
+ */
+export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onAbandon = null, busy = false, onBack = null }) {
+  const peek = Boolean(onBack);
+  const here = peek && run.status === 'rest' ? run.restAt : run.at;
+  const open = new Set(peek ? [] : openStops(run).map(s => s.id));
+  const ahead = peek ? new Set(nextStops(run.map, here).map(s => s.id)) : open;
+  const reachable = useMemo(() => reachableFrom(run.map, here), [run.map, here]);
+  const path = new Set([...run.cleared, run.at, here].filter(Boolean));
   const stops = [...run.map.floors.flat(), run.map.boss];
   const links = run.map.floors.flat().flatMap(s => s.next.map(id => [s, stopById(run.map, id)]));
   const boss = useMemo(() => bossTeam(run), [run.seed, run.rung]);
@@ -277,10 +302,16 @@ export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, bu
     : s.kind === 'rest' ? null
       : (CLIMB.floorCap(s.floor) + (s.kind === 'rivalry' ? CLIMB.rivalryExtra : 0)) * mult;
   const rung = AI_LEVELS.find(l => l.id === run.rung)?.label ?? run.rung;
-  const floor = run.at ? stopById(run.map, run.at)?.floor ?? 0 : 0;
+  const floor = here ? stopById(run.map, here)?.floor ?? 0 : 0;
   return (
     <div className={styles.screen}>
-    <h2 className={styles.title}>The Climb <span className={styles.muted}>· {rung} · {floor ? `floor ${floor} cleared` : 'floor 1 ahead'}</span></h2>
+    <h2 className={styles.title}>The Climb <span className={styles.muted}>· {rung} · {peek ? `Rest Day on floor ${floor}` : floor ? `floor ${floor} cleared` : 'floor 1 ahead'}</span></h2>
+    {peek && (
+      <div className={styles.actions}>
+        <button type="button" className={styles.primary} onClick={onBack}>← Back to the Rest Day</button>
+        <span className={styles.muted}>The outlined stops come next.</span>
+      </div>
+    )}
     <div className={styles.mapScreen}>
       <div className={styles.mapPanel}>
       <div className={styles.mapWrap}>
@@ -290,12 +321,15 @@ export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, bu
         <svg className={styles.links} viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true">
           {links.map(([a, b]) => (
             <line key={`${a.id}-${b.id}`} x1={xPct(a.lane) * 3} y1={yPct(a.floor)} x2={xPct(b.lane) * 3} y2={yPct(b.floor)}
-              className={run.cleared.includes(a.id) || run.at === a.id ? styles.linkLit : styles.link} />
+              className={path.has(a.id) && path.has(b.id) ? styles.linkLit : a.id === (here ?? null) && ahead.has(b.id) ? styles.linkAhead : styles.link} />
           ))}
         </svg>
         {stops.map(s => {
           const isOpen = open.has(s.id);
           const done = run.cleared.includes(s.id) || run.at === s.id;
+          const isHere = s.id === here;
+          const isAhead = peek && ahead.has(s.id);
+          const far = !path.has(s.id) && !reachable.has(s.id);
           const cap = capAt(s);
           const isBoss = s.kind === 'boss';
           const logo = isBoss && boss.logo ? logoSrc(boss.logo) : null;
@@ -305,7 +339,10 @@ export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, bu
               type="button"
               data-stop={s.id}
               data-open={isOpen ? 'true' : 'false'}
-              className={`${styles.stop} ${styles[s.kind]} ${isOpen ? styles.open : ''} ${done ? styles.done : ''} ${run.at === s.id ? styles.here : ''}`}
+              data-ahead={isAhead ? 'true' : undefined}
+              data-here={isHere ? 'true' : undefined}
+              data-far={far ? 'true' : undefined}
+              className={`${styles.stop} ${styles[s.kind]} ${isOpen ? styles.open : ''} ${done ? styles.done : ''} ${isHere ? styles.here : ''} ${isAhead ? styles.ahead : ''} ${far ? styles.far : ''}`}
               style={{ left: `${xPct(s.lane)}%`, top: `${yPct(s.floor)}%` }}
               disabled={!isOpen || busy}
               onClick={() => onGo(s.id)}
@@ -340,11 +377,13 @@ export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, bu
             );
           })}
         </ul>
-        <div className={styles.sideActions}>
-          {run.freeRest > 0 && <button type="button" onClick={onFreeRest} disabled={busy}>Take the free Rest Day</button>}
-          <button type="button" className={styles.danger} onClick={onRetire} disabled={busy}>Retire and bank the pot</button>
-          {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}
-        </div>
+        {!peek && (
+          <div className={styles.sideActions}>
+            {run.freeRest > 0 && <button type="button" onClick={onFreeRest} disabled={busy}>Take the free Rest Day</button>}
+            <button type="button" className={styles.danger} onClick={onRetire} disabled={busy}>Retire and bank the pot</button>
+            {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}
+          </div>
+        )}
       </aside>
     </div>
     </div>
@@ -420,7 +459,10 @@ export function practiceTiles(run, showPlus) {
 }
 
 /** Rest everyone, or practice: upgrade one copy (the user, 2026-10-19: not "smith"). */
-export function RestDay({ run, onRest, onPractice, busy = false, free = false }) {
+// `onViewMap`: a look at the map (the user, 2026-10-19). From a Rest Day stop
+// it opens the map read-only and comes back here; the free Rest Day was taken
+// from the map, so for it this is simply the way back (nothing is spent yet).
+export function RestDay({ run, onRest, onPractice, busy = false, free = false, onViewMap = null }) {
   const [showPlus, setShowPlus] = useState(false);
   const { cards } = rosterCards(run);
   const tired = cards.filter(c => (run.fatigue?.[c.id] ?? 0) > 0);
@@ -429,6 +471,11 @@ export function RestDay({ run, onRest, onPractice, busy = false, free = false })
     <div className={styles.screen}>
       <h2 className={styles.title}>{free ? 'A day off' : 'Rest Day'}</h2>
       <p className={styles.lede}>One of two: rest the whole team, or practice and upgrade one copy of a card.</p>
+      {onViewMap && (
+        <div className={styles.actions}>
+          <button type="button" data-view-map="true" onClick={onViewMap} disabled={busy}>{free ? '← Back to the map' : '🗺 See the map and what comes next'}</button>
+        </div>
+      )}
       <section className={styles.restCard}>
         <h3 className={styles.h3}>Rest</h3>
         <p className={styles.muted}>{tired.length ? `${tired.map(c => `${c.name} (${run.fatigue[c.id]} min)`).join(', ')} come back fresh.` : 'Everyone is fresh already.'}</p>

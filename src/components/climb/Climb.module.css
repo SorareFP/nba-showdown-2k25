@@ -108,6 +108,11 @@
 .stop.open:hover { transform: translate(-50%, -50%) scale(1.06); }
 .stop.done { opacity: 0.85; border-color: var(--green) !important; }
 .stop.here { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.35); }
+/* A look from the Rest Day: the stops after it outlined, not tappable; stops
+   the run can no longer reach fade (on every map). */
+.stop.ahead { opacity: 1; border-style: dashed !important; border-color: var(--orange) !important; border-width: 2px !important; }
+.stop.far { opacity: 0.25; }
+.linkAhead { stroke: var(--orange); stroke-width: 3; stroke-dasharray: 8 5; vector-effect: non-scaling-stroke; }
 @keyframes stopCall {
   0%, 100% { box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.35); }
   50% { box-shadow: 0 0 0 7px rgba(234, 88, 12, 0.12); }

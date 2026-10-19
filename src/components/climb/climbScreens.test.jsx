@@ -143,3 +143,43 @@ describe('the end of a run', () => {
     expect(lost).toContain('the pot is lost');
   });
 });
+
+// A LOOK FROM THE REST DAY (the user, 2026-10-19): the map read-only, you at
+// the Rest Day, the stops after it outlined, the way back, nothing tappable.
+const atRestDay = () => {
+  const r = camped();
+  const stops = r.map.floors.flat();
+  const rest = stops.find(s => s.kind === 'rest' && s.floor >= 2 && stops.some(p => p.next.includes(s.id)));
+  const from = stops.find(p => p.next.includes(rest.id));
+  return { ...r, status: 'rest', at: from.id, cleared: [from.id], restAt: rest.id };
+};
+
+describe('the map from a Rest Day', () => {
+  it('marks you at the Rest Day and outlines what comes next, with nothing tappable', () => {
+    const r = atRestDay();
+    const out = html(<ClimbMap run={r} onBack={noop} />);
+    expect(out).not.toContain('data-open="true"');
+    expect(out).toContain(`data-stop="${r.restAt}" data-open="false" data-here="true"`);
+    const next = r.map.floors.flat().find(s => s.id === r.restAt).next;
+    expect(out.match(/data-ahead="true"/g)).toHaveLength(next.length);
+    for (const id of next) expect(out).toContain(`data-stop="${id}" data-open="false" data-ahead="true"`);
+    expect(out).toContain('Back to the Rest Day');
+    expect(out).toContain('Rest Day on floor');
+    expect(out).not.toContain('Retire and bank the pot');
+  });
+
+  it('fades the stops the run can no longer reach, never the path behind it', () => {
+    const r = atRestDay();
+    const out = html(<ClimbMap run={r} onBack={noop} />);
+    expect(out).toContain('data-far="true"');
+    expect(out).not.toContain(`data-stop="${r.at}" data-open="false" data-far`);
+    expect(html(<ClimbMap run={camped()} onGo={noop} onRetire={noop} onFreeRest={noop} />)).not.toContain('data-far="true"');
+  });
+
+  it('is offered from the Rest Day, and the free Rest Day goes back to the map', () => {
+    const r = atRestDay();
+    expect(html(<RestDay run={r} onRest={noop} onPractice={noop} onViewMap={noop} />)).toContain('See the map and what comes next');
+    expect(html(<RestDay run={camped()} free onRest={noop} onPractice={noop} onViewMap={noop} />)).toContain('Back to the map');
+    expect(html(<RestDay run={r} onRest={noop} onPractice={noop} />)).not.toContain('data-view-map');
+  });
+});

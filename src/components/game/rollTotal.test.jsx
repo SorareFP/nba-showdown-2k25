@@ -26,7 +26,7 @@ const board = g => renderToStaticMarkup(
 );
 
 describe("the tile's Roll", () => {
-  it('is the whole modifier the die carries, with hot markers and fatigue spelled out', () => {
+  it('is the whole modifier the die carries, the parts only in its tooltip', () => {
     const g = openRolling(tutorialStart());
     const p = getTeam(g, 'A').starters[0];
     const ps = getPS(g, 'A', p.id);
@@ -40,6 +40,7 @@ describe("the tile's Roll", () => {
     expect(html).toContain('hot +2');
     expect(html).toMatch(/tired −?-?\d/);
     expect(html).toContain(`matchup ${mod.matchup > 0 ? '+' : ''}${mod.matchup}`);
+    expect(html).not.toContain('advParts');   // no visible breakdown ("I don't need to see why")
   });
 
   it('says nothing more than the matchup when nothing else rides on it', () => {
@@ -50,5 +51,36 @@ describe("the tile's Roll", () => {
     expect(html).not.toContain('tired ');
     const mod = scoringRollModifier(g, 'A', 0);
     expect(mod.total).toBe(mod.matchup + mod.card);
+  });
+});
+
+// THE PLACEMENT POPOVER, FULLY FACTORED (the user, 2026-10-19: "I meant here
+// during the matchup strategy phase. I don't need to see why, I just need them
+// to be fully factored in here"). placementRolls places him on a copy and reads
+// the same sum the tile and the die will carry.
+import { placementRolls } from '../../game/engine.js';
+describe('the placement popover\'s rolls', () => {
+  it('are the whole roll both ways: markers, fatigue and a card bonus on the slot', () => {
+    const g = openRolling(tutorialStart());
+    const me = getTeam(g, 'A').starters[2];
+    const them = getTeam(g, 'B').starters[2];
+    Object.assign(getPS(g, 'A', me.id), { hot: 1, minutes: 20 });
+    Object.assign(getPS(g, 'B', them.id), { cold: 1 });
+    g.tempEff = { ...(g.tempEff || {}), A: { ...(g.tempEff?.A || {}), r2: 3 } };
+    const pr = placementRolls(g, 'A', 2, me);
+    expect(pr.mine).toBe(scoringRollModifier(g, 'A', 2).total);
+    expect(pr.theirs).toBe(scoringRollModifier(g, 'B', 2).total);
+    const plain = scoringRollModifier(g, 'A', 2);
+    expect(plain.card).toBe(3);
+    expect(plain.markers).toBe(2);
+    expect(plain.fatigue).toBeLessThan(0);
+  });
+
+  it('never changes the game it reads', () => {
+    const g = openRolling(tutorialStart());
+    const before = JSON.stringify(g);
+    const bench = (getTeam(g, 'A').roster || []).find(p => !getTeam(g, 'A').starters.some(s => s?.id === p.id));
+    placementRolls(g, 'A', 1, bench ?? getTeam(g, 'A').starters[1]);
+    expect(JSON.stringify(g)).toBe(before);
   });
 });

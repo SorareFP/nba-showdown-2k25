@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
+import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, placementRolls, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
 import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer } from '../../game/canPlay.js';
 import { checkNeedFor } from '../../game/checkTerms.js';
@@ -1777,16 +1777,14 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
             // the first (the user, 2026-09-07: "I'm not seeing what MY player's
             // boost would be"). Now: my attack on the left, their attack on the
             // right, each coloured from my side of the table.
-            const mine = oppPlayer ? calcAdv(p, oppPlayer, {}, 0) : null;   // I attack them
-            const theirs = oppPlayer ? calcAdv(oppPlayer, p, {}, 0) : null; // they attack me
-            // ALL OF THE ROLL (2026-10-19): the shooter's fatigue and hot/cold
-            // markers ride on the matchup, as they will on the die.
-            const extras = (key, pl) => {
-              const ps = getPS(game, key, pl.id) || {};
-              return fatigueForMinutes(ps.minutes || 0) + ((ps.hot || 0) - (ps.cold || 0)) * 2;
-            };
-            const mineRoll = mine ? mine.rollBonus + extras(teamKey, p) : 0;
-            const theirsRoll = theirs ? theirs.rollBonus + extras(oppKey, oppPlayer) : 0;
+            // THE WHOLE ROLL, BOTH WAYS (the user, 2026-10-19: "fully factored
+            // in here"): the engine places him on a copy and reads the sum the
+            // die will carry — every card effect, fatigue, hot/cold markers.
+            const pr = oppPlayer ? placementRolls(game, teamKey, mySlot, p) : null;
+            const mine = pr?.mineAdv ?? null;     // I attack them
+            const theirs = pr?.theirsAdv ?? null; // they attack me
+            const mineRoll = pr?.mine ?? 0;
+            const theirsRoll = pr?.theirs ?? 0;
             const good = '#4ADE80', bad = '#F87171', flat = '#94A3B8';
             const mineCol = mine ? (mineRoll > 0 ? good : mineRoll < 0 ? bad : flat) : flat;
             // Their roll bonus is bad for me, so the colours flip.
@@ -1800,8 +1798,8 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
                 <span className={styles.placementStats}>S{p.speed}·P{p.power}·D{p.defBoost||0}</span>
                 {mine && theirs && (
                   <span className={styles.placementBoth}>
-                    <span className={styles.placementAdv} style={{ color: mineCol }} title="What my player's scoring roll gets attacking them (matchup, fatigue and hot/cold markers)">⚔ {fmt(mine, mineRoll)}</span>
-                    <span className={styles.placementAdv} style={{ color: theirsCol }} title="The opposing player's scoring roll if guarded by this player (matchup, fatigue and hot/cold markers)">🛡 {fmt(theirs, theirsRoll)}</span>
+                    <span className={styles.placementAdv} style={{ color: mineCol }} title="My player's whole scoring roll attacking them">⚔ {fmt(mine, mineRoll)}</span>
+                    <span className={styles.placementAdv} style={{ color: theirsCol }} title="Their whole scoring roll if this player guards them">🛡 {fmt(theirs, theirsRoll)}</span>
                   </span>
                 )}
               </button>
@@ -2028,8 +2026,8 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
   // THE WHOLE ROLL (the user, 2026-10-19: "show what roll bonuses look like
   // with ALL factors folded in, like hot markers, fatigue, etc"): the total is
   // scoringRollModifier — doRoll's own sum of the matchup, card roll bonuses
-  // on this slot, fatigue and hot/cold markers — and the parts other than the
-  // matchup are spelled out under it.
+  // on this slot, fatigue and hot/cold markers. No breakdown on the tile ("I
+  // don't need to see why"); the parts are in the tooltip only.
   const mod=adv?scoringRollModifier(game,teamKey,idx):null;
   const rollTotal=mod?mod.total:(adv?.rollBonus??0);
   const rollCol=adv?(rollTotal>0?'#4ADE80':rollTotal<0?'#F87171':'#94A3B8'):'#94A3B8';
@@ -2100,9 +2098,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               {' '}
               <span className={styles.advRoll} style={{color:rollCol}} title={rollTitle} data-roll-total={rollTotal}>Roll {sgnR(rollTotal)}{adv.hasPenalty?' ⚠':''}</span>
             </div>
-            {rollParts.length>0&&(
-              <div className={styles.advParts} title={rollTitle}>matchup {sgnR(mod.matchup)} · {rollParts.join(' · ')}</div>
-            )}
+
           </div>
         )}
         {phase==='scoring'&&(

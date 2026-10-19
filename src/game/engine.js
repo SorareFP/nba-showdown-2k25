@@ -855,6 +855,28 @@ export function scoringRollModifier(g, teamKey, idx) {
   return { matchup, card, fatigue, markers, total: matchup + card + fatigue + markers };
 }
 
+/**
+ * WHAT A PLACEMENT WOULD ROLL, BOTH WAYS. The user (2026-10-19), of the
+ * placement popover: the roll bonuses "fully factored in here" — not a
+ * matchup-only figure with some extras added. `player` goes into `slot` on a
+ * copy of the game and scoringRollModifier is read for him attacking and for
+ * the man in that slot attacking him: the same sum the tile and the die carry
+ * (matchup with every card effect on it, card roll bonuses, fatigue, markers).
+ */
+export function placementRolls(g, teamKey, slot, player) {
+  const copy = JSON.parse(JSON.stringify(g));
+  const team = getTeam(copy, teamKey);
+  team.starters = [...(team.starters || [])];
+  team.starters[slot] = player;
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  return {
+    mine: scoringRollModifier(copy, teamKey, slot)?.total ?? null,
+    theirs: scoringRollModifier(copy, oppKey, slot)?.total ?? null,
+    mineAdv: matchupAdv(copy, teamKey, slot),
+    theirsAdv: matchupAdv(copy, oppKey, slot),
+  };
+}
+
 export function matchupContest(g, teamKey, idx, type) {
   if (!contestConfig.enabled) return 0;
   if (type === 'ft') return 0;

@@ -45,11 +45,14 @@ import { TEAMS } from '../../cards/teams.js';
  * need to be smart about how you navigate it"; the coaches had "ridiculous
  * strategy cards that the players don't have access to"). Floors 1-3: the
  * coach plays its own fifteen-card kit, nothing from its fifty (no rares, no
- * legendaries), on a cheaper roster. 300 runs at Prince: floors 1-3 won
- * 95/90/92% (were 83/71/72), 15% of runs over by floor 3 (were 46%), 54% reach
- * the boss (31%), which still holds at ~15%: 8% win the act (6%).
+ * legendaries), on a cheaper roster. Re-tuned the same day for the sixteen-card
+ * kits (a crunch card in each made close games swingier, which costs the
+ * favourite): Act I $1,200-1,350 and $100 off floors 4-6. 300 runs at Prince:
+ * floors 1-3 won 95/93/93% (were 83/71/72), 14% of runs over by floor 3 (were
+ * 46%), floors 4-6 80-85%, 55% reach the boss (31%), which still holds at
+ * ~15%: 8% win the act (6%).
  */
-export const FLOOR_CAPS = [1300, 1350, 1450, 2100, 2200, 2450, 2700];
+export const FLOOR_CAPS = [1200, 1250, 1350, 2000, 2100, 2350, 2700];
 /** The last floor whose coach plays only its kit. */
 export const KIT_ONLY_FLOORS = 3;
 export const CLIMB = {

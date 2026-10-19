@@ -73,10 +73,11 @@ whole mode splits into four pieces, each its own spec and plan:
 - **Act I eased, 2026-10-19** (the user: "losing in the second or third game
   so often is tough ... in Slay, the early opponents are fairly easy"; the
   coaches carried rares and legendaries no player could have yet). Floors 1-3:
-  the coach plays its own fifteen-card kit only (KIT_ONLY_FLOORS), on caps of
-  **$1,300, 1,350, 1,450**. 300 runs at Prince: floors 1-3 won 95/90/92%
-  (were 83/71/72), 15% of runs over by floor 3 (46%), 54% reach the boss (31%),
-  the boss still ~15%.
+  the coach plays its own kit only (KIT_ONLY_FLOORS). With the sixteen-card
+  kits (a crunch card in each, the same day) the caps are **$1,200, 1,250,
+  1,350, 2,000, 2,100, 2,350, 2,700**. 300 runs at Prince: floors 1-3 won
+  95/93/93% (were 83/71/72), 14% of runs over by floor 3 (46%), floors 4-6
+  80-85%, 55% reach the boss (31%), the boss still ~15%.
 - **A game is one quarter:** it starts at Q4 section 1, so it is three
   sections with crunch time if within CRUNCH_MARGIN and overtime if tied. The
   rest is the normal engine; the coach plays at the run's rung.

@@ -1032,6 +1032,44 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
     opts.swapSlot1 = s1; opts.swapSlot2 = s2;
   }
 
+  // ── Switch the Screen: which two attackers trade defenders ─────────────
+  // THE DEFENCE CHOOSES (the user, 2026-10-19: it "automatically settles when
+  // it should be a user decision on who switches"). With no pair named the
+  // engine swaps the two worst-beaten defenders, which is the coach's rule.
+  // The mirror of High Screen & Roll's prompts, from the defence's side: the
+  // first pick shows who guards each attacker now, the second what the swap
+  // does to both of their rolls.
+  if (cardId === 'switch_the_screen') {
+    const oppMu = game.offMatchups[oppKey] || [0, 1, 2, 3, 4];
+    const oppEff = game.tempEff?.[oppKey] || {};
+    const rollStr = a => (a.rollBonus > 0 ? `+${a.rollBonus}` : a.hasPenalty ? `${a.rollBonus}` : '0');
+    const adv = (att, def, i) => (att && def ? calcAdv(att, def, oppEff, i) : null);
+    const now = oppT.starters.map((att, i) => adv(att, myT.starters[oppMu[i]], i));
+    const nowInfo = oppT.starters.map((att, i) => (now[i]
+      ? `guarded by ${myT.starters[oppMu[i]].name}  |  Spd ${now[i].speedAdv > 0 ? '+' : ''}${now[i].speedAdv} · Pwr ${now[i].powerAdv > 0 ? '+' : ''}${now[i].powerAdv} → their roll ${rollStr(now[i])}`
+      : ''));
+    const s1 = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: '🛡 Switch the Screen — pick the first attacker to switch', extraInfo: nowInfo });
+    if (s1 === null) return null;
+    const delta = (n, o) => { const d = n - o; return d > 0 ? `▲${d}` : d < 0 ? `▼${-d}` : '—'; };
+    const swapInfo = oppT.starters.map((att, i) => {
+      if (i === s1) return '⬆ (selected above)';
+      const dI = myT.starters[oppMu[i]];
+      const dS = myT.starters[oppMu[s1]];
+      const nI = adv(att, dS, i);
+      const nS = adv(oppT.starters[s1], dI, s1);
+      if (!nI || !nS || !now[i] || !now[s1]) return '';
+      return `If switched → ${att.name} vs ${dS.name}: their roll ${rollStr(nI)} (${delta(nI.rollBonus, now[i].rollBonus)})  |  ${oppT.starters[s1].name} vs ${dI.name}: their roll ${rollStr(nS)} (${delta(nS.rollBonus, now[s1].rollBonus)})`;
+    });
+    let s2 = null;
+    for (;;) {
+      s2 = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: `🛡 Pick the attacker to switch with ${oppT.starters[s1]?.name}`, extraInfo: swapInfo });
+      if (s2 === null) return null;
+      if (s2 !== s1) break;
+      toast('Pick a different player', { tone: 'error' });
+    }
+    opts.slots = [s1, s2];
+  }
+
   // ── Hack-A-____ ────────────────────────────────────────────────────────
   // The choice IS the card, so the row shows what the swap is worth: the roll
   // he loses against the four free throws he gets. A 14 line makes about 3.4

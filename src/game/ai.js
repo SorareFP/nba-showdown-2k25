@@ -1307,6 +1307,7 @@ function evaluateCard(game, teamKey, handCardId, strat, opts = {}) {
     // Crunch Time (canPlay gates them to the window; riders to the timeout)
     desperation_press: 8,
     second_closer: 7,
+    chemistry: 6,   // Climb-only: a set-up, best early in a game
     ato_masterpiece: 8,
     fresh_legs: 6,
     ice_the_hot_hand: 7,
@@ -1859,6 +1860,7 @@ export function aiBuildCardOpts(game, teamKey, handCardId) {
     }
 
     case 'desperation_press':
+    case 'chemistry':
     case 'second_closer': {
       return {};
     }

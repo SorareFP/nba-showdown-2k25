@@ -67,6 +67,7 @@ export const CLIMB = {
   coachDeckSize: f => (f <= KIT_ONLY_FLOORS ? KIT_SIZE : 15 + Math.round((f - 1) * 10 / 7)),
   recovery: { base: 10, by10: 12, by20: 14 },
   rareChance: f => 0.05 + 0.2 * (f - 1) / 6,
+  climbOnlyChance: 0.35,   // the reward's "anywhere" slot, while a Climb-only card is left (2026-10-19)
   maxRoster: 10,
 };
 
@@ -298,11 +299,18 @@ export function presetFor(run) {
  * Each is rare with the floor's chance; a Rivalry's third always is. Never a
  * card the deck holds at its limit, never one twice.
  */
-export function stratOffer(run, stop, rng) {
+export function stratOffer(run, stop, rng, rngClimb = null) {
   const chosen = [];
   [run.playbook, run.playbook, null].forEach((lean, slot) => {
+    // THE CLIMB'S OWN CARDS (2026-10-19, strats.js `climbOnly`): the slot from
+    // anywhere offers one CLIMB.climbOnlyChance of the time while one is left
+    // to take. Its own seeded stream, so the other offers do not shift.
+    if (!lean && rngClimb) {
+      const own = OFFERABLE.filter(s => s.climbOnly && !chosen.includes(s.id) && !atLimit(run.deck, s.id));
+      if (own.length && rngClimb() < CLIMB.climbOnlyChance) { chosen.push(pickFrom(rngClimb, own).id); return; }
+    }
     const rare = (stop.kind === 'rivalry' && slot === 2) || rng() < CLIMB.rareChance(stop.floor);
-    const pool = OFFERABLE.filter(s => (!lean || leanOf(s.id) === lean) && !chosen.includes(s.id) && !atLimit(run.deck, s.id));
+    const pool = OFFERABLE.filter(s => !s.climbOnly && (!lean || leanOf(s.id) === lean) && !chosen.includes(s.id) && !atLimit(run.deck, s.id));
     const want = pool.filter(s => (s.rarity === 'rare') === rare);
     const from = want.length ? want : pool;
     if (from.length) chosen.push(pickFrom(rng, from).id);
@@ -361,7 +369,7 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {} }) 
     ...next,
     status: 'reward',
     extraPicks: Math.max(0, run.extraPicks - 1),
-    offers: { stopId, strats: stratOffer(next, stop, rng), picks, players, perks },
+    offers: { stopId, strats: stratOffer(next, stop, rng, climbRng(run.seed, 'climb-only', stopId)), picks, players, perks },
   };
 }
 

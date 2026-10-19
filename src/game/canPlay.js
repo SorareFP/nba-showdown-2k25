@@ -449,6 +449,14 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
   if (cardId === 'blitz') return blitzVerdict(g, teamKey);
   if (SHOT_REACTIONS.includes(cardId) && cardId !== 'close_out') return shotReaction(g, teamKey, cardId, plus);
 
+  // CHEMISTRY (Climb-only, 2026-10-19): set up in the matchup, on your turn, once a game.
+  if (cardId === 'chemistry') {
+    if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
+    if (g.matchupTurn !== teamKey) return no("It's not your turn");
+    if (g.chem?.[teamKey]) return no('Chemistry is already in play');
+    return ok('Every screen you play from now on sets up your next roll: +1, then +2, then +3');
+  }
+
   // ── MATCHUP PHASE ──────────────────────────────────────────────────────
   if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper','pick_up_full_court',
     'spain_pick_roll','mismatch_hunter','strength_in_numbers','energizer','defensive_identity','defensive_anchor','swarming_defense',

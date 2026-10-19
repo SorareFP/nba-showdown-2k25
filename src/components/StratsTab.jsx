@@ -12,8 +12,8 @@ const PHASE_LABELS = {
 };
 
 export default function StratsTab() {
-  const off = STRATS.filter(s => s.side === 'off');
-  const def = STRATS.filter(s => s.side === 'def');
+  const off = STRATS.filter(s => s.side === 'off' && !s.climbOnly);
+  const def = STRATS.filter(s => s.side === 'def' && !s.climbOnly);
 
   return (
     <div>

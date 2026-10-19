@@ -96,7 +96,7 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
       imgUrl: getPlayerThumbUrl(cardKey(c)),
       fullUrl: getPlayerImageUrl(cardKey(c)),
     }));
-    const strats = STRATS.map(s => ({
+    const strats = STRATS.filter(s => !s.climbOnly).map(s => ({
       key: s.id,
       name: s.name,
       type: 'strat',

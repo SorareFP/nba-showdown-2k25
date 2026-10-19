@@ -1,5 +1,27 @@
 # The Climb, piece 2: how a deck scales (DRAFT for the user)
 
+## The user's answers (2026-10-19) and what is built
+
+- **Run-long things are relics, not cards:** "run-based things would have to
+  be similar to relics dropped by rivalries and bosses, while quarter-long
+  things (like negate all fatigue this game, +X power this game, etc.) that
+  are drawn during the game are what we're looking for." So family 1 became
+  **perks** (src/game/modes/climbPerks.js): a Rivalry win offers one of three
+  or none; a boss will when acts follow it. Built: Gym Rat, Extra Reps,
+  Signature Move (as +1 3PT Bonus), Film Study (practise a card now); no
+  number on a player moves more than 3.
+- **Cards last a game.** Chemistry is built (strats.js `climbOnly`), offered
+  from the reward's "anywhere" slot 35% of the time while it is not in the
+  deck. Families 2-4 are the pool for more, in that spirit.
+- **The playbooks are the characters:** "the starting decks being similar to
+  the different characters in Slay, and the way they get specific cards to
+  them. Assists and rebounds being like strength/weak in slay, and then some
+  of the speed/power builds being like the difference between the Ironclad and
+  the Silent." No new currencies: "I do not really want to get into the added
+  currency types like with The Regent." So the next Climb-only cards should
+  lean to a playbook, each its own.
+- The four "+" drafts below the kits were approved ("Perfect") and are built.
+
 2026-10-19. The user: "start to use inspiration from StS II about how decks
 might be able to scale and how to pull those strings with Climb-only cards."
 Nothing here is built. Every card below is a draft for the strategy card

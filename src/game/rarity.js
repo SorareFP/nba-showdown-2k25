@@ -62,7 +62,7 @@ export function getPlayersByRarity(rarity) {
 
 // Get all strat cards by rarity
 export function getStratsByRarity(rarity) {
-  return STRATS.filter(s => getStratRarity(s) === rarity);
+  return STRATS.filter(s => !s.climbOnly && getStratRarity(s) === rarity);
 }
 
 // Target pull rates — these are the ACTUAL probabilities per pick,

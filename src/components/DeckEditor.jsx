@@ -33,6 +33,7 @@ export default function DeckEditor({ deck, onSave, onCancel, collection }) {
     const groups = {};
     for (const phase of PHASE_ORDER) groups[phase] = [];
     for (const s of STRATS) {
+      if (s.climbOnly) continue;   // dealt only inside a Climb run
       const p = PHASE_ORDER.includes(s.phase) ? s.phase : 'reaction';
       groups[p].push(s);
     }

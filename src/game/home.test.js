@@ -149,7 +149,8 @@ describe('The Climb in the news', () => {
   });
 
   it('leads the news with its 2026-10-19 changes, then the Play hub', () => {
-    expect(NEWS[0]).toMatchObject({ id: 'climb-pays-as-you-go', to: 'climb' });
-    expect(NEWS[1]).toMatchObject({ id: 'play-hub', to: 'modes' });
+    expect(NEWS[0]).toMatchObject({ id: 'climb-perks-chemistry', to: 'climb' });
+    expect(NEWS[1]).toMatchObject({ id: 'climb-pays-as-you-go', to: 'climb' });
+    expect(NEWS[2]).toMatchObject({ id: 'play-hub', to: 'modes' });
   });
 });

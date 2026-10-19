@@ -31,8 +31,10 @@ export function buildDeck(deckConfig) {
       for (let i = 0; i < count; i++) d.push(cardId);
     }
   } else {
-    // Fallback when no learned weights exist: STRATS copies, untruncated.
+    // Fallback when no learned weights exist: STRATS copies, untruncated
+    // (no Climb-only card: those are dealt only inside a run).
     for (const s of STRATS) {
+      if (s.climbOnly) continue;
       for (let i = 0; i < (s.copies || 2); i++) d.push(s.id);
     }
   }
@@ -852,7 +854,9 @@ export function scoringRollModifier(g, teamKey, idx) {
   const player = getTeam(g, teamKey)?.starters?.[idx];
   const ps = (player && getPS(g, teamKey, player.id)) || {};
   const markers = ((ps.hot || 0) - (ps.cold || 0)) * 2;
-  return { matchup, card, fatigue, markers, total: matchup + card + fatigue + markers };
+  // Chemistry's set-up rides on this team's next roll, whoever makes it.
+  const chem = g.chem?.[teamKey]?.pending || 0;
+  return { matchup, card, fatigue, markers, chem, total: matchup + card + fatigue + markers + chem };
 }
 
 /**
@@ -1771,6 +1775,12 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   if (openPts && !openExcept.includes(idx)) {
     bonus += openPts;
     delete ng.openMan[teamKey];
+  }
+  // Chemistry's set-up (Climb-only): the next roll of this team carries it.
+  const chemPts = ng.chem?.[teamKey]?.pending || 0;
+  if (chemPts) {
+    bonus += chemPts;
+    ng.chem[teamKey].pending = 0;
   }
 
   const fat = getFatigue(ng, teamKey, idx);

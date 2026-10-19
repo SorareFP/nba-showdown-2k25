@@ -7,7 +7,7 @@ import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore,
 import { checkTerms } from './checkTerms.js';
 import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
-import { getStrat, baseId, isPlus } from './strats.js';
+import { getStrat, baseId, isPlus, SCREEN_CARDS } from './strats.js';
 
 /**
  * POINTS A CARD SCORES GO ON THE SCOREBOARD AND ON THE PLAYER'S LINE, together.
@@ -236,7 +236,31 @@ export function execCard(game, teamKey, cardId, opts = {}) {
   // that read it and `handId` so the copy played is the copy spent.
   const res = resolveCard(game, teamKey, baseId(cardId), { ...opts, plus: isPlus(cardId), handId: cardId });
   if (!res.ok) return res;
+  if (SCREEN_CARDS.includes(baseId(cardId))) bumpChemistry(res.game, teamKey);
   return { ...res, game: handOverPriority(game, res.game, teamKey) };
+}
+
+/**
+ * CHEMISTRY (Climb-only, 2026-10-19): "each screen card you play gives your
+ * next scoring roll +1 more than the last". A screen played while it is in
+ * play raises the count, and the next roll of yours carries the count
+ * (doRoll spends it; scoringRollModifier shows it). `g.chem[teamKey]` is
+ * { count, pending } from the moment the card is played to the game's end.
+ */
+function bumpChemistry(g, teamKey) {
+  const c = g.chem?.[teamKey];
+  if (!c) return;
+  c.count += 1;
+  c.pending = c.count;
+  addLog(g, teamKey, `Chemistry: the screen sets up the next roll at +${c.pending}.`);
+}
+
+/** A screen the defence cancelled (Go Under, Fight Over, Veer Switch) takes its step back. */
+function unChemistry(g, teamKey) {
+  const c = g.chem?.[teamKey];
+  if (!c || !(c.pending > 0)) return;
+  c.count = Math.max(0, c.count - 1);
+  c.pending = 0;
 }
 
 function resolveCard(game, teamKey, cardId, opts = {}) {
@@ -379,6 +403,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       break;
     }
 
+    case 'chemistry': {
+      if (g.chem?.[teamKey]) return fail('Chemistry is already in play');
+      g.chem = { ...(g.chem ?? {}), [teamKey]: { count: 0, pending: 0 } };
+      addLog(g, teamKey, 'Chemistry: from now on, every screen sets up the next roll a little better (+1, +2, +3…).');
+      break;
+    }
+
     case 'second_closer': {
       if (!g.crunch?.active) return fail('Crunch Time only');
       if ((g.crunch.extra?.[teamKey] || 0) >= 1) return fail('One Second Closer per game');
@@ -508,6 +539,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const mu = g.offMatchups[lc.teamKey];
       mu[lc.opts.swapSlot1] = lc.opts.origD1;
       mu[lc.opts.swapSlot2] = lc.opts.origD2;
+      unChemistry(g, lc.teamKey);   // a cancelled screen does not count (Chemistry)
       // THE OFFENCE CHOOSES THE SHOOTER (the user, 2026-09-09). The defence
       // used to name the target — and the coach named the worse shooter —
       // but the consolation belongs to the side whose screen was cancelled.
@@ -529,6 +561,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const mu = g.offMatchups[lc.teamKey];
       mu[lc.opts.swapSlot1] = lc.opts.origD1;
       mu[lc.opts.swapSlot2] = lc.opts.origD2;
+      unChemistry(g, lc.teamKey);   // a cancelled screen does not count (Chemistry)
       const offT = getTeam(g, lc.teamKey);
       const p1 = offT.starters[lc.opts.swapSlot1];
       const p2 = offT.starters[lc.opts.swapSlot2];
@@ -550,6 +583,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const veerBefore = [...mu];
       mu[lc.opts.swapSlot1] = lc.opts.origD1;
       mu[lc.opts.swapSlot2] = lc.opts.origD2;
+      unChemistry(g, lc.teamKey);   // a cancelled screen does not count (Chemistry)
       // ONLY THE TWO DEFENDERS IN THE SCREEN CAN SWITCH. A veer is the late
       // switch between the two men the screen involved: the defence either
       // keeps them where they were or trades them — it does not get to pull a

@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-perks-chemistry', date: '2026-10-19', title: 'The Climb: perks and Climb-only cards',
+    body: "Beat a Rivalry and it drops a perk for the rest of the run: Gym Rat (+1 Power on a player you choose), Extra Reps (his Shot Line 1 better), Signature Move (+1 3PT Bonus) or Film Study (practise a card on the spot). Take one of three, or none. Rewards can now offer cards you will only ever find in a climb, starting with Chemistry: it stays in play for the game, and every screen you play after it sets up your next roll at +1, then +2, then +3. And Second Closer, ATO Masterpiece, Hack-A-____ and Transition Outlet have their \"+\" versions to practise.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'climb-pays-as-you-go', date: '2026-10-19', title: 'The Climb pays as you go, and Act I is fairer',
     body: "Every Climb game now pays a quarter of a regular game, win or lose: a quarter of finishing one and of the win bonus or a close loss's consolation, at your coach rung's rate. The pot is still yours on top when you retire or beat the boss. The first three floors are fairer too: those coaches play only their starting kit, like yours, with no rares, on cheaper rosters. The boss is as tough as ever. Every starting kit now carries a crunch card (Second Closer, ATO Masterpiece or Hack-A-____), and Defense trades a Close Out and Help Defender for two Transition Outlets, so it has shots of its own. And on a Rest Day you can look at the map to see what comes next before you choose.",
     to: 'climb', cta: 'The Climb',

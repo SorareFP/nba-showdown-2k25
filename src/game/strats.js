@@ -288,9 +288,28 @@ export const STRATS = [
   // roll-replacer spends stays the original player's.
   { id:'blitz',               name:'Blitz',              phase:'reaction', side:'def', copies:2, locked:false, color:'#9F1239', rarity:'uncommon',
     desc:'Opponent announces a 3PT or Paint Shot Check: blitz the shooter. The offense must give that check to another player on the floor, with the same card bonus.' },
+  // ── CLIMB-ONLY (The Climb, piece 2, 2026-10-19) ──────────────────────────
+  // Offered only as rewards inside a run: never in a pack, the market, a
+  // collection, a deck you build or a coach's deck (`climbOnly`: packEngine,
+  // rarity, the default deck, DeckEditor, MyCollection, StratsTab skip it). The
+  // user: the cards are what lasts a game ("negate all fatigue this game, +X
+  // power this game"); run-long things are perks. Chemistry, approved "Go for
+  // it" from docs/plans/2026-10-19-the-climb-scaling-draft.md, pays off the
+  // screens every kit carries.
+  { id:'chemistry',           name:'Chemistry',          phase:'matchup',  side:'off', copies:1, locked:false, color:'#7C3AED', rarity:'uncommon', climbOnly:true,
+    desc:'Stays in play this game: each screen card you play gives your next scoring roll +1 more than the last: +1, then +2, then +3.' },
 ];
 
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));
+
+/**
+ * THE SCREEN CARDS — what Chemistry counts (2026-10-19): the offence's
+ * screening actions, on or off the ball. Switch the Screen is the defence's.
+ */
+export const SCREEN_CARDS = Object.freeze([
+  'high_screen_roll', 'spain_pick_roll', 'ghost_screen', 'pin_down_screen', 'stagger_action', 'flare_screen',
+  'elevator_doors', 'pick_and_pop', 'outside_pick', 'delayed_slip', 'pick_and_roll_maestro', 'short_roll_playmaker', 'hammer_set',
+]);
 
 // ── "+" COPIES (The Climb, 2026-10-18) ────────────────────────────────────────
 // A Rest Day's Practice upgrades ONE copy of a card (the user: "It should only be

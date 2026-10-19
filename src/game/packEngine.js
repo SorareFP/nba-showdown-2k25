@@ -510,7 +510,8 @@ export const SPECIAL_BAND_SHARE = 0.25;
  * the starter's bonusStrats.
  */
 function packableStrats() {
-  return STRATS.filter(s => !s.promo);
+  // Climb-only cards (strats.js) never reach a pack either.
+  return STRATS.filter(s => !s.promo && !s.climbOnly);
 }
 
 /**

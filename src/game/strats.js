@@ -293,7 +293,7 @@ export const STRATS = [
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));
 
 // ── "+" COPIES (The Climb, 2026-10-18) ────────────────────────────────────────
-// A Rest Day's Smith upgrades ONE copy of a card (the user: "It should only be
+// A Rest Day's Practice upgrades ONE copy of a card (the user: "It should only be
 // each card, not all of one"), and that copy rides in the deck, the hand and
 // the discard as its id with a `+`, so it travels as itself through every
 // draw and undo. The engine compares ids as strings in ~40 places, so the

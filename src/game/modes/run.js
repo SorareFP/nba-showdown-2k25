@@ -366,14 +366,14 @@ export function skipOffers(run, part = null) {
 
 function applyRest(run, { choice, cardId }) {
   if (choice === 'rest') return { ...run, fatigue: {} };
-  if (choice !== 'smith') fail('Rest or Smith');
+  if (choice !== 'practice') fail('Rest or Practice');
   if (isPlus(cardId)) fail('That copy is already upgraded');
   if (!KIT_CARD_IDS.has(cardId)) fail(`${STRAT_MAP[cardId]?.name ?? cardId}: no upgrade yet`);
   const deck = addCard(takeCard(run.deck, cardId), plusId(cardId));
   return { ...run, deck };
 }
 
-/** A Rest Day: rest everyone, or smith one copy. Either clears the floor. */
+/** A Rest Day: rest everyone, or practice — upgrade one copy to its "+". Either clears the floor. */
 export function restDay(run, choice) {
   if (run.status !== 'rest') fail('Not at a Rest Day');
   const done = applyRest(run, choice);

@@ -3,7 +3,7 @@
 2026-10-18. The Climb, piece 1, Task 1 (docs/plans/2026-10-18-the-climb.md).
 Nothing here ships until the user approves it (the strategy card approval
 rule). A run's deck is the **core** plus one **playbook's** eight; a Rest Day's
-Smith turns **one copy** into its "+".
+Practice turns **one copy** into its "+".
 
 **The rule for every "+":** the same card, one step stronger: a bigger number,
 or one threshold loosened by one. A card with no number to move (the switching

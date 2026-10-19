@@ -15,7 +15,7 @@
 // random five under $2,200, the playbook that fits, a random boon, a random
 // open stop; takes the first strat that leans to the playbook while the deck
 // is under 20, the priciest player offered, rests before the boss and when the
-// starters' summed penalty is -12 or worse, and smiths a kit card otherwise; never retires. A
+// starters' summed penalty is -12 or worse, and practises a kit card otherwise; never retires. A
 // human should draft better, so the numbers here are a floor for you.
 import {
   CLIMB, newRun, chooseCamp, openStops, chooseStop, presetFor, recordResult, resultFromGame,
@@ -101,12 +101,12 @@ for (let i = 0; i < RUNS; i += 1) {
     } else if (run.status === 'rest') {
       const starters = rosterCards(run).cards.sort((a, b) => b.salary - a.salary).slice(0, 5);
       const pain = starters.reduce((t, c) => t + fatigueForMinutes(run.fatigue[c.id] ?? 0), 0);
-      const smithable = Object.keys(run.deck).filter(id => !isPlus(id) && KIT_CARD_IDS.has(id));
+      const practicable = Object.keys(run.deck).filter(id => !isPlus(id) && KIT_CARD_IDS.has(id));
       // Rest before the boss always (floor 7), and whenever the five are worn.
       const beforeBoss = stopById(run.map, run.restAt)?.floor === 7;
-      run = beforeBoss || pain <= -12 || !smithable.length
+      run = beforeBoss || pain <= -12 || !practicable.length
         ? restDay(run, { choice: 'rest' })
-        : restDay(run, { choice: 'smith', cardId: pick(rng, smithable) });
+        : restDay(run, { choice: 'practice', cardId: pick(rng, practicable) });
     } else if (run.status === 'game') {
       const stop = stopById(run.map, run.game.stopId);
       const p = presetFor(run);

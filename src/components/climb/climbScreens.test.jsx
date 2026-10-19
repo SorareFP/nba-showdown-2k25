@@ -84,7 +84,10 @@ describe('the reward screen', () => {
 describe('the Rest Day', () => {
   it('offers the "+" of a kit card and says a card outside the kits has no upgrade yet', () => {
     const r = { ...camped(), status: 'rest', restAt: '2-0', deck: { ...camped().deck, green_light: 1 } };
-    const out = html(<RestDay run={r} onRest={noop} onSmith={noop} />);
+    const out = html(<RestDay run={r} onRest={noop} onPractice={noop} />);
+    // "Practice", not "Smith" (the user, 2026-10-19).
+    expect(out).toContain('Practice');
+    expect(out).not.toMatch(/smith/i);
     expect(out).toContain('Catch &amp; Shoot+');
     expect(out).toContain('no upgrade yet');
     expect(out).toContain('Rest');

@@ -334,15 +334,15 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onSkip, busy = fa
 
 // ── Rest Day ─────────────────────────────────────────────────────────────────
 
-/** Rest everyone, or smith one copy. */
-export function RestDay({ run, onRest, onSmith, busy = false, free = false }) {
+/** Rest everyone, or practice: upgrade one copy (the user, 2026-10-19: not "smith"). */
+export function RestDay({ run, onRest, onPractice, busy = false, free = false }) {
   const { cards } = rosterCards(run);
   const tired = cards.filter(c => (run.fatigue?.[c.id] ?? 0) > 0);
   const ids = Object.keys(run.deck ?? {}).filter(id => run.deck[id] > 0).sort((a, b) => (getStrat(a)?.name ?? a).localeCompare(getStrat(b)?.name ?? b));
   return (
     <div className={styles.screen}>
       <h2 className={styles.title}>{free ? 'A day off' : 'Rest Day'}</h2>
-      <p className={styles.lede}>One of two: rest the whole team, or upgrade one card.</p>
+      <p className={styles.lede}>One of two: rest the whole team, or practice and upgrade one card.</p>
       <div className={styles.restChoice}>
         <section className={styles.restCard}>
           <h3 className={styles.h3}>Rest</h3>
@@ -350,8 +350,8 @@ export function RestDay({ run, onRest, onSmith, busy = false, free = false }) {
           <button type="button" className={styles.primary} onClick={onRest} disabled={busy}>Rest</button>
         </section>
         <section className={styles.restCard}>
-          <h3 className={styles.h3}>Smith one copy</h3>
-          <ul className={styles.smithList}>
+          <h3 className={styles.h3}>Practice <span className={styles.muted}>upgrade one copy</span></h3>
+          <ul className={styles.practiceList}>
             {ids.map(id => {
               const plus = isPlus(id);
               const kit = KIT_CARD_IDS.has(baseId(id));
@@ -362,8 +362,8 @@ export function RestDay({ run, onRest, onSmith, busy = false, free = false }) {
                   {plus ? <span className={styles.muted}> already upgraded</span>
                     : kit ? (
                       <>
-                        <span className={styles.smithText}><strong>{getStrat(plusId(id))?.name}:</strong> {getStrat(plusId(id))?.desc}</span>
-                        <button type="button" onClick={() => onSmith(id)} disabled={busy}>Upgrade a copy</button>
+                        <span className={styles.practiceText}><strong>{getStrat(plusId(id))?.name}:</strong> {getStrat(plusId(id))?.desc}</span>
+                        <button type="button" onClick={() => onPractice(id)} disabled={busy}>Practice it</button>
                       </>
                     ) : <span className={styles.muted}> no upgrade yet</span>}
                 </li>

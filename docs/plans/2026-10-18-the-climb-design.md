@@ -6,7 +6,7 @@ rewards of players and strats." Decided over the 2026-10-18 brainstorm; the
 whole mode splits into four pieces, each its own spec and plan:
 
 1. **The core loop (this spec):** start, Training Camp, one act, short games,
-   rewards, fatigue as health, Rest Day (rest or smith), the pot, retire
+   rewards, fatigue as health, Rest Day (rest or practice), the pot, retire
    or lose, the server ledger. Upgrades for the starter-kit cards.
 2. Run-only cards: scaling cards (Gym Rat, Heat Check, Chemistry, Film Study,
    tag synergies), "+" upgrades for every other strat, the Film Room.
@@ -30,7 +30,7 @@ whole mode splits into four pieces, each its own spec and plan:
 - **The pot: coins and milestone packs, kept only if you win or retire early.**
 - **Higher-level strategy matters:** skipping a reward is often right; a focused
   deck beats bulk. **Rewards scale higher up the climb.**
-- **Smithing:** upgrades, starting with the starter-kit cards.
+- **Practice** (StS calls it smithing; the user named it Practice, 2026-10-19): upgrades, starting with the starter-kit cards.
 - Name: **The Climb** ("for now").
 
 ## The run
@@ -120,10 +120,10 @@ whole mode splits into four pieces, each its own spec and plan:
   beating the boss banks it. **A loss ends the run and the pot is gone.**
 - Lifetime card stats record for owned players as in any game.
 
-## Rest Day and smithing
+## Rest Day and practice
 
 - **A Rest Day offers one of two,** StS's campfire: **Rest** (clear every
-  player's fatigue) or **Smith** (upgrade one card in the deck to its "+"
+  player's fatigue) or **Practice** (upgrade one card in the deck to its "+"
   version). **Cutting a card belongs to the shop** (piece 3); in piece 1 the
   only cut is Training Camp's "cut 2 starter cards" boon.
 - **"+" versions** exist in piece 1 for the starter-kit cards (the core and the
@@ -134,7 +134,7 @@ whole mode splits into four pieces, each its own spec and plan:
 - An upgraded card is the same card with `upgraded: true`; its effect reads the
   flag in the engine, so the coach's simulation of it (choicePreview, the AI)
   is the real thing.
-- **Smith upgrades one copy** (the user, 2026-10-18: "It should only be each
+- **Practice upgrades one copy** (the user, 2026-10-18: "It should only be each
   card, not all of one"): a deck with two Close Outs can hold one Close Out and
   one Close Out+.
 
@@ -143,7 +143,7 @@ whole mode splits into four pieces, each its own spec and plan:
 - **src/game/modes/run.js** — the run's state (rung, cap, floor, map, roster,
   deck, fatigue, pot, status) and pure functions: new run, map generation,
   choose stop, set up a game, record a result into offers, pick or skip,
-  rest or smith, retire. Seeded randomness, so tests replay exactly.
+  rest or practice, retire. Seeded randomness, so tests replay exactly.
 - **Engine:** an option to start a game at Q4 section 1 with each player's
   starting fatigue (the tutorial's stageCrunch already starts mid-game).
 - **Opponents:** buildAiRoster at the floor's cap; a new classic-team builder.
@@ -166,7 +166,7 @@ whole mode splits into four pieces, each its own spec and plan:
 - Unit tests (run.js): map rules (floor 1 a Game, Rest Day before the boss,
   every stop reachable, no crossings), the cap ramp, every player offer fits
   the cap, the rare chance by floor, pot math, run states (active, won, lost,
-  retired) and their transitions, rest or smith, seeded replay.
+  retired) and their transitions, rest or practice, seeded replay.
 - Engine: a game started at Q4 section 1 plays three sections, arms crunch,
   goes to overtime when tied, and carries the given fatigue.
 - Server (functions harness): start, claim win, claim loss ends the run, bank

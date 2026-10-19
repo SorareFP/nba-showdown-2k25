@@ -140,7 +140,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
           <RestDay
             run={run} free busy={busy}
             onRest={() => act(async () => { await commit(takeFreeRest(run, { choice: 'rest' })); setFreeRest(false); })}
-            onSmith={cardId => act(async () => { await commit(takeFreeRest(run, { choice: 'smith', cardId })); setFreeRest(false); })}
+            onPractice={cardId => act(async () => { await commit(takeFreeRest(run, { choice: 'practice', cardId })); setFreeRest(false); })}
           />
         );
       }
@@ -177,7 +177,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         <RestDay
           run={run} busy={busy}
           onRest={() => act(() => commit(restDay(run, { choice: 'rest' })))}
-          onSmith={cardId => act(() => commit(restDay(run, { choice: 'smith', cardId })))}
+          onPractice={cardId => act(() => commit(restDay(run, { choice: 'practice', cardId })))}
         />
       );
     default:

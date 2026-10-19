@@ -87,9 +87,9 @@
 /* Rest Day */
 .restChoice { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(280px, 2fr); gap: 12px; align-items: start; }
 .restCard { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-.smithList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
-.smithList li { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
-.smithText { flex-basis: 100%; color: var(--text-muted); font-size: 12px; }
+.practiceList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+.practiceList li { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+.practiceText { flex-basis: 100%; color: var(--text-muted); font-size: 12px; }
 
 @media (max-width: 768px) {
   .mapScreen { grid-template-columns: 1fr; }

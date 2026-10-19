@@ -1,5 +1,5 @@
 // A "+" COPY IS ITS CARD (The Climb, docs/plans/2026-10-18-the-climb.md,
-// Task 3b). The user, 2026-10-18: Smith upgrades "each card, not all of one",
+// Task 3b). The user, 2026-10-18: Practice (once "Smith") upgrades "each card, not all of one",
 // so an upgraded copy rides in the deck as `id+` beside its plain twins. The
 // engine compares ids as strings in ~40 places; the `+` is read at the doors
 // (execCard, canPlay, the AI, the board) and nowhere inside, so a "+" copy is

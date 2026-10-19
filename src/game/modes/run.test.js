@@ -218,30 +218,30 @@ describe('the Rest Day', () => {
     return chooseStop({ ...r, at: from.id, fatigue: { [FIVE[0].id]: 12 } }, rest.id);
   };
 
-  it('rests everyone, or smiths one copy, then clears the floor', () => {
+  it('rests everyone, or practises one copy, then clears the floor', () => {
     const r = toRest();
     expect(r.status).toBe('rest');
     const rested = restDay(r, { choice: 'rest' });
     expect(rested.fatigue).toEqual({});
     expect(rested.cap).toBe(r.cap + 300);
     expect(rested.status).toBe('map');
-    const smith = restDay(r, { choice: 'smith', cardId: 'catch_and_shoot' });
+    const smith = restDay(r, { choice: 'practice', cardId: 'catch_and_shoot' });
     expect(smith.deck.catch_and_shoot).toBe(1);
     expect(smith.deck['catch_and_shoot+']).toBe(1);
     expect(smith.cap).toBe(r.cap + 300);
     expect(smith.fatigue).toEqual(r.fatigue);
   });
 
-  it('smiths each copy once, and only kit cards', () => {
+  it('practises each copy once, and only kit cards', () => {
     const r = toRest();
-    const twice = { ...restDay(r, { choice: 'smith', cardId: 'catch_and_shoot' }), status: 'rest', restAt: r.restAt };
-    const both = restDay(twice, { choice: 'smith', cardId: 'catch_and_shoot' });
+    const twice = { ...restDay(r, { choice: 'practice', cardId: 'catch_and_shoot' }), status: 'rest', restAt: r.restAt };
+    const both = restDay(twice, { choice: 'practice', cardId: 'catch_and_shoot' });
     expect(both.deck.catch_and_shoot ?? 0).toBe(0);
     expect(both.deck['catch_and_shoot+']).toBe(2);
-    expect(() => restDay({ ...both, status: 'rest', restAt: r.restAt }, { choice: 'smith', cardId: 'catch_and_shoot+' })).toThrow();
+    expect(() => restDay({ ...both, status: 'rest', restAt: r.restAt }, { choice: 'practice', cardId: 'catch_and_shoot+' })).toThrow();
     const withRare = { ...r, deck: { ...r.deck, green_light: 1 } };
     expect(KIT_CARD_IDS.has('green_light')).toBe(false);
-    expect(() => restDay(withRare, { choice: 'smith', cardId: 'green_light' })).toThrow(/no upgrade yet/);
+    expect(() => restDay(withRare, { choice: 'practice', cardId: 'green_light' })).toThrow(/no upgrade yet/);
   });
 
   it('can be taken from the map with the free Rest Day, once', () => {

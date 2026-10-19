@@ -1341,6 +1341,8 @@ function evaluateCard(game, teamKey, handCardId, strat, opts = {}) {
     desperation_press: 8,
     second_closer: 7,
     chemistry: 6,   // Climb-only: a set-up, best early in a game
+    let_it_fly: 6, pace_and_space: 6, bruise_brothers: 6, weight_room: 6,
+    conditioning: 5, shut_the_door: 6, stay_hot: 4, ice_bath: 5,
     ato_masterpiece: 8,
     fresh_legs: 6,
     ice_the_hot_hand: 7,
@@ -1874,6 +1876,14 @@ export function aiBuildCardOpts(game, teamKey, handCardId) {
       return { playerIdx: bestReset.i };
     }
 
+    case 'weight_room': {
+      // The best roller gets the Power.
+      let bestW = { i: 0, v: -Infinity };
+      starters.forEach((p, i) => { const v = p ? expectedOutput(p, 0) : -Infinity; if (v > bestW.v) bestW = { i, v }; });
+      return { playerIdx: bestW.i };
+    }
+    case 'let_it_fly': case 'pace_and_space': case 'bruise_brothers':
+    case 'conditioning': case 'shut_the_door': case 'stay_hot': case 'ice_bath':
     case 'desperation_press':
     case 'chemistry':
     case 'second_closer': {

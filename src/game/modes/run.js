@@ -299,7 +299,7 @@ export function presetFor(run) {
     deckB: { ...g.deckB },
     aiLevel: run.rung,
     returnTab: 'climb',
-    gameOpts: { startQuarter: 4, fatigue: { A: { ...run.fatigue } } },
+    gameOpts: { startQuarter: 4, fatigue: { A: { ...run.fatigue } }, ...(run.carryHot ? { hot: { A: { ...run.carryHot } } } : {}) },
     climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung },
   };
 }
@@ -318,7 +318,8 @@ export function stratOffer(run, stop, rng, rngClimb = null) {
     // anywhere offers one CLIMB.climbOnlyChance of the time while one is left
     // to take. Its own seeded stream, so the other offers do not shift.
     if (!lean && rngClimb) {
-      const own = OFFERABLE.filter(s => s.climbOnly && !chosen.includes(s.id) && !atLimit(run.deck, s.id));
+      // Your playbook's own, or one for any playbook: a character's cards (2026-10-19).
+      const own = OFFERABLE.filter(s => s.climbOnly && (leanOf(s.id) == null || leanOf(s.id) === run.playbook) && !chosen.includes(s.id) && !atLimit(run.deck, s.id));
       if (own.length && rngClimb() < CLIMB.climbOnlyChance) { chosen.push(pickFrom(rngClimb, own).id); return; }
     }
     const rare = (stop.kind === 'rivalry' && slot === 2) || rng() < CLIMB.rareChance(stop.floor);
@@ -376,7 +377,7 @@ function playerOffer(run, rng) {
  * run. A win clears the stop and the floor: the cap rises, every tracker
  * comes down by the recovery, and the offers are dealt.
  */
-export function recordResult(run, { stopId, won, margin = 0, endMinutes = {} }) {
+export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, carryHot = null, iceBath = null }) {
   if (run.status !== 'game' || run.game?.stopId !== stopId) return run;
   if (!won) return { ...run, status: 'lost', lostAt: stopId, game: null };
   const stop = stopById(run.map, stopId);
@@ -389,7 +390,15 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {} }) 
     if (left > 0) fatigue[c.id] = left;
   }
   const gameWins = run.gameWins + (stop.kind === 'game' ? 1 : 0);
-  const next = { ...run, at: stopId, cleared, cap: run.cap + CLIMB.capPerFloor, fatigue, gameWins, game: null };
+  // Ice Bath clears the trackers and leaves the deck; Stay Hot's markers ride
+  // into the next game only (2026-10-19).
+  const iced = iceBath && (run.deck?.[iceBath] ?? 0) > 0;
+  const next = {
+    ...run, at: stopId, cleared, cap: run.cap + CLIMB.capPerFloor, gameWins, game: null,
+    fatigue: iced ? {} : fatigue,
+    deck: iced ? takeCard(run.deck, iceBath) : run.deck,
+    carryHot: carryHot && Object.keys(carryHot).length ? carryHot : null,
+  };
   const rng = climbRng(run.seed, 'offers', stopId);
   // The player offer is always drawn, so the cards' draw after it is the same
   // as before the drops were chances; the drop roll has its own stream.
@@ -541,10 +550,15 @@ export function potPreview(run) {
 /** A finished run game as recordResult takes it: you are Team A (presetFor); a tie is not a win. */
 export function resultFromGame(game, stopId) {
   const margin = (game?.teamA?.score ?? 0) - (game?.teamB?.score ?? 0);
+  const buffs = game?.buffs?.A ?? {};
   return {
     stopId,
     won: margin > 0,
     margin,
     endMinutes: Object.fromEntries((game?.teamA?.stats ?? []).map(s => [s.id, s.minutes ?? 0])),
+    // Stay Hot: the hot markers his players end on, two at most (2026-10-19).
+    ...(buffs.stay_hot ? { carryHot: Object.fromEntries((game?.teamA?.stats ?? []).filter(s => (s.hot ?? 0) > 0).map(s => [s.id, Math.min(2, s.hot)])) } : {}),
+    // Ice Bath: the copy played, which leaves the deck once the fatigue goes.
+    ...(buffs.ice_bath ? { iceBath: typeof buffs.ice_bath === 'string' ? buffs.ice_bath : 'ice_bath' } : {}),
   };
 }

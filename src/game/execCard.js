@@ -7,7 +7,7 @@ import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore,
 import { checkTerms } from './checkTerms.js';
 import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots, HACK_A } from './canPlay.js';
 import { lookupChart } from './cards.js';
-import { getStrat, baseId, isPlus, SCREEN_CARDS } from './strats.js';
+import { getStrat, baseId, isPlus, SCREEN_CARDS, CLIMB_GAME_CARDS } from './strats.js';
 
 /**
  * POINTS A CARD SCORES GO ON THE SCOREBOARD AND ON THE PLAYER'S LINE, together.
@@ -400,6 +400,34 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!g.pressArmed) g.pressArmed = {};
       g.pressArmed[dpOpp] = (g.pressArmed[dpOpp] || 0) + 1;
       addLog(g, teamKey, 'Desperation Press: their next top-tier roll gets re-rolled. The second result stands.');
+      break;
+    }
+
+    // THE CLIMB'S GAME-LONG CARDS (2026-10-19): a flag in g.buffs for the
+    // game, read where it matters (climbCheckParts, getFatigue, the run's
+    // resultFromGame); Pace and Space and Weight Room change the game's own
+    // copies of the players, so every reader sees the new number.
+    case 'let_it_fly': case 'pace_and_space': case 'bruise_brothers': case 'weight_room':
+    case 'conditioning': case 'shut_the_door': case 'stay_hot': case 'ice_bath': {
+      if (g.buffs?.[teamKey]?.[cardId]) return fail('Already in play this game');
+      const bump = (match, stat, n) => {
+        const seen = new Set();
+        for (const p of [...(myT.roster || []), ...(myT.starters || [])]) {
+          if (!p || seen.has(p) || !match(p)) continue;
+          seen.add(p);
+          p[stat] = (p[stat] || 0) + n;
+        }
+      };
+      let line = `${getStrat(cardId)?.name}: ${getStrat(cardId)?.desc}`;
+      if (cardId === 'weight_room') {
+        const who = myT.starters?.[opts.playerIdx];
+        if (opts.playerIdx == null || !who) return fail('Choose one of your players');
+        bump(p => p.id === who.id, 'power', 3);
+        line = `Weight Room: ${who.name} +3 Power for the rest of this game.`;
+      }
+      if (cardId === 'pace_and_space') bump(() => true, 'speed', 1);
+      g.buffs = { ...(g.buffs ?? {}), [teamKey]: { ...(g.buffs?.[teamKey] ?? {}), [cardId]: cardId === 'ice_bath' ? (opts.handId ?? 'ice_bath') : true } };
+      addLog(g, teamKey, line);
       break;
     }
 

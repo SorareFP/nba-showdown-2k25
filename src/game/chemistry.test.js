@@ -9,6 +9,7 @@ import { canPlayCard } from './canPlay.js';
 import { STRATS, STRAT_MAP, SCREEN_CARDS } from './strats.js';
 import { getStratsByRarity } from './rarity.js';
 import { stratOffer } from './modes/run.js';
+import { leanOf } from './modes/climbKits.js';
 import { climbRng } from './modes/climbMap.js';
 
 const mk = (id, over = {}) => ({
@@ -94,14 +95,23 @@ describe('Chemistry', () => {
     const run = { playbook: 'speed', deck: { catch_and_shoot: 2 } };
     const stop = { kind: 'game', floor: 2 };
     let seen = 0;
-    for (let i = 0; i < 60; i += 1) {
+    let chem = 0;
+    for (let i = 0; i < 120; i += 1) {
       const o = stratOffer(run, stop, climbRng(i, 'offers'), climbRng(i, 'climb-only'));
-      if (o.includes('chemistry')) { seen += 1; expect(o[2]).toBe('chemistry'); }
+      const own = o.filter(id => STRAT_MAP[id].climbOnly);
+      if (own.length) {
+        seen += 1;
+        expect(o[2]).toBe(own[0]);
+        // Your playbook's own, or one for any playbook: never Paint's or Defense's.
+        expect([null, 'speed']).toContain(leanOf(own[0]));
+      }
+      if (o.includes('chemistry')) chem += 1;
     }
-    expect(seen).toBeGreaterThan(5);
-    expect(seen).toBeLessThan(40);
+    expect(seen).toBeGreaterThan(20);
+    expect(seen).toBeLessThan(70);
+    expect(chem).toBeGreaterThan(0);
     const holding = { ...run, deck: { ...run.deck, chemistry: 1 } };
     for (let i = 0; i < 30; i += 1) expect(stratOffer(holding, stop, climbRng(i, 'offers'), climbRng(i, 'climb-only'))).not.toContain('chemistry');
-    expect(STRATS.filter(s => s.climbOnly).map(s => s.id)).toEqual(['chemistry']);
+    expect(STRATS.filter(s => s.climbOnly).length).toBe(9);
   });
 });

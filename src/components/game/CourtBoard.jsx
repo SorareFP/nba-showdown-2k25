@@ -1032,6 +1032,14 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
     opts.swapSlot1 = s1; opts.swapSlot2 = s2;
   }
 
+  // ── Weight Room (Climb-only): who gets +3 Power this game ─────────────────
+  if (cardId === 'weight_room') {
+    const idx = await pickFiltered(filterStarters(myT.starters, () => true), '🏋️ Weight Room — who gets +3 Power for the rest of this game?', teamKey, undefined, 'playerIdx',
+      p => `Power ${p.power} → ${p.power + 3}`);
+    if (idx === null) return null;
+    opts.playerIdx = idx;
+  }
+
   // ── Switch the Screen: which two attackers trade defenders ─────────────
   // THE DEFENCE CHOOSES (the user, 2026-10-19: it "automatically settles when
   // it should be a user decision on who switches"). With no pair named the

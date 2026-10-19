@@ -298,7 +298,31 @@ export const STRATS = [
   // screens every kit carries.
   { id:'chemistry',           name:'Chemistry',          phase:'matchup',  side:'off', copies:1, locked:false, color:'#7C3AED', rarity:'uncommon', climbOnly:true,
     desc:'Stays in play this game: each screen card you play gives your next scoring roll +1 more than the last: +1, then +2, then +3.' },
+  // THE FIRST WAVE BY PLAYBOOK (2026-10-19; the user: "Whichever makes sense,
+  // you don't have to ask"), from docs/plans/2026-10-19-the-climb-scaling-draft.md.
+  // Each lasts the game it is played in (g.buffs); Stay Hot and Ice Bath carry
+  // into the run (the user's own: "Cards carrying hot markers into next game
+  // could be great, or erasing fatigue after a game").
+  { id:'let_it_fly',          name:'Let It Fly',         phase:'matchup',  side:'off', copies:1, locked:false, color:'#0EA5E9', rarity:'uncommon', climbOnly:true,
+    desc:'Stays in play this game: your 3PT Shot Checks are +1.' },
+  { id:'pace_and_space',      name:'Pace and Space',     phase:'matchup',  side:'off', copies:1, locked:false, color:'#0284C7', rarity:'uncommon', climbOnly:true,
+    desc:'Stays in play this game: +1 Speed to every player of yours.' },
+  { id:'bruise_brothers',     name:'Bruise Brothers',    phase:'matchup',  side:'off', copies:1, locked:false, color:'#B45309', rarity:'uncommon', climbOnly:true,
+    desc:'Stays in play this game: your Paint Shot Checks are +1.' },
+  { id:'weight_room',         name:'Weight Room',        phase:'matchup',  side:'off', copies:1, locked:false, color:'#92400E', rarity:'uncommon', climbOnly:true,
+    desc:'Choose a player: +3 Power for the rest of this game.' },
+  { id:'conditioning',        name:'Conditioning',       phase:'matchup',  side:'def', copies:1, locked:false, color:'#15803D', rarity:'uncommon', climbOnly:true,
+    desc:'Your players\' fatigue costs them nothing this game.' },
+  { id:'shut_the_door',       name:'Shut the Door',      phase:'matchup',  side:'def', copies:1, locked:false, color:'#166534', rarity:'uncommon', climbOnly:true,
+    desc:'Stays in play this game: opposing Paint Shot Checks are −1.' },
+  { id:'stay_hot',            name:'Stay Hot',           phase:'matchup',  side:'off', copies:1, locked:false, color:'#DC2626', rarity:'uncommon', climbOnly:true,
+    desc:'Stays in play this game: your players carry the hot markers they finish it with into the next game (up to 2 each).' },
+  { id:'ice_bath',            name:'Ice Bath',           phase:'matchup',  side:'off', copies:1, locked:false, color:'#0891B2', rarity:'uncommon', climbOnly:true,
+    desc:'After this game, your players\' fatigue is cleared. Ice Bath then leaves your deck.' },
 ];
+
+/** The Climb-only cards that last a game (g.buffs): one rule in canPlay, one in execCard. */
+export const CLIMB_GAME_CARDS = Object.freeze(['let_it_fly', 'pace_and_space', 'bruise_brothers', 'weight_room', 'conditioning', 'shut_the_door', 'stay_hot', 'ice_bath']);
 
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));
 

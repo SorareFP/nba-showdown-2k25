@@ -1,7 +1,7 @@
 // NBA Showdown 2026 — Card playability rules
 // Returns { canPlay: bool, reason: string }
 
-import { CRUNCH_CARDS, TIMEOUT_RIDERS, baseId, isPlus } from './strats.js';
+import { CRUNCH_CARDS, TIMEOUT_RIDERS, baseId, isPlus, CLIMB_GAME_CARDS, getStrat } from './strats.js';
 import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, isOpeningSection, reboundTrackLead, challengeTarget, rerollOdds, answerEventKey } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
@@ -474,6 +474,15 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
   if (g.pendingChoice?.kind === 'blitz' && SHOT_REACTIONS.includes(cardId)) return no('Wait for the offense to pick the new shooter');
   if (cardId === 'blitz') return blitzVerdict(g, teamKey);
   if (SHOT_REACTIONS.includes(cardId) && cardId !== 'close_out') return shotReaction(g, teamKey, cardId, plus);
+
+  // THE CLIMB'S GAME-LONG CARDS (2026-10-19): set up in the matchup, on your turn, once each a game.
+  if (CLIMB_GAME_CARDS.includes(cardId)) {
+    if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
+    if (g.matchupTurn !== teamKey) return no("It's not your turn");
+    if (g.buffs?.[teamKey]?.[cardId]) return no('Already in play this game');
+    if (cardId === 'weight_room' && !(myT.starters || []).some(Boolean)) return no('Nobody on the floor');
+    return ok(getStrat(cardId)?.desc ?? 'For the rest of this game');
+  }
 
   // CHEMISTRY (Climb-only, 2026-10-19): set up in the matchup, on your turn, once a game.
   if (cardId === 'chemistry') {

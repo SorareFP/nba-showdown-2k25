@@ -1,8 +1,15 @@
-// THE CLIMB'S STARTER KITS — the fifteen strategy cards a run begins with.
+// THE CLIMB'S STARTER KITS — the sixteen strategy cards a run begins with.
 //
 // A shared CORE of seven (the switching cards every deck carries: placement
-// sets the matchups, and only these move a defender) plus eight SIGNATURE
-// cards of the playbook chosen at Training Camp. Drafted by hand from what
+// sets the matchups, and only these move a defender) plus nine SIGNATURE
+// cards of the playbook chosen at Training Camp, one of them a crunch card.
+//
+// THE KITS GREW, 2026-10-19 (approved by the user: "Let's try the kits"). The
+// user: "the base decks should have a clutch time card in each", and "There
+// are basically no shot checks in user decks to start" — the Defense kit had
+// none. Each kit gained a crunch card (all are rares; Unethical Hoops is a
+// promo and stays out), and Defense traded a Close Out and Help Defender for
+// two Transition Outlets. Coaches play these kits too. Drafted by hand from what
 // each card asks for (docs/plans/2026-10-18-the-climb.md, Task 1): the spec
 // meant to take them from the cards each fitted fifty in archetypeDecks.js
 // uses more than the other two, but those fifties differ by at most one copy
@@ -31,6 +38,7 @@ export const KITS = Object.freeze({
     ghost_screen: 1,
     close_out: 1,
     passing_lane: 1,
+    second_closer: 1,
   }),
   // The paint, the post and the glass.
   paint: Object.freeze({
@@ -41,16 +49,18 @@ export const KITS = Object.freeze({
     putback_specialist: 1,
     glass_cleaner: 1,
     box_out: 1,
+    ato_masterpiece: 1,
   }),
   // Contests, rim protection, wearing the other side down.
   defense: Object.freeze({
-    close_out: 2,
+    close_out: 1,
     drop_coverage: 1,
     smothering_defense: 1,
     pick_up_full_court: 1,
     rim_protector: 1,
-    help_defender: 1,
     cold_spell: 1,
+    transition_outlet: 2,
+    hack_a: 1,
   }),
 });
 
@@ -59,24 +69,36 @@ export const PLAYBOOKS = Object.freeze(['speed', 'paint', 'defense']);
 /** The playbook each fitted archetype (deckFit.js nearestArchetype) plays. */
 export const PLAYBOOK_OF_ARCHETYPE = Object.freeze({ fast: 'speed', big: 'paint', stoppy: 'defense' });
 
-/** A playbook's fifteen: the core plus its eight. */
+/** A playbook's sixteen: the core plus its nine. */
 export function kitDeck(playbook) {
   const deck = { ...CORE };
   for (const [id, n] of Object.entries(KITS[playbook] ?? {})) deck[id] = (deck[id] ?? 0) + n;
   return deck;
 }
 
-/** Every card in the core or a kit — the ones with a "+" in piece 1. */
+/**
+ * Every card in the core or a kit. Since the kits grew (2026-10-19) this is no
+ * longer the set with a "+": four kit cards have none yet, and Help Defender
+ * keeps its approved "+" outside the kits. What can be practised is what has
+ * a "+" (strats.js PLUS).
+ */
 export const KIT_CARD_IDS = new Set([
   ...Object.keys(CORE),
   ...PLAYBOOKS.flatMap(pb => Object.keys(KITS[pb])),
 ]);
 
+/** The size of every kit (they are all the same): the Act I coach's deck. */
+export const KIT_SIZE = Object.values(kitDeck(PLAYBOOKS[0])).reduce((t, n) => t + n, 0);
+
 // Where the text rule below files a card in the wrong kit: a defensive card
 // in the speed kit leans speed, and Close Out, in two kits, leans defense.
-// Burned on the Switch is a core switching card and leans nowhere.
+// Burned on the Switch is a core switching card and leans nowhere. Second
+// Closer (no lean by its text) and Transition Outlet (paint by its text) lean
+// to the kits they joined on 2026-10-19.
 const LEAN_OVERRIDES = Object.freeze({
   burned_switch: null,
+  second_closer: 'speed',
+  transition_outlet: 'defense',
   close_out: 'defense',
   passing_lane: 'speed',
   box_out: 'paint',

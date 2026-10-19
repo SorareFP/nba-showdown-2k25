@@ -23,12 +23,20 @@ versions); the effects are built once the user approves them.
 
 ## The kits
 
+**GREW 2026-10-19** (approved by the user: "Let's try the kits"). The user: "the
+base decks should have a clutch time card in each" and "There are basically no
+shot checks in user decks to start" (Defense had none). Each kit gained a crunch
+card (every crunch card is a rare; Unethical Hoops is a promo and stays out),
+and Defense traded a Close Out and Help Defender for two Transition Outlets.
+The four new kit cards have no "+" yet ("no upgrade yet" on the Practice
+screen); Help Defender keeps its approved "+" outside the kits.
+
 | | cards |
 |---|---|
 | **Core** (7) | High Screen & Roll x2, Switch the Screen, Veer Switch, Go Under, Overhelp, Burned on the Switch |
-| **Speed** (8) | Catch & Shoot x2, First Step, Drive the Lane, Spain Pick & Roll, Ghost Screen, Close Out, Passing Lane |
-| **Paint** (8) | Bully Ball x2, Power Move, Back to the Basket, Offensive Board Mastery, Putback Specialist, Glass Cleaner, Box Out |
-| **Defense** (8) | Close Out x2, Drop Coverage, Smothering Defense, Pick Up Full Court, Rim Protector, Help Defender, Cold Spell |
+| **Speed** (9) | Catch & Shoot x2, First Step, Drive the Lane, Spain Pick & Roll, Ghost Screen, Close Out, Passing Lane, **Second Closer** |
+| **Paint** (9) | Bully Ball x2, Power Move, Back to the Basket, Offensive Board Mastery, Putback Specialist, Glass Cleaner, Box Out, **ATO Masterpiece** |
+| **Defense** (9) | Close Out, Drop Coverage, Smothering Defense, Pick Up Full Court, Rim Protector, Cold Spell, **Transition Outlet x2**, **Hack-A-\_\_\_\_** |
 
 ## The "+" versions
 

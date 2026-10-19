@@ -4,13 +4,12 @@
 import { describe, it, expect } from 'vitest';
 import { SOURCES } from './players.js';
 import { PLUS } from '../game/strats.js';
-import { KIT_CARD_IDS } from '../game/modes/climbKits.js';
 
 describe('the strats-plus source', () => {
   it('holds every card with "+" text, named with the "+", on the strategy cards\' art', () => {
     const src = SOURCES['strats-plus'];
     expect(src).toMatchObject({ set: 'strats-plus', template: 'strat', artSet: 'strats', editable: false });
-    expect(new Set(src.players.map(p => p.id))).toEqual(KIT_CARD_IDS);
+    expect(new Set(src.players.map(p => p.id))).toEqual(new Set(Object.keys(PLUS)));   // the approved "+", not the kits (they grew 2026-10-19)
     for (const p of src.players) {
       expect(p.name, p.id).toMatch(/\+$/);
       expect(p.desc, p.id).toBe(PLUS[p.id].desc);

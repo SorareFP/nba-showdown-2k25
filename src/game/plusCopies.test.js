@@ -66,9 +66,14 @@ describe('the "+" helpers', () => {
     expect(getStratImagePath('green_light+')).toBe(getStratImagePath('green_light'));
   });
 
-  it('has "+" text for exactly the starter-kit cards, each one different from its card', () => {
-    expect(new Set(Object.keys(PLUS))).toEqual(KIT_CARD_IDS);
-    for (const id of KIT_CARD_IDS) {
+  // The twenty-six approved "+" (2026-10-19): every kit card but the four the
+  // kits gained that day, and Help Defender, which left the Defense kit.
+  it('has "+" text for the twenty-six approved cards, each one different from its card', () => {
+    const fresh = ['second_closer', 'ato_masterpiece', 'transition_outlet', 'hack_a'];
+    const want = new Set([...[...KIT_CARD_IDS].filter(id => !fresh.includes(id)), 'help_defender']);
+    expect(want.size).toBe(26);
+    expect(new Set(Object.keys(PLUS))).toEqual(want);
+    for (const id of want) {
       expect(PLUS[id].desc, id).toBeTruthy();
       expect(PLUS[id].desc, id).not.toBe(getStrat(id).desc);
       expect(getStrat(plusId(id)).desc, id).toBe(PLUS[id].desc);

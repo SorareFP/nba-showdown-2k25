@@ -50,19 +50,20 @@ describe('Training Camp', () => {
     expect(['speed', 'paint', 'defense']).toContain(r.camp.fits);
   });
 
-  it('builds the fifteen and applies each boon', () => {
+  it('builds the sixteen and applies each boon', () => {
     const base = chooseCamp(start(), { playbook: 'speed', boon: start().camp.boons[0] });
     expect(base.status).toBe('map');
-    expect(total(kitDeck('speed'))).toBe(15);
+    expect(total(kitDeck('speed'))).toBe(16);
     const forced = boon => {
       const r = start();
       return chooseCamp({ ...r, camp: { ...r.camp, boons: [boon, 'free_rest', 'cap_400'] } }, { playbook: 'speed', boon, cuts: ['catch_and_shoot', 'first_step'] });
     };
     expect(forced('cap_400').cap).toBe(2600);
-    expect(total(forced('cut_two').deck)).toBe(13);
+    expect(total(forced('cut_two').deck)).toBe(14);
     const rare = forced('rare_strat');
-    expect(total(rare.deck)).toBe(16);
-    expect(Object.keys(rare.deck).some(id => STRAT_MAP[id].rarity === 'rare')).toBe(true);
+    expect(total(rare.deck)).toBe(17);
+    // A rare beyond the kit's own crunch card (Second Closer, since 2026-10-19).
+    expect(Object.keys(rare.deck).some(id => STRAT_MAP[id].rarity === 'rare' && !(id in kitDeck('speed')))).toBe(true);
     expect(forced('free_rest').freeRest).toBe(1);
     expect(forced('extra_picks').extraPicks).toBe(3);
   });
@@ -91,10 +92,10 @@ describe('the map and the games', () => {
     expect(r.game.rosterB).toHaveLength(CLIMB.oppSize[0]);
     expect(capSal(r.game.rosterB.map(getCardByKey))).toBeLessThanOrEqual(CLIMB.floorCap(1));
     expect(total(r.game.deckB)).toBe(CLIMB.coachDeckSize(1));
-    // Act I's coach plays its own kit only: fifteen cards, no rares (2026-10-19).
-    expect(CLIMB.coachDeckSize(1)).toBe(15);
-    expect(CLIMB.coachDeckSize(3)).toBe(15);
-    expect(CLIMB.coachDeckSize(4)).toBeGreaterThan(15);
+    // Act I's coach plays its own kit only: sixteen cards, its one crunch rare (2026-10-19).
+    expect(CLIMB.coachDeckSize(1)).toBe(16);
+    expect(CLIMB.coachDeckSize(3)).toBe(16);
+    expect(CLIMB.coachDeckSize(4)).toBeGreaterThan(16);
     expect(Object.keys(r.game.deckB).every(id => KIT_CARD_IDS.has(id))).toBe(true);
   });
 
@@ -294,7 +295,7 @@ describe('a saved run', () => {
 
   it('shows the deck\'s size and lean', () => {
     const line = deckLine(camped());
-    expect(line).toMatchObject({ size: 15, playbook: 'speed' });
+    expect(line).toMatchObject({ size: 16, playbook: 'speed' });
     expect(line.leaning).toBe(Object.entries(kitDeck('speed')).filter(([id]) => leanOf(id) === 'speed').reduce((t, [, n]) => t + n, 0));
     expect(typeof line.fits).toBe('boolean');
   });

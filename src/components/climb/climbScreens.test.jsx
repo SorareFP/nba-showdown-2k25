@@ -88,7 +88,7 @@ describe('the reward screen', () => {
   it('shows the deck line, the three cards and Skip, and no player row when none is offered', () => {
     const r = won();
     const out = html(<RewardPicker run={r} onPickStrat={noop} onPickPlayer={noop} onSkip={noop} />);
-    expect(out).toContain('15 cards');
+    expect(out).toContain('16 cards');
     for (const id of r.offers.strats) expect(out).toContain(getStrat(id).name.replace(/&/g, '&amp;'));
     expect(out).toContain('Skip');
     expect(r.offers.players).toEqual([]);

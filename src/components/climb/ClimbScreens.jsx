@@ -14,7 +14,7 @@ import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossT
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops } from '../../game/modes/climbMap.js';
-import { PLAYBOOKS, KIT_CARD_IDS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
+import { PLAYBOOKS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
 import styles from './Climb.module.css';
 
 const dollars = n => `$${Math.round(n).toLocaleString('en-US')}`;
@@ -195,7 +195,7 @@ export function TrainingCamp({ run, onChoose, busy = false }) {
       <h2 className={styles.title}>Training Camp</h2>
       <h3 className={styles.h3}>Playbook</h3>
       <p className={styles.lede}>
-        Every deck carries the seven switching basics ({Object.entries(CORE).map(([id, n]) => `${getStrat(id)?.name}${n > 1 ? ` ×${n}` : ''}`).join(', ')}) and the eight cards of the playbook you choose.
+        Every deck carries the seven switching basics ({Object.entries(CORE).map(([id, n]) => `${getStrat(id)?.name}${n > 1 ? ` ×${n}` : ''}`).join(', ')}) and the nine cards of the playbook you choose, a crunch card among them.
       </p>
       {/* The playbooks as their cards (2026-10-19, "use the whole screen"): a
           face opens the whole card (ZoomImg stops the click), anywhere else
@@ -452,7 +452,7 @@ export function practiceTiles(run, showPlus) {
   }
   return [...by.values()]
     .map(t => {
-      const upgradeable = KIT_CARD_IDS.has(t.id) && Boolean(PLUS[t.id]);
+      const upgradeable = Boolean(PLUS[t.id]);
       return { ...t, upgradeable, canPractice: upgradeable && t.count > t.plusCount, faceId: showPlus && upgradeable ? plusId(t.id) : t.id };
     })
     .sort((a, b) => (getStrat(a.id)?.name ?? a.id).localeCompare(getStrat(b.id)?.name ?? b.id));

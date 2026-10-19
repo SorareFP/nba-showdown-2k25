@@ -12,9 +12,9 @@
 //                       ├─chooseStop(Rest Day)→ rest ─restDay→ map
 //                       └─retire→ retired
 import { generateMap, stopById, nextStops, potOf, climbRng, MAP_VERSION } from './climbMap.js';
-import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, KIT_CARD_IDS, kitDeck, leanOf, coachDeck } from './climbKits.js';
+import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, KIT_SIZE, kitDeck, leanOf, coachDeck } from './climbKits.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
-import { STRATS, STRAT_MAP, baseId, isPlus, plusId } from '../strats.js';
+import { STRATS, STRAT_MAP, PLUS, baseId, isPlus, plusId } from '../strats.js';
 import { ALL_CARDS, DORMANT_KEYS, cardKey, getCardByKey } from '../cardSets.js';
 import { isFeatCard } from '../recordBreakers.js';
 import { capOf } from '../coinRewards.js';
@@ -60,7 +60,7 @@ export const CLIMB = {
   bossCap: 4800,
   oppSize: [5, 5, 6, 6, 7, 7],
   bossSize: 8,
-  coachDeckSize: f => (f <= KIT_ONLY_FLOORS ? 15 : 15 + Math.round((f - 1) * 10 / 7)),
+  coachDeckSize: f => (f <= KIT_ONLY_FLOORS ? KIT_SIZE : 15 + Math.round((f - 1) * 10 / 7)),
   recovery: { base: 10, by10: 12, by20: 14 },
   rareChance: f => 0.05 + 0.2 * (f - 1) / 6,
   maxRoster: 10,
@@ -412,7 +412,7 @@ function applyRest(run, { choice, cardId }) {
   if (choice === 'rest') return { ...run, fatigue: {} };
   if (choice !== 'practice') fail('Rest or Practice');
   if (isPlus(cardId)) fail('That copy is already upgraded');
-  if (!KIT_CARD_IDS.has(cardId)) fail(`${STRAT_MAP[cardId]?.name ?? cardId}: no upgrade yet`);
+  if (!PLUS[cardId]) fail(`${STRAT_MAP[cardId]?.name ?? cardId}: no upgrade yet`);
   const deck = addCard(takeCard(run.deck, cardId), plusId(cardId));
   return { ...run, deck };
 }

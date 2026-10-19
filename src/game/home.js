@@ -30,7 +30,7 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 export const NEWS = [
   {
     id: 'climb-pays-as-you-go', date: '2026-10-19', title: 'The Climb pays as you go, and Act I is fairer',
-    body: "Every Climb game now pays a quarter of a regular game, win or lose: a quarter of finishing one and of the win bonus or a close loss's consolation, at your coach rung's rate. The pot is still yours on top when you retire or beat the boss. The first three floors are fairer too: those coaches play only their starting kit, like yours, with no rares, on cheaper rosters. The boss is as tough as ever. And on a Rest Day you can look at the map to see what comes next before you choose.",
+    body: "Every Climb game now pays a quarter of a regular game, win or lose: a quarter of finishing one and of the win bonus or a close loss's consolation, at your coach rung's rate. The pot is still yours on top when you retire or beat the boss. The first three floors are fairer too: those coaches play only their starting kit, like yours, with no rares, on cheaper rosters. The boss is as tough as ever. Every starting kit now carries a crunch card (Second Closer, ATO Masterpiece or Hack-A-____), and Defense trades a Close Out and Help Defender for two Transition Outlets, so it has shots of its own. And on a Rest Day you can look at the map to see what comes next before you choose.",
     to: 'climb', cta: 'The Climb',
   },
   {

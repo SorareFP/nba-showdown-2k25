@@ -24,10 +24,10 @@ import {
   pickStrat, pickPlayer, skipOffers, restDay, rosterCards, potPreview,
 } from '../../src/game/modes/run.js';
 import { climbRng, KIND_WEIGHTS, stopById } from '../../src/game/modes/climbMap.js';
-import { leanOf, KIT_CARD_IDS } from '../../src/game/modes/climbKits.js';
+import { leanOf } from '../../src/game/modes/climbKits.js';
 import { simulateGame } from '../../src/game/modes/simulate.js';
 import { fatigueForMinutes } from '../../src/game/engine.js';
-import { isPlus } from '../../src/game/strats.js';
+import { isPlus, PLUS } from '../../src/game/strats.js';
 import { CARDS } from '../../src/game/cards.js';
 import { cardKey } from '../../src/game/cardSets.js';
 import { capSal } from '../../src/game/teamRules.js';
@@ -114,7 +114,7 @@ for (let i = 0; i < RUNS; i += 1) {
     } else if (run.status === 'rest') {
       const starters = rosterCards(run).cards.sort((a, b) => b.salary - a.salary).slice(0, 5);
       const pain = starters.reduce((t, c) => t + fatigueForMinutes(run.fatigue[c.id] ?? 0), 0);
-      const practicable = Object.keys(run.deck).filter(id => !isPlus(id) && KIT_CARD_IDS.has(id));
+      const practicable = Object.keys(run.deck).filter(id => !isPlus(id) && PLUS[id]);
       // Rest before the boss always (floor 7), and whenever the five are worn.
       const beforeBoss = stopById(run.map, run.restAt)?.floor === 7;
       const wantRest = POLICY === 'rest' || beforeBoss || !practicable.length || (POLICY === 'mixed' && pain <= -12);

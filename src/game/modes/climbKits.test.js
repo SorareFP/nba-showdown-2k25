@@ -4,36 +4,49 @@
 // copy of any card, so "the cards each uses more than the others" picks
 // almost nothing.
 import { describe, it, expect } from 'vitest';
-import { CORE, KITS, PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, KIT_CARD_IDS } from './climbKits.js';
+import { CORE, KITS, PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, KIT_CARD_IDS, KIT_SIZE } from './climbKits.js';
 import { STRAT_MAP, CRUNCH_CARDS } from '../strats.js';
 import { ARCHETYPE_DECKS } from '../archetypeDecks.js';
 
 const total = deck => Object.values(deck).reduce((t, n) => t + n, 0);
 
 describe('the starter kits', () => {
-  it('are a fifteen-card deck for every playbook: the core plus the kit', () => {
+  it('are a sixteen-card deck for every playbook: the core plus the kit (2026-10-19)', () => {
     expect(PLAYBOOKS).toEqual(['speed', 'paint', 'defense']);
     expect(total(CORE)).toBe(7);
+    expect(KIT_SIZE).toBe(16);
     for (const pb of PLAYBOOKS) {
-      expect(total(KITS[pb]), pb).toBe(8);
+      expect(total(KITS[pb]), pb).toBe(9);
       const deck = kitDeck(pb);
-      expect(total(deck), pb).toBe(15);
+      expect(total(deck), pb).toBe(16);
       const want = { ...CORE };
       for (const [id, n] of Object.entries(KITS[pb])) want[id] = (want[id] ?? 0) + n;
       expect(deck).toEqual(want);
     }
   });
 
-  it('use only real commons and uncommons, no crunch cards, within each card\'s copy limit', () => {
+  // The user, 2026-10-19: "the base decks should have a clutch time card in
+  // each" — and every crunch card is a rare. No promo (Unethical Hoops).
+  it('carry one crunch card each (a rare), otherwise commons and uncommons, within copy limits', () => {
+    const crunch = { speed: 'second_closer', paint: 'ato_masterpiece', defense: 'hack_a' };
     for (const pb of PLAYBOOKS) {
+      const ids = Object.keys(kitDeck(pb));
+      expect(ids.filter(id => CRUNCH_CARDS.includes(id)), pb).toEqual([crunch[pb]]);
       for (const [id, n] of Object.entries(kitDeck(pb))) {
         const s = STRAT_MAP[id];
         expect(s, id).toBeTruthy();
-        expect(['common', 'uncommon'], id).toContain(s.rarity);
-        expect(CRUNCH_CARDS, id).not.toContain(id);
+        expect(s.promo, id).toBeFalsy();
+        expect(CRUNCH_CARDS.includes(id) ? ['rare'] : ['common', 'uncommon'], id).toContain(s.rarity);
         expect(n, id).toBeLessThanOrEqual(s.copies);
       }
     }
+  });
+
+  // "There are basically no shot checks in user decks to start": Defense had none.
+  it('give the Defense kit its shot checks: two Transition Outlets for a Close Out and Help Defender', () => {
+    expect(KITS.defense.transition_outlet).toBe(2);
+    expect(KITS.defense.close_out).toBe(1);
+    expect(KITS.defense.help_defender).toBeUndefined();
   });
 
   it('maps each fitted archetype to its playbook', () => {
@@ -52,8 +65,8 @@ describe('the starter kits', () => {
     expect(leanOf('no_such_card')).toBe(null);
   });
 
-  it('name the twenty-six cards that get a "+" in piece 1', () => {
-    expect(KIT_CARD_IDS.size).toBe(26);
+  it('name every core and kit card: twenty-nine since the kits grew', () => {
+    expect(KIT_CARD_IDS.size).toBe(29);
     for (const pb of PLAYBOOKS) for (const id of Object.keys(kitDeck(pb))) expect(KIT_CARD_IDS.has(id), id).toBe(true);
   });
 });

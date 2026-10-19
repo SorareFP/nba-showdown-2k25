@@ -39,7 +39,19 @@ import { TEAMS } from '../../cards/teams.js';
  *              a full-quarter starter carry 2 minutes from a close win; at 8,
  *              floors 2-6 were coin flips.
  */
-export const FLOOR_CAPS = [1600, 1650, 1700, 2100, 2200, 2450, 2700];
+/*
+ * ACT I EASED (the user, 2026-10-19: "losing in the second or third game so
+ * often is tough ... in Slay, the early opponents are fairly easy and you just
+ * need to be smart about how you navigate it"; the coaches had "ridiculous
+ * strategy cards that the players don't have access to"). Floors 1-3: the
+ * coach plays its own fifteen-card kit, nothing from its fifty (no rares, no
+ * legendaries), on a cheaper roster. 300 runs at Prince: floors 1-3 won
+ * 95/90/92% (were 83/71/72), 15% of runs over by floor 3 (were 46%), 54% reach
+ * the boss (31%), which still holds at ~15%: 8% win the act (6%).
+ */
+export const FLOOR_CAPS = [1300, 1350, 1450, 2100, 2200, 2450, 2700];
+/** The last floor whose coach plays only its kit. */
+export const KIT_ONLY_FLOORS = 3;
 export const CLIMB = {
   startCap: 2200,
   capPerFloor: 300,
@@ -48,7 +60,7 @@ export const CLIMB = {
   bossCap: 4800,
   oppSize: [5, 5, 6, 6, 7, 7],
   bossSize: 8,
-  coachDeckSize: f => 15 + Math.round((f - 1) * 10 / 7),
+  coachDeckSize: f => (f <= KIT_ONLY_FLOORS ? 15 : 15 + Math.round((f - 1) * 10 / 7)),
   recovery: { base: 10, by10: 12, by20: 14 },
   rareChance: f => 0.05 + 0.2 * (f - 1) / 6,
   maxRoster: 10,

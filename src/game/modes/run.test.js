@@ -91,6 +91,11 @@ describe('the map and the games', () => {
     expect(r.game.rosterB).toHaveLength(CLIMB.oppSize[0]);
     expect(capSal(r.game.rosterB.map(getCardByKey))).toBeLessThanOrEqual(CLIMB.floorCap(1));
     expect(total(r.game.deckB)).toBe(CLIMB.coachDeckSize(1));
+    // Act I's coach plays its own kit only: fifteen cards, no rares (2026-10-19).
+    expect(CLIMB.coachDeckSize(1)).toBe(15);
+    expect(CLIMB.coachDeckSize(3)).toBe(15);
+    expect(CLIMB.coachDeckSize(4)).toBeGreaterThan(15);
+    expect(Object.keys(r.game.deckB).every(id => KIT_CARD_IDS.has(id))).toBe(true);
   });
 
   it('hands the Play tab a Q4 game with the run\'s fatigue', () => {

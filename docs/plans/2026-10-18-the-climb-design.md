@@ -70,6 +70,13 @@ whole mode splits into four pieces, each its own spec and plan:
   them a third of the fights). Result: about 80% of Games and 70% of Rivalries
   won, a third of runs reach the boss, which simulated drafters beat 8-18% of
   the time depending on the franchise.
+- **Act I eased, 2026-10-19** (the user: "losing in the second or third game
+  so often is tough ... in Slay, the early opponents are fairly easy"; the
+  coaches carried rares and legendaries no player could have yet). Floors 1-3:
+  the coach plays its own fifteen-card kit only (KIT_ONLY_FLOORS), on caps of
+  **$1,300, 1,350, 1,450**. 300 runs at Prince: floors 1-3 won 95/90/92%
+  (were 83/71/72), 15% of runs over by floor 3 (46%), 54% reach the boss (31%),
+  the boss still ~15%.
 - **A game is one quarter:** it starts at Q4 section 1, so it is three
   sections with crunch time if within CRUNCH_MARGIN and overtime if tied. The
   rest is the normal engine; the coach plays at the run's rung.

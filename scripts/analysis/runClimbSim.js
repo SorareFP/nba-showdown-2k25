@@ -10,6 +10,8 @@
 //   boss               the boss's cap
 //   rest, rivalryW     the kind weights for floors 2-6 (game takes the rest)
 //   rec, rec10, rec20  minutes of recovery between games, by the win's margin
+//   decks              the coach's deck size floor by floor, the boss last: decks=15,15,15,19,20,21,22,25
+//   start              your starting cap (the five you bring)
 //
 // The coach plays both sides (simulateGame). "You" are a simple drafter: a
 // random five under $2,200, the playbook that fits, a random boon, a random
@@ -18,7 +20,7 @@
 // starters' summed penalty is -12 or worse, and practises a kit card otherwise; never retires. A
 // human should draft better, so the numbers here are a floor for you.
 import {
-  CLIMB, newRun, chooseCamp, openStops, chooseStop, presetFor, recordResult, resultFromGame,
+  CLIMB, CLIMB_FIVE, newRun, chooseCamp, openStops, chooseStop, presetFor, recordResult, resultFromGame,
   pickStrat, pickPlayer, skipOffers, restDay, rosterCards, potPreview,
 } from '../../src/game/modes/run.js';
 import { climbRng, KIND_WEIGHTS, stopById } from '../../src/game/modes/climbMap.js';
@@ -32,7 +34,7 @@ import { capSal } from '../../src/game/teamRules.js';
 
 const args = process.argv.slice(2);
 const positional = args.filter(a => !a.includes('='));
-const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : k === 'policy' ? v : Number(v)]));
+const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : k === 'policy' || k === 'decks' ? v : Number(v)]));
 // policy=rest       rest at every Rest Day
 // policy=practice   practise at every Rest Day but the one before the boss
 // (default)         rest when worn (-12 or worse) or before the boss, else practise
@@ -55,6 +57,13 @@ if (overrides.rest != null || overrides.rivalryW != null) {
   KIND_WEIGHTS.rivalry = overrides.rivalryW ?? KIND_WEIGHTS.rivalry;
   KIND_WEIGHTS.game = Math.max(0, 1 - KIND_WEIGHTS.rest - KIND_WEIGHTS.rivalry);
 }
+// decks=15,15,15,19,20,21,22,25: the coach's deck size floor by floor, the boss last
+if (overrides.decks) {
+  const sizes = String(overrides.decks).split(',').map(Number);
+  CLIMB.coachDeckSize = f => sizes[Math.min(sizes.length, f) - 1];
+}
+// start=2400: your starting cap (the five you bring)
+if (overrides.start != null) { CLIMB.startCap = overrides.start; CLIMB_FIVE.cap = overrides.start; }
 if (overrides.rec != null) CLIMB.recovery.base = overrides.rec;
 if (overrides.rec10 != null) CLIMB.recovery.by10 = overrides.rec10;
 if (overrides.rec20 != null) CLIMB.recovery.by20 = overrides.rec20;

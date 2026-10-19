@@ -1779,12 +1779,20 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
             // right, each coloured from my side of the table.
             const mine = oppPlayer ? calcAdv(p, oppPlayer, {}, 0) : null;   // I attack them
             const theirs = oppPlayer ? calcAdv(oppPlayer, p, {}, 0) : null; // they attack me
+            // ALL OF THE ROLL (2026-10-19): the shooter's fatigue and hot/cold
+            // markers ride on the matchup, as they will on the die.
+            const extras = (key, pl) => {
+              const ps = getPS(game, key, pl.id) || {};
+              return fatigueForMinutes(ps.minutes || 0) + ((ps.hot || 0) - (ps.cold || 0)) * 2;
+            };
+            const mineRoll = mine ? mine.rollBonus + extras(teamKey, p) : 0;
+            const theirsRoll = theirs ? theirs.rollBonus + extras(oppKey, oppPlayer) : 0;
             const good = '#4ADE80', bad = '#F87171', flat = '#94A3B8';
-            const mineCol = mine ? (mine.rollBonus > 0 ? good : mine.hasPenalty ? bad : flat) : flat;
+            const mineCol = mine ? (mineRoll > 0 ? good : mineRoll < 0 ? bad : flat) : flat;
             // Their roll bonus is bad for me, so the colours flip.
-            const theirsCol = theirs ? (theirs.rollBonus > 0 ? bad : theirs.hasPenalty ? good : flat) : flat;
+            const theirsCol = theirs ? (theirsRoll > 0 ? bad : theirsRoll < 0 ? good : flat) : flat;
             const sgn = n => (n > 0 ? '+' : '') + n;
-            const fmt = a => 'S' + sgn(a.rawSpeedDiff) + ' P' + sgn(a.rawPowerDiff) + ' · roll ' + sgn(a.rollBonus) + (a.hasPenalty ? ' ⚠' : '');
+            const fmt = (a, roll) => 'S' + sgn(a.rawSpeedDiff) + ' P' + sgn(a.rawPowerDiff) + ' · roll ' + sgn(roll) + (a.hasPenalty ? ' ⚠' : '');
             return (
               <button key={id} className={styles.placementOption}
                 onClick={() => { setOpen(false); onPlacePlayer(id); }}>
@@ -1792,8 +1800,8 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
                 <span className={styles.placementStats}>S{p.speed}·P{p.power}·D{p.defBoost||0}</span>
                 {mine && theirs && (
                   <span className={styles.placementBoth}>
-                    <span className={styles.placementAdv} style={{ color: mineCol }} title="What my player gets attacking them">⚔ {fmt(mine)}</span>
-                    <span className={styles.placementAdv} style={{ color: theirsCol }} title="Opposing player's roll bonus if guarded by this player">🛡 {fmt(theirs)}</span>
+                    <span className={styles.placementAdv} style={{ color: mineCol }} title="What my player's scoring roll gets attacking them (matchup, fatigue and hot/cold markers)">⚔ {fmt(mine, mineRoll)}</span>
+                    <span className={styles.placementAdv} style={{ color: theirsCol }} title="The opposing player's scoring roll if guarded by this player (matchup, fatigue and hot/cold markers)">🛡 {fmt(theirs, theirsRoll)}</span>
                   </span>
                 )}
               </button>
@@ -2017,7 +2025,21 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
   // Hover a second on the art or the name and the whole card comes up (CardPeek.jsx).
   const peek = useCardPeek(lb, 'player', player);
   const col=teamKey==='A'?'var(--orange)':'var(--blue)';
-  const rollCol=adv?(adv.rollBonus>0?'#4ADE80':adv.hasPenalty?'#F87171':'#94A3B8'):'#94A3B8';
+  // THE WHOLE ROLL (the user, 2026-10-19: "show what roll bonuses look like
+  // with ALL factors folded in, like hot markers, fatigue, etc"): the total is
+  // scoringRollModifier — doRoll's own sum of the matchup, card roll bonuses
+  // on this slot, fatigue and hot/cold markers — and the parts other than the
+  // matchup are spelled out under it.
+  const mod=adv?scoringRollModifier(game,teamKey,idx):null;
+  const rollTotal=mod?mod.total:(adv?.rollBonus??0);
+  const rollCol=adv?(rollTotal>0?'#4ADE80':rollTotal<0?'#F87171':'#94A3B8'):'#94A3B8';
+  const sgnR=n=>`${n>0?'+':''}${n}`;
+  const rollParts=mod?[
+    mod.card?`cards ${sgnR(mod.card)}`:null,
+    mod.markers?`${mod.markers>0?'hot':'cold'} ${sgnR(mod.markers)}`:null,
+    mod.fatigue?`tired ${sgnR(mod.fatigue)}`:null,
+  ].filter(Boolean):[];
+  const rollTitle=mod?`Scoring roll ${sgnR(mod.total)}: matchup ${sgnR(mod.matchup)}${rollParts.length?`, ${rollParts.join(', ')}`:''}`:undefined;
   const allStats=[...game.teamA.stats,...game.teamB.stats];
   const min=allStats.find(s=>s.id===player.id)?.minutes||0;
   const myHand=(teamKey==='A'?game.teamA:game.teamB).hand;
@@ -2076,8 +2098,11 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               {' '}
               <span style={{color:adv.powerAdv>0?'#4ADE80':adv.rawPowerDiff<0?'#F87171':'#94A3B8'}}>P{adv.rawPowerDiff>0?'+':''}{adv.rawPowerDiff}</span>
               {' '}
-              <span className={styles.advRoll} style={{color:rollCol}}>Roll {adv.rollBonus>0?'+':''}{adv.rollBonus}{adv.hasPenalty?' ⚠':''}</span>
+              <span className={styles.advRoll} style={{color:rollCol}} title={rollTitle} data-roll-total={rollTotal}>Roll {sgnR(rollTotal)}{adv.hasPenalty?' ⚠':''}</span>
             </div>
+            {rollParts.length>0&&(
+              <div className={styles.advParts} title={rollTitle}>matchup {sgnR(mod.matchup)} · {rollParts.join(' · ')}</div>
+            )}
           </div>
         )}
         {phase==='scoring'&&(

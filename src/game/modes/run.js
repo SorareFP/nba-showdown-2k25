@@ -68,6 +68,13 @@ export const CLIMB = {
   recovery: { base: 10, by10: 12, by20: 14 },
   rareChance: f => 0.05 + 0.2 * (f - 1) / 6,
   climbOnlyChance: 0.35,   // the reward's "anywhere" slot, while a Climb-only card is left (2026-10-19)
+  // THE DROPS (the user, 2026-10-19: "percent chances of games dropping
+  // certain thing. Like all games drop strategy cards, rivalries *could* drop
+  // a perk"). Strategy cards come with every win; a player offer and a perk
+  // are chances by the stop's kind, smoothed the way Slay the Spire's potions
+  // are: a miss raises the next chance by the step, a drop lowers it.
+  drops: { game: { player: 0.4, perk: 0.05 }, rivalry: { player: 0.75, perk: 0.5 } },
+  dropStep: { player: 0.1, perk: 0.05 },
   maxRoster: 10,
 };
 
@@ -176,6 +183,7 @@ export function newRun({ id, seed, rung, rosterKeys, now = Date.now(), mapVersio
     extraPicks: 0,
     freeRest: 0,
     perks: [],
+    dropOdds: { player: 0, perk: 0 },
     camp: { fits: fitsOf(cards), boons: shuffled(BOONS, rng).slice(0, 3) },
     game: null,
     offers: null,
@@ -360,13 +368,15 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {} }) 
   const gameWins = run.gameWins + (stop.kind === 'game' ? 1 : 0);
   const next = { ...run, at: stopId, cleared, cap: run.cap + CLIMB.capPerFloor, fatigue, gameWins, game: null };
   const rng = climbRng(run.seed, 'offers', stopId);
-  const players = stop.kind === 'rivalry' || (stop.kind === 'game' && gameWins % 2 === 0) ? playerOffer(next, rng) : [];
+  // The player offer is always drawn, so the cards' draw after it is the same
+  // as before the drops were chances; the drop roll has its own stream.
+  const playerPool = playerOffer(next, rng);
+  const perkPool = perkOffer(next, climbRng(run.seed, 'perks', stopId), rosterCards(next).cards.map(c => c.id));
+  const { players, perks, dropOdds } = rollDrops(run, stop, stopId, playerPool, perkPool);
   const picks = 1 + (run.extraPicks > 0 ? 1 : 0);
-  // A RIVALRY DROPS A PERK (the user, 2026-10-19: run-long things are "relics
-  // dropped by rivalries and bosses"): one of three, or skip.
-  const perks = stop.kind === 'rivalry' ? perkOffer(next, climbRng(run.seed, 'perks', stopId), rosterCards(next).cards.map(c => c.id)) : [];
   return {
     ...next,
+    dropOdds,
     status: 'reward',
     extraPicks: Math.max(0, run.extraPicks - 1),
     offers: { stopId, strats: stratOffer(next, stop, rng, climbRng(run.seed, 'climb-only', stopId)), picks, players, perks },
@@ -393,6 +403,27 @@ export function recordServerWin(run, stopId) {
 export function abandon(run) {
   if (run.status === 'lost' || run.banked) fail('That run is already over');
   return { ...run, status: 'lost', abandoned: true, game: null };
+}
+
+/**
+ * Did this win drop a player offer and a perk (CLIMB.drops)? A chance by the
+ * stop's kind plus the run's smoothing (`dropOdds`): each miss raises the next
+ * chance by CLIMB.dropStep, each drop lowers it, kept within -0.4..+0.6. An
+ * offer with nothing in it (a full roster, no room) counts as a miss.
+ */
+export function rollDrops(run, stop, stopId, playerPool, perkPool) {
+  const odds = { player: 0, perk: 0, ...(run.dropOdds ?? {}) };
+  const base = CLIMB.drops[stop.kind] ?? { player: 0, perk: 0 };
+  const roll = climbRng(run.seed, 'drops', stopId);
+  const hit = what => roll() < Math.min(1, Math.max(0, base[what] + odds[what]));
+  const gotPlayer = hit('player') && playerPool.length > 0;
+  const gotPerk = hit('perk') && perkPool.length > 0;
+  const nudge = (what, got) => Math.min(0.6, Math.max(-0.4, odds[what] + (got ? -1 : 1) * CLIMB.dropStep[what]));
+  return {
+    players: gotPlayer ? playerPool : [],
+    perks: gotPerk ? perkPool : [],
+    dropOdds: { player: nudge('player', gotPlayer), perk: nudge('perk', gotPerk) },
+  };
 }
 
 /** Back to the map once nothing is left to take. */

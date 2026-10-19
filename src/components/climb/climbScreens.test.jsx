@@ -204,3 +204,21 @@ describe('perks', () => {
 });
 import { rosterCards as rosterCardsFn } from '../../game/modes/run.js';
 function rosterCardsOf(run) { return rosterCardsFn(run).cards; }
+
+// WHO A REWARD IS FOR (2026-10-19: "it could glow a little and say 'matches (player)'").
+describe('a reward card one of your players fits', () => {
+  it('glows and names him; one nobody fits says so; one asking nothing says nothing', () => {
+    const base = won();
+    // A Speed 12-14 player joins (none of the five is one), and nobody reaches 15.
+    const fast = [...CARDS].find(c => c.speed >= 12 && c.speed < 15 && c.power < 15 && !/'/.test(c.name));
+    const r = { ...base, roster: [...base.roster, cardKey(fast)] };
+    expect(rosterCardsOf(r).some(c => c.speed >= 15 || c.power >= 15)).toBe(false);
+    const offered = { ...r, offers: { ...r.offers, strats: ['catch_and_shoot', 'lob_city', 'high_screen_roll'], picks: 1, players: [] } };
+    const out = html(<RewardPicker run={offered} onPickStrat={noop} onPickPlayer={noop} onSkip={noop} />);
+    expect(out).toContain('data-fits="true"');
+    expect(out).toContain(`✓ Matches ${fast.name}`);
+    expect(out).toContain('data-fits="false"');
+    expect(out).toContain('No player of yours fits it yet');
+    expect(out.match(/data-fits=/g).length).toBe(2);   // High Screen & Roll asks nothing fixed
+  });
+});

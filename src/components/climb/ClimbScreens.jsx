@@ -15,7 +15,8 @@ import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops } from '../../game/modes/climbMap.js';
 import { PLAYBOOKS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
-import { PERKS, boostsOf, perkProblem, practicable } from '../../game/modes/climbPerks.js';
+import { PERKS, boostsOf, boostedCard, perkProblem, practicable } from '../../game/modes/climbPerks.js';
+import { cardFit } from '../../game/cardFit.js';
 import styles from './Climb.module.css';
 
 const dollars = n => `$${Math.round(n).toLocaleString('en-US')}`;
@@ -58,14 +59,24 @@ function PlayerTile({ cardKey, card, children, selected = false, onClick = null,
   );
 }
 
-/** A strategy card tile with its text. */
-function StratTile({ id, children = null, onClick = null, disabled = false, note = null, big = false }) {
+// Who a reward card is for (cardFit.js; the user, 2026-10-19: "it could glow a
+// little and say 'matches (player)'"): the first two names, then a count.
+const fitNames = ps => {
+  const names = ps.map(p => p.name);
+  return names.length > 2 ? `${names.slice(0, 2).join(', ')} and ${names.length - 2} more` : names.join(' and ');
+};
+
+/** A strategy card tile with its text; `fit` (cardFit) marks who on your team it is for. */
+function StratTile({ id, children = null, onClick = null, disabled = false, note = null, big = false, fit = null }) {
   const s = getStrat(id);
   if (!s) return null;
   return (
-    <div className={`${styles.tile} ${styles.stratTile} ${big ? styles.offer : ''}`} data-rarity={s.rarity}>
+    <div className={`${styles.tile} ${styles.stratTile} ${big ? styles.offer : ''} ${fit?.ok ? styles.fits : ''}`} data-rarity={s.rarity} data-fits={fit ? String(fit.ok) : undefined}>
       <ZoomImg strat={id} className={styles.face} src={getStratThumbPath(id)} onError={fallbackTo(getStratImagePath(id))} alt={s.name} loading="lazy" />
       <div className={styles.tileName}>{s.name}</div>
+      {fit && (fit.ok
+        ? <div className={styles.fitLine}>✓ Matches {fitNames(fit.matches)}</div>
+        : <div className={styles.fitMiss}>{fit.matches.length ? `Not enough yet: only ${fitNames(fit.matches)}` : 'No player of yours fits it yet'}</div>)}
       <div className={styles.tileMeta}>{s.rarity}</div>
       <p className={styles.stratText}>{s.desc}</p>
       {note && <p className={styles.note}>{note}</p>}
@@ -452,6 +463,8 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
 export function RewardPicker({ run, onPickStrat, onPickPlayer, onPickPerk = () => {}, onSkip, busy = false }) {
   const o = run.offers ?? { strats: [], players: [], picks: 0 };
   const perks = o.perks ?? [];
+  // Your team as a game would deal it (perks on): what each card is checked against.
+  const team = (() => { const b = boostsOf(run); return rosterCards(run).cards.map(c => boostedCard(c, b[c.id])); })();
   const room = run.cap - capSal(rosterCards(run).cards);
   return (
     <div className={`${styles.screen} ${styles.offerScreen}`}>
@@ -461,7 +474,7 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onPickPerk = () =
         <>
           <h3 className={styles.h3}>Strategy cards <span className={styles.muted}>take {o.picks}, or skip</span></h3>
           <div className={styles.offers}>
-            {o.strats.map(id => <StratTile key={id} id={id} big onClick={() => onPickStrat(id)} disabled={busy}>Take</StratTile>)}
+            {o.strats.map(id => <StratTile key={id} id={id} big fit={cardFit(id, team)} onClick={() => onPickStrat(id)} disabled={busy}>Take</StratTile>)}
           </div>
           <div className={styles.actions}><button type="button" onClick={() => onSkip('strats')} disabled={busy}>Skip the cards</button></div>
         </>

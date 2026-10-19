@@ -155,6 +155,12 @@
 .offer .tileName { font-size: clamp(14px, 1.1vw, 20px); }
 .offer .tileMeta, .offer .stratText { font-size: clamp(12px, 0.8vw, 15px); }
 .offer .tileBtn { padding: 10px 12px; font-size: clamp(13px, 0.9vw, 16px); }
+/* A reward card one of your players fits (cardFit.js, 2026-10-19): a soft glow
+   and who it is for; one nobody fits says so, quietly. */
+.fits { border-color: var(--green) !important; box-shadow: 0 0 0 1px var(--green), 0 0 18px rgba(34, 197, 94, 0.35); }
+.fitLine { color: var(--green); font-weight: 700; font-size: clamp(12px, 0.85vw, 15px); }
+.fitMiss { color: var(--text-muted); font-size: clamp(12px, 0.8vw, 14px); font-style: italic; }
+
 /* A perk on offer (2026-10-19): no face, so the tile is the icon and the text. */
 .perk { align-items: stretch; gap: 8px; min-height: 0; }
 .perkIcon { font-size: clamp(40px, 3.6vw, 72px); line-height: 1; text-align: center; padding: 8px 0; }

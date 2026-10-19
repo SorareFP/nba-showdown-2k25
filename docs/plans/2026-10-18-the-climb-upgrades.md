@@ -69,6 +69,20 @@ screen); Help Defender keeps its approved "+" outside the kits.
 | Help Defender+ | An opponent yet to roll has a Speed or Power advantage of +4 or more: one of your other defenders rotates over. They get no positive matchup bonus this section — and the player your helper left gets +3 on their next roll. | An opponent yet to roll has a Speed or Power advantage of +3 or more: one of your other defenders rotates over. They get no positive matchup bonus this section. |
 | Cold Spell+ | Opponent rolls a natural 1 or 2 on their scoring roll: apply a cold marker + reduce their Rebound Track by 1. | Opponent rolls a natural 1 to 5 on their scoring roll: apply a cold marker + reduce their Rebound Track by 1. |
 
+## The four new kit cards: "+" drafts (2026-10-19, AWAITING APPROVAL)
+
+The kits gained these on 2026-10-19; until they are approved each says "no
+upgrade yet" on the Practice screen. Same rule as the second draft: a "+" is
+worth a Rest Day, so about half again to double the card's main number, or the
+card plus one rider the game already has. No new mechanics, no new targets.
+
+| Card | Today | "+" | Why |
+|---|---|---|---|
+| Second Closer+ | CRUNCH TIME: your team gains a second Clutch Possession this game, for a different player. | CRUNCH TIME: your team gains **two more** Clutch Possessions this game, each for a different player. | The main number doubled, 1 to 2. Clutch dice are the best rolls in the game, and it still needs Crunch Time. |
+| ATO Masterpiece+ | Play during your Timeout: coming out of the huddle, a chosen player takes a 3PT or Paint shot check at +2. | Play during your Timeout: coming out of the huddle, a chosen player takes a 3PT or Paint shot check at **+4**. | The main number doubled. One timeout a game keeps it a single shot. |
+| Hack-A-\_\_\_\_+ | CRUNCH TIME: foul a chosen opponent before they can go to work. They skip their scoring roll and shoot four free throws instead. | CRUNCH TIME: foul a chosen opponent before they can go to work. They skip their scoring roll and shoot **two** free throws instead. | What it gives back is halved: four free throws are about 3.4 points off a 14 line and 2.2 off a 19; two are about 1.7 and 1.1. |
+| Transition Outlet+ | Spend 1 Rebound and 1 Assist: a player with a Speed advantage announces a 3PT or Paint Shot Check at +2. Hit: +1 Assist. | Spend **1 Rebound**: a player with a Speed advantage announces a 3PT or Paint Shot Check at +2. Hit: +1 Assist. | A cheaper cost: no Assist, so a hit leaves you an Assist up. Defense is the kit with the fewest Assist sources. |
+
 ## What "leans to your playbook" means
 
 After a win, two of the three strategy cards offered come from your

@@ -7,7 +7,7 @@ import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool, STARTERS } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
-import { getStrat, baseId, plusId } from '../../game/strats.js';
+import { getStrat, baseId, plusId, isPlus } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick, forfeitNet, FORFEIT_CARDS } from '../../game/ai.js';
 import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName, submitSoloLineup, DEFAULT_ORDER, placingTeam } from '../../game/placement.js';
 import styles from './CourtBoard.module.css';
@@ -249,9 +249,12 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
  */
 // Exported for switchAnswers.test.jsx: every prompt a card raises goes through
 // `openModal`, so a test can count them and answer them.
-export async function buildOpts(game, teamKey, handCardId, base, openModal, ui = {}) {
-  // A "+" copy (The Climb) asks what its card asks.
+export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, ui = {}) {
+  // A "+" copy (The Climb) asks what its card asks, with its own thresholds
+  // (`plus`), and its pickers preview the "+" copy itself (the modal's card id).
   const cardId = baseId(handCardId);
+  const plus = isPlus(handCardId);
+  const openModal = m => openModalRaw({ ...m, cardId: m.cardId === cardId ? handCardId : m.cardId });
   const toast = ui.toast ?? (() => {});
   const ask = ui.ask ?? (async () => false);
   const opts = { ...base };
@@ -422,9 +425,9 @@ export async function buildOpts(game, teamKey, handCardId, base, openModal, ui =
           const dp = defenders[di];
           if (!dp) return false;
           const a = calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i);
-          return a.hasPenalty && p.speed >= 12;
+          return a.hasPenalty && p.speed >= (plus ? 11 : 12);
         });
-        label = 'Select Speed 12+ player with penalty (not yet rolled)';
+        label = `Select Speed ${plus ? 11 : 12}+ player with penalty (not yet rolled)`;
         break;
       }
       case 'spain_pick_roll': {
@@ -484,7 +487,7 @@ export async function buildOpts(game, teamKey, handCardId, base, openModal, ui =
       }
       case 'crash_and_kick': case 'extra_pass': case 'putback_specialist': {
         eligible = filterStarters(myT.starters, () => true);
-        label = cardId === 'putback_specialist' ? 'Who takes the paint check at +3?' : 'Who takes the shot check?';
+        label = cardId === 'putback_specialist' ? `Who takes the paint check at +${plus ? 5 : 3}?` : 'Who takes the shot check?';
         break;
       }
       case 'pick_and_pop': {
@@ -564,8 +567,8 @@ export async function buildOpts(game, teamKey, handCardId, base, openModal, ui =
         break;
       }
       case 'back_to_basket': {
-        eligible = filterStarters(myT.starters, (p) => p.power >= 13 && (p.paintBoost || 0) > 0);
-        label = 'Select Power 13+ player with Paint Bonus';
+        eligible = filterStarters(myT.starters, (p) => p.power >= (plus ? 12 : 13) && (p.paintBoost || 0) > 0);
+        label = `Select Power ${plus ? 12 : 13}+ player with Paint Bonus`;
         break;
       }
       case 'putback_dunk': {
@@ -611,8 +614,8 @@ export async function buildOpts(game, teamKey, handCardId, base, openModal, ui =
         break;
       }
       case 'catch_and_shoot': {
-        eligible = filterStarters(myT.starters, (p) => (p.speed || 0) >= 12);
-        label = 'Select player with Speed 12+';
+        eligible = filterStarters(myT.starters, (p) => (p.speed || 0) >= (plus ? 11 : 12));
+        label = `Select player with Speed ${plus ? 11 : 12}+`;
         break;
       }
       case 'green_light': {
@@ -755,8 +758,8 @@ export async function buildOpts(game, teamKey, handCardId, base, openModal, ui =
 
   // ── Help Defender: which mismatch, and who rotates over ────────────────
   if (cardId === 'help_defender') {
-    const targets = helpTargets(game, teamKey);
-    if (targets.length === 0) { toast('No opponent yet to roll is beating their defender by +4.'); return null; }
+    const targets = helpTargets(game, teamKey, plus ? 3 : 4);
+    if (targets.length === 0) { toast(`No opponent yet to roll is beating their defender by +${plus ? 3 : 4}.`); return null; }
     const t = targets.length === 1 ? 0 : await pickFiltered(
       targets.map(x => ({ p: x.off, origIdx: x.offSlot })),
       'Who is beating their defender?', teamKey, undefined, 'targetIdx',
@@ -935,9 +938,9 @@ export async function buildOpts(game, teamKey, handCardId, base, openModal, ui =
     const oppRolls = game.rollResults[oppKey] || [];
     const eligible = filterStarters(oppT.starters, (p, i) => {
       const r = oppRolls[i];
-      return r && (r.die === 1 || r.die === 2) && !r.coldSpellUsed;
+      return r && r.die >= 1 && r.die <= (plus ? 5 : 2) && !r.coldSpellUsed;
     });
-    if (eligible.length === 0) { toast('No opponent rolled a natural 1 or 2.'); return null; }
+    if (eligible.length === 0) { toast(`No opponent rolled a natural ${plus ? '1 to 5' : '1 or 2'}.`); return null; }
     const idx = await pickFiltered(eligible, 'Apply Cold Spell to:', oppKey,
       (p, oi) => `(rolled ${oppRolls[oi]?.die})`);
     if (idx === null) return null;
@@ -2289,7 +2292,7 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
         <span style={{color:hasCloseOut&&coPlay?.canPlay?'var(--green)':'#94A3B8',fontSize:12}}>Team {defKey}: {hasCloseOut&&coPlay?.canPlay?'⚡ Close Out available!':'no Close Out'}</span>
       </div>
       <div className={styles.pendingActions}>
-        {defLive&&hasCloseOut&&coPlay?.canPlay&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,closeOutId,{})}>{getStrat(closeOutId)?.name ?? 'Close Out'} −3</button>}
+        {defLive&&hasCloseOut&&coPlay?.canPlay&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,closeOutId,{})}>{getStrat(closeOutId)?.name ?? 'Close Out'} {isPlus(closeOutId) ? '−5' : '−3'}</button>}
         {canBlitz&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,blitzId,{})} title="The offense must give this check to another player on the floor">Blitz {offP?.name?.split(' ').slice(-1)[0]}</button>}
         {/* COACH'S CHALLENGE, WHILE THE NEXT CHECK WAITS. A card that takes
             several checks in a row (Green Light) announces the next one the

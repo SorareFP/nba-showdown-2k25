@@ -90,12 +90,17 @@ describe('playing a "+" copy', () => {
     }
   });
 
-  it('is legal exactly when its card is, for every card, in every phase', () => {
+  // Exact for a card with no "+" text; for one with "+" text (approved
+  // 2026-10-19), never LESS legal than its card — a "+" only loosens.
+  it('is legal whenever its card is, and exactly when for a card with no "+" yet', () => {
     for (const phase of ['matchup_strats', 'scoring']) {
       const g = board(phase);
       for (const s of STRATS) {
         g.teamA.hand = [s.id, plusId(s.id), 'close_out'];
-        expect(canPlayCard(g, 'A', plusId(s.id)).canPlay, `${phase} ${s.id}`).toBe(canPlayCard(g, 'A', s.id).canPlay);
+        const plain = canPlayCard(g, 'A', s.id).canPlay;
+        const plus = canPlayCard(g, 'A', plusId(s.id)).canPlay;
+        if (PLUS[s.id]) { if (plain) expect(plus, `${phase} ${s.id}`).toBe(true); }
+        else expect(plus, `${phase} ${s.id}`).toBe(plain);
       }
     }
   });

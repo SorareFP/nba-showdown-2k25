@@ -1,7 +1,7 @@
 // NBA Showdown 2026 — Card playability rules
 // Returns { canPlay: bool, reason: string }
 
-import { CRUNCH_CARDS, TIMEOUT_RIDERS, baseId } from './strats.js';
+import { CRUNCH_CARDS, TIMEOUT_RIDERS, baseId, isPlus } from './strats.js';
 import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, isOpeningSection, reboundTrackLead, challengeTarget, rerollOdds, answerEventKey } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
@@ -209,7 +209,8 @@ export function burstTargets(g, teamKey) {
   return out;
 }
 
-export function helpTargets(g, teamKey) {
+// `edge`: Help Defender+ (The Climb, 2026-10-19) answers a +3 edge, not +4.
+export function helpTargets(g, teamKey, edge = 4) {
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const myT = getTeam(g, teamKey);
   const oppT = getOpp(g, teamKey);
@@ -224,7 +225,7 @@ export function helpTargets(g, teamKey) {
     if (!def) return;
     const a = calcAdv(off, def, g.tempEff?.[oppKey] || {}, offSlot);
     const adv = Math.max(a.speedAdv, a.powerAdv);
-    if (adv >= 4) out.push({ offSlot, off, def, defIdx, adv });
+    if (adv >= edge) out.push({ offSlot, off, def, defIdx, adv });
   });
   return out;
 }
@@ -322,7 +323,7 @@ export function canAnswerCheck(g, check) {
   return hand.some(id => SHOT_REACTIONS.includes(baseId(id)) && canPlayCard(probe, defKey, id).canPlay);
 }
 
-function shotReaction(g, teamKey, cardId) {
+function shotReaction(g, teamKey, cardId, plus = false) {
   const psc = g.pendingShotCheck;
   if (!psc) return no('Wait for the opponent to announce a shot check');
   if (psc.teamKey === teamKey) return no('Can only answer the opponent\'s shot checks');
@@ -335,16 +336,16 @@ function shotReaction(g, teamKey, cardId) {
   switch (cardId) {
     case 'rim_protector':
       if (psc.type !== 'paint') return no('Rim Protector answers a Paint check');
-      if (!guard || (guard.power || 0) + (guard.defBoost || 0) < 15) return no('Your defender on the shooter needs Power + Defensive Bonus of 15');
-      return ok('−4 to the check; a miss is +2 REB');
+      if (!guard || (guard.power || 0) + (guard.defBoost || 0) < (plus ? 13 : 15)) return no(`Your defender on the shooter needs Power + Defensive Bonus of ${plus ? 13 : 15}`);
+      return ok(plus ? '−5 to the check; a miss is +3 REB' : '−4 to the check; a miss is +2 REB');
     case 'drop_coverage':
       if (psc.type !== 'paint') return no('Drop Coverage answers a Paint check');
       if (!guard || (guard.defBoost || 0) <= 0) return no('Your defender on the shooter needs a Defensive Bonus');
-      return ok('−2 to the check');
+      return ok(plus ? '−4 to the check' : '−2 to the check');
     case 'smothering_defense':
       if (!guard || (guard.defBoost || 0) <= 0) return no('Your defender on the shooter needs a Defensive Bonus');
-      if (!(psc.bonus > 0)) return no('That check carries no card bonus to smother');
-      return ok('Their card bonus −3 (min 0)');
+      if (!(psc.bonus > 0) && !plus) return no('That check carries no card bonus to smother');
+      return ok(plus ? 'No card bonus, and −1' : 'Their card bonus −3 (min 0)');
     case 'denial':
       if (myT.hand.filter(id => baseId(id) !== 'denial').length === 0) return no('No card to discard');
       return ok('They lose 2 AST, or the check is at −3');
@@ -382,8 +383,9 @@ export const reboundLead = reboundTrackLead;
  * rebound paint check is not a card and needs only the bank. Null when the
  * card may spend.
  */
-export function reboundLeadProblem(g, teamKey, cardId) {
-  const cost = REBOUND_CARD_COST[cardId];
+export function reboundLeadProblem(g, teamKey, cardId, plus = false) {
+  // Offensive Board Mastery+ spends two (The Climb, 2026-10-19).
+  const cost = plus && cardId === 'offensive_board' ? 2 : REBOUND_CARD_COST[cardId];
   if (!cost) return null;
   const lead = reboundLead(g, teamKey);
   if (lead >= cost) return null;
@@ -418,14 +420,16 @@ export const passAnswer = g => ({ ...g, answerPassed: answerEventKey(g) });
 export function canPlayCard(g, teamKey, handCardId) {
   // A "+" copy (The Climb) is judged as its card.
   const cardId = baseId(handCardId);
+  const plus = isPlus(handCardId);
   // The card's own conditions first (a wrong phase says so), then the lead.
-  const verdict = cardVerdict(g, teamKey, cardId);
+  const verdict = cardVerdict(g, teamKey, cardId, plus);
   if (!verdict.canPlay) return verdict;
-  const lead = reboundLeadProblem(g, teamKey, cardId);
+  const lead = reboundLeadProblem(g, teamKey, cardId, plus);
   return lead ? no(lead) : verdict;
 }
 
-function cardVerdict(g, teamKey, cardId) {
+// `plus`: the card is a "+" copy (The Climb, approved 2026-10-19).
+function cardVerdict(g, teamKey, cardId, plus = false) {
   const myT = getTeam(g, teamKey);
   const oppT = getOpp(g, teamKey);
   const phase = g.phase;
@@ -443,7 +447,7 @@ function cardVerdict(g, teamKey, cardId) {
   // (Smothering Defense reads "your defender on them") waits for the pick.
   if (g.pendingChoice?.kind === 'blitz' && SHOT_REACTIONS.includes(cardId)) return no('Wait for the offense to pick the new shooter');
   if (cardId === 'blitz') return blitzVerdict(g, teamKey);
-  if (SHOT_REACTIONS.includes(cardId) && cardId !== 'close_out') return shotReaction(g, teamKey, cardId);
+  if (SHOT_REACTIONS.includes(cardId) && cardId !== 'close_out') return shotReaction(g, teamKey, cardId, plus);
 
   // ── MATCHUP PHASE ──────────────────────────────────────────────────────
   if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper','pick_up_full_court',
@@ -534,6 +538,7 @@ function cardVerdict(g, teamKey, cardId) {
     if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
     if (!g.lastMatchupCard) return no('No switch card to react to');
     if (g.lastMatchupCard.teamKey === teamKey) return no('Cannot react to your own switch card');
+    if (g.lastMatchupCard.locked) return no('That screen is Uncancelable');
     return ok('Cancel opponent\'s screen card');
   }
 
@@ -542,15 +547,17 @@ function cardVerdict(g, teamKey, cardId) {
     if (g.pendingShotCheck.teamKey === teamKey) return no('Can only close out opponent\'s shot checks');
     if (g.pendingShotCheck.type !== '3pt') return no('Close Out answers a 3PT check');
     if (g.pendingShotCheck.reacted) return no('This shot check has already been answered');
-    return ok('Reduce this shot check by −3 (miss = cold marker)');
+    return ok(`Reduce this shot check by ${plus ? '−5' : '−3'} (miss = cold marker)`);
   }
 
   if (cardId === 'cold_spell') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
     const oppRolls = Object.values(g.rollResults[teamKey === 'A' ? 'B' : 'A'] || {});
-    const hasNat12 = oppRolls.some(r => r && (r.die === 1 || r.die === 2) && !r.coldSpellUsed);
-    if (!hasNat12) return no('Wait for opponent to roll a natural 1 or 2 on their scoring roll');
-    return ok('React to opponent\'s natural 1 or 2 scoring roll');
+    // "+": a natural 1 to 5.
+    const csTop = plus ? 5 : 2;
+    const hasNat12 = oppRolls.some(r => r && r.die >= 1 && r.die <= csTop && !r.coldSpellUsed);
+    if (!hasNat12) return no(`Wait for opponent to roll a natural ${plus ? '1 to 5' : '1 or 2'} on their scoring roll`);
+    return ok(`React to opponent's natural ${plus ? '1 to 5' : '1 or 2'} scoring roll`);
   }
 
   if (cardId === 'anticipate_pass') {
@@ -566,7 +573,8 @@ function cardVerdict(g, teamKey, cardId) {
     const sw = g.lastDefSwitch;
     if (!sw) return no('Opponent must play a defensive switch first (Veer Switch, Switch Everything)');
     if (sw.teamKey === teamKey) return no('Cannot react to your own switch');
-    return ok('Opponent switched their defence — pick a player for +3 roll');
+    if (sw.locked) return no('That switch is Uncancelable');
+    return ok(`Opponent switched their defence — pick a player for +${plus ? 5 : 3} roll`);
   }
 
   // ── CRUNCH TIME cards ───────────────────────────────────────────────────
@@ -634,8 +642,9 @@ function cardVerdict(g, teamKey, cardId) {
     const sw = g.lastDefSwitch;
     if (!sw) return no('Opponent must force a matchup switch first (Veer Switch, Switch Everything)');
     if (sw.teamKey === teamKey) return no('Cannot react to your own switch');
+    if (sw.locked) return no('That switch is Uncancelable');
     if (burnedSlots(g, sw).length === 0) return no('No defender got worse on that switch');
-    return ok('A weaker defender switched on — +3 to that player');
+    return ok(`A weaker defender switched on — +${plus ? 5 : 3} to that player`);
   }
 
   if (cardId === 'offensive_foul') {
@@ -739,11 +748,11 @@ function cardVerdict(g, teamKey, cardId) {
 
   if (cardId === 'offensive_board') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
-    if (myT.rebounds < 3) return no(`Need 3 rebounds (have ${myT.rebounds})`);
+    if (myT.rebounds < (plus ? 2 : 3)) return no(`Need ${plus ? 2 : 3} rebounds (have ${myT.rebounds})`);
     const rolled = (g.rollResults?.[teamKey] || []);
     const owed = g.tempEff?.[teamKey] || {};
     if (!myT.starters.some((p, i) => p && rolled[i] != null && typeof owed['extra_roll_' + i] !== 'number')) return no('Wait until one of your players has rolled');
-    return ok('A player who has rolled takes a second scoring roll at −2');
+    return ok(plus ? 'A player who has rolled takes a second scoring roll' : 'A player who has rolled takes a second scoring roll at −2');
   }
 
   if (cardId === 'rebound_tap_out') {
@@ -779,9 +788,9 @@ function cardVerdict(g, teamKey, cardId) {
         const dp = oppT.starters[defIdx];
         if (!dp) return false;
         const adv = calcAdv(p, dp, g.tempEff[teamKey], i);
-        return adv.hasPenalty && p.speed >= 12;
+        return adv.hasPenalty && p.speed >= (plus ? 11 : 12);
       });
-      if (!hasPenalty) return no('Need a Speed 12+ player with a roll penalty who hasn\'t rolled yet');
+      if (!hasPenalty) return no(`Need a Speed ${plus ? 11 : 12}+ player with a roll penalty who hasn't rolled yet`);
       return ok();
     }
 
@@ -837,10 +846,10 @@ function cardVerdict(g, teamKey, cardId) {
 
   if (cardId === 'help_defender') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
-    if (helpTargets(g, teamKey).length === 0) {
-      return no('No opponent yet to roll is beating their defender by +4');
+    if (helpTargets(g, teamKey, plus ? 3 : 4).length === 0) {
+      return no(`No opponent yet to roll is beating their defender by +${plus ? 3 : 4}`);
     }
-    return ok('Rotate a defender over — they lose their edge, someone else gets +3');
+    return ok(plus ? 'Rotate a defender over — they lose their edge' : 'Rotate a defender over — they lose their edge, someone else gets +3');
   }
   if (['find_the_open_man', 'putback_specialist', 'glass_cleaner', 'box_out', 'passing_lane', 'kick_out_three', 'rebound_and_push'].includes(cardId)) {
     // The glass cards (2026-09-23): the same missed-check window as Putback
@@ -1013,7 +1022,7 @@ function cardVerdict(g, teamKey, cardId) {
       if (fwdTargets(g, teamKey).length === 0) return no('Nobody left to shoot — every roll is in');
       return ok();
     case 'catch_and_shoot':
-      if (!myT.starters.some(p => p.speed >= 12)) return no('Need a player with Speed 12+ in lineup');
+      if (!myT.starters.some(p => p.speed >= (plus ? 11 : 12))) return no(`Need a player with Speed ${plus ? 11 : 12}+ in lineup`);
       return ok();
     case 'elevator_doors': {
       if (!myT.starters.some(p => (p.threePtBoost || 0) > 0)) return no('Need a player with a 3PT Bonus in lineup');
@@ -1033,10 +1042,10 @@ function cardVerdict(g, teamKey, cardId) {
     }
     case 'power_move':
       if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');
-      return ok('Give a player +2 Power (or +3 if Power advantage ≥5)');
+      return ok(plus ? 'Give a player +4 Power (or +6 if Power advantage ≥5)' : 'Give a player +2 Power (or +3 if Power advantage ≥5)');
     case 'first_step':
       if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');
-      return ok('Give a player +2 Speed (or +3 if Speed advantage ≥5)');
+      return ok(plus ? 'Give a player +4 Speed (or +6 if Speed advantage ≥5)' : 'Give a player +2 Speed (or +3 if Speed advantage ≥5)');
     case 'and_one': {
       const hasAdv3 = myT.starters.some((p, i) => {
         const defIdx = (g.offMatchups[teamKey] || [])[i] ?? i;
@@ -1074,7 +1083,7 @@ function cardVerdict(g, teamKey, cardId) {
       return ok();
     }
     case 'back_to_basket':
-      if (!myT.starters.some(p => p.power >= 13 && (p.paintBoost || 0) > 0)) return no('Need Power 13+ player with a Paint Bonus');
+      if (!myT.starters.some(p => p.power >= (plus ? 12 : 13) && (p.paintBoost || 0) > 0)) return no(`Need Power ${plus ? 12 : 13}+ player with a Paint Bonus`);
       return ok();
     case 'cross_court_dime':
       if (myT.assists < 3) return no(`Need 3 assists (have ${myT.assists})`);

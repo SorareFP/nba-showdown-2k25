@@ -307,15 +307,12 @@ export const plusId = id => (isPlus(id) ? id : `${id}${PLUS_MARK}`);
 
 /**
  * THE "+" TEXT of each upgradable card, by its plain id: the starter kits'
- * twenty-six (docs/plans/2026-10-18-the-climb-upgrades.md). SECOND DRAFT
- * (2026-10-19): each worth a Rest Day — the user: "there are seldom upgrades
- * that justify using a rest day on them instead of resting the players".
- *
- * DRAFTS (the user, 2026-10-19: "use the drafts for now"): they name the
- * Practice screen's faces (public/cards/strats-plus/) so the batch can be
- * judged on the cards. The EFFECTS are not built yet — a "+" copy still plays
- * as its plain card until the approved texts are wired into execCard.js
- * (`opts.plus`), and The Climb does not deploy before then.
+ * twenty-six (docs/plans/2026-10-18-the-climb-upgrades.md). APPROVED by the
+ * user 2026-10-19, after a second draft made each one worth a Rest Day ("there
+ * are seldom upgrades that justify using a rest day on them instead of resting
+ * the players"). The effects are execCard.js's `opts.plus` and canPlay.js's
+ * `plus`; the faces are public/cards/strats-plus/ — re-export them
+ * (npm run export:cards -- --set strats-plus) when a text here changes.
  */
 export const PLUS = {
   high_screen_roll: { desc: "Select two of your own players to swap their defenders, and gain 1 Assist. 🔒 Uncancelable." },

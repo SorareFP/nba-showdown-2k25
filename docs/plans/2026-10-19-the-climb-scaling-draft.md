@@ -47,6 +47,17 @@ Numbers are starting values for the simulated runs.
 | Defense | **Lockdown** | Stays in play this game: each opposing shot check you hold to a miss makes their next one −1 more (−1, −2, −3), until they hit. |
 | Defense | **Shut the Door** | Stays in play this game: opposing Paint Shot Checks are −1. |
 | Any | **Momentum** | Stays in play this game: your first scoring roll each section is +1, then +2, then +3. |
+| Any | **Stay Hot** | Stays in play this game: your players carry the hot markers they finish it with into the next game (up to 2 each). |
+| Any | **Ice Bath** | After this game, your players' fatigue is cleared. Ice Bath then leaves your deck. |
+
+The last two are the user's (2026-10-19: "Cards carrying hot markers into next
+game could be great, or erasing fatigue after a game"): a game's card whose
+payoff carries into the run, like Slay the Spire's Feed or a potion. Guardrails:
+Stay Hot stops at two markers a player so a streak does not snowball through
+the act, and Ice Bath is one use (it leaves the deck) so it never replaces
+choosing a Rest Day on the map. Both ride on what a game already hands the run:
+its end-of-game minutes become fatigue (resultFromGame), so its hot markers can
+travel the same way into the next game (newGame takes carried fatigue already).
 
 ## What Slay the Spire scales with
 

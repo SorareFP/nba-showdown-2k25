@@ -21,10 +21,11 @@
 // human should draft better, so the numbers here are a floor for you.
 import {
   CLIMB, CLIMB_FIVE, newRun, chooseCamp, openStops, chooseStop, presetFor, recordResult, resultFromGame,
-  pickStrat, pickPlayer, skipOffers, restDay, rosterCards, potPreview,
+  pickStrat, pickPlayer, pickPerk, skipOffers, restDay, rosterCards, potPreview,
 } from '../../src/game/modes/run.js';
 import { climbRng, KIND_WEIGHTS, stopById } from '../../src/game/modes/climbMap.js';
 import { leanOf } from '../../src/game/modes/climbKits.js';
+import { PERKS, practicable, perkProblem } from '../../src/game/modes/climbPerks.js';
 import { simulateGame } from '../../src/game/modes/simulate.js';
 import { fatigueForMinutes } from '../../src/game/engine.js';
 import { isPlus, PLUS } from '../../src/game/strats.js';
@@ -145,6 +146,14 @@ for (let i = 0; i < RUNS; i += 1) {
       if (run.status === 'reward' && run.offers?.players?.length) {
         const best = [...run.offers.players].sort((a, b) => (rosterCards({ roster: [b] }).cards[0]?.salary ?? 0) - (rosterCards({ roster: [a] }).cards[0]?.salary ?? 0))[0];
         run = pickPlayer(run, best);
+      }
+      // A Rivalry's perk: the first offered, on the priciest player (or Film Study's first card).
+      if (run.status === 'reward' && run.offers?.perks?.length) {
+        const id = run.offers.perks[0];
+        const target = PERKS[id].target === 'card'
+          ? practicable(run.deck)[0]
+          : [...rosterCards(run).cards].sort((a, b) => b.salary - a.salary).map(c => c.id).find(cid => !perkProblem(run, id, cid, rosterCards(run).cards.map(c => c.id)));
+        run = target ? pickPerk(run, id, target) : skipOffers(run, 'perks');
       }
       if (run.status === 'reward') run = skipOffers(run);
     } else {

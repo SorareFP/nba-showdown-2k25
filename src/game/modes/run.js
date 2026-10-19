@@ -13,6 +13,7 @@
 //                       └─retire→ retired
 import { generateMap, stopById, nextStops, potOf, climbRng, MAP_VERSION } from './climbMap.js';
 import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, KIT_SIZE, kitDeck, leanOf, coachDeck } from './climbKits.js';
+import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard } from './climbPerks.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
 import { STRATS, STRAT_MAP, PLUS, baseId, isPlus, plusId } from '../strats.js';
 import { ALL_CARDS, DORMANT_KEYS, cardKey, getCardByKey } from '../cardSets.js';
@@ -173,6 +174,7 @@ export function newRun({ id, seed, rung, rosterKeys, now = Date.now(), mapVersio
     gameWins: 0,
     extraPicks: 0,
     freeRest: 0,
+    perks: [],
     camp: { fits: fitsOf(cards), boons: shuffled(BOONS, rng).slice(0, 3) },
     game: null,
     offers: null,
@@ -277,7 +279,8 @@ export function presetFor(run) {
   if (run.status !== 'game' || !g) fail('No game to play');
   return {
     key: g.key,
-    rosterA: rosterCards(run).cards,
+    // A perk's boosts ride on copies of the cards (climbPerks.js, 2026-10-19).
+    rosterA: (() => { const b = boostsOf(run); return rosterCards(run).cards.map(c => boostedCard(c, b[c.id])); })(),
     rosterB: g.rosterB.map(k => getCardByKey(k)).filter(Boolean),
     deckA: { ...run.deck },
     deckB: { ...g.deckB },
@@ -351,11 +354,14 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {} }) 
   const rng = climbRng(run.seed, 'offers', stopId);
   const players = stop.kind === 'rivalry' || (stop.kind === 'game' && gameWins % 2 === 0) ? playerOffer(next, rng) : [];
   const picks = 1 + (run.extraPicks > 0 ? 1 : 0);
+  // A RIVALRY DROPS A PERK (the user, 2026-10-19: run-long things are "relics
+  // dropped by rivalries and bosses"): one of three, or skip.
+  const perks = stop.kind === 'rivalry' ? perkOffer(next, climbRng(run.seed, 'perks', stopId), rosterCards(next).cards.map(c => c.id)) : [];
   return {
     ...next,
     status: 'reward',
     extraPicks: Math.max(0, run.extraPicks - 1),
-    offers: { stopId, strats: stratOffer(next, stop, rng), picks, players },
+    offers: { stopId, strats: stratOffer(next, stop, rng), picks, players, perks },
   };
 }
 
@@ -382,9 +388,21 @@ export function abandon(run) {
 }
 
 /** Back to the map once nothing is left to take. */
-const settle = run => (run.offers && (run.offers.picks > 0 && run.offers.strats.length) || run.offers?.players?.length
+const settle = run => (run.offers && (run.offers.picks > 0 && run.offers.strats.length) || run.offers?.players?.length || run.offers?.perks?.length
   ? run
   : { ...run, status: 'map', offers: null });
+
+/**
+ * Take a perk (climbPerks.js). `target` is a player's id for a player perk,
+ * a card id in the deck for Film Study, which upgrades one copy at once.
+ */
+export function pickPerk(run, id, target) {
+  if (run.status !== 'reward' || !run.offers?.perks?.includes(id)) fail('That perk is not on offer');
+  const problem = perkProblem(run, id, target, rosterCards(run).cards.map(c => c.id));
+  if (problem) fail(problem);
+  const deck = PERKS[id].target === 'card' ? addCard(takeCard(run.deck, target), plusId(target)) : run.deck;
+  return settle({ ...run, deck, perks: [...(run.perks ?? []), { id, target }], offers: { ...run.offers, perks: [] } });
+}
 
 export function pickStrat(run, id) {
   if (run.status !== 'reward' || !run.offers?.strats.includes(id) || !(run.offers.picks > 0)) fail('That card is not on offer');
@@ -406,6 +424,7 @@ export function skipOffers(run, part = null) {
   if (run.status !== 'reward') fail('Nothing is on offer');
   if (part === 'strats') return settle({ ...run, offers: { ...run.offers, strats: [], picks: 0 } });
   if (part === 'players') return settle({ ...run, offers: { ...run.offers, players: [] } });
+  if (part === 'perks') return settle({ ...run, offers: { ...run.offers, perks: [] } });
   return { ...run, status: 'map', offers: null };
 }
 

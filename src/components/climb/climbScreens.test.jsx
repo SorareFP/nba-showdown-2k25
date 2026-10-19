@@ -183,3 +183,24 @@ describe('the map from a Rest Day', () => {
     expect(html(<RestDay run={r} onRest={noop} onPractice={noop} />)).not.toContain('data-view-map');
   });
 });
+
+// PERKS (2026-10-19): a Rivalry's prize on the reward screen, kept on the map.
+describe('perks', () => {
+  it('offers each perk with who or what takes it, and lists the run\'s perks on the map', () => {
+    const r = won();
+    const ids = rosterCardsOf(r);
+    const offered = { ...r, offers: { ...r.offers, perks: ['gym_rat', 'film_study'] } };
+    const out = html(<RewardPicker run={offered} onPickStrat={noop} onPickPlayer={noop} onPickPerk={noop} onSkip={noop} />);
+    expect(out).toContain('data-perk="gym_rat"');
+    expect(out).toContain('data-perk="film_study"');
+    expect(out).toContain('Skip the perk');
+    expect(out).toContain(`${ids[0].name} · Power ${ids[0].power}`);
+    expect(out).toContain('Catch &amp; Shoot');   // Film Study lists the deck's cards with a "+"
+    const withPerk = { ...r, status: 'map', offers: null, perks: [{ id: 'gym_rat', target: ids[0].id }] };
+    const map = html(<ClimbMap run={withPerk} onGo={noop} onRetire={noop} onFreeRest={noop} />);
+    expect(map).toContain('data-perks="true"');
+    expect(map).toContain('Gym Rat');
+  });
+});
+import { rosterCards as rosterCardsFn } from '../../game/modes/run.js';
+function rosterCardsOf(run) { return rosterCardsFn(run).cards; }

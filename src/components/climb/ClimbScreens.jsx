@@ -15,6 +15,7 @@ import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops } from '../../game/modes/climbMap.js';
 import { PLAYBOOKS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
+import { PERKS, boostsOf, perkProblem, practicable } from '../../game/modes/climbPerks.js';
 import styles from './Climb.module.css';
 
 const dollars = n => `$${Math.round(n).toLocaleString('en-US')}`;
@@ -70,6 +71,56 @@ function StratTile({ id, children = null, onClick = null, disabled = false, note
       {note && <p className={styles.note}>{note}</p>}
       {onClick && <button type="button" className={styles.tileBtn} onClick={onClick} disabled={disabled}>{children}</button>}
     </div>
+  );
+}
+
+// The number a perk moves, as the player stands now (his boosts included).
+const PERK_STAT_NAME = { power: 'Power', shotLine: 'Shot Line', threePtBoost: '3PT Bonus' };
+const perkNow = (card, stat, boost) => `${PERK_STAT_NAME[stat]} ${(card?.[stat] ?? 0) + (boost?.[stat] ?? 0)}`;
+
+/**
+ * A PERK ON OFFER (2026-10-19): what it does, who or what takes it, and Take.
+ * A player perk lists the players it can still move (PERK_CAP), with the
+ * number as it stands; Film Study lists the cards with a "+".
+ */
+function PerkTile({ run, id, onPick, busy }) {
+  const def = PERKS[id];
+  const { cards } = rosterCards(run);
+  const boosts = boostsOf(run);
+  const ids = cards.map(c => c.id);
+  const options = def.target === 'card'
+    ? practicable(run.deck).map(cid => ({ value: cid, label: getStrat(cid)?.name ?? cid }))
+    : cards.filter(c => !perkProblem(run, id, c.id, ids)).map(c => ({ value: c.id, label: `${c.name} · ${perkNow(c, def.stat, boosts[c.id])}` }));
+  const [target, setTarget] = useState(options[0]?.value ?? '');
+  return (
+    <div className={`${styles.tile} ${styles.offer} ${styles.perk}`} data-perk={id}>
+      <div className={styles.perkIcon} aria-hidden="true">{def.icon}</div>
+      <div className={styles.tileName}>{def.name}</div>
+      <p className={styles.stratText}>{def.text}</p>
+      <select className={styles.perkSelect} value={target} onChange={e => setTarget(e.target.value)} aria-label={def.target === 'card' ? 'Which card' : 'Which player'}>
+        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+      <button type="button" className={styles.tileBtn} disabled={busy || !target} onClick={() => onPick(id, target)}>Take</button>
+    </div>
+  );
+}
+
+/** The run's perks, for the map's side panel. */
+function PerkList({ run }) {
+  const perks = run.perks ?? [];
+  if (!perks.length) return null;
+  const { cards } = rosterCards(run);
+  return (
+    <>
+      <h3 className={styles.h3}>Perks</h3>
+      <ul className={styles.roster} data-perks="true">
+        {perks.map((p, i) => {
+          const def = PERKS[p.id];
+          const who = def?.target === 'card' ? getStrat(p.target)?.name : cards.find(c => c.id === p.target)?.name;
+          return <li key={`${p.id}-${i}`}><span>{def?.icon} {def?.name ?? p.id}</span><span className={styles.muted}>{who ?? ''}</span></li>;
+        })}
+      </ul>
+    </>
   );
 }
 
@@ -364,6 +415,7 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
         <div className={styles.stat}><span>Pot</span><strong><PotLine run={run} /></strong></div>
         <div className={styles.stat}><span>Cap</span><strong>{dollars(capSal(cards))} of {dollars(run.cap)}</strong></div>
         <DeckLine run={run} />
+        <PerkList run={run} />
         <h3 className={styles.h3}>Your team</h3>
         <ul className={styles.roster}>
           {cards.map(c => {
@@ -397,8 +449,9 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
  * screen (the user, 2026-10-19: "let's use the whole screen here"): big cards
  * across the middle, sized to the window, as StS shows a card reward.
  */
-export function RewardPicker({ run, onPickStrat, onPickPlayer, onSkip, busy = false }) {
+export function RewardPicker({ run, onPickStrat, onPickPlayer, onPickPerk = () => {}, onSkip, busy = false }) {
   const o = run.offers ?? { strats: [], players: [], picks: 0 };
+  const perks = o.perks ?? [];
   const room = run.cap - capSal(rosterCards(run).cards);
   return (
     <div className={`${styles.screen} ${styles.offerScreen}`}>
@@ -425,7 +478,16 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onSkip, busy = fa
           <div className={styles.actions}><button type="button" onClick={() => onSkip('players')} disabled={busy}>Skip the players</button></div>
         </>
       )}
-      {o.players.length > 0 && o.strats.length > 0 && o.picks > 0 && (
+      {perks.length > 0 && (
+        <>
+          <h3 className={styles.h3}>A perk <span className={styles.muted}>for the rest of the run · a Rivalry's prize</span></h3>
+          <div className={styles.offers} data-perk-offer="true">
+            {perks.map(id => <PerkTile key={id} run={run} id={id} onPick={onPickPerk} busy={busy} />)}
+          </div>
+          <div className={styles.actions}><button type="button" onClick={() => onSkip('perks')} disabled={busy}>Skip the perk</button></div>
+        </>
+      )}
+      {[o.players.length > 0, o.strats.length > 0 && o.picks > 0, perks.length > 0].filter(Boolean).length > 1 && (
         <div className={styles.actions}><button type="button" onClick={() => onSkip()} disabled={busy}>Skip everything</button></div>
       )}
     </div>

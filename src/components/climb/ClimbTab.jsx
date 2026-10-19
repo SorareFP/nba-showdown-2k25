@@ -16,7 +16,7 @@ import { getCardByKey } from '../../game/cardSets.js';
 import { climbStart, climbGame, climbBank } from '../../firebase/serverWrites.js';
 import { ownedPlayers, capSal } from '../../game/teamRules.js';
 import {
-  newRun, chooseCamp, chooseStop, presetFor, recordResult, pickStrat, pickPlayer, skipOffers,
+  newRun, chooseCamp, chooseStop, presetFor, recordResult, pickStrat, pickPlayer, pickPerk, skipOffers,
   restDay, takeFreeRest, retire, rosterCards, recordServerWin, abandon,
 } from '../../game/modes/run.js';
 import { stopById } from '../../game/modes/climbMap.js';
@@ -196,6 +196,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
           run={run} busy={busy}
           onPickStrat={id => act(() => commit(pickStrat(run, id)))}
           onPickPlayer={key => act(() => commit(pickPlayer(run, key)))}
+          onPickPerk={(id, target) => act(() => commit(pickPerk(run, id, target)))}
           onSkip={part => act(() => commit(skipOffers(run, part ?? null)))}
         />
       );

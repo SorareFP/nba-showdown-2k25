@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, placementRolls, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
-import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer } from '../../game/canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer, screenLockSlots } from '../../game/canPlay.js';
 import { checkNeedFor } from '../../game/checkTerms.js';
 import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
@@ -1048,8 +1048,16 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
     const nowInfo = oppT.starters.map((att, i) => (now[i]
       ? `guarded by ${myT.starters[oppMu[i]].name}  |  Spd ${now[i].speedAdv > 0 ? '+' : ''}${now[i].speedAdv} · Pwr ${now[i].powerAdv > 0 ? '+' : ''}${now[i].powerAdv} → their roll ${rollStr(now[i])}`
       : ''));
-    const s1 = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: '🛡 Switch the Screen — pick the first attacker to switch', extraInfo: nowInfo });
-    if (s1 === null) return null;
+    // An Uncancelable screen's pair keeps its defenders this section (screenLockSlots).
+    const stsLocked = screenLockSlots(game, oppKey);
+    const lockedInfo = nowInfo.map((line, i) => (stsLocked.includes(i) ? `🔒 their screen is Uncancelable — ${line}` : line));
+    let s1 = null;
+    for (;;) {
+      s1 = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: '🛡 Switch the Screen — pick the first attacker to switch', extraInfo: lockedInfo });
+      if (s1 === null) return null;
+      if (!stsLocked.includes(s1)) break;
+      toast(`${oppT.starters[s1]?.name}'s screen is Uncancelable this section`, { tone: 'error' });
+    }
     const delta = (n, o) => { const d = n - o; return d > 0 ? `▲${d}` : d < 0 ? `▼${-d}` : '—'; };
     const swapInfo = oppT.starters.map((att, i) => {
       if (i === s1) return '⬆ (selected above)';
@@ -1064,6 +1072,7 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
     for (;;) {
       s2 = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: `🛡 Pick the attacker to switch with ${oppT.starters[s1]?.name}`, extraInfo: swapInfo });
       if (s2 === null) return null;
+      if (stsLocked.includes(s2)) { toast(`${oppT.starters[s2]?.name}'s screen is Uncancelable this section`, { tone: 'error' }); continue; }
       if (s2 !== s1) break;
       toast('Pick a different player', { tone: 'error' });
     }

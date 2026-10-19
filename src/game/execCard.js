@@ -5,7 +5,7 @@
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass, noteCheckMiss } from './engine.js';
 import { checkTerms } from './checkTerms.js';
-import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
+import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat, baseId, isPlus, SCREEN_CARDS } from './strats.js';
 
@@ -742,15 +742,21 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // Overhelp or Burned on the Switch exactly as it answers the rare.
       const stsOpp = teamKey === 'A' ? 'B' : 'A';
       const stsMu = [...(g.offMatchups[stsOpp] || [0, 1, 2, 3, 4])];
+      // An Uncancelable screen's two attackers keep their defenders this section.
+      const stsLocked = screenLockSlots(g, stsOpp);
       let si = Number(opts.slots?.[0]);
       let sj = Number(opts.slots?.[1]);
+      if (stsLocked.includes(si) || stsLocked.includes(sj)) {
+        const who = oppT.starters[stsLocked.includes(si) ? si : sj]?.name;
+        return fail(`Their screen on ${who} is Uncancelable this section`);
+      }
       if (!(Number.isInteger(si) && Number.isInteger(sj) && si !== sj && stsMu[si] != null && stsMu[sj] != null)) {
         // No pair named: switch the two defenders losing worst, which is what
         // a coach calls the switch for.
         const ranked = (oppT.starters || [])
           .map((p, s) => {
             const d = myT.starters[stsMu[s]];
-            if (!p || !d) return null;
+            if (!p || !d || stsLocked.includes(s)) return null;
             const a = calcAdv(p, d, g.tempEff[stsOpp] || {}, s);
             return { s, gap: a.speedAdv + a.powerAdv };
           })
@@ -779,6 +785,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const oppTeam = teamKey === 'A' ? 'B' : 'A';
       if (opts.assignments && opts.assignments.length === 5) {
         const seBefore = [...(g.offMatchups[oppTeam] || [0, 1, 2, 3, 4])];
+        const seLocked = screenLockSlots(g, oppTeam).find(i => opts.assignments[i] !== seBefore[i]);
+        if (seLocked != null) return fail(`Their screen on ${oppT.starters[seLocked]?.name} is Uncancelable this section: he keeps his defender`);
         g.offMatchups[oppTeam] = [...opts.assignments];
         g.lastDefSwitch = recordDefSwitch(teamKey, 'switch_everything', seBefore, g.offMatchups[oppTeam]);
         addLog(g, teamKey, `Switch Everything: ${myT.name} reassigned their entire defense`);

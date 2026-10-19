@@ -381,3 +381,43 @@ describe('the crunch cards and Transition Outlet', () => {
     expect(canPlayCard(g2, 'A', plusId('transition_outlet')).canPlay).toBe(true);
   });
 });
+
+// HIGH SCREEN & ROLL+ REALLY IS UNCANCELABLE (the user, 2026-10-19: "Looks like
+// High Screen & Roll+ is cancelable after all" — the coach's Switch the Screen
+// swapped the same two defenders straight back). For the rest of the section
+// neither screened attacker can be switched again.
+import { screenLockSlots } from './canPlay.js';
+describe('an Uncancelable screen holds its pair for the section', () => {
+  const screenedPlus = () => {
+    const g = board('matchup_strats');
+    const r = play(g, 'A', 'high_screen_roll', true, { swapSlot1: 0, swapSlot2: 1 });
+    r.game.matchupTurn = 'B';
+    return r.game;
+  };
+  it('Switch the Screen cannot name either screened attacker, and its own pick skips them', () => {
+    const g = screenedPlus();
+    expect(screenLockSlots(g, 'A')).toEqual([0, 1]);
+    const named = play(g, 'B', 'switch_the_screen', false, { slots: [0, 1] });
+    expect(named.ok).toBe(false);
+    expect(named.msg).toMatch(/Uncancelable/);
+    const half = play(screenedPlus(), 'B', 'switch_the_screen', false, { slots: [1, 3] });
+    expect(half.ok).toBe(false);
+    const auto = play(screenedPlus(), 'B', 'switch_the_screen', false, {});
+    expect(auto.ok, auto.msg).toBe(true);
+    const mu = auto.game.offMatchups.A;
+    const before = screenedPlus().offMatchups.A;
+    expect([mu[0], mu[1]]).toEqual([before[0], before[1]]);
+  });
+
+  it('Switch Everything must leave the pair as it is; a plain screen locks nothing', () => {
+    const g = screenedPlus();
+    const mu = [...g.offMatchups.A];
+    const moves = [mu[1], mu[0], mu[2], mu[3], mu[4]];
+    const r = play(g, 'B', 'switch_everything', false, { assignments: moves });
+    expect(r.ok).toBe(false);
+    const keeps = [mu[0], mu[1], mu[3], mu[2], mu[4]];
+    expect(play(screenedPlus(), 'B', 'switch_everything', false, { assignments: keeps }).ok).toBe(true);
+    const plain = play(board('matchup_strats'), 'A', 'high_screen_roll', false, { swapSlot1: 0, swapSlot2: 1 });
+    expect(screenLockSlots(plain.game, 'A')).toEqual([]);
+  });
+});

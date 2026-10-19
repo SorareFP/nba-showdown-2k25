@@ -58,6 +58,21 @@ export function fwdTargets(g, teamKey) {
  * not hounded yet this section, as slot indexes. The record lives in the
  * hounded side's tempEff, which clears at the section's end.
  */
+/**
+ * THE SLOTS AN UNCANCELABLE SCREEN HOLDS (High Screen & Roll+). The user,
+ * 2026-10-19: "Looks like High Screen & Roll+ is cancelable after all" — the
+ * cancel cards were barred, but the coach's Switch the Screen swapped the same
+ * two attackers' defenders straight back. For the rest of the section the
+ * defence cannot switch either screened attacker again: Switch the Screen
+ * picks from the others, Switch Everything leaves those two as they are.
+ * `offenseKey` is the team that ran the screen.
+ */
+export function screenLockSlots(g, offenseKey) {
+  const lc = g?.lastMatchupCard;
+  if (!lc?.locked || lc.teamKey !== offenseKey) return [];
+  return [lc.opts?.swapSlot1, lc.opts?.swapSlot2].filter(i => Number.isInteger(i));
+}
+
 export function pickUpTargets(g, teamKey) {
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const had = new Set(g.tempEff?.[oppKey]?.houndedIds || []);
@@ -695,7 +710,10 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     // Everything, a rare — which left Overhelp and Burned on the Switch, both
     // offensive answers to a defensive switch, with almost nothing to answer
     // (the user, 2026-09-12).
-    if ((oppT.starters || []).filter(Boolean).length < 2) return no('Need two opposing players to switch between');
+    const lockedSts = screenLockSlots(g, teamKey === 'A' ? 'B' : 'A');
+    if ((oppT.starters || []).filter((p, i) => p && !lockedSts.includes(i)).length < 2) {
+      return no(lockedSts.length ? 'Their screen is Uncancelable: no two other players to switch' : 'Need two opposing players to switch between');
+    }
     return ok('Swap the defenders on two opposing players');
   }
 

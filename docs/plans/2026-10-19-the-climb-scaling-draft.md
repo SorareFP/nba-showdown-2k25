@@ -27,6 +27,27 @@ might be able to scale and how to pull those strings with Climb-only cards."
 Nothing here is built. Every card below is a draft for the strategy card
 approval rule; the numbers are starting values the simulated runs would set.
 
+## Next: one-game cards for each playbook (DRAFT, 2026-10-19)
+
+The user's examples were "negate all fatigue this game, +X power this game".
+Each playbook gets its own, like a Slay the Spire character's card pool, so a
+Speed run and a Paint run feel different. All are Climb-only, last the game
+they are played in, and use only what the game already has (no new currency).
+Numbers are starting values for the simulated runs.
+
+| Playbook | Card | Text |
+|---|---|---|
+| Speed | **Pace and Space** | Stays in play this game: +1 Speed to every player of yours. |
+| Speed | **Let It Fly** | Stays in play this game: your 3PT Shot Checks are +1. |
+| Speed | **Track Meet** | Stays in play this game: a player of yours with a Speed advantage of 4+ gets +2 to his scoring roll. |
+| Paint | **Weight Room** | Choose a player: +3 Power for the rest of this game. |
+| Paint | **Bruise Brothers** | Stays in play this game: your Paint Shot Checks are +1. |
+| Paint | **Glass Eaters** | Stays in play this game: the glass bonus (a rebound lead of 3+) is +3 instead of +2, on every paint check, not once a section. |
+| Defense | **Conditioning** | Your players' fatigue costs them nothing this game. |
+| Defense | **Lockdown** | Stays in play this game: each opposing shot check you hold to a miss makes their next one −1 more (−1, −2, −3), until they hit. |
+| Defense | **Shut the Door** | Stays in play this game: opposing Paint Shot Checks are −1. |
+| Any | **Momentum** | Stays in play this game: your first scoring roll each section is +1, then +2, then +3. |
+
 ## What Slay the Spire scales with
 
 Slay the Spire 1:

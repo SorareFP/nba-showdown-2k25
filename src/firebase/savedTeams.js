@@ -5,12 +5,15 @@ function teamsRef(uid) {
   return collection(db, 'users', uid, 'teams');
 }
 
-export async function saveTeam(uid, { name, players, salary, linkedDeckId = null }) {
+// `climb` (2026-10-19): a Climb five — five owned players under the Climb's
+// starting cap, saved ahead for The Climb's start screen.
+export async function saveTeam(uid, { name, players, salary, linkedDeckId = null, climb = false }) {
   return addDoc(teamsRef(uid), {
     name,
     players,
     salary,
     linkedDeckId,
+    ...(climb ? { climb: true } : {}),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });

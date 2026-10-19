@@ -10,7 +10,8 @@ import { capOf } from '../../game/coinRewards.js';
 import { getStrat, isPlus, plusId, baseId } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster } from '../../game/teamRules.js';
-import { CLIMB, openStops, deckLine, potPreview, rosterCards } from '../../game/modes/run.js';
+import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem } from '../../game/modes/run.js';
+import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById } from '../../game/modes/climbMap.js';
 import { PLAYBOOKS, KIT_CARD_IDS, kitDeck } from '../../game/modes/climbKits.js';
 import styles from './Climb.module.css';
@@ -89,9 +90,14 @@ function PotLine({ run }) {
 // ── Start ────────────────────────────────────────────────────────────────────
 
 /** Pick a rung and five of your players under the starting cap. */
-export function ClimbStart({ owned = [], onStart, busy = false }) {
+// `saved`: your saved teams; the Climb fives among them (made in My Teams,
+// or with "Save these five" here) fill the five in one tap (the user,
+// 2026-10-19). One that no longer works says why.
+export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null, busy = false }) {
   const [rung, setRung] = useState('prince');
   const [picked, setPicked] = useState([]);
+  const ownedKeys = useMemo(() => new Set(owned.map(o => o.key)), [owned]);
+  const fives = saved.filter(t => t.climb);
   const list = useMemo(() => [...owned].sort((a, b) => (b.card.salary ?? 0) - (a.card.salary ?? 0) || a.card.name.localeCompare(b.card.name)), [owned]);
   const cards = picked.map(k => list.find(o => o.key === k)?.card).filter(Boolean);
   const total = capSal(cards);
@@ -134,6 +140,24 @@ export function ClimbStart({ owned = [], onStart, busy = false }) {
           </button>
         ))}
       </div>
+      {fives.length > 0 && (
+        <>
+          <h3 className={styles.h3}>Your Climb fives <span className={styles.muted}>saved in My Teams</span></h3>
+          <div className={styles.fives}>
+            {fives.map(t => {
+              const problem = fiveProblem(t.players, ownedKeys);
+              const cards5 = (t.players ?? []).map(k => getCardByKey(k)).filter(Boolean);
+              return (
+                <button key={t.id} type="button" data-five={t.id} className={styles.five} disabled={Boolean(problem) || busy}
+                  onClick={() => setPicked(cards5.map(cardKey))} title={problem ?? `Bring ${t.name}`}>
+                  <strong>{t.name}</strong>
+                  <span>{problem ? problem : `${dollars(capSal(cards5))} · ${cards5.map(c => c.name.split(' ').slice(-1)[0]).join(', ')}`}</span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
       <h3 className={styles.h3}>Your five <span className={total > CLIMB.startCap ? styles.over : styles.muted}>{dollars(total)} of {dollars(CLIMB.startCap)} · {picked.length}/5</span></h3>
       {list.length === 0 && <p className={styles.muted}>Open your starter pack first: a climb starts with players you own.</p>}
       <div className={styles.grid}>
@@ -149,6 +173,7 @@ export function ClimbStart({ owned = [], onStart, busy = false }) {
       {hidden > 0 && <p className={styles.muted}>{hidden} more of your players {picked.length >= 5 ? 'wait for the next climb' : 'do not fit what is left of the cap'}.</p>}
       <div className={styles.actions}>
         <button type="button" className={styles.primary} disabled={!ready || busy} onClick={() => onStart({ rung, keys: picked })}>Start the climb</button>
+        {onSaveFive && <button type="button" disabled={!ready || busy} onClick={() => onSaveFive(picked)}>Save these five</button>}
       </div>
     </div>
   );

@@ -186,6 +186,18 @@ const climbDemoServer = {
   },
 };
 
+const CLIMB_DEMO_TEAMS = 'showdown.climb.demo.teams';
+const climbDemoTeams = {
+  async load() {
+    try { return JSON.parse(globalThis.localStorage?.getItem(CLIMB_DEMO_TEAMS) ?? '[]'); } catch { return []; }
+  },
+  async save(_uid, team) {
+    const all = await climbDemoTeams.load();
+    all.unshift({ id: `t${Date.now()}`, ...team });
+    try { globalThis.localStorage?.setItem(CLIMB_DEMO_TEAMS, JSON.stringify(all)); } catch { /* the sitting keeps it */ }
+  },
+};
+
 function ClimbDemo() {
   const [tab, setTab] = useState('climb');
   const [preset, setPreset] = useState(null);
@@ -213,6 +225,7 @@ function ClimbDemo() {
           collection={collection}
           store={climbDemoStore}
           server={climbDemoServer}
+          teams={climbDemoTeams}
           pendingResult={result}
           onResultConsumed={() => setResult(null)}
           onPlayFixture={fixture => { setPreset(fixture); setTab('play'); }}

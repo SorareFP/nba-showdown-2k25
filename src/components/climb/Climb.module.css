@@ -98,3 +98,9 @@
   .stop { min-width: 64px; }
   .stopCap { display: none; }
 }
+
+/* Saved Climb fives on the start screen (2026-10-19). */
+.fives { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.five { display: flex; flex-direction: column; gap: 2px; text-align: left; }
+.five span { font-size: 12px; color: var(--text-muted); }
+.five:disabled span { color: var(--orange-light); }

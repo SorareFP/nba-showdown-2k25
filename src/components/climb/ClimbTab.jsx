@@ -11,8 +11,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../firebase/AuthProvider.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import { saveRun, loadActiveRun } from '../../firebase/climb.js';
+import { loadTeams, saveTeam } from '../../firebase/savedTeams.js';
+import { getCardByKey } from '../../game/cardSets.js';
 import { climbStart, climbGame, climbBank } from '../../firebase/serverWrites.js';
-import { ownedPlayers } from '../../game/teamRules.js';
+import { ownedPlayers, capSal } from '../../game/teamRules.js';
 import {
   newRun, chooseCamp, chooseStop, presetFor, recordResult, pickStrat, pickPlayer, skipOffers,
   restDay, takeFreeRest, retire, rosterCards, recordServerWin, abandon,
@@ -34,11 +36,14 @@ export async function oneAtATime(gate, fn) {
 
 export const FIREBASE_STORE = { loadActive: loadActiveRun, save: saveRun };
 export const FIREBASE_SERVER = { start: climbStart, openGame: climbGame, bank: climbBank };
+/** Saved teams: the Climb fives among them fill the start screen (2026-10-19). */
+export const FIREBASE_TEAMS = { load: loadTeams, save: saveTeam };
 
-export default function ClimbTab({ collection = null, pendingResult = null, onResultConsumed, onPlayFixture, store = FIREBASE_STORE, server = FIREBASE_SERVER }) {
+export default function ClimbTab({ collection = null, pendingResult = null, onResultConsumed, onPlayFixture, store = FIREBASE_STORE, server = FIREBASE_SERVER, teams = FIREBASE_TEAMS }) {
   const { user } = useAuth();
   const uid = user?.uid ?? null;
-  const { ask, toast } = useDialogs();
+  const { ask, toast, askText } = useDialogs();
+  const [saved, setSaved] = useState([]);
   const [run, setRun] = useState(undefined);
   const [busy, setBusy] = useState(false);
   const gate = useRef(false);
@@ -73,6 +78,24 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   }, [pendingResult, run, onResultConsumed, commit]);
 
   const owned = useMemo(() => ownedPlayers(collection), [collection]);
+
+  // YOUR CLIMB FIVES, for the start screen. A failed read just shows none.
+  const loadSaved = useCallback(() => {
+    if (needsAccount) return;
+    Promise.resolve(teams.load(uid)).then(t => setSaved(Array.isArray(t) ? t : [])).catch(() => setSaved([]));
+  }, [teams, uid, needsAccount]);
+  useEffect(() => { if (run === null) loadSaved(); }, [run, loadSaved]);
+
+  const saveFive = async keys => {
+    const name = await askText({ title: 'Name this Climb five', placeholder: 'Bench Mob', confirmLabel: 'Save five' });
+    if (!name) return;
+    await act(async () => {
+      const salary = capSal(keys.map(k => getCardByKey(k)).filter(Boolean));
+      await teams.save(uid, { name, players: keys, salary, climb: true });
+      toast(`Saved “${name}” to My Teams.`, { tone: 'success' });
+      loadSaved();
+    });
+  };
 
   const start = ({ rung, keys }) => act(async () => {
     const { runId, seed, mapVersion } = await server.start(uid, { rung });
@@ -129,7 +152,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
 
   if (needsAccount) return <div className={styles.screen}><p className={styles.lede}>Sign in to climb: a run starts with players you own.</p></div>;
   if (run === undefined) return <div className={styles.screen}><p className={styles.muted}>Loading your climb…</p></div>;
-  if (!run) return <ClimbStart owned={owned} onStart={start} busy={busy} />;
+  if (!run) return <ClimbStart owned={owned} saved={saved} onStart={start} onSaveFive={saveFive} busy={busy} />;
 
   switch (run.status) {
     case 'camp':

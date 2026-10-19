@@ -20,13 +20,20 @@ import { useAuth } from '../firebase/AuthProvider.jsx';
 import { saveTeam, updateTeam } from '../firebase/savedTeams.js';
 import { CARD_MAP } from '../game/cards.js';
 import { getPlayerRarity, RARITY_CONFIG } from '../game/rarity.js';
+import { CLIMB_FIVE } from '../game/modes/run.js';
 import { CAP, MAX, MIN_TO_PLAY, capSal, ownedPlayers, playerOnRoster, doubledPlayers, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
 import PoolFilters from './PoolFilters.jsx';
 import PlayerCard from './PlayerCard.jsx';
 import { useLightbox } from './CardLightbox.jsx';
 import styles from './TeamBuilderTab.module.css';
 
-export default function TeamEditor({ team, collection, onSaved, onCancel }) {
+// `limits` (2026-10-19): a Climb five is this editor with The Climb's cap and
+// size (run.js CLIMB_FIVE: $2,200, exactly five), saved with the Climb mark.
+// Editing a saved Climb five brings its limits with it.
+export default function TeamEditor({ team, collection, onSaved, onCancel, limits = null }) {
+  const climb = Boolean(limits) || Boolean(team?.climb);
+  const capLimit = climb ? (limits?.cap ?? CLIMB_FIVE.cap) : CAP;
+  const maxLimit = climb ? (limits?.size ?? CLIMB_FIVE.size) : MAX;
   const { user } = useAuth();
   const { open } = useLightbox();
 
@@ -58,16 +65,16 @@ export default function TeamEditor({ team, collection, onSaved, onCancel }) {
   }, [owned, filters]);
 
   const sal = capSal(roster);
-  const over = sal > CAP;
-  const pct = Math.min(100, (sal / CAP) * 100);
+  const over = sal > capLimit;
+  const pct = Math.min(100, (sal / capLimit) * 100);
 
   const add = card => {
     setError(null);
     if (inRoster(card)) return;
     // One card a player: the Team Builder's rule, now here too (2026-10-07).
     if (playerOnRoster(roster, card)) return setError(`${card.name} is already on this team — one card a player.`);
-    if (roster.length >= MAX) return setError(`Team full (max ${MAX})`);
-    if (sal + card.salary > CAP) return setError(`Over the salary cap ($${CAP})`);
+    if (roster.length >= maxLimit) return setError(climb ? `A Climb five is five players` : `Team full (max ${maxLimit})`);
+    if (sal + card.salary > capLimit) return setError(`Over the ${climb ? "Climb's " : ''}salary cap ($${capLimit})`);
     setRoster([...roster, card]);
   };
   const remove = card => setRoster(roster.filter(c => c !== card));
@@ -76,14 +83,15 @@ export default function TeamEditor({ team, collection, onSaved, onCancel }) {
   // again until one of them goes.
   const twice = doubledPlayers(roster);
   const canSave =
-    !saving && name.trim().length > 0 && roster.length > 0 && !over && unowned.length === 0 && twice.length === 0;
+    !saving && name.trim().length > 0 && roster.length > 0 && !over && unowned.length === 0 && twice.length === 0
+    && (!climb || roster.length === maxLimit);
 
   const handleSave = async () => {
     if (!canSave) return;
     setSaving(true);
     setError(null);
     try {
-      const data = { name: name.trim(), players: roster.map(keyOf), salary: sal };
+      const data = { name: name.trim(), players: roster.map(keyOf), salary: sal, ...(climb ? { climb: true } : {}) };
       if (team?.id) await updateTeam(user.uid, team.id, data);
       else await saveTeam(user.uid, data);
       onSaved?.();
@@ -109,7 +117,7 @@ export default function TeamEditor({ team, collection, onSaved, onCancel }) {
             />
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <span className={styles.salInfo} style={{ color: over ? 'var(--red)' : 'var(--text-muted)' }}>
-                ${sal}/{CAP} · {roster.length}/{MAX}
+                ${sal}/{capLimit} · {roster.length}/{maxLimit}
               </span>
               <button className={styles.saveBtn} onClick={handleSave} disabled={!canSave} title="Save team">
                 {saving ? '…' : '💾'}
@@ -121,7 +129,10 @@ export default function TeamEditor({ team, collection, onSaved, onCancel }) {
             <div className={styles.capFill} style={{ width: pct + '%', background: over ? 'var(--red)' : 'var(--orange)' }} />
           </div>
 
-          {roster.length < MIN_TO_PLAY && (
+          {climb && roster.length < maxLimit && (
+            <div className={styles.empty}>{`${maxLimit - roster.length} more for a Climb five`} · at most ${capLimit.toLocaleString('en-US')}</div>
+          )}
+          {!climb && roster.length < MIN_TO_PLAY && (
             <div className={styles.empty}>
               {roster.length === 0
                 ? 'Add players from your collection below'

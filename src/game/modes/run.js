@@ -109,14 +109,39 @@ export function rosterCards(run) {
 const fitsOf = cards => PLAYBOOK_OF_ARCHETYPE[nearestArchetype(cards)?.id] ?? PLAYBOOKS[0];
 
 /** A new run: five owned players under the starting cap, at a rung. Opens on Training Camp. */
-export function newRun({ id, seed, rung, rosterKeys, now = Date.now(), mapVersion = MAP_VERSION }) {
+/**
+ * A CLIMB FIVE — what a run starts with, and what My Teams saves ahead (the
+ * user, 2026-10-19: "we definitely need to be able to pre-make eligible
+ * lineups").
+ */
+export const CLIMB_FIVE = { cap: CLIMB.startCap, size: 5 };
+
+/**
+ * Why these keys cannot start a climb, or null when they can: five players,
+ * every card still in the game and (given `ownedKeys`) still yours, one card a
+ * player, at most the starting cap. One rule for the editor, the start screen
+ * and newRun.
+ */
+export function fiveProblem(rosterKeys, ownedKeys = null) {
   const keys = rosterKeys ?? [];
-  if (keys.length !== 5) fail('A climb starts with five players');
+  if (keys.length !== CLIMB_FIVE.size) return 'A climb starts with five players';
   const cards = keys.map(k => getCardByKey(k));
-  if (cards.some(c => !c)) fail('One of those cards no longer exists');
-  if (new Set(cards.map(c => c.id)).size !== 5) fail('One card a player');
+  const gone = keys.find((k, i) => !cards[i]);
+  if (gone) return `${gone.split(':').pop().replace(/_/g, ' ')} no longer exists`;
+  if (ownedKeys) {
+    const lost = cards.find(c => !ownedKeys.has(cardKey(c)));
+    if (lost) return `You no longer own ${lost.name}`;
+  }
+  if (new Set(cards.map(c => c.id)).size !== cards.length) return 'One card a player';
   const sal = capSal(cards);
-  if (sal > CLIMB.startCap) fail(`Those five cost ${dollars(sal)}; the starting cap is ${dollars(CLIMB.startCap)}`);
+  if (sal > CLIMB_FIVE.cap) return `${dollars(sal)}, over the ${dollars(CLIMB_FIVE.cap)} cap`;
+  return null;
+}
+
+export function newRun({ id, seed, rung, rosterKeys, now = Date.now(), mapVersion = MAP_VERSION }) {
+  const problem = fiveProblem(rosterKeys);
+  if (problem) fail(problem);
+  const cards = rosterKeys.map(k => getCardByKey(k));
   const rng = climbRng(seed, 'camp');
   return {
     id, seed, rung, createdAt: now, mapVersion,

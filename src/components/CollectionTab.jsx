@@ -14,6 +14,7 @@ import { STRAT_MAP } from '../game/strats.js';
 import { PACK_TYPES } from '../game/packEngine.js';
 import DeckEditor from './DeckEditor.jsx';
 import TeamEditor from './TeamEditor.jsx';
+import { CLIMB_FIVE } from '../game/modes/run.js';
 import PackShop from './PackShop.jsx';
 import PackOpening from './PackOpening.jsx';
 import { getStrat } from '../game/strats.js';
@@ -499,7 +500,9 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
   if (editingTeam) {
     return (
       <TeamEditor
-        team={editingTeam === 'new' ? null : editingTeam}
+        team={editingTeam === 'new' || editingTeam === 'new-climb' ? null : editingTeam}
+        // A Climb five (2026-10-19): five owned players under The Climb's cap.
+        limits={editingTeam === 'new-climb' || editingTeam?.climb ? CLIMB_FIVE : null}
         collection={collection}
         onSaved={() => { setEditingTeam(null); refresh(); }}
         onCancel={() => setEditingTeam(null)}
@@ -598,7 +601,10 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>My Teams</h2>
-            <button className={styles.newBtn} onClick={() => setEditingTeam('new')}>+ New Team</button>
+            <span style={{ display: 'flex', gap: 8 }}>
+              <button className={styles.newBtn} onClick={() => setEditingTeam('new-climb')} title="Five of your players under The Climb's $2,200 cap, ready for its start screen">+ New Climb five</button>
+              <button className={styles.newBtn} onClick={() => setEditingTeam('new')}>+ New Team</button>
+            </span>
           </div>
           {loading && <Skeleton rows={3} height={52} label="Loading your teams" />}
           {!loading && teams.length === 0 && (
@@ -611,7 +617,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
                   <div>
                     <div className={styles.itemName}>{t.name}</div>
                     <div className={styles.itemMeta}>
-                      {t.players.length} players · ${t.salary}
+                      {t.climb && '🧗 Climb five · '}{t.players.length} players · ${t.salary}
                       {getDeckName(t.linkedDeckId) && ` · 🃏 ${getDeckName(t.linkedDeckId)}`}
                       {t.updatedAt?.toDate && ` · ${t.updatedAt.toDate().toLocaleDateString()}`}
                     </div>
@@ -642,7 +648,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
                         ) : <div key={pid} className={styles.playerRow}>{pid}</div>;
                       })}
                     </div>
-                    {decks.length > 0 && (
+                    {decks.length > 0 && !t.climb && (
                       <div className={styles.linkDeck}>
                         <label className={styles.linkLabel}>Strategy Deck</label>
                         <select

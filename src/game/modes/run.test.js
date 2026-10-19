@@ -341,3 +341,23 @@ describe('a run that disagrees with its ledger', () => {
     expect(() => abandon({ ...camped(), status: 'won', banked: { coins: 1, booster: true } })).toThrow();
   });
 });
+
+// CLIMB FIVES, MADE AHEAD (the user, 2026-10-19: "we definitely need to be
+// able to pre-make eligible lineups"). One rule says what a five may be, for
+// the editor in My Teams, the start screen and newRun alike.
+describe('a Climb five', () => {
+  it('is five players you own, one card a player, at most the starting cap — or says why not', async () => {
+    const { fiveProblem, CLIMB_FIVE } = await import('./run.js');
+    expect(CLIMB_FIVE).toEqual({ cap: 2200, size: 5 });
+    const owned = new Set(KEYS);
+    expect(fiveProblem(KEYS, owned)).toBe(null);
+    expect(fiveProblem(KEYS)).toBe(null);
+    expect(fiveProblem(KEYS.slice(0, 4), owned)).toMatch(/five/);
+    expect(fiveProblem([...KEYS.slice(0, 4), 'gone:Nobody'], owned)).toMatch(/no longer exists/);
+    const sold = new Set(KEYS.slice(1));
+    expect(fiveProblem(KEYS, sold)).toMatch(new RegExp(`no longer own ${FIVE[0].name}`));
+    expect(fiveProblem([...KEYS.slice(0, 4), KEYS[0]], owned)).toMatch(/one card a player/i);
+    const pricey = [...CARDS].sort((a, b) => b.salary - a.salary).slice(0, 5).map(cardKey);
+    expect(fiveProblem(pricey, new Set(pricey))).toMatch(/over the \$2,200 cap/);
+  });
+});

@@ -316,6 +316,11 @@ export const plusId = id => (isPlus(id) ? id : `${id}${PLUS_MARK}`);
  */
 export const PLUS = {
   high_screen_roll: { desc: "Select two of your own players to swap their defenders, and gain 1 Assist. 🔒 Uncancelable." },
+  // The four the kits gained on 2026-10-19, approved that day ("Perfect").
+  second_closer: { desc: "CRUNCH TIME: your team gains two more Clutch Possessions this game, each for a different player." },
+  ato_masterpiece: { desc: "Play during your Timeout: coming out of the huddle, a chosen player takes a 3PT or Paint shot check at +4." },
+  hack_a: { desc: "CRUNCH TIME: foul a chosen opponent before they can go to work. They skip their scoring roll and shoot two free throws instead." },
+  transition_outlet: { desc: "Spend 1 Rebound: a player with a Speed advantage announces a 3PT or Paint Shot Check at +2. Hit: +1 Assist." },
   switch_the_screen: { desc: "Swap the defenders on two opposing players, and the opponent loses 1 Assist. 🔒 Uncancelable." },
   veer_switch: { desc: "Cancel opponent's screen-and-roll card. You choose the new defender assignments instead, and draw a card." },
   go_under: { desc: "Cancel opponent's screen-and-roll card. The offence chooses which of the two players involved takes a 3PT Shot Check at −4." },

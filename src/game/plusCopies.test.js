@@ -66,12 +66,12 @@ describe('the "+" helpers', () => {
     expect(getStratImagePath('green_light+')).toBe(getStratImagePath('green_light'));
   });
 
-  // The twenty-six approved "+" (2026-10-19): every kit card but the four the
-  // kits gained that day, and Help Defender, which left the Defense kit.
-  it('has "+" text for the twenty-six approved cards, each one different from its card', () => {
-    const fresh = ['second_closer', 'ato_masterpiece', 'transition_outlet', 'hack_a'];
-    const want = new Set([...[...KIT_CARD_IDS].filter(id => !fresh.includes(id)), 'help_defender']);
-    expect(want.size).toBe(26);
+  // The thirty approved "+" (2026-10-19): every kit card (the four the kits
+  // gained that day were approved the same day), and Help Defender, which left
+  // the Defense kit and keeps its "+".
+  it('has "+" text for the thirty approved cards, each one different from its card', () => {
+    const want = new Set([...KIT_CARD_IDS, 'help_defender']);
+    expect(want.size).toBe(30);
     expect(new Set(Object.keys(PLUS))).toEqual(want);
     for (const id of want) {
       expect(PLUS[id].desc, id).toBeTruthy();

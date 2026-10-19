@@ -69,10 +69,10 @@ screen); Help Defender keeps its approved "+" outside the kits.
 | Help Defender+ | An opponent yet to roll has a Speed or Power advantage of +4 or more: one of your other defenders rotates over. They get no positive matchup bonus this section — and the player your helper left gets +3 on their next roll. | An opponent yet to roll has a Speed or Power advantage of +3 or more: one of your other defenders rotates over. They get no positive matchup bonus this section. |
 | Cold Spell+ | Opponent rolls a natural 1 or 2 on their scoring roll: apply a cold marker + reduce their Rebound Track by 1. | Opponent rolls a natural 1 to 5 on their scoring roll: apply a cold marker + reduce their Rebound Track by 1. |
 
-## The four new kit cards: "+" drafts (2026-10-19, AWAITING APPROVAL)
+## The four new kit cards: "+" versions (APPROVED 2026-10-19: "Perfect"; built)
 
-The kits gained these on 2026-10-19; until they are approved each says "no
-upgrade yet" on the Practice screen. Same rule as the second draft: a "+" is
+The kits gained these on 2026-10-19 and the user approved their "+" the same
+day; the effects and the practiced faces are built. Same rule as the second draft: a "+" is
 worth a Rest Day, so about half again to double the card's main number, or the
 card plus one rider the game already has. No new mechanics, no new targets.
 

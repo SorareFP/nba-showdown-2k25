@@ -382,8 +382,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'second_closer': {
       if (!g.crunch?.active) return fail('Crunch Time only');
       if ((g.crunch.extra?.[teamKey] || 0) >= 1) return fail('One Second Closer per game');
-      g.crunch.extra[teamKey] = (g.crunch.extra[teamKey] || 0) + 1;
-      addLog(g, teamKey, 'Second Closer: a second Clutch Possession is live.');
+      // "+": two more, not one (2026-10-19).
+      g.crunch.extra[teamKey] = (g.crunch.extra[teamKey] || 0) + (plus ? 2 : 1);
+      addLog(g, teamKey, plus ? 'Second Closer+: two more Clutch Possessions are live.' : 'Second Closer: a second Clutch Possession is live.');
       break;
     }
 
@@ -397,8 +398,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (opts.checkType !== '3pt' && opts.checkType !== 'paint') return fail('Choose a 3PT or Paint check');
       const atoType = opts.checkType;
       announceCheck(g, {
-        teamKey, playerIdx: opts.playerIdx, type: atoType, bonus: 2 + _assistShotBonus,
-        cardLabel: 'ATO Masterpiece: out of the huddle',
+        teamKey, playerIdx: opts.playerIdx, type: atoType, bonus: (plus ? 4 : 2) + _assistShotBonus,
+        cardLabel: `ATO Masterpiece${plus ? '+' : ''}: out of the huddle`,
       });
       break;
     }
@@ -1088,15 +1089,18 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!g.blockedRolls[hkOpp]) g.blockedRolls[hkOpp] = {};
       g.blockedRolls[hkOpp][hkIdx] = true;
       const last = victim.name.split(' ').slice(-1)[0] || victim.name;
-      addLog(g, teamKey, `HACK-A-${last.toUpperCase()}! Fouled before the play — no scoring roll, four from the line.`);
+      // "+": two from the line, not four (2026-10-19).
+      addLog(g, teamKey, `HACK-A-${last.toUpperCase()}! Fouled before the play — no scoring roll, ${plus ? 'two' : 'four'} from the line.`);
       announceCheck(g, {
         teamKey: hkOpp, playerIdx: hkIdx, type: 'ft', bonus: 0,
         cardLabel: `Hack-A: ${victim.name} — first free throw`,
-        then: [
-          { cardLabel: `Hack-A: ${victim.name} — second free throw` },
-          { cardLabel: `Hack-A: ${victim.name} — third free throw` },
-          { cardLabel: `Hack-A: ${victim.name} — fourth free throw` },
-        ],
+        then: plus
+          ? [{ cardLabel: `Hack-A: ${victim.name} — second free throw` }]
+          : [
+            { cardLabel: `Hack-A: ${victim.name} — second free throw` },
+            { cardLabel: `Hack-A: ${victim.name} — third free throw` },
+            { cardLabel: `Hack-A: ${victim.name} — fourth free throw` },
+          ],
       });
       break;
     }
@@ -1753,11 +1757,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       break;
     }
     case 'transition_outlet': {
-      if (myT.rebounds < 1 || myT.assists < 1) return fail('Need 1 rebound and 1 assist to spend');
+      // "+": the Rebound alone, no Assist (2026-10-19).
+      if (myT.rebounds < 1 || (!plus && myT.assists < 1)) return fail(plus ? 'Need 1 rebound to spend' : 'Need 1 rebound and 1 assist to spend');
       if (adv.speedAdv <= 0) return fail(`${player?.name} needs a Speed advantage`);
       const kind = opts.checkType === 'paint' ? 'paint' : '3pt';
-      myT.rebounds -= 1; myT.assists -= 1;
-      addLog(g, teamKey, `Transition Outlet: −1 REB −1 AST → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check at +2 (hit = +1 AST).`);
+      myT.rebounds -= 1;
+      if (!plus) myT.assists -= 1;
+      addLog(g, teamKey, `Transition Outlet${plus ? '+: −1 REB' : ': −1 REB −1 AST'} → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check at +2 (hit = +1 AST).`);
       announceCheck(g, { teamKey, playerIdx: idx, type: kind, bonus: 2 + _assistShotBonus, cardLabel: 'Transition Outlet', onHitAst: 1 });
       break;
     }

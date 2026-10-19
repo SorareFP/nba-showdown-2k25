@@ -597,12 +597,12 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     }
     if (cardId === 'second_closer') {
       if ((g.crunch.extra?.[teamKey] || 0) >= 1) return no('One Second Closer per game');
-      return ok('A second Clutch Possession, for a different player');
+      return ok(plus ? 'Two more Clutch Possessions, each for a different player' : 'A second Clutch Possession, for a different player');
     }
     if (cardId === 'hack_a') {
       // Anyone who has yet to roll: the foul happens before he can go to work.
       if (preRollTargets(g, teamKey === 'A' ? 'B' : 'A').length === 0) return no('Every opponent has already rolled');
-      return ok('Foul an opponent: no scoring roll, four free throws instead');
+      return ok(`Foul an opponent: no scoring roll, ${plus ? 'two' : 'four'} free throws instead`);
     }
     // The timeout riders (strats.js TIMEOUT_RIDERS): only during YOUR called timeout.
     if (TIMEOUT_RIDERS.includes(cardId) && g.timeoutActive !== teamKey) return no('Play during your Timeout');
@@ -1010,7 +1010,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
       return ok('+2 pts and another hot marker');
     }
     case 'transition_outlet': {
-      if (myT.rebounds < 1 || myT.assists < 1) return no('Need 1 rebound and 1 assist to spend');
+      if (myT.rebounds < 1 || (!plus && myT.assists < 1)) return no(plus ? 'Need 1 rebound to spend' : 'Need 1 rebound and 1 assist to spend');
       const some = myT.starters.some((p, i) => {
         const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i];
         return p && dp && calcAdv(p, dp, g.tempEff[teamKey] || {}, i).speedAdv > 0;

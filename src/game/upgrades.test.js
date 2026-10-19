@@ -334,3 +334,50 @@ describe('the defense kit', () => {
     expect(r.plus.game.teamB.reboundsWon).toBe(5);
   });
 });
+
+// THE FOUR THE KITS GAINED (2026-10-19), their "+" approved that day ("Perfect").
+import { clutchAvailable } from './engine.js';
+const inCrunch = (over = {}) => {
+  const g = board('scoring', over);
+  g.quarter = 4; g.section = 3;
+  g.crunch = { active: true, margin: 4, used: {}, extra: {}, timeoutUsed: {}, searched: {} };
+  return g;
+};
+describe('the crunch cards and Transition Outlet', () => {
+  it('Second Closer+: two more Clutch Possessions instead of one', () => {
+    const r = both(() => inCrunch(), 'A', 'second_closer');
+    okBoth(r);
+    expect([clutchAvailable(r.plain.game, 'A'), clutchAvailable(r.plus.game, 'A')]).toEqual([2, 3]);
+  });
+
+  it('ATO Masterpiece+: the check out of the huddle is at +4', () => {
+    const make = () => { const g = inCrunch(); g.timeoutActive = 'A'; return g; };
+    const r = both(make, 'A', 'ato_masterpiece', { playerIdx: 0, checkType: '3pt' });
+    okBoth(r);
+    expect(r.plus.game.pendingShotCheck.bonus - r.plain.game.pendingShotCheck.bonus).toBe(2);
+  });
+
+  it('Hack-A+: two free throws instead of four', () => {
+    const r = both(() => inCrunch(), 'A', 'hack_a', { targetIdx: 2 });
+    okBoth(r);
+    const fts = res => res.game.log.filter(l => /Hack-A: .* free throw/.test(l.msg)).length;
+    expect([fts(r.plain), fts(r.plus)]).toEqual([4, 2]);
+    expect(r.plus.game.blockedRolls.B[2]).toBe(true);
+  });
+
+  it('Transition Outlet+: one Rebound and no Assist, and it needs no Assist to play', () => {
+    // A rebound-spending card needs a lead on the track at least its cost (REBOUND_CARD_COST).
+    const lead = g => { g.teamA.reboundsWon = 3; g.teamB.reboundsWon = 0; return g; };
+    const r = both(() => lead(board('scoring', { a: [{ speed: 17 }] })), 'A', 'transition_outlet', { playerIdx: 0, checkType: '3pt' });
+    okBoth(r);
+    // The spend, from the log (the check may resolve at once, and a hit pays an Assist back).
+    expect(r.plain.game.log.some(l => /Transition Outlet: −1 REB −1 AST/.test(l.msg))).toBe(true);
+    expect(r.plus.game.log.some(l => /Transition Outlet\+: −1 REB →/.test(l.msg))).toBe(true);
+    expect([r.plain.game.teamA.rebounds, r.plus.game.teamA.rebounds]).toEqual([5, 5]);
+    const broke = () => { const g = lead(board('scoring', { a: [{ speed: 17 }] })); g.teamA.assists = 0; return g; };
+    const g1 = broke(); g1.teamA.hand = ['transition_outlet'];
+    const g2 = broke(); g2.teamA.hand = [plusId('transition_outlet')];
+    expect(canPlayCard(g1, 'A', 'transition_outlet').canPlay).toBe(false);
+    expect(canPlayCard(g2, 'A', plusId('transition_outlet')).canPlay).toBe(true);
+  });
+});

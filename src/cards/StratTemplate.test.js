@@ -66,3 +66,15 @@ describe('the strategy-card face', () => {
     expect(html).not.toContain('NO ART');
   });
 });
+
+// THE PRACTICED FACE (The Climb, 2026-10-19): a "+" card says so on its face.
+describe('a practiced face', () => {
+  it('carries the "+" mark, its "+" name and text, and a plain face does not', async () => {
+    const { getStrat } = await import('../game/strats.js');
+    const plus = render({ card: getStrat('close_out+') });
+    expect(plus).toContain('data-plus-mark="1"');
+    expect(plus).toContain('Close Out+');
+    expect(plus).toContain('−5');
+    expect(render({ card: getStrat('close_out') })).not.toContain('data-plus-mark');
+  });
+});

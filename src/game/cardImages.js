@@ -1,7 +1,13 @@
 // NBA Showdown 2026 — Card Image Mapping
 
 import { BASE_SET, getCardByKey } from './cardSets.js';
-import { baseId } from './strats.js';
+import { baseId, isPlus, PLUS } from './strats.js';
+
+/**
+ * A "+" copy (The Climb) with "+" text wears its practiced face from
+ * public/cards/strats-plus/ (2026-10-19); one without wears its card's.
+ */
+const stratFaceDir = cardId => (isPlus(cardId) && PLUS[baseId(cardId)] ? 'strats-plus' : 'strats');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -35,7 +41,7 @@ export function getPlayerThumbUrl(playerKey, set) {
 }
 
 export function getStratThumbPath(cardId) {
-  return `/nba-showdown-2k25/cards/thumbs/strats/${baseId(cardId)}.webp`;
+  return `/nba-showdown-2k25/cards/thumbs/${stratFaceDir(cardId)}/${baseId(cardId)}.webp`;
 }
 
 /**
@@ -65,7 +71,6 @@ export function fallbackTo(fullUrl, then) {
  * `{id}.png` convention the player sets use, so nothing has to remember that
  * this one directory is spelled differently.
  */
-// A "+" copy (The Climb) wears its card's face.
 export function getStratImagePath(cardId) {
-  return `/nba-showdown-2k25/cards/strats/${baseId(cardId)}.png`;
+  return `/nba-showdown-2k25/cards/${stratFaceDir(cardId)}/${baseId(cardId)}.png`;
 }

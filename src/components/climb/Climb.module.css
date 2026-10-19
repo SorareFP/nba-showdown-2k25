@@ -104,3 +104,9 @@
 .five { display: flex; flex-direction: column; gap: 2px; text-align: left; }
 .five span { font-size: 12px; color: var(--text-muted); }
 .five:disabled span { color: var(--orange-light); }
+
+/* Practice (2026-10-19): the deck as faces, with a toggle to the "+" faces. */
+.practiceHead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--text); cursor: pointer; }
+.toggle input { accent-color: var(--orange); width: 16px; height: 16px; }
+.dim { opacity: 0.45; }

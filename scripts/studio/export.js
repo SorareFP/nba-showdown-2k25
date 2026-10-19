@@ -82,11 +82,15 @@ const SET_FILES = {
   // `null` marks a set whose list comes from code. It exports like any other
   // set otherwise, through the same StratTemplate the studio composes with.
   strats: null,
+  // THE CLIMB'S PRACTICED FACES (2026-10-19): the "+" version of each
+  // starter-kit card, from strats.js PLUS, on the strategy card's own art.
+  'strats-plus': null,
 };
 
 /** The cards of one set: from its generated file, or from code. */
 async function cardsFor(set) {
   if (set === 'strats') return (await import('../../src/game/strats.js')).STRATS;
+  if (set === 'strats-plus') return Object.keys((await import('../../src/game/strats.js')).PLUS).map(id => ({ id }));
   // Requested cards (Free Agents) live in their own file and join the set
   // each was built into, here as in the game (src/game/cardSets.js).
   const freeAgentsFile = resolve(process.cwd(), 'card-data', 'generated', 'cards-free-agents.json');
@@ -221,7 +225,7 @@ async function exportOne(page, set, card, out) {
     // sidebar holds — so the app's sheen (HoloSheen.jsx) reads their boxes
     // from here, as fractions of the card. CSS-module classes are hashed, so
     // the match is on the `_name_` core of the class.
-    if (set !== 'strats') {
+    if (set !== 'strats' && set !== 'strats-plus') {
       const measured = await el.evaluate(root => {
         const box = root.getBoundingClientRect();
         const frac = r => [

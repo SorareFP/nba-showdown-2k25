@@ -7,7 +7,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 vi.mock('../../firebase/CardStatsProvider.jsx', () => ({ useCardStats: () => ({ stats: {} }) }));
 
-import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver } from './ClimbScreens.jsx';
+import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, practiceTiles } from './ClimbScreens.jsx';
+import { baseId } from '../../game/strats.js';
 import { newRun, chooseCamp, chooseStop, recordResult } from '../../game/modes/run.js';
 import { CARDS } from '../../game/cards.js';
 import { cardKey } from '../../game/cardSets.js';
@@ -94,16 +95,40 @@ describe('the reward screen', () => {
   });
 });
 
-describe('the Rest Day', () => {
-  it('offers the "+" of a kit card and says a card outside the kits has no upgrade yet', () => {
-    const r = { ...camped(), status: 'rest', restAt: '2-0', deck: { ...camped().deck, green_light: 1 } };
+// THE PRACTICE SCREEN (the user, 2026-10-19): "the practice option should
+// show all the cards in your deck, and you should be able to look at them,
+// and there should be a checkbox that toggles the photos to show their
+// 'practiced' versions."
+describe('the Practice screen', () => {
+  const restRun = () => ({
+    ...camped(), status: 'rest', restAt: '2-0',
+    deck: { ...camped().deck, catch_and_shoot: 1, 'catch_and_shoot+': 1, green_light: 1 },
+  });
+
+  it('lays out every card in the deck once, plain by default and practiced on the toggle', () => {
+    const r = restRun();
+    const plain = practiceTiles(r, false);
+    expect(plain.map(t => t.id).sort()).toEqual([...new Set(Object.keys(r.deck).map(baseId))].sort());
+    expect(plain.find(t => t.id === 'catch_and_shoot')).toMatchObject({ count: 2, plusCount: 1, canPractice: true, upgradeable: true, faceId: 'catch_and_shoot' });
+    expect(plain.find(t => t.id === 'green_light')).toMatchObject({ canPractice: false, upgradeable: false, faceId: 'green_light' });
+    const up = practiceTiles(r, true);
+    expect(up.find(t => t.id === 'catch_and_shoot').faceId).toBe('catch_and_shoot+');
+    expect(up.find(t => t.id === 'green_light').faceId).toBe('green_light');
+    expect(practiceTiles({ ...r, deck: { 'catch_and_shoot+': 2 } }, false)[0]).toMatchObject({ count: 2, plusCount: 2, canPractice: false });
+  });
+
+  it('shows a face per card, the toggle, Rest, and Practice only where a plain kit copy is left', () => {
+    const r = restRun();
     const out = html(<RestDay run={r} onRest={noop} onPractice={noop} />);
-    // "Practice", not "Smith" (the user, 2026-10-19).
-    expect(out).toContain('Practice');
-    expect(out).not.toMatch(/smith/i);
-    expect(out).toContain('Catch &amp; Shoot+');
+    expect(out).toContain('Show practiced versions');
+    expect(out).toContain('type="checkbox"');
+    expect(out.match(/data-practice-tile=/g)).toHaveLength(practiceTiles(r, false).length);
+    expect(out).toContain('/cards/thumbs/strats/catch_and_shoot.webp');
+    expect(out).toMatch(/data-practice="catch_and_shoot"/);
+    expect(out).not.toMatch(/data-practice="green_light"/);
     expect(out).toContain('no upgrade yet');
-    expect(out).toContain('Rest');
+    expect(out).toContain('>Rest<');
+    expect(out).not.toMatch(/smith/i);
   });
 });
 

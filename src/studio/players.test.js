@@ -680,6 +680,9 @@ describe('the special sets in the source list', () => {
       // badges and no treatment, and sets.js does not carry it. It renders
       // through StratTemplate instead, which is what `template` selects.
       'strats',
+      // The Climb's practiced faces (2026-10-19): the "+" versions, drawn on
+      // the strategy cards' own art.
+      'strats-plus',
     ]);
     // The SET_IDS invariant covers the player sets only, for the same reason —
     // 'strats' is deliberately absent from sets.js.
@@ -815,6 +818,8 @@ describe('the selector\'s reference group', () => {
       // it is being curated right now (nine cards still have no art), and a
       // live source folded away is a source the user stops finding.
       'strats',
+      // The Climb's practiced faces (2026-10-19), exported from here.
+      'strats-plus',
     ]);
   });
 
@@ -853,7 +858,7 @@ describe('the selector\'s reference group', () => {
     // SET_IDS covers the card sets; the strategy deck is a source without a
     // set (see the SOURCES test above), and it declares last.
     const open = visibleSources({ showSecondary: true }).map(s => s.set);
-    expect(open).toEqual([...SET_IDS, 'strats']);
+    expect(open).toEqual([...SET_IDS, 'strats', 'strats-plus']);
   });
 
   it('leaves the default source visible and selected in every state', () => {

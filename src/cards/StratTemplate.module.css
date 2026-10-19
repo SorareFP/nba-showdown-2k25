@@ -183,3 +183,20 @@
   margin: -6px 0 10px;
   text-shadow: 0 0 22px rgba(239, 68, 68, 0.45);
 }
+
+/* THE PRACTICED MARK (The Climb, 2026-10-19): a gold "+" on a "+" copy's art. */
+.plusMark {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  z-index: 3;
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  border: 8px solid #ffffff;
+  background: radial-gradient(circle at 35% 30%, #ffe9a8 0%, #f5b400 55%, #c98600 100%);
+  color: #16305e;
+  font: 900 118px/112px 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  text-align: center;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+}

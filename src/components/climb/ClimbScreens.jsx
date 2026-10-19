@@ -7,7 +7,7 @@ import { ZoomImg } from '../CardLightbox.jsx';
 import { getPlayerThumbUrl, getPlayerImageUrl, getStratThumbPath, getStratImagePath, fallbackTo } from '../../game/cardImages.js';
 import { AI_LEVELS, payNote } from '../../game/aiLevels.js';
 import { capOf } from '../../game/coinRewards.js';
-import { getStrat, isPlus, plusId, baseId } from '../../game/strats.js';
+import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster } from '../../game/teamRules.js';
 import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem } from '../../game/modes/run.js';
@@ -359,44 +359,71 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onSkip, busy = fa
 
 // ── Rest Day ─────────────────────────────────────────────────────────────────
 
+/**
+ * THE DECK AS PRACTICE SEES IT: one tile a card, how many copies and how many
+ * already practiced, whether it has a "+" at all, and which face to show —
+ * the "+" face when `showPlus` is on and there is one (the user, 2026-10-19:
+ * "a checkbox that toggles the photos to show their 'practiced' versions").
+ */
+export function practiceTiles(run, showPlus) {
+  const by = new Map();
+  for (const [id, n] of Object.entries(run.deck ?? {})) {
+    if (!(n > 0)) continue;
+    const base = baseId(id);
+    const t = by.get(base) ?? { id: base, count: 0, plusCount: 0 };
+    t.count += n;
+    if (isPlus(id)) t.plusCount += n;
+    by.set(base, t);
+  }
+  return [...by.values()]
+    .map(t => {
+      const upgradeable = KIT_CARD_IDS.has(t.id) && Boolean(PLUS[t.id]);
+      return { ...t, upgradeable, canPractice: upgradeable && t.count > t.plusCount, faceId: showPlus && upgradeable ? plusId(t.id) : t.id };
+    })
+    .sort((a, b) => (getStrat(a.id)?.name ?? a.id).localeCompare(getStrat(b.id)?.name ?? b.id));
+}
+
 /** Rest everyone, or practice: upgrade one copy (the user, 2026-10-19: not "smith"). */
 export function RestDay({ run, onRest, onPractice, busy = false, free = false }) {
+  const [showPlus, setShowPlus] = useState(false);
   const { cards } = rosterCards(run);
   const tired = cards.filter(c => (run.fatigue?.[c.id] ?? 0) > 0);
-  const ids = Object.keys(run.deck ?? {}).filter(id => run.deck[id] > 0).sort((a, b) => (getStrat(a)?.name ?? a).localeCompare(getStrat(b)?.name ?? b));
+  const tiles = practiceTiles(run, showPlus);
   return (
     <div className={styles.screen}>
       <h2 className={styles.title}>{free ? 'A day off' : 'Rest Day'}</h2>
-      <p className={styles.lede}>One of two: rest the whole team, or practice and upgrade one card.</p>
-      <div className={styles.restChoice}>
-        <section className={styles.restCard}>
-          <h3 className={styles.h3}>Rest</h3>
-          <p className={styles.muted}>{tired.length ? `${tired.map(c => `${c.name} (${run.fatigue[c.id]} min)`).join(', ')} come back fresh.` : 'Everyone is fresh already.'}</p>
-          <button type="button" className={styles.primary} onClick={onRest} disabled={busy}>Rest</button>
-        </section>
-        <section className={styles.restCard}>
+      <p className={styles.lede}>One of two: rest the whole team, or practice and upgrade one copy of a card.</p>
+      <section className={styles.restCard}>
+        <h3 className={styles.h3}>Rest</h3>
+        <p className={styles.muted}>{tired.length ? `${tired.map(c => `${c.name} (${run.fatigue[c.id]} min)`).join(', ')} come back fresh.` : 'Everyone is fresh already.'}</p>
+        <div className={styles.actions}><button type="button" className={styles.primary} onClick={onRest} disabled={busy}>Rest</button></div>
+      </section>
+      <section className={styles.restCard}>
+        <div className={styles.practiceHead}>
           <h3 className={styles.h3}>Practice <span className={styles.muted}>upgrade one copy</span></h3>
-          <ul className={styles.practiceList}>
-            {ids.map(id => {
-              const plus = isPlus(id);
-              const kit = KIT_CARD_IDS.has(baseId(id));
-              return (
-                <li key={id}>
-                  <strong>{getStrat(id)?.name}</strong>
-                  {run.deck[id] > 1 && <span className={styles.muted}> ×{run.deck[id]}</span>}
-                  {plus ? <span className={styles.muted}> already upgraded</span>
-                    : kit ? (
-                      <>
-                        <span className={styles.practiceText}><strong>{getStrat(plusId(id))?.name}:</strong> {getStrat(plusId(id))?.desc}</span>
-                        <button type="button" onClick={() => onPractice(id)} disabled={busy}>Practice it</button>
-                      </>
-                    ) : <span className={styles.muted}> no upgrade yet</span>}
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      </div>
+          <label className={styles.toggle}>
+            <input type="checkbox" checked={showPlus} onChange={e => setShowPlus(e.target.checked)} />
+            Show practiced versions
+          </label>
+        </div>
+        <div className={styles.grid}>
+          {tiles.map(t => {
+            const s = getStrat(t.faceId);
+            return (
+              <div key={t.id} data-practice-tile={t.id} className={`${styles.tile} ${styles.stratTile} ${showPlus && !t.upgradeable ? styles.dim : ''}`} data-rarity={s?.rarity}>
+                <ZoomImg strat={t.faceId} className={styles.face} src={getStratThumbPath(t.faceId)} onError={fallbackTo(getStratImagePath(t.faceId))} alt={s?.name} loading="lazy" />
+                <div className={styles.tileName}>{s?.name}</div>
+                <div className={styles.tileMeta}>
+                  {[t.count > 1 ? `×${t.count}` : null, t.plusCount ? `${t.plusCount} practiced` : null, t.upgradeable ? null : 'no upgrade yet'].filter(Boolean).join(' · ') || ' '}
+                </div>
+                {t.canPractice && (
+                  <button type="button" data-practice={t.id} className={styles.tileBtn} onClick={() => onPractice(t.id)} disabled={busy}>Practice</button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }

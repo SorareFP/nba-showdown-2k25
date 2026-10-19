@@ -205,6 +205,8 @@ export default function StratTemplate({
         )}
         <div className={styles.wedge} />
         <ChevronDots direction="left" className={styles.artChevrons} />
+        {/* THE PRACTICED MARK (The Climb, 2026-10-19): a "+" copy's face. */}
+        {s.upgraded ? <div className={styles.plusMark} data-plus-mark="1" aria-label="Practiced">+</div> : null}
       </div>
 
       <div className={styles.body}>

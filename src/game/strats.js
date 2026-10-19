@@ -306,12 +306,45 @@ export const isPlus = id => typeof id === 'string' && id.endsWith(PLUS_MARK);
 export const plusId = id => (isPlus(id) ? id : `${id}${PLUS_MARK}`);
 
 /**
- * THE "+" TEXT of each upgradable card, by its plain id. The effects read
- * `opts.plus` in execCard.js. Empty until the user approves the batch in
- * docs/plans/2026-10-18-the-climb-upgrades.md; a "+" with no text here plays
- * as its plain card.
+ * THE "+" TEXT of each upgradable card, by its plain id: the starter kits'
+ * twenty-six (docs/plans/2026-10-18-the-climb-upgrades.md). SECOND DRAFT
+ * (2026-10-19): each worth a Rest Day — the user: "there are seldom upgrades
+ * that justify using a rest day on them instead of resting the players".
+ *
+ * DRAFTS (the user, 2026-10-19: "use the drafts for now"): they name the
+ * Practice screen's faces (public/cards/strats-plus/) so the batch can be
+ * judged on the cards. The EFFECTS are not built yet — a "+" copy still plays
+ * as its plain card until the approved texts are wired into execCard.js
+ * (`opts.plus`), and The Climb does not deploy before then.
  */
-export const PLUS = {};
+export const PLUS = {
+  high_screen_roll: { desc: "Select two of your own players to swap their defenders, and gain 1 Assist. 🔒 Uncancelable." },
+  switch_the_screen: { desc: "Swap the defenders on two opposing players, and the opponent loses 1 Assist. 🔒 Uncancelable." },
+  veer_switch: { desc: "Cancel opponent's screen-and-roll card. You choose the new defender assignments instead, and draw a card." },
+  go_under: { desc: "Cancel opponent's screen-and-roll card. You choose which of the two players involved takes a 3PT Shot Check, at −2." },
+  overhelp: { desc: "Opponent plays a defensive switching card: one of your players gets +5 to their scoring roll this segment." },
+  burned_switch: { desc: "Opponent forces a matchup switch: if the new defender has lower Speed OR Power than the original, you get +5 to your scoring roll." },
+  catch_and_shoot: { desc: "Player with Speed 11+ attempts a 3PT Shot Check at +4. Success: +1 assist." },
+  first_step: { desc: "Choose a player: +4 Speed. If their Speed advantage is already 5 or more: +6 Speed instead." },
+  drive_the_lane: { desc: "Player with a Speed advantage attempts three free throw checks. Speed advantage ≥4: defender gains a cold marker." },
+  spain_pick_roll: { desc: "Choose a player faster than their defender: +4 to their scoring roll this period. If they score on that roll, +2 Assists." },
+  ghost_screen: { desc: "Choose an offensive player with Speed 11+. They are treated as having no defender — roll penalty is negated to 0, their shot checks are uncontested, and their scoring roll gets +2." },
+  close_out: { desc: "When opponent announces a 3PT Shot Check: −5 to that check. If they miss: cold marker on that player." },
+  passing_lane: { desc: "Right after an opponent's scoring roll wins assists: cancel them, and you gain 1 Assist. −2 more from their track if your defender on them has more Speed." },
+  bully_ball: { desc: "Player with a Power advantage attempts two Paint Shot Checks at +2 each. Power advantage ≥4: +4 to each check." },
+  power_move: { desc: "Choose a player: +4 Power. If their Power advantage is already ≥5: +6 Power instead." },
+  back_to_basket: { desc: "Player with Power 12+ and a Paint Bonus attempts a Paint Shot Check at +3." },
+  offensive_board: { desc: "Spend 2 rebounds: take a second scoring roll with a different player." },
+  putback_specialist: { desc: "After your player misses a shot check, spend 2 Rebounds: any player of yours announces a Paint Shot Check at +5. Hit: +1 Assist." },
+  glass_cleaner: { desc: "After an opponent misses any shot check: +3 Rebounds. +2 more if your defender on the shooter has more Power than them." },
+  box_out: { desc: "Right after an opponent's scoring roll wins rebounds: cancel them, and you gain 1 Rebound. −2 more from their track if your defender on them has more Power." },
+  drop_coverage: { desc: "Opponent announces a Paint Shot Check and your defender on them has a Defensive Bonus: −4 to the check." },
+  smothering_defense: { desc: "Opponent announces any shot check and your defender on them has a Defensive Bonus: the check loses its card bonus entirely and is at −1." },
+  pick_up_full_court: { desc: "Hound one opposing player the length of the floor: −2 to their scoring roll this segment, and they gain 8 minutes of fatigue. Once per player per section." },
+  rim_protector: { desc: "Opponent announces a Paint Shot Check and your defender on them has Power + Defensive Bonus of 13+: −5 to the check. Miss: +3 Rebounds for you." },
+  help_defender: { desc: "An opponent yet to roll has a Speed or Power advantage of +3 or more: one of your other defenders rotates over. They get no positive matchup bonus this section." },
+  cold_spell: { desc: "Opponent rolls a natural 1, 2, 3 or 4 on their scoring roll: apply a cold marker + reduce their Rebound Track by 2." },
+};
 
 const PLUS_STRATS = new Map();
 /** A card by id — a "+" copy as its card, named with the "+" and its "+" text. */

@@ -56,9 +56,24 @@ describe('the "+" helpers', () => {
     expect(getStrat('no_such_card+')).toBeFalsy();
   });
 
-  it('draws the plain face for a "+" copy', () => {
-    expect(getStratImagePath('close_out+')).toBe(getStratImagePath('close_out'));
-    expect(getStratThumbPath('close_out+')).toBe(getStratThumbPath('close_out'));
+  // THE PRACTICED FACE (the user, 2026-10-19: a checkbox "toggles the photos
+  // to show their practiced versions"). A "+" copy with "+" text wears its own
+  // face from public/cards/strats-plus/; one with none yet wears its card's.
+  it('draws the practiced face for a "+" copy that has one, and the plain face otherwise', () => {
+    expect(getStratImagePath('close_out+')).toBe('/nba-showdown-2k25/cards/strats-plus/close_out.png');
+    expect(getStratThumbPath('close_out+')).toBe('/nba-showdown-2k25/cards/thumbs/strats-plus/close_out.webp');
+    expect(getStratImagePath('close_out')).toBe('/nba-showdown-2k25/cards/strats/close_out.png');
+    expect(getStratImagePath('green_light+')).toBe(getStratImagePath('green_light'));
+  });
+
+  it('has "+" text for exactly the starter-kit cards, each one different from its card', () => {
+    expect(new Set(Object.keys(PLUS))).toEqual(KIT_CARD_IDS);
+    for (const id of KIT_CARD_IDS) {
+      expect(PLUS[id].desc, id).toBeTruthy();
+      expect(PLUS[id].desc, id).not.toBe(getStrat(id).desc);
+      expect(getStrat(plusId(id)).desc, id).toBe(PLUS[id].desc);
+    }
+    expect(getStrat('close_out+').desc).toContain('−5');
   });
 });
 

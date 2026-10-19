@@ -30,6 +30,9 @@ export default function ExportFrame() {
   // bug that silently skipped all 354 base cards on the first full export.
   const source = SOURCES[set] ?? Object.values(SOURCES).find(s => s.set === set) ?? null;
   const card = source?.players.find(c => c.id === id) ?? null;
+  // A source drawn on another set's art (the practiced faces on the strategy
+  // cards', 2026-10-19) reads that set's photos and crops.
+  const artSet = source?.artSet ?? set;
 
   useEffect(() => {
     if (!card) return;
@@ -38,7 +41,7 @@ export default function ExportFrame() {
       // fetched from /__studio/teams, a WRITE-ONLY route that answers a GET
       // with 405 — read as "no overrides", so no exported face carried a
       // colour the user set in the Studio from the day the export shipped.
-      const studio = await fetchStudioState(set);
+      const studio = await fetchStudioState(artSet);
       setState({
         hasPhoto: (studio.photos ?? []).includes(id),
         photoExt: (studio.photoExt ?? {})[id],
@@ -46,7 +49,7 @@ export default function ExportFrame() {
         teamOverrides: studio.teamOverrides ?? {},
       });
     })();
-  }, [set, id]);
+  }, [set, id, artSet]);
 
   // ?back=1 — THE CARD BACK, not a card. It exports through this same page so
   // it lands at exactly the 843x1181 the faces do; a back rasterised any other
@@ -77,7 +80,7 @@ export default function ExportFrame() {
       {source?.template === 'strat' ? (
         <StratTemplate
           card={card}
-          set={set}
+          set={artSet}
           crop={state.crop}
           hasPhoto={state.hasPhoto}
           photoExt={state.photoExt}

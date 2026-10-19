@@ -34,7 +34,7 @@
 // missing/renamed file becomes a build error rather than an empty studio.
 import rawPool from '../../card-data/generated/player-pool-2026.json';
 import { SHIPPED_CARDS } from '../game/shippedCards.js';
-import { STRATS } from '../game/strats.js';
+import { STRATS, PLUS, getStrat, plusId } from '../game/strats.js';
 import {
   CURRENT_SET,
   STATS_SEASON,
@@ -503,6 +503,17 @@ const STRAT_PLAYERS = STRATS.map(s => ({
   team: (s.phase ?? '').replace('_', ' ').toUpperCase(),
 }));
 
+/**
+ * THE PRACTICED FACES (The Climb, 2026-10-19): one per card with "+" text,
+ * titled with the "+" and carrying the "+" text, on the strategy card's own
+ * art and crop (`artSet`). Keyed by the plain id so the faces land at
+ * public/cards/strats-plus/{id}.png, where cardImages.js looks for a "+" copy.
+ */
+const STRAT_PLUS_PLAYERS = Object.keys(PLUS).map(id => {
+  const plus = getStrat(plusId(id));
+  return { ...plus, id, pos: plus.side === 'def' ? 'DEF' : 'OFF', team: (plus.phase ?? '').replace('_', ' ').toUpperCase() };
+});
+
 export const SOURCES = {
   pool: {
     key: 'pool',
@@ -805,6 +816,21 @@ export const SOURCES = {
       'photo dropped on it and its rules text stays in sync with the engine automatically. ' +
       'The meta line shows PHASE and side rather than team and position.',
     players: [...STRAT_PLAYERS].sort(byName),
+  },
+  'strats-plus': {
+    key: 'strats-plus',
+    set: 'strats-plus',
+    template: 'strat',
+    // The art is the strategy card's: its photo and crop, read from `strats`.
+    artSet: 'strats',
+    label: `Practiced cards · ${STRAT_PLUS_PLAYERS.length}`,
+    sub: 'The Climb · the "+" faces',
+    editable: false,
+    hint:
+      'THE CLIMB’S PRACTICED FACES. Each starter-kit card with "+" text (strats.js PLUS), titled with ' +
+      'the "+", on the strategy card’s own photo and crop — change the art on the Strategy cards source. ' +
+      'Exported to public/cards/strats-plus/ (npm run export:cards -- --set strats-plus).',
+    players: [...STRAT_PLUS_PLAYERS].sort(byName),
   },
 };
 

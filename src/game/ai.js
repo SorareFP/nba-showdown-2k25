@@ -5,8 +5,8 @@
 
 import { challengeTarget, getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions, timeoutProblem } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
-import { getStrat, STRATS, TIMEOUT_RIDERS, baseId, plusId } from './strats.js';
+import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST, HACK_A } from './canPlay.js';
+import { getStrat, STRATS, TIMEOUT_RIDERS, baseId, plusId, isPlus } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
 import { checkNeedFor } from './checkTerms.js';
 
@@ -1192,10 +1192,43 @@ export function switchCancelValue(game, teamKey, handCardId) {
   return { gain, saved: after - left };
 }
 
+/**
+ * WHICH MAN TO FOUL, AND WHETHER TO (Hack-A-____). For every opponent still to
+ * roll, the roll he loses (expectedOutput over his chart, matchup bonus and
+ * markers in) against the free throws he gets (HACK_A: two, d20 + 10 under
+ * pressure against his Shot Line, markers counted). The biggest swing is the
+ * hack; none above zero and the coach keeps the card (2026-10-19: it used to
+ * foul whoever lost least, a gift of four free throws).
+ */
+function hackValue(game, teamKey, plus = false) {
+  const hkOpp = teamKey === 'A' ? 'B' : 'A';
+  const hkOppT = getOpp(game, teamKey);
+  const mine = getTeam(game, teamKey).starters || [];
+  const hkRolls = game.rollResults?.[hkOpp] || [];
+  const hkBlocked = game.blockedRolls?.[hkOpp] || {};
+  const press = plus ? HACK_A.plusPressure : HACK_A.pressure;
+  let best = null;
+  (hkOppT.starters || []).forEach((p, i) => {
+    if (!p || hkRolls[i] != null || hkBlocked[i]) return;
+    const dp = mine[(game.offMatchups?.[hkOpp] || [])[i] ?? i];
+    const a = dp ? calcAdv(p, dp, game.tempEff?.[hkOpp] || {}, i) : { rollBonus: 0 };
+    const ps = getPS(game, hkOpp, p.id) || {};
+    const marker = ((ps.hot || 0) - (ps.cold || 0)) * 2;
+    const ftHit = Math.min(1, Math.max(0, (21 - ((p.shotLine || 99) - 10 - marker + press)) / 20));
+    const swing = expectedOutput(p, (a.rollBonus || 0) + marker) - HACK_A.fts * ftHit;
+    if (!best || swing > best.swing) best = { i, swing };
+  });
+  return best;
+}
+
 function evaluateCard(game, teamKey, handCardId, strat, opts = {}) {
   // A "+" copy (The Climb) is valued as its card.
   const cardId = baseId(handCardId);
   const phase = game.phase;
+  if (cardId === 'hack_a') {
+    const h = hackValue(game, teamKey, isPlus(handCardId));
+    return h && h.swing > 0 ? Math.min(10, 4 + 4 * h.swing) : 0;
+  }
   if (cardId === 'switch_everything') {
     const { gain } = switchEverythingValue(game, teamKey);
     return gain >= SWITCH_FLOOR ? Math.min(10, 3 + 2 * gain) : 0;
@@ -1722,25 +1755,7 @@ export function aiBuildCardOpts(game, teamKey, handCardId) {
     }
 
     case 'hack_a': {
-      // WHICH MAN TO FOUL is the whole card. For every opponent still to roll,
-      // weigh the roll he loses (expectedOutput over his chart, matchup bonus
-      // in) against the four free throws he gains: d20 + 10 against his shot
-      // line, markers counted. The biggest swing is the hack.
-      const hkOpp = teamKey === 'A' ? 'B' : 'A';
-      const hkOppT = getOpp(game, teamKey);
-      const hkRolls = game.rollResults?.[hkOpp] || [];
-      const hkBlocked = game.blockedRolls?.[hkOpp] || {};
-      let best = null;
-      (hkOppT.starters || []).forEach((p, i) => {
-        if (!p || hkRolls[i] != null || hkBlocked[i]) return;
-        const dp = starters[(game.offMatchups?.[hkOpp] || [])[i] ?? i];
-        const a = dp ? calcAdv(p, dp, game.tempEff?.[hkOpp] || {}, i) : { rollBonus: 0 };
-        const ps = getPS(game, hkOpp, p.id) || {};
-        const marker = ((ps.hot || 0) - (ps.cold || 0)) * 2;
-        const ftHit = Math.min(1, Math.max(0, (21 - ((p.shotLine || 99) - 10 - marker)) / 20));
-        const swing = expectedOutput(p, (a.rollBonus || 0) + marker) - 4 * ftHit;
-        if (!best || swing > best.swing) best = { i, swing };
-      });
+      const best = hackValue(game, teamKey, isPlus(handCardId));
       return { targetIdx: best ? best.i : 0 };
     }
 

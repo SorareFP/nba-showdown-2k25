@@ -5,7 +5,7 @@
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass, noteCheckMiss } from './engine.js';
 import { checkTerms } from './checkTerms.js';
-import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots } from './canPlay.js';
+import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots, HACK_A } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat, baseId, isPlus, SCREEN_CARDS } from './strats.js';
 
@@ -1131,18 +1131,15 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!g.blockedRolls[hkOpp]) g.blockedRolls[hkOpp] = {};
       g.blockedRolls[hkOpp][hkIdx] = true;
       const last = victim.name.split(' ').slice(-1)[0] || victim.name;
-      // "+": two from the line, not four (2026-10-19).
-      addLog(g, teamKey, `HACK-A-${last.toUpperCase()}! Fouled before the play — no scoring roll, ${plus ? 'two' : 'four'} from the line.`);
+      // Two from the line under crunch-time pressure (HACK_A, reworked
+      // 2026-10-19: four free throws were worth more than any roll); the "+"
+      // presses harder. The second shot inherits the first one's pressure.
+      const press = plus ? HACK_A.plusPressure : HACK_A.pressure;
+      addLog(g, teamKey, `HACK-A-${last.toUpperCase()}! Fouled before the play — no scoring roll, two from the line at −${press}.`);
       announceCheck(g, {
-        teamKey: hkOpp, playerIdx: hkIdx, type: 'ft', bonus: 0,
+        teamKey: hkOpp, playerIdx: hkIdx, type: 'ft', bonus: -press,
         cardLabel: `Hack-A: ${victim.name} — first free throw`,
-        then: plus
-          ? [{ cardLabel: `Hack-A: ${victim.name} — second free throw` }]
-          : [
-            { cardLabel: `Hack-A: ${victim.name} — second free throw` },
-            { cardLabel: `Hack-A: ${victim.name} — third free throw` },
-            { cardLabel: `Hack-A: ${victim.name} — fourth free throw` },
-          ],
+        then: [{ cardLabel: `Hack-A: ${victim.name} — second free throw` }],
       });
       break;
     }

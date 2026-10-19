@@ -286,7 +286,7 @@ export default function RulebookTab() {
           <li><strong>Ice the Hot Hand</strong> (timeout rider): strip all hot markers from one opposing player.</li>
           <li><strong>Reset</strong> (timeout rider): clear all cold markers from one of your players.</li>
           <li><strong>Unethical Hoops</strong> (the sign-up card): a player of yours with a Speed or Power advantage draws the foul — four free-throw checks, no bonus (a free throw carries its own +10).</li>
-          <li><strong>Hack-A-____:</strong> foul an opponent who has not rolled. They skip their scoring roll and shoot four free throws instead — worth about 3.4 points off a shot line of 14 and about 2.2 off a 19, so pick the one who cannot make them.</li>
+          <li><strong>Hack-A-____:</strong> foul an opponent who has not rolled. They skip their scoring roll and shoot two free throws at −3 instead (crunch-time pressure) — about 1.4 points off a shot line of 14 and 1.0 off an 18, against a scoring roll worth about 1.5, so pick the one whose roll you fear and whose free throws you don't.</li>
         </ul>
       </Section>
 

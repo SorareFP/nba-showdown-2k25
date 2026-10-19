@@ -138,7 +138,7 @@ export const STRATS = [
   { id:'second_closer',       name:'Second Closer',      phase:'scoring',  side:'off', copies:1, locked:false, color:'#A21CAF', rarity:'rare',
     desc:'CRUNCH TIME: your team gains a second Clutch Possession this game, for a different player.' },
   { id:'hack_a',              name:'Hack-A-____',        phase:'scoring',  side:'def', copies:1, locked:false, color:'#78350F', rarity:'rare',
-    desc:'CRUNCH TIME: foul a chosen opponent before they can go to work. They skip their scoring roll and shoot four free throws instead.' },
+    desc:'CRUNCH TIME: foul a chosen opponent before they can go to work. They skip their scoring roll and shoot two free throws at −3 instead.' },
   { id:'foul_trouble',        name:'Foul Trouble',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#9A3412', rarity:'uncommon',
     desc:'Choose an opposing defender your player is beating by 4 or more on Speed or Power: they pick up the foul that sits them for the whole next section.' },
   { id:'delayed_slip',        name:'Delayed Slip',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'common',
@@ -338,7 +338,7 @@ export const PLUS = {
   // The four the kits gained on 2026-10-19, approved that day ("Perfect").
   second_closer: { desc: "CRUNCH TIME: your team gains two more Clutch Possessions this game, each for a different player." },
   ato_masterpiece: { desc: "Play during your Timeout: coming out of the huddle, a chosen player takes a 3PT or Paint shot check at +4." },
-  hack_a: { desc: "CRUNCH TIME: foul a chosen opponent before they can go to work. They skip their scoring roll and shoot two free throws instead." },
+  hack_a: { desc: "CRUNCH TIME: foul a chosen opponent before they can go to work. They skip their scoring roll and shoot two free throws at −6 instead." },
   transition_outlet: { desc: "Spend 1 Rebound: a player with a Speed advantage announces a 3PT or Paint Shot Check at +2. Hit: +1 Assist." },
   switch_the_screen: { desc: "Swap the defenders on two opposing players, and the opponent loses 1 Assist. 🔒 Uncancelable." },
   veer_switch: { desc: "Cancel opponent's screen-and-roll card. You choose the new defender assignments instead, and draw a card." },

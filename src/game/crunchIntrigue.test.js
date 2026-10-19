@@ -12,7 +12,7 @@ import { describe, it, expect } from 'vitest';
 import { newGame, endSection, getTeam, CRUNCH_MARGIN } from './engine.js';
 import { canPlayCard, foulTroubleTargets } from './canPlay.js';
 import { execCard } from './execCard.js';
-import { aiBuildCardOpts } from './ai.js';
+import { aiBuildCardOpts, aiScoringDecision } from './ai.js';
 import { CRUNCH_CARDS } from './strats.js';
 
 const mk = (id, over = {}) => ({
@@ -54,39 +54,49 @@ describe('Hack-A-____', () => {
     expect(canPlayCard(crunch(g), 'A', 'hack_a').canPlay).toBe(true);
   });
 
-  it('takes the roll away and sends him to the line four times', () => {
+  // REWORKED 2026-10-19 (the user: "It almost never drops the average points
+  // of a player below their normal scoring line"): two free throws at −3.
+  it('takes the roll away and sends him to the line twice, under pressure', () => {
     const g = crunch(board({ aHand: ['hack_a'] }));
     const r = execCard(g, 'A', 'hack_a', { targetIdx: 2 });
     expect(r.ok).toBe(true);
     // His scoring roll is gone, the same way This Is My House takes one.
     expect(r.game.blockedRolls.B[2]).toBe(true);
-    // Four free throws, resolved on the spot: a free throw never pauses.
+    // Two free throws, resolved on the spot: a free throw never pauses.
     expect(r.game.pendingShotCheck).toBe(null);
     const lines = r.game.log.filter(l => /Hack-A: /.test(l.msg));
-    expect(lines).toHaveLength(4);
-    expect(r.game.log.some(l => /HACK-A-B2!/.test(l.msg))).toBe(true);
+    expect(lines).toHaveLength(2);
+    expect(r.game.log.some(l => /HACK-A-B2!.*two from the line at −3/.test(l.msg))).toBe(true);
   });
 
   it('pays the points to the man who shot them, not the man who fouled', () => {
-    // A shot line of 4 makes every free throw: d20 + 10 clears it always.
+    // A shot line of 4 makes every free throw: d20 + 10 − 3 clears it always.
     const b = roster('b'); b[2] = mk('b2', { shotLine: 4 });
     const g = crunch(board({ b, aHand: ['hack_a'] }));
     const before = { a: g.teamA.score, b: g.teamB.score };
     const after = execCard(g, 'A', 'hack_a', { targetIdx: 2 }).game;
-    expect(after.teamB.score - before.b).toBe(4);
+    expect(after.teamB.score - before.b).toBe(2);
     expect(after.teamA.score).toBe(before.a);
     // And on his own line, so the box score and the plus-minus agree.
     const ps = after.teamB.stats.find(s => s.id === 'b2');
-    expect(ps.pts).toBe(4);
+    expect(ps.pts).toBe(2);
   });
 
   it('is worth nothing against a shooter and everything against a brick', () => {
     // Same chart, opposite lines: the coach hacks the one who cannot shoot.
     const b = roster('b');
-    b[1] = mk('b1', { shotLine: 4 });    // makes all four
-    b[3] = mk('b3', { shotLine: 20 });   // needs a 10+
+    b[1] = mk('b1', { shotLine: 4 });    // makes both
+    b[3] = mk('b3', { shotLine: 20 });   // needs a 13+ under the pressure
     const g = crunch(board({ b, aHand: ['hack_a'] }));
     expect(aiBuildCardOpts(g, 'A', 'hack_a').targetIdx).toBe(3);
+  });
+
+  it('is kept when every foul would hand the shooter more than his roll', () => {
+    // Five sure shooters with a quiet chart: no hack takes points off.
+    const b = roster('b').map((p, i) => mk(`b${i}`, { shotLine: 4, chart: [{ lo: 1, hi: 99, pts: 1, reb: 0, ast: 0 }] }));
+    const g = crunch(board({ b, aHand: ['hack_a'] }));
+    expect(canPlayCard(g, 'A', 'hack_a').canPlay).toBe(true);
+    expect(aiScoringDecision(g, 'A').cardId).not.toBe('hack_a');
   });
 
   it('will not foul a man who has already gone to work', () => {

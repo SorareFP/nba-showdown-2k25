@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, placementRolls, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
-import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer, screenLockSlots } from '../../game/canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer, screenLockSlots, HACK_A } from '../../game/canPlay.js';
 import { checkNeedFor } from '../../game/checkTerms.js';
 import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
@@ -1093,10 +1093,11 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
     if (!targets.length) { toast('Every opponent has already rolled.', { tone: 'error' }); return null; }
     const pick = await openModal({
       teamKey: oppKey, cardId, players: targets.map(t => t.p),
-      label: 'Foul which opponent? (no scoring roll, four free throws)',
+      label: `Foul which opponent? (no scoring roll, two free throws at −${plus ? HACK_A.plusPressure : HACK_A.pressure})`,
       extraInfo: targets.map(({ p }) => {
-        const ftPts = (4 * Math.min(1, Math.max(0, (21 - ((p.shotLine || 99) - 10)) / 20))).toFixed(1);
-        return `Shot line ${p.shotLine} — four FTs are worth about ${ftPts} pts`;
+        const press = plus ? HACK_A.plusPressure : HACK_A.pressure;
+        const ftPts = (HACK_A.fts * Math.min(1, Math.max(0, (21 - ((p.shotLine || 99) - 10 + press)) / 20))).toFixed(1);
+        return `Shot line ${p.shotLine} — the two free throws are worth about ${ftPts} pts`;
       }),
       preview: previewWith(i => ({ targetIdx: targets[i].origIdx })),
     });

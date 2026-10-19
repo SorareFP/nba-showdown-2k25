@@ -357,11 +357,14 @@ describe('the crunch cards and Transition Outlet', () => {
     expect(r.plus.game.pendingShotCheck.bonus - r.plain.game.pendingShotCheck.bonus).toBe(2);
   });
 
-  it('Hack-A+: two free throws instead of four', () => {
+  // Reworked 2026-10-19: two free throws at −3, the "+" at −6.
+  it('Hack-A+: the two free throws at −6 instead of −3', () => {
     const r = both(() => inCrunch(), 'A', 'hack_a', { targetIdx: 2 });
     okBoth(r);
     const fts = res => res.game.log.filter(l => /Hack-A: .* free throw/.test(l.msg)).length;
-    expect([fts(r.plain), fts(r.plus)]).toEqual([4, 2]);
+    expect([fts(r.plain), fts(r.plus)]).toEqual([2, 2]);
+    expect(r.plain.game.log.some(l => /two from the line at −3/.test(l.msg))).toBe(true);
+    expect(r.plus.game.log.some(l => /two from the line at −6/.test(l.msg))).toBe(true);
     expect(r.plus.game.blockedRolls.B[2]).toBe(true);
   });
 

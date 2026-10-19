@@ -73,6 +73,17 @@ export function screenLockSlots(g, offenseKey) {
   return [lc.opts?.swapSlot1, lc.opts?.swapSlot2].filter(i => Number.isInteger(i));
 }
 
+/**
+ * HACK-A-____'S TRIP TO THE LINE, reworked 2026-10-19. The user: "The Hack_A
+ * card is kind of garbage. It almost never drops the average points of a
+ * player below their normal scoring line." Measured over every card: a
+ * scoring roll is worth a median 1.46 points (with its assists and rebounds),
+ * four free throws 3.2 — every hack was a gift (Shot Lines run 12-18, so there
+ * is no bad free-throw shooter to hunt). Two at −3 (crunch-time pressure)
+ * costs 65-85% of players points; the "+", at −6, about 90%.
+ */
+export const HACK_A = Object.freeze({ fts: 2, pressure: 3, plusPressure: 6 });
+
 export function pickUpTargets(g, teamKey) {
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const had = new Set(g.tempEff?.[oppKey]?.houndedIds || []);
@@ -625,7 +636,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     if (cardId === 'hack_a') {
       // Anyone who has yet to roll: the foul happens before he can go to work.
       if (preRollTargets(g, teamKey === 'A' ? 'B' : 'A').length === 0) return no('Every opponent has already rolled');
-      return ok(`Foul an opponent: no scoring roll, ${plus ? 'two' : 'four'} free throws instead`);
+      return ok(`Foul an opponent: no scoring roll, ${HACK_A.fts} free throws at −${plus ? HACK_A.plusPressure : HACK_A.pressure} instead`);
     }
     // The timeout riders (strats.js TIMEOUT_RIDERS): only during YOUR called timeout.
     if (TIMEOUT_RIDERS.includes(cardId) && g.timeoutActive !== teamKey) return no('Play during your Timeout');

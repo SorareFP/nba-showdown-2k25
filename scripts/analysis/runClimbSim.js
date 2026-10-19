@@ -32,7 +32,11 @@ import { capSal } from '../../src/game/teamRules.js';
 
 const args = process.argv.slice(2);
 const positional = args.filter(a => !a.includes('='));
-const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : Number(v)]));
+const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : k === 'policy' ? v : Number(v)]));
+// policy=rest       rest at every Rest Day
+// policy=practice   practise at every Rest Day but the one before the boss
+// (default)         rest when worn (-12 or worse) or before the boss, else practise
+const POLICY = overrides.policy ?? 'mixed';
 const RUNS = Number(positional[0] ?? 300);
 const RUNG = positional[1] ?? 'prince';
 const SEED = Number(positional[2] ?? 1);
@@ -104,7 +108,8 @@ for (let i = 0; i < RUNS; i += 1) {
       const practicable = Object.keys(run.deck).filter(id => !isPlus(id) && KIT_CARD_IDS.has(id));
       // Rest before the boss always (floor 7), and whenever the five are worn.
       const beforeBoss = stopById(run.map, run.restAt)?.floor === 7;
-      run = beforeBoss || pain <= -12 || !practicable.length
+      const wantRest = POLICY === 'rest' || beforeBoss || !practicable.length || (POLICY === 'mixed' && pain <= -12);
+      run = wantRest
         ? restDay(run, { choice: 'rest' })
         : restDay(run, { choice: 'practice', cardId: pick(rng, practicable) });
     } else if (run.status === 'game') {
@@ -142,7 +147,7 @@ for (let i = 0; i < RUNS; i += 1) {
 
 const pct = (n, d) => (d ? `${(100 * n / d).toFixed(1)}%` : '—');
 const median = xs => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.floor(s.length / 2)] : 0; };
-console.log(`The Climb, ${RUNS} simulated runs at ${RUNG} (seed ${SEED})`);
+console.log(`The Climb, ${RUNS} simulated runs at ${RUNG} (seed ${SEED}), Rest Day policy: ${POLICY}`);
 console.log(`caps: floor 1 $${CLIMB.floorCap(1)} → floor 7 $${CLIMB.floorCap(7)}, rivalry +$${CLIMB.rivalryExtra}, boss $${CLIMB.bossCap}; recovery ${JSON.stringify(CLIMB.recovery)}; kinds ${JSON.stringify(KIND_WEIGHTS)}`);
 for (const [k, t] of Object.entries(byKind)) console.log(`  ${k.padEnd(8)} won ${pct(t.won, t.played)} of ${t.played}`);
 console.log(`  by floor: ${byFloor.map((t, f) => `${f + 1}:${pct(t.won, t.played)}(${t.played})`).join('  ')}`);

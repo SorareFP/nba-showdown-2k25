@@ -1066,10 +1066,11 @@ export const climbGame = onCall({ region: 'us-central1' }, async request => {
 });
 
 /**
- * A RUN GAME'S CLAIM (claimGameReward with a runId). Pays nothing; moves the
- * ledger, writes the receipt (so a reload answers `already`), and writes the
- * lifetime stats of the caller's OWNED cards only — a run's reward players
- * are borrowed. A claim for anything but the open game under its own key
+ * A RUN GAME'S CLAIM (claimGameReward with a runId). Pays a quarter of a game
+ * (climbGamePay, since 2026-10-19: "it shouldn't be all-or-nothing") at the
+ * LEDGER's rung, never the browser's; moves the ledger, writes the receipt
+ * (so a reload answers `already`), and writes the lifetime stats of the
+ * caller's OWNED cards only — a run's reward players are borrowed. A claim for anything but the open game under its own key
  * changes nothing and answers with the run's status.
  */
 async function climbClaim(uid, runId, claim, claimKey) {
@@ -1085,7 +1086,7 @@ async function climbClaim(uid, runId, claim, claimKey) {
       const receipt = await tx.get(receiptRef);
       if (receipt.exists) {
         const r = receipt.data() ?? {};
-        return { already: true, coins: 0, breakdown: Array.isArray(r.breakdown) ? r.breakdown : [], run: { status: run?.status ?? 'none' } };
+        return { already: true, coins: r.coins ?? 0, breakdown: Array.isArray(r.breakdown) ? r.breakdown : [], run: { status: run?.status ?? 'none' } };
       }
     }
     if (!run || run.status !== 'active' || !run.open || claimKey !== `fixture:climb:${runId}:${run.open}`) {
@@ -1107,13 +1108,13 @@ async function climbClaim(uid, runId, claim, claimKey) {
     const cleared = claim.won ? [...(run.cleared ?? []), run.open] : (run.cleared ?? []);
     const status = !claim.won ? 'lost' : stop?.kind === 'boss' ? 'won' : 'active';
     tx.update(ref, claim.won ? { cleared, open: null, status } : { status, lostAt: run.open, open: null });
-    const { breakdown } = runClaimPreview(stop, run.rung, claim.won);
-    tx.update(userRef, { gameWindow: { at: now, n: recent + 1 } });
+    const { coins, breakdown } = runClaimPreview(stop, run.rung, claim.won, claim.margin);
+    tx.update(userRef, { gameWindow: { at: now, n: recent + 1 }, ...(coins > 0 ? { currency: FieldValue.increment(coins) } : {}) });
     if (receiptRef) {
       tx.set(receiptRef, {
         claimedAt: FieldValue.serverTimestamp(),
         expireAt: new Date(now + GAME_RECEIPT_DAYS * 86_400_000),
-        game: claimKey, coins: 0, breakdown, reward: null, run: runId,
+        game: claimKey, coins, breakdown, reward: null, run: runId,
       });
     }
     for (const row of owned) {
@@ -1129,7 +1130,7 @@ async function climbClaim(uid, runId, claim, claimKey) {
         lastPlayed: FieldValue.serverTimestamp(),
       }, { merge: true });
     }
-    return { coins: 0, breakdown, run: { status, pot: potOf(map, cleared, run.rung) } };
+    return { coins, breakdown, run: { status, pot: potOf(map, cleared, run.rung) } };
   });
 }
 

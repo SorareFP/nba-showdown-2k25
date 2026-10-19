@@ -431,6 +431,40 @@ export function settleGameReward(claim, daily, today) {
   };
 }
 
+/**
+ * A CLIMB GAME PAYS A QUARTER OF A GAME. The user (2026-10-19): "players
+ * should get pro-rated quarter-length coins for playing the climb, it
+ * shouldn't be all-or-nothing". A run game is one quarter, so it pays a
+ * quarter of what a full game pays for being played: completion, and the win
+ * bonus on the margin a full game would carry (the quarter's, times four) or
+ * the close-loss consolation, at the rung's rate (the coach always draws its
+ * own team at the rung). Paid win or lose; the pot is still banked on top.
+ * Left out: the daily first win (a quarter must not use up a whole game's)
+ * and milestones (a one-quarter box score is not a game's).
+ */
+export const CLIMB_GAME_SHARE = 0.25;
+export function climbGamePay({ won = false, margin = null, aiLevel = null } = {}) {
+  const share = n => Math.round(n * CLIMB_GAME_SHARE);
+  const m = sanitizeMargin(margin);
+  const full = m === null ? null : m * 4;
+  const breakdown = [{ label: 'Quarter played · 1/4 of a game', coins: share(REWARD.complete) }];
+  if (won) {
+    breakdown.push({ label: `Victory Bonus · by ${Math.max(1, m ?? 1)} (1/4)`, coins: share(winBonus(full)) });
+  } else if (full !== null && full <= 0 && -full <= CLOSE_LOSS.within) {
+    breakdown.push({ label: `${full === 0 ? 'Tie Game' : 'Close Loss'} (1/4)`, coins: share(CLOSE_LOSS.coins) });
+  }
+  let coins = breakdown.reduce((t, l) => t + l.coins, 0);
+  const pay = gamePayFactor({ aiLevel, won, rungDraw: true });
+  if (pay !== 1) {
+    const delta = Math.round(coins * pay) - coins;
+    if (delta) {
+      coins += delta;
+      breakdown.push({ label: `${AI_PAY[aiLevel]?.label ?? (pay < 1 ? 'Easier coach' : 'Harder coach')} · ${Math.round(pay * 100)}% rate`, coins: delta });
+    }
+  }
+  return { coins, breakdown };
+}
+
 export { MILESTONES, BAM_MILESTONE };
 
 // ── The box score a finished game reports ───────────────────────────────────

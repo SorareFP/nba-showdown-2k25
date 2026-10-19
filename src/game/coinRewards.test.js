@@ -192,3 +192,27 @@ describe('todayKey', () => {
     expect(todayKey(new Date('2026-09-05T23:59:00Z'))).toBe('2026-09-05');
   });
 });
+
+// A CLIMB GAME PAYS A QUARTER OF A GAME (2026-10-19: "it shouldn't be
+// all-or-nothing"), the pot still on top.
+import { climbGamePay, CLIMB_GAME_SHARE } from './coinRewards.js';
+describe('climbGamePay', () => {
+  it('is a quarter of completion, and of the win bonus on the margin a full game would carry', () => {
+    expect(CLIMB_GAME_SHARE).toBe(0.25);
+    const won = climbGamePay({ won: true, margin: 5, aiLevel: 'prince' });
+    expect(won.coins).toBe(Math.round(75 / 4) + Math.round(winBonus(20) / 4));
+    expect(won.breakdown.map(l => l.label).join(' | ')).toMatch(/Quarter played.*Victory Bonus · by 5/);
+  });
+
+  it('pays the quarter win or lose, a close loss a quarter of its consolation, and never the daily first win', () => {
+    expect(climbGamePay({ won: false, margin: -9, aiLevel: 'prince' }).coins).toBe(19);
+    expect(climbGamePay({ won: false, margin: -1, aiLevel: 'prince' }).coins).toBe(19 + 4);
+    expect(climbGamePay({ won: true, margin: 3 }).breakdown.some(l => /First Win/.test(l.label))).toBe(false);
+  });
+
+  it('takes the rung premium on a win only, like any coached game', () => {
+    const prince = climbGamePay({ won: true, margin: 6, aiLevel: 'prince' }).coins;
+    expect(climbGamePay({ won: true, margin: 6, aiLevel: 'deity' }).coins).toBeGreaterThan(prince);
+    expect(climbGamePay({ won: false, margin: -9, aiLevel: 'deity' }).coins).toBe(19);
+  });
+});

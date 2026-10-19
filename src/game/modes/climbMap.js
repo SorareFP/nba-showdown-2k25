@@ -11,7 +11,7 @@
 // Floor 1 is all Games, floor 7 all Rest Days. Every path passes a Rivalry and
 // a Rest Day on floors 2-6, and no path has two Rest Days in a row — so floor
 // 6, under floor 7's Rest Days, is never one.
-import { payFactorOf } from '../coinRewards.js';
+import { payFactorOf, climbGamePay } from '../coinRewards.js';
 
 export const FLOORS = 7;
 export const LANES = 3;
@@ -261,9 +261,12 @@ export function potOf(map, clearedIds, rung) {
 }
 
 /** The results screen's line for a run game: it pays nothing now, it adds to the pot. */
-export function runClaimPreview(stop, rung, won) {
-  if (!won) return { coins: 0, breakdown: [{ label: 'The run is over and the pot is lost', coins: 0 }] };
+// Since 2026-10-19 a run game also PAYS, a quarter of a game (climbGamePay);
+// `margin` is the game's (the claim's, sanitized there). The pot line follows.
+export function runClaimPreview(stop, rung, won, margin = null) {
+  const pay = climbGamePay({ won, margin, aiLevel: rung });
+  if (!won) return { coins: pay.coins, breakdown: [...pay.breakdown, { label: 'The run is over and the pot is lost', coins: 0 }] };
   const n = Math.round(stopPot(stop) * payFactorOf(rung));
   const label = stop?.kind === 'boss' ? `Into the pot: +${n} and a Booster` : `Into the pot: +${n}`;
-  return { coins: 0, breakdown: [{ label, coins: 0 }] };
+  return { coins: pay.coins, breakdown: [...pay.breakdown, { label, coins: 0 }] };
 }

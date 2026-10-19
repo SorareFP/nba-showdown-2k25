@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-pays-as-you-go', date: '2026-10-19', title: 'The Climb pays as you go, and Act I is fairer',
+    body: "Every Climb game now pays a quarter of a regular game, win or lose: a quarter of finishing one and of the win bonus or a close loss's consolation, at your coach rung's rate. The pot is still yours on top when you retire or beat the boss. The first three floors are fairer too: those coaches play only their starting kit, like yours, with no rares, on cheaper rosters. The boss is as tough as ever. And on a Rest Day you can look at the map to see what comes next before you choose.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'play-hub', date: '2026-10-19', title: 'Every game mode under Play',
     body: "Play opens on one page of every way to play: The Climb, a quick game, Season, Dynasty, Tournament and Online PvP, each as a card. Anything you have going says where you stand (the floor and pot of a climb, a dynasty's year, a season's next game) with a Resume button, and a game in progress sits first. Dynasty, Tournament and PvP have left the top bar for it, and every mode has a link back to All modes. On a phone, Home and the rules join the bottom bar.",
     to: 'modes', cta: 'Play',

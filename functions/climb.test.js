@@ -74,7 +74,7 @@ vi.mock('./shared/src/game/friends.js', () => import('../src/game/friends.js'));
 vi.mock('./shared/src/game/modes/climbMap.js', () => import('../src/game/modes/climbMap.js'));
 
 const { climbStart, climbGame, climbBank, claimGameReward } = await import('./index.js');
-const { generateMap, potOf, stopById, reachableGame } = await import('../src/game/modes/climbMap.js');
+const { generateMap, potOf, stopById, reachableGame, runClaimPreview } = await import('../src/game/modes/climbMap.js');
 
 const UID = 'u1';
 const call = (fn, data) => fn({ auth: { uid: UID }, data });
@@ -140,16 +140,21 @@ describe('opening a game', () => {
 });
 
 describe('a run game\'s claim', () => {
-  it('clears the stop on a win and pays nothing now, once', async () => {
-    const { runId } = await started();
+  // A QUARTER OF A GAME (2026-10-19: "it shouldn't be all-or-nothing"), at
+  // the LEDGER's rung: the claim says Deity, the run is Prince.
+  it('clears the stop on a win and pays a quarter of a game at the run\'s rung, once', async () => {
+    const { runId, map } = await started();
     await call(climbGame, { runId, stopId: '1-0' });
     const res = await claim(runId, '1-0', true);
-    expect(res.coins).toBe(0);
+    const due = runClaimPreview(stopById(map, '1-0'), 'prince', true, 8).coins;
+    expect(due).toBeGreaterThan(0);
+    expect(res.coins).toBe(due);
     expect(res.run).toMatchObject({ status: 'active' });
-    expect(coins()).toBe(100);
+    expect(coins()).toBe(100 + due);
     expect(ledger(runId)).toMatchObject({ cleared: ['1-0'], open: null, status: 'active' });
-    expect(docs.get(`users/${UID}/gameReceipts/${keyOf(runId, '1-0')}`)).toMatchObject({ coins: 0 });
-    expect(await claim(runId, '1-0', true)).toMatchObject({ already: true, coins: 0 });
+    expect(docs.get(`users/${UID}/gameReceipts/${keyOf(runId, '1-0')}`)).toMatchObject({ coins: due });
+    expect(await claim(runId, '1-0', true)).toMatchObject({ already: true, coins: due });
+    expect(coins()).toBe(100 + due);
     expect(ledger(runId).cleared).toEqual(['1-0']);
     expect(docs.get(`users/${UID}`).dailyFirstWin).toBe(false);
   });
@@ -193,12 +198,13 @@ describe('banking the pot', () => {
     await winAt(runId, b);
     const pot = potOf(map, [a, b], 'king');
     expect(pot.coins).toBeGreaterThan(0);
+    const before = coins();   // the two games paid their quarters already
     const res = await call(climbBank, { runId, pot: 99999, coins: 99999 });
     expect(res).toMatchObject({ coins: pot.coins, booster: false });
-    expect(coins()).toBe(100 + pot.coins);
+    expect(coins()).toBe(before + pot.coins);
     expect(ledger(runId)).toMatchObject({ status: 'banked' });
     expect(await call(climbBank, { runId })).toMatchObject({ already: true, coins: pot.coins });
-    expect(coins()).toBe(100 + pot.coins);
+    expect(coins()).toBe(before + pot.coins);
   });
 
   it('adds a one-pack Booster box for the boss', async () => {
@@ -223,9 +229,10 @@ describe('banking the pot', () => {
     const map = generateMap(ledger(runId).seed);
     const b = map.floors.flat().find(s => reachableGame(map, '1-0', s.id)).id;
     expect(await call(climbGame, { runId, stopId: b })).toMatchObject({ ok: true });
+    const before = coins();
     await expect(call(climbBank, { runId })).rejects.toThrow(/still open/);
     expect(ledger(runId)).toMatchObject({ status: 'active', open: b });
-    expect(coins()).toBe(100);
+    expect(coins()).toBe(before);
     await claim(runId, b, true);
     expect((await call(climbBank, { runId })).coins).toBe(potOf(map, ['1-0', b], 'prince').coins);
   });
@@ -234,8 +241,10 @@ describe('banking the pot', () => {
     const { runId } = await started();
     await call(climbGame, { runId, stopId: '1-0' });
     await claim(runId, '1-0', false);
+    expect(coins()).toBe(100 + runClaimPreview({ kind: 'game', floor: 1 }, 'prince', false, -3).coins);   // the quarter, lost or not
+    const before = coins();
     await expect(call(climbBank, { runId })).rejects.toThrow(/lost/);
-    expect(coins()).toBe(100);
+    expect(coins()).toBe(before);
   });
 });
 

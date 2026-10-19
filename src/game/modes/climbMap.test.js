@@ -145,11 +145,15 @@ describe('the pot', () => {
   });
 
   it('previews a run game: into the pot, or the pot lost', () => {
-    const won = runClaimPreview({ kind: 'game', floor: 2 }, 'deity', true);
-    expect(won.coins).toBe(0);
-    expect(won.breakdown[0].label).toContain('+53');
-    expect(runClaimPreview({ kind: 'boss', floor: 8 }, 'prince', true).breakdown[0].label).toMatch(/\+120.*Booster/);
-    expect(runClaimPreview({ kind: 'game', floor: 2 }, 'prince', false).breakdown[0].label).toMatch(/pot is lost/);
+    // The game's own quarter first (climbGamePay, 2026-10-19), the pot last.
+    const won = runClaimPreview({ kind: 'game', floor: 2 }, 'deity', true, 6);
+    expect(won.coins).toBeGreaterThan(0);
+    expect(won.breakdown[0].label).toMatch(/Quarter played/);
+    expect(won.breakdown.at(-1).label).toContain('+53');
+    expect(runClaimPreview({ kind: 'boss', floor: 8 }, 'prince', true).breakdown.at(-1).label).toMatch(/\+120.*Booster/);
+    const lost = runClaimPreview({ kind: 'game', floor: 2 }, 'prince', false, -9);
+    expect(lost.breakdown.at(-1).label).toMatch(/pot is lost/);
+    expect(lost.coins).toBe(19);
   });
 });
 

@@ -148,8 +148,8 @@ describe('The Climb in the news', () => {
     expect(NEWS.find(n => n.id === 'the-climb')).toMatchObject({ to: 'climb', cta: 'Start a climb' });
   });
 
-  it('is followed by the Play hub, which leads the news and opens it (2026-10-19)', () => {
-    expect(NEWS[0]).toMatchObject({ id: 'play-hub', to: 'modes' });
-    expect(NEWS[1].id).toBe('the-climb');
+  it('leads the news with its 2026-10-19 changes, then the Play hub', () => {
+    expect(NEWS[0]).toMatchObject({ id: 'climb-pays-as-you-go', to: 'climb' });
+    expect(NEWS[1]).toMatchObject({ id: 'play-hub', to: 'modes' });
   });
 });

@@ -119,7 +119,10 @@ whole mode splits into four pieces, each its own spec and plan:
 - **The reward screen shows the deck:** its size and its fit (deckFit.js), so
   what a pick costs is visible. A 15-card deck is seen whole in a one-quarter
   game; past that every card thins the others.
-- **The pot:** run games pay nothing per game. A Game win adds **30 coins at
+- **The pot:** run games paid nothing per game until 2026-10-19; since then
+  each pays a quarter of a game (the user: "pro-rated quarter-length coins ...
+  it shouldn't be all-or-nothing"; climbGamePay in coinRewards.js), and the pot
+  is banked on top. A Game win adds **30 coins at
   floor 1 rising to 60 at floor 7**, a Rivalry **+70**, the boss **+120 and a
   Booster pack**; all times the rung's pay factor. Winning the act is roughly
   400 coins and a Booster for about an hour.

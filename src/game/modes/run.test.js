@@ -368,3 +368,25 @@ describe('a Climb five', () => {
     expect(fiveProblem(pricey, new Set(pricey))).toMatch(/over the \$2,200 cap/);
   });
 });
+
+// THREE PRICES (the user, 2026-10-19: "different ranges of player offers so
+// that you're not immediately up against the cap every time you take a player").
+import { rollDrops } from './run.js';
+describe('a player offer', () => {
+  it('comes at three prices: under 35% of the room, 35-70%, and 70-100%', () => {
+    const base = camped();
+    const run = { ...base, cap: capSal(FIVE) + 1500, dropOdds: { player: 1, perk: -1 } };
+    const g = openStops(run).find(s => s.kind === 'game');
+    const r = recordResult(chooseStop(run, g.id), { stopId: g.id, won: true, margin: 6 });
+    const room = r.cap - capSal(rosterCards(r).cards);
+    const shares = r.offers.players.map(k => getCardByKey(k).salary / room);
+    expect(shares).toHaveLength(3);
+    expect(shares[0]).toBeLessThanOrEqual(0.35);
+    expect(shares[1]).toBeGreaterThan(0.35);
+    expect(shares[1]).toBeLessThanOrEqual(0.7);
+    expect(shares[2]).toBeGreaterThan(0.7);
+    expect(shares[2]).toBeLessThanOrEqual(1);
+    expect(new Set(r.offers.players.map(k => getCardByKey(k).id)).size).toBe(3);
+    expect(typeof rollDrops).toBe('function');
+  });
+});

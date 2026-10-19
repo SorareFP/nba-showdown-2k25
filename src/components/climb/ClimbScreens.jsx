@@ -485,7 +485,8 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onPickPerk = () =
           <div className={styles.offers} data-player-offer="true">
             {o.players.map(k => {
               const card = rosterCards({ roster: [k] }).cards[0];
-              return <PlayerTile key={k} cardKey={k} card={card} big onClick={busy ? null : () => onPickPlayer(k)}>Sign</PlayerTile>;
+              // What signing him leaves (2026-10-19): the three come at three prices.
+              return <PlayerTile key={k} cardKey={k} card={card} big extra={<> · leaves {dollars(room - (card?.salary ?? 0))}</>} onClick={busy ? null : () => onPickPlayer(k)}>Sign</PlayerTile>;
             })}
           </div>
           <div className={styles.actions}><button type="button" onClick={() => onSkip('players')} disabled={busy}>Skip the players</button></div>

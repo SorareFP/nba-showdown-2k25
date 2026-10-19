@@ -67,6 +67,10 @@ export const CLIMB = {
   coachDeckSize: f => (f <= KIT_ONLY_FLOORS ? KIT_SIZE : 15 + Math.round((f - 1) * 10 / 7)),
   recovery: { base: 10, by10: 12, by20: 14 },
   rareChance: f => 0.05 + 0.2 * (f - 1) / 6,
+  // A player offer's three prices, as shares of the room left (2026-10-19),
+  // and how many of each band's priciest it draws from.
+  offerBands: [[0, 0.35], [0.35, 0.7], [0.7, 1]],
+  offerBest: 12,
   climbOnlyChance: 0.35,   // the reward's "anywhere" slot, while a Climb-only card is left (2026-10-19)
   // THE DROPS (the user, 2026-10-19: "percent chances of games dropping
   // certain thing. Like all games drop strategy cards, rivalries *could* drop
@@ -326,25 +330,44 @@ export function stratOffer(run, stop, rng, rngClimb = null) {
   return chosen;
 }
 
-/** Three players that fit under the cap, from the forty priciest that do; none when the roster is full. */
+/**
+ * THREE PLAYERS AT THREE PRICES (the user, 2026-10-19: "there should be
+ * different ranges of player offers so that you're not immediately up against
+ * the cap every time you take a player"): one from each band of the room left
+ * (CLIMB.offerBands: up to 35%, 35-70%, 70-100%), cheapest first, each drawn
+ * from the best of its band (the priciest, one card a player). An empty band
+ * borrows from the rest. None when the roster is full.
+ */
 function playerOffer(run, rng) {
   const { cards } = rosterCards(run);
   if (cards.length >= CLIMB.maxRoster) return [];
   const room = run.cap - capSal(cards);
+  if (!(room > 0)) return [];
   const on = new Set(cards.map(c => c.id));
   const fits = PLAYER_POOL
     .filter(c => (c.salary ?? 0) <= room && !on.has(c.id))
     .sort((a, b) => (b.salary ?? 0) - (a.salary ?? 0) || cardKey(a).localeCompare(cardKey(b)));
-  const seen = new Set();
-  const top = [];
-  for (const c of fits) {
-    if (seen.has(c.id)) continue;
-    seen.add(c.id);
-    top.push(c);
-    if (top.length >= 40) break;
-  }
+  const taken = new Set();
+  const bestOf = list => {
+    const seen = new Set();
+    const out = [];
+    for (const c of list) {
+      if (taken.has(c.id) || seen.has(c.id)) continue;
+      seen.add(c.id);
+      out.push(c);
+      if (out.length >= CLIMB.offerBest) break;
+    }
+    return out;
+  };
   const out = [];
-  while (out.length < 3 && top.length) out.push(cardKey(top.splice(Math.floor(rng() * top.length), 1)[0]));
+  for (const [lo, hi] of CLIMB.offerBands) {
+    let pool = bestOf(fits.filter(c => { const f = (c.salary ?? 0) / room; return f > lo && f <= hi; }));
+    if (!pool.length) pool = bestOf(fits);
+    if (!pool.length) break;
+    const c = pool[Math.floor(rng() * pool.length)];
+    taken.add(c.id);
+    out.push(cardKey(c));
+  }
   return out;
 }
 

@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import {
   CLIMB, BOONS, recoveryFor, newRun, chooseCamp, openStops, chooseStop, gameSetup, presetFor,
   recordResult, stratOffer, pickStrat, pickPlayer, skipOffers, restDay, takeFreeRest, retire,
-  rosterCards, deckLine, potPreview,
+  rosterCards, deckLine, potPreview, bossTeam,
 } from './run.js';
 import { stopById, potOf, climbRng } from './climbMap.js';
 import { kitDeck, KIT_CARD_IDS, leanOf } from './climbKits.js';
@@ -272,6 +272,7 @@ describe('the end of a run', () => {
     const boss = gameSetup(atBoss, 'boss');
     expect(boss.rosterB).toHaveLength(CLIMB.bossSize);
     expect(boss.opponent.classic).toBe(true);
+    expect(bossTeam(r).abbr).toBe(boss.opponent.abbr); // the map's boss is the one you meet
   });
 });
 

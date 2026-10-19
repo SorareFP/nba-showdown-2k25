@@ -9,7 +9,7 @@ vi.mock('../../firebase/CardStatsProvider.jsx', () => ({ useCardStats: () => ({ 
 
 import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, practiceTiles } from './ClimbScreens.jsx';
 import { baseId } from '../../game/strats.js';
-import { newRun, chooseCamp, chooseStop, recordResult } from '../../game/modes/run.js';
+import { newRun, chooseCamp, chooseStop, recordResult, bossTeam } from '../../game/modes/run.js';
 import { CARDS } from '../../game/cards.js';
 import { cardKey } from '../../game/cardSets.js';
 import { getStrat } from '../../game/strats.js';
@@ -67,6 +67,7 @@ describe('the map', () => {
     expect(out.match(/data-open="true"/g)).toHaveLength(3);
     for (const id of ['1-0', '1-1', '1-2']) expect(out).toContain(`data-stop="${id}" data-open="true"`);
     expect(out).toContain('data-stop="boss"');
+    expect(out).toContain(`Boss · ${bossTeam(camped()).name}`);
     expect(out).toContain('Pot');
     expect(out).toContain('$2,200');
   });

@@ -201,6 +201,13 @@ function bossFranchise(run) {
   return pickFrom(climbRng(run.seed, 'boss'), list);
 }
 
+/** Who waits at the top of the map, known from the start as in StS: the boss's franchise and its logo. */
+export function bossTeam(run) {
+  const abbr = bossFranchise(run);
+  const team = TEAMS[abbr] ?? {};
+  return { abbr, name: team.name ?? abbr, city: team.city ?? '', logo: team.logo ?? null };
+}
+
 /** The franchises the run's fights meet, in order, never the boss's and never twice. */
 function franchiseOrder(run) {
   const boss = bossFranchise(run);

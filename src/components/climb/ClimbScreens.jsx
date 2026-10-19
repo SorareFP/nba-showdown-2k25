@@ -10,10 +10,11 @@ import { capOf } from '../../game/coinRewards.js';
 import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster } from '../../game/teamRules.js';
-import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem } from '../../game/modes/run.js';
+import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam } from '../../game/modes/run.js';
+import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById } from '../../game/modes/climbMap.js';
-import { PLAYBOOKS, KIT_CARD_IDS, kitDeck } from '../../game/modes/climbKits.js';
+import { PLAYBOOKS, KIT_CARD_IDS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
 import styles from './Climb.module.css';
 
 const dollars = n => `$${Math.round(n).toLocaleString('en-US')}`;
@@ -38,9 +39,9 @@ const KIND = {
 };
 
 /** A player card tile: the face opens the whole card. */
-function PlayerTile({ cardKey, card, children, selected = false, onClick = null, extra = null }) {
+function PlayerTile({ cardKey, card, children, selected = false, onClick = null, extra = null, big = false }) {
   return (
-    <div className={`${styles.tile} ${selected ? styles.selected : ''}`}>
+    <div className={`${styles.tile} ${selected ? styles.selected : ''} ${big ? styles.offer : ''}`}>
       <ZoomImg
         player={cardKey}
         className={styles.face}
@@ -57,11 +58,11 @@ function PlayerTile({ cardKey, card, children, selected = false, onClick = null,
 }
 
 /** A strategy card tile with its text. */
-function StratTile({ id, children = null, onClick = null, disabled = false, note = null }) {
+function StratTile({ id, children = null, onClick = null, disabled = false, note = null, big = false }) {
   const s = getStrat(id);
   if (!s) return null;
   return (
-    <div className={`${styles.tile} ${styles.stratTile}`} data-rarity={s.rarity}>
+    <div className={`${styles.tile} ${styles.stratTile} ${big ? styles.offer : ''}`} data-rarity={s.rarity}>
       <ZoomImg strat={id} className={styles.face} src={getStratThumbPath(id)} onError={fallbackTo(getStratImagePath(id))} alt={s.name} loading="lazy" />
       <div className={styles.tileName}>{s.name}</div>
       <div className={styles.tileMeta}>{s.rarity}</div>
@@ -193,17 +194,34 @@ export function TrainingCamp({ run, onChoose, busy = false }) {
     <div className={styles.screen}>
       <h2 className={styles.title}>Training Camp</h2>
       <h3 className={styles.h3}>Playbook</h3>
+      <p className={styles.lede}>
+        Every deck carries the seven switching basics ({Object.entries(CORE).map(([id, n]) => `${getStrat(id)?.name}${n > 1 ? ` ×${n}` : ''}`).join(', ')}) and the eight cards of the playbook you choose.
+      </p>
+      {/* The playbooks as their cards (2026-10-19, "use the whole screen"): a
+          face opens the whole card (ZoomImg stops the click), anywhere else
+          on the panel chooses it. */}
       <div className={styles.playbooks}>
-        {PLAYBOOKS.map(pb => (
-          <button key={pb} type="button" className={`${styles.playbook} ${playbook === pb ? styles.on : ''}`} aria-pressed={playbook === pb} onClick={() => { setPlaybook(pb); setCuts([]); }}>
-            <strong>{PLAYBOOK_NAME[pb]}</strong>
-            {run.camp?.fits === pb && <span className={styles.badge}>fits your team</span>}
-            <span className={styles.muted}>{PLAYBOOK_LINE[pb]}</span>
-            <ul className={styles.cardList}>
-              {Object.entries(kitDeck(pb)).map(([id, n]) => <li key={id}>{getStrat(id)?.name}{n > 1 ? ` ×${n}` : ''}</li>)}
-            </ul>
-          </button>
-        ))}
+        {PLAYBOOKS.map(pb => {
+          const on = playbook === pb;
+          const choose = () => { setPlaybook(pb); setCuts([]); };
+          return (
+            <div key={pb} data-playbook={pb} className={`${styles.playbook} ${on ? styles.on : ''}`} onClick={choose}>
+              <button type="button" className={styles.playbookHead} aria-pressed={on} onClick={e => { e.stopPropagation(); choose(); }}>
+                <strong>{PLAYBOOK_NAME[pb]}</strong>
+                {run.camp?.fits === pb && <span className={styles.badge}>fits your team</span>}
+                <span className={styles.muted}>{PLAYBOOK_LINE[pb]}</span>
+              </button>
+              <div className={styles.kitFaces}>
+                {Object.entries(KITS[pb]).map(([id, n]) => (
+                  <div key={id} className={styles.kitFace}>
+                    <ZoomImg strat={id} className={styles.face} src={getStratThumbPath(id)} onError={fallbackTo(getStratImagePath(id))} alt={getStrat(id)?.name} loading="lazy" />
+                    {n > 1 && <span className={styles.copies}>×{n}</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
       <h3 className={styles.h3}>One of three</h3>
       <div className={styles.boons}>
@@ -239,17 +257,20 @@ export function TrainingCamp({ run, onChoose, busy = false }) {
 
 // ── The map ──────────────────────────────────────────────────────────────────
 
-const ROW = 74;
-const PAD = 20;
-const yOf = floor => PAD + (FLOORS + 1 - floor) * ROW + ROW / 2;
-const xOf = lane => (lane + 0.5) * 100;
+// The map is the screen (the user, 2026-10-19: "make the actual climb the main
+// part here, visually"): it fills the main column and the window's height, and
+// every position is a percentage of it, so the lines (a 300 x 100 viewBox
+// stretched over the same box) and the stops always meet.
+const ROWS = FLOORS + 1;
+const yPct = floor => (ROWS - floor + 0.5) / ROWS * 100;
+const xPct = lane => (lane + 0.5) / 3 * 100;
 
 /** The act: seven floors and the boss, the open stops tappable; your team, the pot and the way out beside it. */
 export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, busy = false }) {
   const open = new Set(openStops(run).map(s => s.id));
   const stops = [...run.map.floors.flat(), run.map.boss];
-  const height = (FLOORS + 1) * ROW + PAD * 2;
   const links = run.map.floors.flat().flatMap(s => s.next.map(id => [s, stopById(run.map, id)]));
+  const boss = useMemo(() => bossTeam(run), [run.seed, run.rung]);
   const { cards } = rosterCards(run);
   const mult = capOf(run.rung);
   const capAt = s => s.kind === 'boss' ? CLIMB.bossCap * mult
@@ -261,10 +282,14 @@ export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, bu
     <div className={styles.screen}>
     <h2 className={styles.title}>The Climb <span className={styles.muted}>· {rung} · {floor ? `floor ${floor} cleared` : 'floor 1 ahead'}</span></h2>
     <div className={styles.mapScreen}>
-      <div className={styles.mapWrap} style={{ height }}>
-        <svg className={styles.links} viewBox={`0 0 300 ${height}`} preserveAspectRatio="none" aria-hidden="true">
+      <div className={styles.mapPanel}>
+      <div className={styles.mapWrap}>
+        {Array.from({ length: FLOORS }, (_, i) => i + 1).map(f => (
+          <span key={f} className={`${styles.floorNo} ${f === floor + 1 ? styles.floorNext : ''}`} style={{ top: `${yPct(f)}%` }} aria-hidden="true">{f}</span>
+        ))}
+        <svg className={styles.links} viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true">
           {links.map(([a, b]) => (
-            <line key={`${a.id}-${b.id}`} x1={xOf(a.lane)} y1={yOf(a.floor)} x2={xOf(b.lane)} y2={yOf(b.floor)}
+            <line key={`${a.id}-${b.id}`} x1={xPct(a.lane) * 3} y1={yPct(a.floor)} x2={xPct(b.lane) * 3} y2={yPct(b.floor)}
               className={run.cleared.includes(a.id) || run.at === a.id ? styles.linkLit : styles.link} />
           ))}
         </svg>
@@ -272,24 +297,31 @@ export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, bu
           const isOpen = open.has(s.id);
           const done = run.cleared.includes(s.id) || run.at === s.id;
           const cap = capAt(s);
+          const isBoss = s.kind === 'boss';
+          const logo = isBoss && boss.logo ? logoSrc(boss.logo) : null;
           return (
             <button
               key={s.id}
               type="button"
               data-stop={s.id}
               data-open={isOpen ? 'true' : 'false'}
-              className={`${styles.stop} ${styles[s.kind]} ${isOpen ? styles.open : ''} ${done ? styles.done : ''}`}
-              style={{ left: `${(s.lane + 0.5) / 3 * 100}%`, top: yOf(s.floor) }}
+              className={`${styles.stop} ${styles[s.kind]} ${isOpen ? styles.open : ''} ${done ? styles.done : ''} ${run.at === s.id ? styles.here : ''}`}
+              style={{ left: `${xPct(s.lane)}%`, top: `${yPct(s.floor)}%` }}
               disabled={!isOpen || busy}
               onClick={() => onGo(s.id)}
-              title={`${KIND[s.kind].name}${cap ? ` · coach's cap ${dollars(cap)}` : ''}`}
+              title={`${isBoss ? `Boss: the classic ${boss.city} ${boss.name}` : KIND[s.kind].name}${cap ? ` · coach's cap ${dollars(cap)}` : ''}`}
             >
-              <span className={styles.stopIcon}>{done ? '✓' : KIND[s.kind].icon}</span>
-              <span className={styles.stopName}>{KIND[s.kind].name}</span>
-              {cap && <span className={styles.stopCap}>{dollars(cap)}</span>}
+              {logo && !done
+                ? <img className={styles.bossLogo} src={logo} alt="" />
+                : <span className={styles.stopIcon}>{done ? '✓' : KIND[s.kind].icon}</span>}
+              <span className={styles.stopText}>
+                <span className={styles.stopName}>{isBoss ? `Boss · ${boss.name}` : KIND[s.kind].name}</span>
+                {cap && <span className={styles.stopCap}>{dollars(cap)}</span>}
+              </span>
             </button>
           );
         })}
+      </div>
       </div>
       <aside className={styles.side}>
         <div className={styles.stat}><span>Pot</span><strong><PotLine run={run} /></strong></div>
@@ -321,19 +353,23 @@ export function ClimbMap({ run, onGo, onRetire, onFreeRest, onAbandon = null, bu
 
 // ── Rewards ──────────────────────────────────────────────────────────────────
 
-/** Pick a strategy card (or two), maybe a player, or skip. */
+/**
+ * Pick a strategy card (or two), maybe a player, or skip. The offers are the
+ * screen (the user, 2026-10-19: "let's use the whole screen here"): big cards
+ * across the middle, sized to the window, as StS shows a card reward.
+ */
 export function RewardPicker({ run, onPickStrat, onPickPlayer, onSkip, busy = false }) {
   const o = run.offers ?? { strats: [], players: [], picks: 0 };
   const room = run.cap - capSal(rosterCards(run).cards);
   return (
-    <div className={styles.screen}>
+    <div className={`${styles.screen} ${styles.offerScreen}`}>
       <h2 className={styles.title}>A win. Choose your reward.</h2>
       <DeckLine run={run} />
       {o.strats.length > 0 && o.picks > 0 && (
         <>
           <h3 className={styles.h3}>Strategy cards <span className={styles.muted}>take {o.picks}, or skip</span></h3>
-          <div className={styles.grid}>
-            {o.strats.map(id => <StratTile key={id} id={id} onClick={() => onPickStrat(id)} disabled={busy}>Take</StratTile>)}
+          <div className={styles.offers}>
+            {o.strats.map(id => <StratTile key={id} id={id} big onClick={() => onPickStrat(id)} disabled={busy}>Take</StratTile>)}
           </div>
           <div className={styles.actions}><button type="button" onClick={() => onSkip('strats')} disabled={busy}>Skip the cards</button></div>
         </>
@@ -341,10 +377,10 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onSkip, busy = fa
       {o.players.length > 0 && (
         <>
           <h3 className={styles.h3}>A player <span className={styles.muted}>{dollars(room)} of room · for this run only</span></h3>
-          <div className={styles.grid} data-player-offer="true">
+          <div className={styles.offers} data-player-offer="true">
             {o.players.map(k => {
               const card = rosterCards({ roster: [k] }).cards[0];
-              return <PlayerTile key={k} cardKey={k} card={card} onClick={busy ? null : () => onPickPlayer(k)}>Sign</PlayerTile>;
+              return <PlayerTile key={k} cardKey={k} card={card} big onClick={busy ? null : () => onPickPlayer(k)}>Sign</PlayerTile>;
             })}
           </div>
           <div className={styles.actions}><button type="button" onClick={() => onSkip('players')} disabled={busy}>Skip the players</button></div>
@@ -436,7 +472,7 @@ export function RunOver({ run, onBank, onNew, onAbandon = null, busy = false }) 
   const lost = run.status === 'lost';
   const banked = run.banked;
   return (
-    <div className={styles.screen}>
+    <div className={`${styles.screen} ${styles.offerScreen} ${styles.endScreen}`}>
       <h2 className={styles.title}>{run.status === 'won' ? 'You beat the boss!' : lost ? 'The run is over' : 'Retired'}</h2>
       {lost ? (
         <p className={styles.lede}>{pot.coins > 0

@@ -2,7 +2,7 @@
    motion.css; the one 768px breakpoint (docs: mobile_layout). */
 
 .screen { display: flex; flex-direction: column; gap: 12px; color: var(--text); }
-.title { margin: 0; font-size: 22px; }
+.title { margin: 0; font-size: clamp(22px, 1.5vw, 30px); }
 .lede { margin: 0; color: var(--text-muted); max-width: 70ch; line-height: 1.45; }
 .h3 { margin: 8px 0 0; font-size: 15px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
 .muted { color: var(--text-muted); font-weight: 400; }
@@ -23,7 +23,7 @@
 .on { border-color: var(--orange) !important; box-shadow: 0 0 0 1px var(--orange) inset; }
 
 /* Tiles: a card face that opens the whole card, and a button under it. */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 8.5vw, 240px), 1fr)); gap: 10px; }
 .tile {
   background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 8px; display: flex; flex-direction: column; gap: 4px;
@@ -42,37 +42,83 @@
 .rung { display: flex; flex-direction: column; gap: 2px; text-align: left; }
 .rung span { font-size: 12px; color: var(--text-muted); }
 
-/* Training Camp */
-.playbooks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.playbook { display: flex; flex-direction: column; gap: 6px; text-align: left; align-items: flex-start; }
+/* Training Camp (2026-10-19, "use the whole screen"): each playbook shows its
+   eight cards as faces, two rows of four sized so both rows fit the window's
+   height (a face is 5:7: two rows take 2.8 x the width; ~600px is the rest). */
+.playbooks { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(10px, 1.2vw, 24px); }
+.playbook {
+  display: flex; flex-direction: column; gap: 10px; padding: 12px; cursor: pointer;
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+  transition: border-color var(--dur-quick) var(--ease-out);
+}
+.playbook:hover { border-color: var(--orange-light); }
+.screen .playbookHead {
+  display: flex; flex-direction: column; gap: 4px; align-items: flex-start; text-align: left;
+  background: none; border: none; padding: 0;
+}
+.screen .playbookHead:hover:not(:disabled) { background: none; }
+.playbookHead strong { font-size: clamp(16px, 1.3vw, 24px); }
+.playbookHead .muted { font-size: clamp(13px, 0.9vw, 16px); }
+.kitFaces { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; max-width: max(280px, calc((100vh - 600px) * 1.43 + 24px)); }
+.kitFace { position: relative; }
+.copies {
+  position: absolute; top: 4px; right: 4px; pointer-events: none;
+  background: var(--orange); color: #fff; border-radius: 999px; padding: 0 7px; font-size: 12px; font-weight: 700;
+}
 .badge { background: var(--green); color: #fff; border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 700; }
-.cardList { margin: 0; padding-left: 16px; font-size: 12px; color: var(--text-muted); columns: 2; column-gap: 16px; }
-.boons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.boon { display: flex; flex-direction: column; gap: 4px; text-align: left; }
-.boon span { font-size: 12px; color: var(--text-muted); }
+.boons { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(10px, 1.2vw, 24px); }
+.screen .boon { display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 12px 14px; }
+.boon strong { font-size: clamp(15px, 1.1vw, 20px); }
+.boon span { font-size: clamp(12px, 0.85vw, 16px); color: var(--text-muted); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font-size: 12px; padding: 4px 10px !important; }
 
-/* The map */
-.mapScreen { display: grid; grid-template-columns: minmax(280px, 520px) minmax(240px, 1fr); gap: 20px; align-items: start; }
-.mapWrap { position: relative; width: 100%; }
+/* The map (2026-10-19: the map IS the screen — "make the actual climb the main
+   part here, visually"). It takes the main column and the window's height; the
+   pot and team sit in a narrow column beside it. Every stop, line and floor
+   number is placed in percentages of .mapWrap, so it scales with the window. */
+.mapScreen { display: grid; grid-template-columns: minmax(0, 1fr) clamp(260px, 20vw, 340px); gap: 20px; align-items: start; }
+.mapPanel {
+  height: clamp(560px, calc(100vh - 190px), 1150px);
+  padding: 12px 16px 12px 44px; border: 1px solid var(--border); border-radius: var(--radius);
+  background:
+    radial-gradient(ellipse 60% 22% at 50% 0%, rgba(245, 158, 11, 0.16), transparent 70%),
+    linear-gradient(to top, var(--navy) 0%, var(--card-bg) 100%);
+}
+.mapWrap { position: relative; height: 100%; width: min(100%, 1000px); margin: 0 auto; }
 .links { position: absolute; inset: 0; width: 100%; height: 100%; }
-.link { stroke: var(--border); stroke-width: 2; vector-effect: non-scaling-stroke; }
-.linkLit { stroke: var(--orange); stroke-width: 3; vector-effect: non-scaling-stroke; }
+.link { stroke: var(--border); stroke-width: 2; stroke-dasharray: 6 6; vector-effect: non-scaling-stroke; }
+.linkLit { stroke: var(--orange); stroke-width: 4; vector-effect: non-scaling-stroke; }
+.floorNo {
+  position: absolute; left: -32px; transform: translateY(-50%);
+  font-size: 13px; font-weight: 700; color: var(--text-muted); opacity: 0.6;
+}
+.floorNext { color: var(--orange-light); opacity: 1; }
 .stop {
   position: absolute; transform: translate(-50%, -50%);
-  display: flex; flex-direction: column; align-items: center; gap: 0;
-  min-width: 76px; padding: 4px 8px !important; border-radius: var(--radius) !important;
+  display: flex; align-items: center; gap: 8px; text-align: left;
+  min-width: clamp(96px, 8vw, 150px); padding: 5px 12px !important; border-radius: var(--radius) !important;
   background: var(--navy-light) !important; z-index: 1;
 }
 .stop:disabled { opacity: 0.55; }
-.stop.open { opacity: 1; border-color: var(--orange) !important; box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.35); }
+.stop.open {
+  opacity: 1; border-color: var(--orange) !important; border-width: 2px !important;
+  animation: stopCall 1.8s var(--ease-out) infinite;
+}
 .stop.open:hover { transform: translate(-50%, -50%) scale(1.06); }
-.stop.done { opacity: 0.8; border-color: var(--green) !important; }
-.stopIcon { font-size: 18px; line-height: 1.1; }
-.stopName { font-size: 11px; font-weight: 700; }
-.stopCap { font-size: 10px; color: var(--text-muted); }
-.boss { min-width: 96px; border-color: var(--gold) !important; }
+.stop.done { opacity: 0.85; border-color: var(--green) !important; }
+.stop.here { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.35); }
+@keyframes stopCall {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.35); }
+  50% { box-shadow: 0 0 0 7px rgba(234, 88, 12, 0.12); }
+}
+.stopIcon { font-size: clamp(20px, 1.6vw, 28px); line-height: 1; }
+.stopText { display: flex; flex-direction: column; line-height: 1.2; }
+.stopName { font-size: clamp(12px, 0.9vw, 15px); font-weight: 700; white-space: nowrap; }
+.stopCap { font-size: clamp(11px, 0.75vw, 13px); color: var(--text-muted); }
+.boss { min-width: clamp(140px, 12vw, 220px); padding: 8px 16px !important; border-color: var(--gold) !important; border-width: 2px !important; }
+.boss .stopName { color: var(--gold); }
+.bossLogo { width: clamp(36px, 3.2vw, 56px); height: clamp(36px, 3.2vw, 56px); object-fit: contain; }
 .rivalry .stopName { color: var(--orange-light); }
 
 .side { display: flex; flex-direction: column; gap: 8px; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
@@ -91,11 +137,39 @@
 .practiceList li { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
 .practiceText { flex-basis: 100%; color: var(--text-muted); font-size: 12px; }
 
+/* A reward (2026-10-19, "let's use the whole screen here"): the offers are the
+   screen — three big cards across the middle, each as large as the window's
+   height allows (the face is 5:7; ~470px goes to the header, the title, the
+   card's name, text and button). */
+.offerScreen { align-items: center; text-align: center; }
+.offerScreen .title { font-size: clamp(24px, 2vw, 38px); }
+.offerScreen .h3 { justify-content: center; font-size: clamp(15px, 1vw, 19px); }
+.offerScreen .actions { justify-content: center; }
+.offers { display: flex; justify-content: center; align-items: stretch; flex-wrap: wrap; gap: clamp(12px, 2vw, 40px); width: 100%; margin: 4px 0; }
+.offer { width: clamp(160px, min(26vw, calc((100vh - 540px) * 0.714)), 420px); text-align: left; padding: 10px; }
+.offer .tileName { font-size: clamp(14px, 1.1vw, 20px); }
+.offer .tileMeta, .offer .stratText { font-size: clamp(12px, 0.8vw, 15px); }
+.offer .tileBtn { padding: 10px 12px; font-size: clamp(13px, 0.9vw, 16px); }
+/* The end of a run: the same centred moment, the pot in large type. */
+.endScreen { padding-top: clamp(24px, 12vh, 160px); gap: 18px; }
+.endScreen .title { font-size: clamp(28px, 2.6vw, 52px); }
+.endScreen .lede { font-size: clamp(15px, 1.1vw, 21px); }
+.endScreen .actions button { padding: 12px 22px; font-size: clamp(14px, 1vw, 18px); }
+
+@media (max-width: 768px) {
+  .offers { flex-wrap: nowrap; gap: 6px; }
+  .offer { width: auto; flex: 1 1 0; min-width: 0; padding: 6px; }
+  .offer .stratText { font-size: 11px; }
+}
+
 @media (max-width: 768px) {
   .mapScreen { grid-template-columns: 1fr; }
   .playbooks, .boons, .restChoice { grid-template-columns: 1fr; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-  .stop { min-width: 64px; }
+  .stop { min-width: 0; padding: 4px 8px !important; gap: 4px; }
+  .mapPanel { height: clamp(520px, calc(100vh - 230px), 720px); padding: 10px 8px 10px 26px; }
+  .floorNo { left: -20px; font-size: 11px; }
+  .boss { min-width: 96px; }
   .stopCap { display: none; }
 }
 

@@ -672,7 +672,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         if (d.discards) {
           const yes = await ask(d.use === 'remote'
             ? { title: 'Resume this fixture from your other device?', body: `${describeSave(d.save)} The game you have going here will be discarded.`, confirmLabel: 'Resume the fixture', cancelLabel: 'Keep my game', tone: 'danger' }
-            : { title: 'Start this season fixture?', body: 'The game you have going will be discarded.', confirmLabel: 'Discard and play the fixture', cancelLabel: 'Keep my game', tone: 'danger' });
+            // Named for what it is (2026-10-19): a Climb game asked "Start this season fixture?".
+            : { title: `Start this ${preset.climb ? 'Climb game' : preset.returnTab === 'dynasty' ? 'dynasty fixture' : 'season fixture'}?`, body: 'The game you have going will be discarded.', confirmLabel: `Discard and play the ${preset.climb ? 'Climb game' : 'fixture'}`, cancelLabel: 'Keep my game', tone: 'danger' });
           if (!live) return;
           decided = true;
           if (!yes) { bounce(); return; }

@@ -490,8 +490,8 @@ function JoinShared({ teamA, collection, uid, onCancel, onJoined }) {
       const res = await joinLeague(uid, { code, entrant });
       if (res.kind !== 'season') {
         toast(res.kind === 'dynasty'
-          ? `${res.name} is a dynasty — it is in the Dynasty tab, under With friends.`
-          : `${res.name} is a tournament — it is under the Tournament tab.`, { tone: 'success' });
+          ? `${res.name} is a dynasty — it is under Play, Dynasty, With friends.`
+          : `${res.name} is a tournament — it is under Play, Tournament.`, { tone: 'success' });
         onCancel();
         return;
       }

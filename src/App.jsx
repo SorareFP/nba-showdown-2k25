@@ -7,6 +7,7 @@ import SeasonTab from './components/SeasonTab.jsx';
 import DynastyTab from './components/DynastyTab.jsx';
 import TournamentTab from './components/TournamentTab.jsx';
 import ClimbTab from './components/climb/ClimbTab.jsx';
+import PlayHub from './components/PlayHub.jsx';
 import HowToPlay from './components/HowToPlay.jsx';
 import WelcomeTab from './components/WelcomeTab.jsx';
 import HomeTab from './components/HomeTab.jsx';
@@ -54,17 +55,20 @@ const GUEST_TABS = [
 const AUTH_TABS = [
   { id: 'home',    label: '🏠 Home',         icon: '🏠', short: 'Home' },
   { id: 'builder', label: '🏗 Team Builder', icon: '🏗', short: 'Team' },
-  { id: 'play',    label: '🏀 Play',         icon: '🏀', short: 'Play' },
-  // SEASON LIVES INSIDE DYNASTY (the user, 2026-09-11: "We can probably fold
-  // Season mode into Dynasty at this point"). It keeps its screens and its
-  // saves; the 'season' route is reached from Dynasty's One season panel and
-  // the home page, and lights the Dynasty button while it is open.
-  { id: 'dynasty', label: '👑 Dynasty',      icon: '👑', short: 'Dynasty' },
-  { id: 'tournament', label: '🏆 Tournament', icon: '🏆', short: 'Tournament' },
-  { id: 'pvp',     label: '⚔️ PvP',          icon: '⚔️', short: 'PvP' },
+  // THE PLAY BUTTON OPENS THE MODES (the user, 2026-10-19: "collapse all the
+  // game modes into play and have a menu from there", Dynasty, Tournament and
+  // PvP off the top bar). 'modes' is the hub (PlayHub.jsx); 'play' is still the
+  // board, where fixtures, Home's Resume and Team Builder's Start land; every
+  // mode's route lights this button (PLAY_ROUTES).
+  { id: 'modes',   label: '🏀 Play',         icon: '🏀', short: 'Play' },
   { id: 'collection', label: '💾 Collection', icon: '💾', short: 'Cards' },
   { id: 'howtoplay', label: '📖 How to Play', icon: '📖', short: 'Rules' },
 ];
+
+// The routes that live under the Play button, and the ones that show
+// "← All modes" back to it. Season stays reachable from Dynasty too.
+const PLAY_ROUTES = new Set(['modes', 'play', 'climb', 'season', 'dynasty', 'tournament', 'pvp']);
+const BACK_TO_MODES = new Set(['play', 'climb', 'season', 'dynasty', 'tournament', 'pvp']);
 
 function AppInner() {
   const { user, loading: authLoading, signIn, justSignedUp, clearSignup } = useAuth();
@@ -203,9 +207,8 @@ function AppInner() {
   }, []);
 
   const tabs = user ? AUTH_TABS : GUEST_TABS;
-  // The button a route lights: a season is part of Dynasty now.
-  // THE CLIMB (2026-10-18) is reached from the Play tab and lights it.
-  const navTab = tab === 'season' ? 'dynasty' : tab === 'climb' ? 'play' : tab;
+  // The button a route lights: every game mode is under Play (2026-10-19).
+  const navTab = PLAY_ROUTES.has(tab) ? 'modes' : tab;
   // Signing out from a signed-in-only tab lands on the front door.
   useEffect(() => {
     if (!user && !authLoading && !tabs.some(t => t.id === tab)) setTab('home');
@@ -348,7 +351,11 @@ function AppInner() {
                 game survives you looking at your collection, and a key change
                 would remount it and throw the game away. It is the one tab
                 that does not cross-fade, and that is the trade. */}
+            {user && BACK_TO_MODES.has(tab) && (
+              <button type="button" className={styles.backToModes} onClick={() => goTab('modes')}>← All modes</button>
+            )}
             <div key={tab} className={styles.tabFade}>
+            {tab === 'modes' && user && <PlayHub onGo={homeGo} pvp={pvpGame} />}
             {tab === 'home' && !user && authLoading && (
               <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 20px' }}>
                 <Skeleton rows={4} height={72} label="Signing in" />
@@ -395,7 +402,6 @@ function AppInner() {
                 openSeasonId={seasonOpen?.seasonId ?? null}
                 openLeagueId={seasonOpen?.leagueId ?? null}
                 openAction={seasonOpen?.action ?? null}
-                onExit={() => goTab('dynasty')}
                 teamA={teamA}
                 collection={collection}
                 pendingResult={seasonResult}
@@ -440,7 +446,6 @@ function AppInner() {
                   teamA={teamA}
                   teamB={teamB}
                   preset={seasonPreset}
-                  onOpenClimb={() => goTab('climb')}
                   onPresetFinish={result => {
                     setSeasonPreset(null);
                     // A null result is a fixture left unplayed, not a 0-0.
@@ -517,7 +522,7 @@ export default function App() {
           {isPackDemo()
             // The collection demo sits in the app's own column, so the width
             // it is judging is the width the real tab gets.
-            ? (['collection', 'play', 'dynasty', 'climb', 'team'].includes(demoKind()) ? <main className={styles.main}><ErrorBoundary><PackOpeningDemo /></ErrorBoundary></main> : <PackOpeningDemo />)
+            ? (['collection', 'play', 'dynasty', 'climb', 'team', 'modes'].includes(demoKind()) ? <main className={styles.main}><ErrorBoundary><PackOpeningDemo /></ErrorBoundary></main> : <PackOpeningDemo />)
             : <AppInner />}
         </DialogProvider>
       </LightboxProvider>

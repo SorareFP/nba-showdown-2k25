@@ -245,7 +245,7 @@ function JoinTournament({ teamA, collection, uid, onCancel, onJoined }) {
       const entrant = entrantFromTeam(uid, { name: teamName.trim() || 'My Team', roster: pick.roster, deck: pick.deck, deckName: pick.deckName });
       const res = await joinLeague(uid, { code, entrant });
       if (res.kind !== 'tournament') {
-        toast(`${res.name} is a season — it is in the Dynasty tab, under One season.`, { tone: 'success' });
+        toast(`${res.name} is a season — it is under Play, Season.`, { tone: 'success' });
         onCancel();
         return;
       }

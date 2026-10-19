@@ -161,6 +161,15 @@
 }
 .starterBandBtn:hover { filter: brightness(1.08); }
 
+/* "← All modes" above every game mode, back to the Play hub (2026-10-19). */
+.backToModes {
+  margin: 0 0 10px; padding: 4px 10px;
+  background: none; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text-muted); font: inherit; font-size: 13px; cursor: pointer;
+  transition: color var(--dur-quick) var(--ease-out), border-color var(--dur-quick) var(--ease-out);
+}
+.backToModes:hover { color: var(--text); border-color: var(--orange-light); }
+
 .main {
   flex: 1;
   padding: 1.5rem;

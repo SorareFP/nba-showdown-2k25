@@ -282,7 +282,7 @@ export function JoinFriends({ teamA, collection, uid, onCancel, onJoined }) {
   const note = !info ? null
     : info.missing ? 'No league with that code.'
       : !dyn ? (info.kind === 'tournament'
-        ? 'That code is a tournament — join it under the Tournament tab.'
+        ? 'That code is a tournament — join it under Play, Tournament.'
         : 'That code is a shared season — join it under One season, with "Join a shared season".')
         : !open ? 'That dynasty has already started.'
           : own ? `A dynasty you bring your own ten to.` : `A fantasy-draft dynasty — bring nothing but a deck.`;

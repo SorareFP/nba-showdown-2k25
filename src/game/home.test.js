@@ -21,7 +21,7 @@ describe('news', () => {
     expect(NEWS.some(n => n.id === 'unethical-hoops')).toBe(true);
     // Tabs, plus the Collection pages Home opens by name (HOME_SECTIONS, App.jsx homeGo).
     // 'climb' is The Climb's route (2026-10-18), reached from Play and from here.
-    const places = ['play', 'season', 'dynasty', 'climb', 'collection', 'howtoplay', 'builder', ...Object.keys(HOME_SECTIONS)];
+    const places = ['modes', 'play', 'season', 'dynasty', 'climb', 'collection', 'howtoplay', 'builder', ...Object.keys(HOME_SECTIONS)];
     for (const n of [...NEWS, STARTER_NEWS]) {
       if (n.to) expect(places, n.id).toContain(n.to);
       if (n.to) expect(n.cta, n.id).toBeTruthy();
@@ -144,7 +144,12 @@ describe('Home opens Collection pages by name', () => {
 
 // THE CLIMB (2026-10-18): its news item opens the run, newest first.
 describe('The Climb in the news', () => {
-  it('leads the news and opens the climb', () => {
-    expect(NEWS[0]).toMatchObject({ id: 'the-climb', to: 'climb', cta: 'Start a climb' });
+  it('is in the news and opens the climb', () => {
+    expect(NEWS.find(n => n.id === 'the-climb')).toMatchObject({ to: 'climb', cta: 'Start a climb' });
+  });
+
+  it('is followed by the Play hub, which leads the news and opens it (2026-10-19)', () => {
+    expect(NEWS[0]).toMatchObject({ id: 'play-hub', to: 'modes' });
+    expect(NEWS[1].id).toBe('the-climb');
   });
 });

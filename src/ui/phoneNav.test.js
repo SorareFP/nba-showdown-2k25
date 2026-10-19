@@ -11,16 +11,23 @@ describe('the phone bottom bar', () => {
     expect(more).toEqual([]);
   });
 
-  it('puts the four everyday sections on the bar and the rest behind More', () => {
-    const tabs = ['builder', 'play', 'dynasty', 'tournament', 'pvp', 'collection', 'howtoplay'].map(t);
+  it('fits a signed-in player’s five sections on the bar, with no More (the Play hub, 2026-10-19)', () => {
+    const tabs = ['home', 'builder', 'modes', 'collection', 'howtoplay'].map(t);
+    const { bar, more } = phoneNavTabs(tabs);
+    expect(bar.map(x => x.id)).toEqual(tabs.map(x => x.id));
+    expect(more).toEqual([]);
+  });
+
+  it('puts the everyday sections on the bar and the rest behind More when there are too many', () => {
+    const tabs = ['home', 'builder', 'modes', 'extra', 'other', 'collection', 'howtoplay'].map(t);
     const { bar, more } = phoneNavTabs(tabs);
     expect(bar.map(x => x.id)).toEqual(PHONE_BAR);
-    expect(more.map(x => x.id)).toEqual(['tournament', 'pvp', 'howtoplay']);
+    expect(more.map(x => x.id)).toEqual(['extra', 'other', 'howtoplay']);
     expect(bar.length + 1).toBeLessThanOrEqual(5);           // four plus the More button
   });
 
   it('never loses a section: bar and More together are the whole list', () => {
-    const tabs = ['builder', 'play', 'dynasty', 'tournament', 'pvp', 'collection', 'howtoplay'].map(t);
+    const tabs = ['home', 'builder', 'modes', 'extra', 'other', 'collection', 'howtoplay'].map(t);
     const { bar, more } = phoneNavTabs(tabs);
     expect([...bar, ...more].map(x => x.id).sort()).toEqual(tabs.map(x => x.id).sort());
   });

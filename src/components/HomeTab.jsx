@@ -169,7 +169,7 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
       )}
 
       <nav className={s.quick} aria-label="Quick actions">
-        <button className={s.quickBtn} onClick={() => onGo('play')}><span aria-hidden="true">🏀</span> Play a game</button>
+        <button className={s.quickBtn} onClick={() => onGo('modes')}><span aria-hidden="true">🏀</span> Play a game</button>
         <button className={s.quickBtn} onClick={() => onGo('builder')}><span aria-hidden="true">🏗</span> Build a team</button>
         <button className={s.quickBtn} onClick={() => onGo('season')}><span aria-hidden="true">📅</span> Seasons</button>
         <button className={s.quickBtn} onClick={() => onGo('shop')}><span aria-hidden="true">🛒</span> Pack Shop</button>

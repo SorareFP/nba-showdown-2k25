@@ -72,18 +72,35 @@ describe('the starter kits', () => {
 });
 
 describe('the coach\'s deck', () => {
-  it('is the nearest playbook\'s fifteen, grown from its archetype\'s fifty', async () => {
+  it('is the nearest playbook\'s kit, grown from its archetype\'s fifty', async () => {
     const { coachDeck } = await import('./climbKits.js');
     const { nearestArchetype } = await import('../deckFit.js');
     const { CARDS } = await import('../cards.js');
     const { climbRng } = await import('./climbMap.js');
     const roster = CARDS.slice(0, 8);
     const pb = PLAYBOOK_OF_ARCHETYPE[nearestArchetype(roster).id];
-    expect(coachDeck(roster, 15, climbRng(1, 'deck'))).toEqual(kitDeck(pb));
-    const big = coachDeck(roster, 25, climbRng(1, 'deck'));
-    expect(total(big)).toBe(25);
+    expect(coachDeck(roster, {}, climbRng(1, 'deck'))).toEqual(kitDeck(pb));
+    const big = coachDeck(roster, { extra: 9 }, climbRng(1, 'deck'));
+    expect(total(big)).toBe(total(kitDeck(pb)) + 9);
     for (const [id, n] of Object.entries(kitDeck(pb))) expect(big[id], id).toBeGreaterThanOrEqual(n);
     for (const [id, n] of Object.entries(big)) expect(n, id).toBeLessThanOrEqual(STRAT_MAP[id].copies);
-    expect(coachDeck(roster, 25, climbRng(1, 'deck'))).toEqual(big);
+    expect(coachDeck(roster, { extra: 9 }, climbRng(1, 'deck'))).toEqual(big);
+  });
+
+  it('plays one copy of each card in Act I, and can leave the rares out of what it adds (2026-10-20)', async () => {
+    const { coachDeck } = await import('./climbKits.js');
+    const { nearestArchetype } = await import('../deckFit.js');
+    const { CARDS } = await import('../cards.js');
+    const { climbRng } = await import('./climbMap.js');
+    const roster = CARDS.slice(0, 8);
+    const pb = PLAYBOOK_OF_ARCHETYPE[nearestArchetype(roster).id];
+    const single = coachDeck(roster, { singles: true }, climbRng(1, 'deck'));
+    expect(Object.keys(single).sort()).toEqual(Object.keys(kitDeck(pb)).sort());
+    expect(Object.values(single).every(n => n === 1)).toBe(true);
+    const boss = coachDeck(roster, { extra: 3, singles: true, rares: false }, climbRng(2, 'deck'));
+    const added = Object.keys(boss).filter(id => !(id in kitDeck(pb)));
+    expect(added).toHaveLength(3);
+    expect(added.every(id => !['rare', 'legendary'].includes(STRAT_MAP[id].rarity))).toBe(true);
+    expect(Object.values(boss).every(n => n === 1)).toBe(true);
   });
 });

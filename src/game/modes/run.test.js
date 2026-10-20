@@ -94,12 +94,15 @@ describe('the map and the games', () => {
     expect(r.game).toEqual(gameSetup(camped(), '1-1'));
     expect(r.game.rosterB).toHaveLength(CLIMB.oppSize[0]);
     expect(capSal(r.game.rosterB.map(getCardByKey))).toBeLessThanOrEqual(CLIMB.floorCap(1));
-    expect(total(r.game.deckB)).toBe(CLIMB.coachDeckSize(1));
-    // Act I's coach plays its own kit only: sixteen cards, its one crunch rare (2026-10-19).
-    expect(CLIMB.coachDeckSize(1)).toBe(16);
-    expect(CLIMB.coachDeckSize(3)).toBe(16);
-    expect(CLIMB.coachDeckSize(4)).toBeGreaterThan(16);
+    // Act I's coach plays its own kit only (2026-10-19), ONE COPY of each card
+    // (2026-10-20: "they shouldn't just be dropping two instances of bully ball").
+    expect(CLIMB.coachDeckExtra(1)).toBe(0);
+    expect(CLIMB.coachDeckExtra(3)).toBe(0);
+    expect([4, 5, 6].map(CLIMB.coachDeckExtra)).toEqual([3, 5, 6]);
     expect(Object.keys(r.game.deckB).every(id => KIT_CARD_IDS.has(id))).toBe(true);
+    expect(Object.values(r.game.deckB).every(n => n === 1)).toBe(true);
+    // A Game is at home; a Rivalry is on the road (CLIMB.homeKinds).
+    expect(r.game.home).toBe(true);
   });
 
   it('hands the Play tab a Q4 game with the run\'s fatigue', () => {
@@ -108,7 +111,9 @@ describe('the map and the games', () => {
     expect(p.key).toBe('climb:r1:1-0');
     expect(p.rosterA.map(c => c.id)).toEqual(FIVE.map(c => c.id));
     expect(p.rosterB).toHaveLength(5);
-    expect(p.gameOpts).toEqual({ startQuarter: 4, fatigue: { A: { [FIVE[0].id]: 4 } }, system: { A: 'speed' } });
+    expect(p.gameOpts).toEqual({ startQuarter: 4, fatigue: { A: { [FIVE[0].id]: 4 } }, placementFirst: 'B', system: { A: 'speed' } });
+    // At home: the coach places first and you answer.
+    expect(p.humanIsHome).toBe(true);
     expect(p.returnTab).toBe('climb');
     expect(p.climb).toEqual({ runId: 'r1', stopId: '1-0', kind: 'game', floor: 1, rung: 'prince' });
     expect(p.deckA).toEqual(r.deck);
@@ -280,6 +285,14 @@ describe('the end of a run', () => {
     expect(potPreview(won).booster).toBe(true);
     const boss = gameSetup(atBoss, 'boss');
     expect(boss.rosterB).toHaveLength(CLIMB.bossSize);
+    // The boss's deck (2026-10-20): its kit, one of each, and three more, none rare.
+    const bossKit = Object.keys(kitDeck(bossScout(atBoss).playbook));
+    const added = Object.keys(boss.deckB).filter(id => !bossKit.includes(id));
+    expect(Object.values(boss.deckB).every(n => n === 1)).toBe(true);
+    expect(total(boss.deckB)).toBe(bossKit.length + CLIMB.bossDeckExtra);
+    expect(added).toHaveLength(CLIMB.bossDeckExtra);
+    expect(added.every(id => !['rare', 'legendary'].includes(STRAT_MAP[id].rarity))).toBe(true);
+    expect(boss.home).toBe(false);
     expect(boss.opponent.classic).toBe(true);
     expect(bossTeam(r).abbr).toBe(boss.opponent.abbr); // the map's boss is the one you meet
   });

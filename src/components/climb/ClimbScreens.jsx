@@ -575,7 +575,7 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
               style={{ left: `${xPct(s.lane)}%`, top: `${yPct(s.floor)}%` }}
               disabled={!isOpen || busy}
               onClick={() => onGo(s.id)}
-              title={`${isBoss ? `Boss: the classic ${boss.city} ${boss.name}` : KIND[s.kind].name}${cap ? ` · coach's cap ${dollars(cap)}` : ''}`}
+              title={`${isBoss ? `Boss: the classic ${boss.city} ${boss.name}` : KIND[s.kind].name}${cap ? ` · coach's cap ${dollars(cap)}` : ''}${s.kind === 'rest' ? '' : CLIMB.homeKinds.includes(s.kind) ? ' · at home' : ' · on the road'}`}
             >
               {logo && !done
                 ? <img className={styles.bossLogo} src={logo} alt="" />

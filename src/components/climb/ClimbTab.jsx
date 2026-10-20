@@ -187,7 +187,9 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
       return (
         <div className={styles.screen}>
           <h2 className={styles.title}>{run.game?.kind === 'boss' ? 'The boss' : run.game?.kind === 'rivalry' ? 'A Rivalry' : 'A Game'}{o ? `: ${o.classic ? 'Classic ' : ''}${o.city} ${o.name}` : ''}</h2>
-          <p className={styles.lede}>One quarter from Q4. Your game is waiting on the Play tab.</p>
+          <p className={styles.lede}>
+            One quarter from Q4, {run.game?.home ? 'at home: the coach places first and you answer' : 'on the road: you place first and the coach answers'}. Your game is waiting on the Play tab.
+          </p>
           <div className={styles.actions}>
             <button type="button" className={styles.primary} disabled={busy} onClick={() => act(() => play(run))}>Play it</button>
             <button type="button" className={styles.danger} disabled={busy} onClick={giveUp}>Give up this run</button>

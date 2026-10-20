@@ -10,7 +10,8 @@
 //   boss               the boss's cap
 //   rest, rivalryW     the kind weights for floors 2-6 (game takes the rest)
 //   rec, rec10, rec20  minutes of recovery between games, by the win's margin
-//   decks              the coach's deck size floor by floor, the boss last: decks=15,15,15,19,20,21,22,25
+//   extra              the cards a coach adds to its kit, floor by floor: extra=0,0,0,3,5,6
+//   singles / bossextra / bossrares / home   the coach's deck and home court (2026-10-20)
 //   start              your starting cap (the five you bring)
 //   human              your side's iq (0..1; default 1, the coach's own play)
 //
@@ -40,7 +41,7 @@ import { capSal } from '../../src/game/teamRules.js';
 
 const args = process.argv.slice(2);
 const positional = args.filter(a => !a.includes('='));
-const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : k === 'policy' || k === 'decks' || k === 'rare' || k === 'drafter' ? v : Number(v)]));
+const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : k === 'policy' || k === 'extra' || k === 'rare' || k === 'drafter' ? v : Number(v)]));
 // policy=rest       rest at every Rest Day
 // policy=practice   practise at every Rest Day but the one before the boss
 // (default)         rest when worn (-12 or worse) or before the boss, else practise
@@ -63,11 +64,19 @@ if (overrides.rest != null || overrides.rivalryW != null) {
   KIND_WEIGHTS.rivalry = overrides.rivalryW ?? KIND_WEIGHTS.rivalry;
   KIND_WEIGHTS.game = Math.max(0, 1 - KIND_WEIGHTS.rest - KIND_WEIGHTS.rivalry);
 }
-// decks=15,15,15,19,20,21,22,25: the coach's deck size floor by floor, the boss last
-if (overrides.decks) {
-  const sizes = String(overrides.decks).split(',').map(Number);
-  CLIMB.coachDeckSize = f => sizes[Math.min(sizes.length, f) - 1];
+// extra=0,0,0,3,5,6: the cards the coach adds to its kit, floor by floor.
+// singles=0 (two of a kit's doubles), bossextra=9, bossrares=1, home=0 (always
+// away): the coach's deck and home court as they were before 2026-10-20.
+if (overrides.extra) {
+  const extras = String(overrides.extra).split(',').map(Number);
+  CLIMB.coachDeckExtra = f => extras[Math.min(extras.length, f) - 1];
 }
+if (overrides.singles != null) CLIMB.coachSingles = Boolean(overrides.singles);
+if (overrides.bossextra != null) CLIMB.bossDeckExtra = overrides.bossextra;
+if (overrides.bossrares != null) CLIMB.bossDeckRares = Boolean(overrides.bossrares);
+if (overrides.home != null) CLIMB.homeKinds = overrides.home ? ['game'] : [];
+// homeboss=1: the boss game at home too (measured 2026-10-20).
+if (overrides.homeboss) CLIMB.homeKinds = [...CLIMB.homeKinds, 'boss'];
 // The scaling dials (2026-10-19, "each move up the ladder should feel like a
 // big step"): capstep=450 (cap per floor), rare=0.1,0.45 (rare chance floor 1
 // to 7), playerg / playerr / perkg / perkr (drop chances), climbonly=0.5.

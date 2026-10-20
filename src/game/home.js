@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-home-court', date: '2026-10-20', title: 'The Climb: home court and fairer coaches',
+    body: "You were always the visitor in the Climb, so the coach answered every placement. Now every Game is at home: the coach places first and you answer. Rivalries and the boss are road games. Act I coaches play one copy of each card (no more doubled Bully Ball), and the boss brings its kit plus three cards, none of them rare — it already has the bigger cap and the better players. First Step and Point God now ask which player.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'climb-bar', date: '2026-10-20', title: 'The Climb: your map, deck and team, any time',
     body: "Every Climb screen now has Map, Deck and Team buttons at the top, and so does the board during a run's game: the map with the stop you are on, every card in your deck (a practiced copy shows its + face) and your players with their fatigue, perks and who is In System. The start screen also has the team builder's search, filters and sorting for picking your five.",
     to: 'climb', cta: 'The Climb',

@@ -12,7 +12,7 @@
 //                       ├─chooseStop(Rest Day)→ rest ─restDay→ map
 //                       └─retire→ retired
 import { generateMap, stopById, nextStops, potOf, climbRng, MAP_VERSION } from './climbMap.js';
-import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, KIT_SIZE, kitDeck, leanOf, coachDeck } from './climbKits.js';
+import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, coachDeck } from './climbKits.js';
 import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard } from './climbPerks.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
 import { STRATS, STRAT_MAP, PLUS, baseId, isPlus, plusId } from '../strats.js';
@@ -70,7 +70,21 @@ export const CLIMB = {
   bossCap: 4800,
   oppSize: [5, 5, 6, 6, 7, 7],
   bossSize: 8,
-  coachDeckSize: f => (f <= KIT_ONLY_FLOORS ? KIT_SIZE : 15 + Math.round((f - 1) * 10 / 7)),
+  // THE COACH'S DECK (2026-10-20): its kit, plus coachDeckExtra(floor) cards
+  // from its archetype's fifty (floors 4-6: 3, 5, 6, as the old 19/21/22).
+  // Act I coaches play ONE COPY of each card (coachSingles), and the boss adds
+  // only bossDeckExtra cards and no rare (it was 25 cards, rares and two Bully
+  // Balls). The user: "They already have a higher salary cap and better
+  // players, their strategy decks shouldn't be so good right away either."
+  coachSingles: true,
+  coachDeckExtra: f => (f <= KIT_ONLY_FLOORS ? 0 : Math.round((f - 1) * 10 / 7) - 1),
+  bossDeckExtra: 3,
+  bossDeckRares: false,
+  // HOME COURT (2026-10-20). The user: "you're ALWAYS the away team, so the
+  // other team has the matchup advantage of going 2nd." The home side answers
+  // in the placement snake; a Game is at home, a Rivalry and the boss on the
+  // road.
+  homeKinds: ['game'],
   recovery: { base: 10, by10: 12, by20: 14 },
   rareChance: f => 0.1 + 0.35 * (f - 1) / 6,   // 10% at floor 1 to 45% at floor 7 (was 5% to 25%)
   // A player offer's three prices, as shares of the room left (2026-10-19),
@@ -294,7 +308,10 @@ export function gameSetup(run, stopId) {
     key: `climb:${run.id}:${stopId}`,
     stopId, kind: stop.kind, floor: stop.floor,
     rosterB: roster.map(cardKey),
-    deckB: coachDeck(roster, CLIMB.coachDeckSize(stop.floor), climbRng(run.seed, 'deck', stopId)),
+    deckB: coachDeck(roster, boss
+      ? { extra: CLIMB.bossDeckExtra, singles: CLIMB.coachSingles, rares: CLIMB.bossDeckRares }
+      : { extra: CLIMB.coachDeckExtra(stop.floor), singles: CLIMB.coachSingles }, climbRng(run.seed, 'deck', stopId)),
+    home: CLIMB.homeKinds.includes(stop.kind),
     aiLevel: run.rung,
     cap,
     opponent: { abbr, name: team.name ?? abbr, city: team.city ?? '', classic: boss },
@@ -341,8 +358,11 @@ export function presetFor(run) {
     deckB: { ...g.deckB },
     aiLevel: run.rung,
     returnTab: 'climb',
+    // At home the coach places first and you answer (CLIMB.homeKinds).
+    humanIsHome: Boolean(g.home),
     gameOpts: {
       startQuarter: 4, fatigue: { A: { ...run.fatigue } },
+      placementFirst: g.home ? 'B' : 'A',
       ...(run.carryHot ? { hot: { A: { ...run.carryHot } } } : {}),
       ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
     },

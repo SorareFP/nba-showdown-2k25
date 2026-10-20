@@ -122,24 +122,30 @@ export function leanOf(id) {
 }
 
 /**
- * THE COACH'S DECK at a stop: the playbook its roster sits nearest, grown to
- * `size` (15 at the first floor, 25 for the boss) from that archetype's fitted
- * fifty, drawn by its copies and never past a card's limit.
+ * THE COACH'S DECK at a stop: the kit of the playbook its roster sits nearest,
+ * plus `extra` cards from that archetype's fitted fifty, drawn by its copies
+ * and never past a card's limit. `singles` keeps one copy of each card (kit
+ * and extras alike); `rares: false` draws no rare or legendary extra.
  */
-export function coachDeck(roster, size, rng = Math.random) {
+export function coachDeck(roster, { extra = 0, singles = false, rares = true } = {}, rng = Math.random) {
   const near = nearestArchetype(roster);
-  const deck = kitDeck(PLAYBOOK_OF_ARCHETYPE[near?.id] ?? PLAYBOOKS[0]);
+  const kit = kitDeck(PLAYBOOK_OF_ARCHETYPE[near?.id] ?? PLAYBOOKS[0]);
+  // ONE OF EACH (2026-10-20, Act I). The user: "On the first act, they
+  // shouldn't just be dropping two instances of bully ball. They already have
+  // a higher salary cap and better players, their strategy decks shouldn't be
+  // so good right away either."
+  const deck = singles ? Object.fromEntries(Object.keys(kit).map(id => [id, 1])) : kit;
   const fifty = ARCHETYPE_DECKS.find(a => a.id === near?.id)?.deck ?? {};
   const bag = [];
   for (const id of Object.keys(fifty).sort()) {
-    const room = Math.min(fifty[id], STRAT_MAP[id]?.copies ?? fifty[id]) - (deck[id] ?? 0);
+    if (!rares && ['rare', 'legendary'].includes(STRAT_MAP[id]?.rarity)) continue;
+    const most = singles ? 1 : Math.min(fifty[id], STRAT_MAP[id]?.copies ?? fifty[id]);
+    const room = most - (deck[id] ?? 0);
     for (let i = 0; i < room; i += 1) bag.push(id);
   }
-  let count = Object.values(deck).reduce((t, n) => t + n, 0);
-  while (count < size && bag.length) {
+  for (let n = 0; n < extra && bag.length; n += 1) {
     const [id] = bag.splice(Math.floor(rng() * bag.length), 1);
     deck[id] = (deck[id] ?? 0) + 1;
-    count += 1;
   }
   return deck;
 }

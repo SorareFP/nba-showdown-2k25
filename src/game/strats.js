@@ -6,7 +6,7 @@ export const STRATS = [
   { id:'stagger_action',      name:'Stagger Action',     phase:'matchup',  side:'off', copies:2, locked:false, color:'#0284C7', rarity:'uncommon',
     desc:'One player with Speed 13+ and one with a 3PT Bonus each gain +2 Speed for this segment.' },
   { id:'second_wind',         name:'Second Wind',        phase:'matchup',  side:'off', copies:2, locked:false, color:'#16A34A', rarity:'common',
-    desc:'Choose a fatigued player. They ignore their fatigue penalty this segment (gains +1 fatigue marker after).' },
+    desc:'Choose a fatigued player. They ignore their fatigue penalty this segment (+4 minutes on their tracker after).' },
   { id:'chip_on_shoulder',    name:'Chip on the Shoulder', phase:'matchup', side:'off', copies:2, locked:false, color:'#D97706', rarity:'uncommon',
     desc:'Player with salary ≤$250 gets +3 Speed and +3 Power this segment. If they now have a positive roll bonus, draw a card.' },
   { id:'defensive_stopper',   name:'Defensive Stopper',  phase:'matchup',  side:'def', copies:2, locked:false, color:'#1D4ED8', rarity:'common',
@@ -220,7 +220,7 @@ export const STRATS = [
   { id:'transition_outlet',   name:'Transition Outlet',  phase:'scoring',  side:'off', copies:2, locked:false, color:'#0E7490', rarity:'common',
     desc:'Spend 1 Rebound and 1 Assist: a player with a Speed advantage announces a 3PT or Paint Shot Check at +2. Hit: +1 Assist.' },
   // Reactions — offense
-  { id:'find_the_open_man',   name:'Extra Pass',         phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',
+  { id:'find_the_open_man',   name:'Find the Open Teammate', phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',
     desc:'The opponent has a Double Team on the floor: a player of yours they are NOT trapping gets +4 to their scoring roll.' },
   { id:'putback_specialist',  name:'Putback Specialist', phase:'reaction', side:'off', copies:2, locked:false, color:'#0284C7', rarity:'uncommon',
     desc:'After your player misses a shot check, spend 2 Rebounds: any player of yours announces a Paint Shot Check at +3. Hit: the rebound is theirs.' },

@@ -1850,7 +1850,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 4;
       g.lastDoubleTeam = null;
-      addLog(g, teamKey, `Extra Pass: ${oppT.starters[dt.targetIdx]?.name} is trapped — ${player?.name} +4 roll`);
+      addLog(g, teamKey, `Find the Open Teammate: ${oppT.starters[dt.targetIdx]?.name} is trapped — ${player?.name} +4 roll`);
       break;
     }
     case 'putback_specialist': {

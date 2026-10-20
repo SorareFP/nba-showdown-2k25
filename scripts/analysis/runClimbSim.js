@@ -26,7 +26,9 @@ import {
 } from '../../src/game/modes/run.js';
 import { climbRng, KIND_WEIGHTS, stopById } from '../../src/game/modes/climbMap.js';
 import { leanOf } from '../../src/game/modes/climbKits.js';
-import { PERKS, practicable, perkProblem } from '../../src/game/modes/climbPerks.js';
+import { PERKS, practicable, perkProblem, boostsOf, boostedCard } from '../../src/game/modes/climbPerks.js';
+import { cardFit } from '../../src/game/cardFit.js';
+import { STRAT_MAP } from '../../src/game/strats.js';
 import { simulateGame } from '../../src/game/modes/simulate.js';
 import * as ai from '../../src/game/ai.js';
 import { fatigueForMinutes } from '../../src/game/engine.js';
@@ -37,7 +39,7 @@ import { capSal } from '../../src/game/teamRules.js';
 
 const args = process.argv.slice(2);
 const positional = args.filter(a => !a.includes('='));
-const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : k === 'policy' || k === 'decks' || k === 'rare' ? v : Number(v)]));
+const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : k === 'policy' || k === 'decks' || k === 'rare' || k === 'drafter' ? v : Number(v)]));
 // policy=rest       rest at every Rest Day
 // policy=practice   practise at every Rest Day but the one before the boss
 // (default)         rest when worn (-12 or worse) or before the boss, else practise
@@ -104,6 +106,88 @@ const coachBrain = { ...ai, aiPlacementPick: (g, k, o = {}) => ai.aiPlacementPic
 
 const pick = (rng, list) => list[Math.floor(rng() * list.length)];
 
+// ── THE DRAFTERS (2026-10-19, the user: skill should improve the odds "a ton",
+// and skill is "roster building and deck scaling") ──────────────────────────
+// drafter=careless  takes whatever is offered, at random; rests or practises at random
+// drafter=plain     the simple drafter every earlier number was measured with
+// drafter=careful   a focused deck (cards its team fits, its playbook's or any
+//                   playbook's, the rarest first, skips the rest), cuts the cards
+//                   nobody can use, perks on its star, Rivalries when fresh and
+//                   Rest Days when worn
+// The gap between careless and careful is how much skill moves the odds.
+const DRAFTER = overrides.drafter ?? 'plain';
+const deckCount = deck => Object.values(deck ?? {}).reduce((s, n) => s + n, 0);
+const teamOf = run => { const b = boostsOf(run); return rosterCards(run).cards.map(c => boostedCard(c, b[c.id])); };
+const painOf = run => [...rosterCards(run).cards].sort((a, b) => b.salary - a.salary).slice(0, 5).reduce((t, c) => t + fatigueForMinutes(run.fatigue[c.id] ?? 0), 0);
+const fits = (run, id) => { const f = cardFit(id, teamOf(run)); return !f || f.ok; };
+const onPlan = (run, id) => { const l = leanOf(id); return l == null || l === run.playbook; };
+const RANK = { legendary: 4, rare: 3, uncommon: 2, common: 1 };
+const worth = id => (RANK[STRAT_MAP[id]?.rarity] ?? 1) + (STRAT_MAP[id]?.climbOnly ? 0.5 : 0);
+const starsFirst = run => [...rosterCards(run).cards].sort((a, b) => b.salary - a.salary).map(c => c.id);
+
+function chooseRoute(run, rng) {
+  const stops = openStops(run);
+  if (DRAFTER !== 'careful') return pick(rng, stops);
+  const pain = painOf(run);
+  const want = pain <= -8 ? ['rest', 'game', 'rivalry'] : pain >= -4 ? ['rivalry', 'game', 'rest'] : ['game', 'rivalry', 'rest'];
+  for (const kind of want) { const s = stops.find(x => x.kind === kind); if (s) return s; }
+  return stops[0];
+}
+
+function restChoice(run, rng) {
+  const prac = Object.keys(run.deck).filter(id => !isPlus(id) && PLUS[id]);
+  const beforeBoss = stopById(run.map, run.restAt)?.floor === 7;
+  if (DRAFTER === 'careless') {
+    return rng() < 0.5 || !prac.length ? { choice: 'rest' } : { choice: 'practice', cardId: pick(rng, prac) };
+  }
+  if (DRAFTER === 'careful') {
+    if (beforeBoss || painOf(run) <= -10) return { choice: 'rest' };
+    const dead = Object.keys(run.deck).filter(id => run.deck[id] > 0 && (!fits(run, id) || !onPlan(run, id)));
+    // cut=0: the careful drafter without cutting, to measure what the cut adds.
+    if (overrides.cut !== 0 && dead.length && deckCount(run.deck) > 12) return { choice: 'cut', cardId: dead.sort((a, b) => worth(a) - worth(b))[0] };
+    const good = prac.filter(id => fits(run, id) && onPlan(run, id)).sort((a, b) => worth(b) - worth(a));
+    return good.length ? { choice: 'practice', cardId: good[0] } : { choice: 'rest' };
+  }
+  // plain: rest before the boss and when worn, else practise at random.
+  const wantRest = POLICY === 'rest' || beforeBoss || !prac.length || (POLICY === 'mixed' && painOf(run) <= -12);
+  return wantRest ? { choice: 'rest' } : { choice: 'practice', cardId: pick(rng, prac) };
+}
+
+function takeRewards(run, rng) {
+  const ids = () => rosterCards(run).cards.map(c => c.id);
+  if (DRAFTER === 'careless') {
+    while (run.status === 'reward' && run.offers?.picks > 0 && run.offers.strats.length) run = pickStrat(run, pick(rng, run.offers.strats));
+    if (run.status === 'reward' && run.offers?.players?.length) run = pickPlayer(run, pick(rng, run.offers.players));
+    if (run.status === 'reward' && run.offers?.perks?.length) {
+      const id = pick(rng, run.offers.perks);
+      const options = PERKS[id].target === 'card' ? practicable(run.deck) : ids().filter(cid => !perkProblem(run, id, cid, ids()));
+      run = options.length ? pickPerk(run, id, pick(rng, options)) : skipOffers(run, 'perks');
+    }
+    return run.status === 'reward' ? skipOffers(run) : run;
+  }
+  if (DRAFTER === 'careful') {
+    while (run.status === 'reward' && run.offers?.picks > 0 && run.offers.strats.length) {
+      const want = run.offers.strats.filter(id => fits(run, id) && onPlan(run, id)).sort((a, b) => worth(b) - worth(a));
+      if (!want.length || deckCount(run.deck) >= 18) { run = skipOffers(run, 'strats'); break; }
+      run = pickStrat(run, want[0]);
+    }
+    if (run.status === 'reward' && run.offers?.players?.length) {
+      const best = [...run.offers.players].sort((a, b) => (rosterCards({ roster: [b] }).cards[0]?.salary ?? 0) - (rosterCards({ roster: [a] }).cards[0]?.salary ?? 0))[0];
+      run = pickPlayer(run, best);
+    }
+    if (run.status === 'reward' && run.offers?.perks?.length) {
+      const order = ['extra_reps', 'gym_rat', 'signature_move', 'film_study'];
+      const id = [...run.offers.perks].sort((a, b) => order.indexOf(a) - order.indexOf(b))[0];
+      const target = PERKS[id].target === 'card'
+        ? practicable(run.deck).filter(x => fits(run, x) && onPlan(run, x)).sort((a, b) => worth(b) - worth(a))[0] ?? practicable(run.deck)[0]
+        : starsFirst(run).find(cid => !perkProblem(run, id, cid, ids()));
+      run = target ? pickPerk(run, id, target) : skipOffers(run, 'perks');
+    }
+    return run.status === 'reward' ? skipOffers(run) : run;
+  }
+  return null;   // plain: the loop's own branch
+}
+
 /** A random five under the starting cap, one card a player. */
 function startingFive(rng) {
   const pool = CARDS.filter(c => (c.salary ?? 0) <= 800);
@@ -144,17 +228,9 @@ for (let i = 0; i < RUNS; i += 1) {
 
   for (let guard = 0; guard < 60; guard += 1) {
     if (run.status === 'map') {
-      run = chooseStop(run, pick(rng, openStops(run)).id);
+      run = chooseStop(run, chooseRoute(run, rng).id);
     } else if (run.status === 'rest') {
-      const starters = rosterCards(run).cards.sort((a, b) => b.salary - a.salary).slice(0, 5);
-      const pain = starters.reduce((t, c) => t + fatigueForMinutes(run.fatigue[c.id] ?? 0), 0);
-      const practicable = Object.keys(run.deck).filter(id => !isPlus(id) && PLUS[id]);
-      // Rest before the boss always (floor 7), and whenever the five are worn.
-      const beforeBoss = stopById(run.map, run.restAt)?.floor === 7;
-      const wantRest = POLICY === 'rest' || beforeBoss || !practicable.length || (POLICY === 'mixed' && pain <= -12);
-      run = wantRest
-        ? restDay(run, { choice: 'rest' })
-        : restDay(run, { choice: 'practice', cardId: pick(rng, practicable) });
+      run = restDay(run, restChoice(run, rng));
     } else if (run.status === 'game') {
       const stop = stopById(run.map, run.game.stopId);
       const p = presetFor(run);
@@ -170,6 +246,8 @@ for (let i = 0; i < RUNS; i += 1) {
       if (stop.kind === 'boss') bossGames.push({ salary: capSal(p.rosterA), won: result.won });
       if (result.won) { t.won += 1; byFloor[stop.floor - 1].won += 1; } else deaths[stop.floor] += 1;
       run = recordResult(run, result);
+    } else if (run.status === 'reward' && DRAFTER !== 'plain') {
+      run = takeRewards(run, rng);
     } else if (run.status === 'reward') {
       const o = run.offers;
       const size = Object.values(run.deck).reduce((s, n) => s + n, 0);
@@ -198,7 +276,7 @@ for (let i = 0; i < RUNS; i += 1) {
 
 const pct = (n, d) => (d ? `${(100 * n / d).toFixed(1)}%` : '—');
 const median = xs => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.floor(s.length / 2)] : 0; };
-console.log(`The Climb, ${RUNS} simulated runs at ${RUNG} (seed ${SEED}), Rest Day policy: ${POLICY}`);
+console.log(`The Climb, ${RUNS} simulated runs at ${RUNG} (seed ${SEED}), drafter: ${DRAFTER}, Rest Day policy: ${POLICY}`);
 console.log(`caps: floor 1 $${CLIMB.floorCap(1)} → floor 7 $${CLIMB.floorCap(7)}, rivalry +$${CLIMB.rivalryExtra}, boss $${CLIMB.bossCap}; recovery ${JSON.stringify(CLIMB.recovery)}; kinds ${JSON.stringify(KIND_WEIGHTS)}`);
 for (const [k, t] of Object.entries(byKind)) console.log(`  ${k.padEnd(8)} won ${pct(t.won, t.played)} of ${t.played}`);
 console.log(`  by floor: ${byFloor.map((t, f) => `${f + 1}:${pct(t.won, t.played)}(${t.played})`).join('  ')}`);

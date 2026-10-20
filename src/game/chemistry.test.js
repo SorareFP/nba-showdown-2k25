@@ -112,6 +112,6 @@ describe('Chemistry', () => {
     expect(chem).toBeGreaterThan(0);
     const holding = { ...run, deck: { ...run.deck, chemistry: 1 } };
     for (let i = 0; i < 30; i += 1) expect(stratOffer(holding, stop, climbRng(i, 'offers'), climbRng(i, 'climb-only'))).not.toContain('chemistry');
-    expect(STRATS.filter(s => s.climbOnly).length).toBe(9);
+    expect(STRATS.filter(s => s.climbOnly).length).toBe(11);
   });
 });

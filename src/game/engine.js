@@ -1083,15 +1083,29 @@ function spendParts(astBonus, contest) {
  * checks), the other side's Shut the Door (−1 on your paint checks). One
  * reader for every check, announced or spent, and for the "needs X+" figure.
  */
-export function climbCheckParts(g, teamKey, type) {
+export function climbCheckParts(g, teamKey, type, idx = null) {
   const mine = g?.buffs?.[teamKey] || {};
   const theirs = g?.buffs?.[teamKey === 'A' ? 'B' : 'A'] || {};
   const parts = [];
   if (type === '3pt' && mine.let_it_fly) parts.push({ label: 'Let It Fly', n: 1 });
   if (type === 'paint' && mine.bruise_brothers) parts.push({ label: 'Bruise Brothers', n: 1 });
   if (type === 'paint' && theirs.shut_the_door) parts.push({ label: 'Shut the Door', n: -1 });
+  // Splash: +1 for every two threes the team has made this game, up to +3.
+  if (type === '3pt' && mine.splash) {
+    const threes = (getTeam(g, teamKey)?.stats ?? []).reduce((t, s) => t + (s.threepm || 0), 0);
+    const n = Math.min(3, Math.floor(threes / 2));
+    if (n) parts.push({ label: 'Splash', n });
+  }
+  // On Fire: three makes in a row (noteLastCheck keeps the streak), +3 until a miss.
+  if (mine.on_fire && idx != null) {
+    const p = getTeam(g, teamKey)?.starters?.[idx];
+    if (p && (getPS(g, teamKey, p.id)?.streak || 0) >= 3) parts.push({ label: 'On Fire', n: 3 });
+  }
   return parts;
 }
+
+/** climbCheckParts as one number, for the checks rolled with a plain bonus. */
+export const climbCheckBonus = (g, teamKey, type, idx = null) => climbCheckParts(g, teamKey, type, idx).reduce((t, p) => t + p.n, 0);
 
 export function towersPenalty(g, teamKey, type) {
   return type === 'paint' && standingEntry(g, teamKey === 'A' ? 'B' : 'A', 'twin_towers') ? -2 : 0;
@@ -1116,7 +1130,7 @@ export function checkNeed(g, teamKey, idx, type, { extra = 0, banked = true } = 
   const marker = ((ps.hot || 0) - (ps.cold || 0)) * 2;
   // The tracker's penalty, as shotCheck will apply it (free throws exempt).
   const fat = type === 'ft' ? 0 : getFatigue(g, teamKey, idx);
-  const climb = climbCheckParts(g, teamKey, type).reduce((t, p) => t + p.n, 0);
+  const climb = climbCheckBonus(g, teamKey, type, idx);
   const bonus = astBonus - matchupContest(g, teamKey, idx, type) + boost + marker + fat + towersPenalty(g, teamKey, type) + glassBonus(g, teamKey, type) + climb;
   const need = (player.shotLine || 99) - bonus;
   const pHit = Math.min(1, Math.max(0, (21 - need) / 20));
@@ -1217,6 +1231,10 @@ export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, lab
     defenderId: getTeam(g, defKey)?.starters?.[defIdx]?.id ?? null,
   };
   g.lastShotCheck = rec;
+  // THE MAKE STREAK, for On Fire (Climb-only, 2026-10-19): every check a player
+  // takes passes here; a make adds one, a miss starts him over.
+  const sps = player?.id ? getPS(g, teamKey, player.id) : null;
+  if (sps) sps.streak = result?.hit ? (sps.streak || 0) + 1 : 0;
   // The section's list, for the Challenge (challengeTarget).
   g.shotChecks = [...(g.shotChecks ?? []), rec];
 }
@@ -1294,7 +1312,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     // a bonus to be able to spend"); the bonus, either sign, rides on the die.
     myT.assists -= SPEND_COSTS.assistThree;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const parts3 = [...spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt')), ...climbCheckParts(ng, teamKey, '3pt')];
+    const parts3 = [...spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt')), ...climbCheckParts(ng, teamKey, '3pt', playerIdx)];
     const r = shotCheck(player, '3pt', parts3, ps, getFatigue(ng, teamKey, playerIdx));
     noteCheckMiss(ng, teamKey, '3pt', playerIdx, r.hit);
     if (creditCheckDefended(ng, teamKey, playerIdx, '3pt', r, matchupContest(ng, teamKey, playerIdx, '3pt'))) r.blk = true;
@@ -1320,7 +1338,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (myT.assists < SPEND_COSTS.assistPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.assistPaint} assists (have ${myT.assists})` };
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const partsP = [...spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }, { label: GLASS_LABEL, n: glassBonus(ng, teamKey, 'paint') }, ...climbCheckParts(ng, teamKey, 'paint')];
+    const partsP = [...spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }, { label: GLASS_LABEL, n: glassBonus(ng, teamKey, 'paint') }, ...climbCheckParts(ng, teamKey, 'paint', playerIdx)];
     const r = shotCheck(player, 'paint', partsP, ps, getFatigue(ng, teamKey, playerIdx));
     noteCheckMiss(ng, teamKey, 'paint', playerIdx, r.hit);
     spendGlass(ng, teamKey, partsP);
@@ -1368,7 +1386,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     if (problem) return { game: ng, ok: false, msg: problem };
     const rebBonus = reboundCheckBonus(ng, teamKey);
     myT.rebounds -= SPEND_COSTS.reboundPaint;
-    const partsR = [{ label: 'REB', n: rebBonus }, { label: 'contest', n: -(matchupContest(ng, teamKey, playerIdx, 'paint') || 0) }, { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }, { label: GLASS_LABEL, n: glassBonus(ng, teamKey, 'paint') }, ...climbCheckParts(ng, teamKey, 'paint')];
+    const partsR = [{ label: 'REB', n: rebBonus }, { label: 'contest', n: -(matchupContest(ng, teamKey, playerIdx, 'paint') || 0) }, { label: 'Twin Towers', n: towersPenalty(ng, teamKey, 'paint') }, { label: GLASS_LABEL, n: glassBonus(ng, teamKey, 'paint') }, ...climbCheckParts(ng, teamKey, 'paint', playerIdx)];
     const r = shotCheck(player, 'paint', partsR, ps, getFatigue(ng, teamKey, playerIdx));
     noteCheckMiss(ng, teamKey, 'paint', playerIdx, r.hit);
     spendGlass(ng, teamKey, partsR);

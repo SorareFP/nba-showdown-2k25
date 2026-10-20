@@ -34,6 +34,8 @@ export const CARD_FIT = Object.freeze({
   kick_out_three: { nums: [1], fits: p => (p.threePtBoost ?? 0) >= 1 },
   hammer_set: { nums: [], fits: p => !has3(p) },
   three_point_barrage: { nums: [], fits: has3, count: 3 },
+  // A build-around (2026-10-19): it pays off a team that takes threes.
+  splash: { nums: [], fits: has3, count: 3 },
   // One player at Speed 13+ AND a different one with a 3PT Bonus.
   stagger_action: {
     nums: [13], fits: p => p.speed >= 13 || has3(p),

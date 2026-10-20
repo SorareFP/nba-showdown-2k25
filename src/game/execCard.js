@@ -3,7 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
-import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass, noteCheckMiss } from './engine.js';
+import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass, noteCheckMiss, climbCheckBonus } from './engine.js';
 import { checkTerms } from './checkTerms.js';
 import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots, HACK_A } from './canPlay.js';
 import { lookupChart } from './cards.js';
@@ -160,7 +160,7 @@ export function resolveGoUnder(game, slot) {
   const offPlayer = offT.starters[slot];
   if (!offPlayer) return { game, ok: false, msg: 'No such player' };
   const offPs = getPS(g, pc.teamKey, offPlayer.id) || {};
-  const guBonus = pc.extra - matchupContest(g, pc.teamKey, slot, '3pt');
+  const guBonus = pc.extra - matchupContest(g, pc.teamKey, slot, '3pt') + climbCheckBonus(g, pc.teamKey, '3pt', slot);
   const r = shotCheck(offPlayer, '3pt', guBonus, offPs, getFatigue(g, pc.teamKey, slot));
   trackShotCheck(g, pc.teamKey, r, '3pt', slot);
   noteLastCheck(g, { teamKey: pc.teamKey, playerIdx: slot, player: offPlayer, type: '3pt', result: r, label: 'Go Under 3PT check', bonus: guBonus });
@@ -298,12 +298,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     // A preview writes the check down and rolls nothing (see announceCheck):
     // a miss stands in, on the copy the preview throws away.
     if (Array.isArray(g.previewChecks)) {
-      g.previewChecks.push({ teamKey, playerIdx: idx, type, bonus: (extra || 0) + _assistShotBonus });
+      g.previewChecks.push({ teamKey, playerIdx: idx, type, bonus: (extra || 0) + _assistShotBonus + climbCheckBonus(g, teamKey, type, idx) });
       // A neutral face: a 1-2 or 19-20 would hand the copy a cold or hot
       // marker and the preview would report a roll change the card never makes.
       return { die: 10, bonus: 0, parts: [], total: 10, hit: false, pts: 0, type };
     }
-    return shotCheck(p, type, (extra || 0) + _assistShotBonus - matchupContest(g, teamKey, idx, type), pStats, getFatigue(g, teamKey, idx));
+    // The Climb's game-long check cards ride on these too (climbCheckBonus).
+    return shotCheck(p, type, (extra || 0) + _assistShotBonus - matchupContest(g, teamKey, idx, type) + climbCheckBonus(g, teamKey, type, idx), pStats, getFatigue(g, teamKey, idx));
   };
 
   const player    = myT.starters[idx];
@@ -408,7 +409,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     // resultFromGame); Pace and Space and Weight Room change the game's own
     // copies of the players, so every reader sees the new number.
     case 'let_it_fly': case 'pace_and_space': case 'bruise_brothers': case 'weight_room':
-    case 'conditioning': case 'shut_the_door': case 'stay_hot': case 'ice_bath': {
+    case 'conditioning': case 'shut_the_door': case 'stay_hot': case 'ice_bath':
+    case 'splash': case 'on_fire': {
       if (g.buffs?.[teamKey]?.[cardId]) return fail('Already in play this game');
       const bump = (match, stat, n) => {
         const seen = new Set();
@@ -1377,6 +1379,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // Re-roll the shot check with same bonus
       const newR = shotCheck(ccPlayer, lsc.type, lsc.bonus || 0, ccPs, getFatigue(g, oppKey2, lsc.playerIdx));
       recordShot(g, oppKey2, ccPlayer.id, lsc.type, newR.hit);
+      // An overturned make is a miss: On Fire's streak (noteLastCheck) ends with it.
+      if (ccPs && !newR.hit) ccPs.streak = 0;
       if (creditCheckDefended(g, oppKey2, lsc.playerIdx, lsc.type, newR, matchupContest(g, oppKey2, lsc.playerIdx, lsc.type))) newR.blk = true;
       if (ccPool === 'card') trackShotCheck(g, oppKey2, newR, lsc.type);
       else if (ccAn && newR.hit) ccAn[`${ccPool}Pts`] = (ccAn[`${ccPool}Pts`] || 0) + newR.pts;

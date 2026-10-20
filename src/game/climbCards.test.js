@@ -4,7 +4,7 @@
 // user's own ("carrying hot markers into next game ... or erasing fatigue after
 // a game").
 import { describe, it, expect } from 'vitest';
-import { newGame, getTeam, getPS, getFatigue, checkNeed, climbCheckParts } from './engine.js';
+import { newGame, getTeam, getPS, getFatigue, checkNeed, climbCheckParts, noteLastCheck } from './engine.js';
 import { execCard } from './execCard.js';
 import { canPlayCard } from './canPlay.js';
 import { CLIMB_GAME_CARDS, STRAT_MAP } from './strats.js';
@@ -38,13 +38,13 @@ const play = (g, key, id, opts = {}) => {
 };
 
 describe('the game-long Climb cards', () => {
-  it('are eight Climb-only cards, each leaning to its playbook or to none', () => {
-    expect(CLIMB_GAME_CARDS).toHaveLength(8);
+  it('are ten Climb-only cards, each leaning to its playbook or to none', () => {
+    expect(CLIMB_GAME_CARDS).toHaveLength(10);
     for (const id of CLIMB_GAME_CARDS) expect(STRAT_MAP[id], id).toMatchObject({ climbOnly: true });
-    expect(['let_it_fly', 'pace_and_space'].map(leanOf)).toEqual(['speed', 'speed']);
+    expect(['let_it_fly', 'pace_and_space', 'splash'].map(leanOf)).toEqual(['speed', 'speed', 'speed']);
     expect(['bruise_brothers', 'weight_room'].map(leanOf)).toEqual(['paint', 'paint']);
     expect(['conditioning', 'shut_the_door'].map(leanOf)).toEqual(['defense', 'defense']);
-    expect(['stay_hot', 'ice_bath'].map(leanOf)).toEqual([null, null]);
+    expect(['stay_hot', 'ice_bath', 'on_fire'].map(leanOf)).toEqual([null, null, null]);
   });
 
   it('are set up in the matchup, on your turn, once each a game', () => {
@@ -66,6 +66,41 @@ describe('the game-long Climb cards', () => {
     expect(climbCheckParts(g, 'A', 'paint').map(p => p.n)).toEqual([1, -1]);
     expect(climbCheckParts(g, 'B', 'paint')).toEqual([]);
     expect(checkNeed(g, 'A', 0, '3pt').need).toBe(checkNeed(board(), 'A', 0, '3pt').need - 1);
+  });
+
+  it('Splash grows with the team’s made threes: +1 a pair, up to +3', () => {
+    const g = play(board(), 'A', 'splash');
+    expect(climbCheckParts(g, 'A', '3pt')).toEqual([]);
+    const stats = getTeam(g, 'A').stats;
+    stats[0].threepm = 2; stats[1].threepm = 1;
+    expect(climbCheckParts(g, 'A', '3pt')).toEqual([{ label: 'Splash', n: 1 }]);
+    expect(climbCheckParts(g, 'A', 'paint')).toEqual([]);
+    stats[2].threepm = 9;
+    expect(climbCheckParts(g, 'A', '3pt')).toEqual([{ label: 'Splash', n: 3 }]);
+    expect(climbCheckParts(g, 'B', '3pt')).toEqual([]);
+    expect(checkNeed(g, 'A', 0, '3pt').need).toBe(checkNeed(board(), 'A', 0, '3pt').need - 3);
+  });
+
+  it('On Fire lights a player after three makes in a row, +3 on his checks until he misses', () => {
+    const g = play(board(), 'A', 'on_fire');
+    const shoot = (idx, hit) => {
+      const player = getTeam(g, 'A').starters[idx];
+      noteLastCheck(g, { teamKey: 'A', playerIdx: idx, player, type: 'paint', result: { hit, pts: hit ? 2 : 0, die: 10, type: 'paint' } });
+    };
+    shoot(0, true); shoot(0, true);
+    expect(climbCheckParts(g, 'A', 'paint', 0)).toEqual([]);
+    shoot(0, true);
+    expect(climbCheckParts(g, 'A', 'paint', 0)).toEqual([{ label: 'On Fire', n: 3 }]);
+    expect(climbCheckParts(g, 'A', '3pt', 0)).toEqual([{ label: 'On Fire', n: 3 }]);
+    expect(climbCheckParts(g, 'A', 'paint', 1)).toEqual([]);
+    expect(checkNeed(g, 'A', 0, 'paint').need).toBe(checkNeed(board(), 'A', 0, 'paint').need - 3);
+    shoot(0, false);
+    expect(climbCheckParts(g, 'A', 'paint', 0)).toEqual([]);
+    // Without the card, a streak is only a streak.
+    const plain = board();
+    for (let i = 0; i < 3; i += 1) noteLastCheck(plain, { teamKey: 'A', playerIdx: 0, player: plain.teamA.starters[0], type: 'paint', result: { hit: true, pts: 2, die: 10, type: 'paint' } });
+    expect(getPS(plain, 'A', plain.teamA.starters[0].id).streak).toBe(3);
+    expect(climbCheckParts(plain, 'A', 'paint', 0)).toEqual([]);
   });
 
   it('Pace and Space adds a Speed to every player once; Weight Room three Power to one', () => {

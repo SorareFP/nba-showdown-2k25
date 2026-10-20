@@ -319,10 +319,16 @@ export const STRATS = [
     desc:'Stays in play this game: your players carry the hot markers they finish it with into the next game (up to 2 each).' },
   { id:'ice_bath',            name:'Ice Bath',           phase:'matchup',  side:'off', copies:1, locked:false, color:'#0891B2', rarity:'uncommon', climbOnly:true,
     desc:'After this game, your players\' fatigue is cleared. Ice Bath then leaves your deck.' },
+  // BUILD-AROUNDS (2026-10-19, "keep going down the list"): weak alone, strong
+  // in a deck built for them — the skill lever of a focused deck over a pile.
+  { id:'splash',              name:'Splash',             phase:'matchup',  side:'off', copies:1, locked:false, color:'#0369A1', rarity:'uncommon', climbOnly:true,
+    desc:'Stays in play this game: your 3PT Shot Checks get +1 for every two threes your team has made this game (up to +3).' },
+  { id:'on_fire',             name:'On Fire',            phase:'matchup',  side:'off', copies:1, locked:false, color:'#EA580C', rarity:'uncommon', climbOnly:true,
+    desc:'Stays in play this game: a player of yours who makes three shot checks in a row is On Fire — his shot checks are +3 until he misses.' },
 ];
 
 /** The Climb-only cards that last a game (g.buffs): one rule in canPlay, one in execCard. */
-export const CLIMB_GAME_CARDS = Object.freeze(['let_it_fly', 'pace_and_space', 'bruise_brothers', 'weight_room', 'conditioning', 'shut_the_door', 'stay_hot', 'ice_bath']);
+export const CLIMB_GAME_CARDS = Object.freeze(['let_it_fly', 'pace_and_space', 'bruise_brothers', 'weight_room', 'conditioning', 'shut_the_door', 'stay_hot', 'ice_bath', 'splash', 'on_fire']);
 
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));
 

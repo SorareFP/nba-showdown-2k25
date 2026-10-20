@@ -43,7 +43,7 @@ export function checkTerms(g, psc, idx = psc.playerIdx) {
   if (psc.type === 'paint' && standingEntry(g, other(teamKey), 'twin_towers')) parts.push({ label: 'Twin Towers', n: -2 });
   // The glass lead's +2, on any paint check while it is up (glassBonus).
   parts.push({ label: GLASS_LABEL, n: glassBonus(g, teamKey, psc.type) });
-  parts.push(...climbCheckParts(g, teamKey, psc.type));
+  parts.push(...climbCheckParts(g, teamKey, psc.type, idx));
   return parts.filter(p => p.n);
 }
 

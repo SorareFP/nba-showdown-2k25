@@ -1342,7 +1342,7 @@ function evaluateCard(game, teamKey, handCardId, strat, opts = {}) {
     second_closer: 7,
     chemistry: 6,   // Climb-only: a set-up, best early in a game
     let_it_fly: 6, pace_and_space: 6, bruise_brothers: 6, weight_room: 6,
-    conditioning: 5, shut_the_door: 6, stay_hot: 4, ice_bath: 5,
+    conditioning: 5, shut_the_door: 6, stay_hot: 4, ice_bath: 5, splash: 5, on_fire: 5,
     ato_masterpiece: 8,
     fresh_legs: 6,
     ice_the_hot_hand: 7,
@@ -1884,6 +1884,7 @@ export function aiBuildCardOpts(game, teamKey, handCardId) {
     }
     case 'let_it_fly': case 'pace_and_space': case 'bruise_brothers':
     case 'conditioning': case 'shut_the_door': case 'stay_hot': case 'ice_bath':
+    case 'splash': case 'on_fire':
     case 'desperation_press':
     case 'chemistry':
     case 'second_closer': {

@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-build-arounds', date: '2026-10-20', title: 'The Climb: build a deck, not a pile',
+    body: "A Rest Day can now cut a card from your deck for good, so the cards you built around come up more often. The map scouts the boss from the first floor: its best five, its playbook and the rares in its deck. And two new Climb-only cards reward a deck built for them: Splash (your threes get +1 for every two your team has made this game, up to +3) and On Fire (a player who makes three checks in a row is +3 until he misses).",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'climb-perks-chemistry', date: '2026-10-19', title: 'The Climb: perks and Climb-only cards',
     body: "Beat a Rivalry and it drops a perk for the rest of the run: Gym Rat (+1 Power on a player you choose), Extra Reps (his Shot Line 1 better), Signature Move (+1 3PT Bonus) or Film Study (practise a card on the spot). Take one of three, or none (a Rivalry usually drops one, a Game now and then). Your cap rises $450 a floor now, and rarer cards come more often as you climb, so every step up builds a bigger team. Rewards can now offer cards you will only ever find in a climb, each playbook its own: Let It Fly and Pace and Space for Speed, Bruise Brothers and Weight Room for Paint, Conditioning and Shut the Door for Defense, and for anyone Chemistry, Stay Hot (your hot markers carry into the next game) and Ice Bath (after this game, your fatigue is gone). A reward card one of your players fits now glows and names him, and players are offered at three prices. And Second Closer, ATO Masterpiece, Hack-A-____ and Transition Outlet have their \"+\" versions to practise.",
     to: 'climb', cta: 'The Climb',

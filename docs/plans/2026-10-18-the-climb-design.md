@@ -87,6 +87,21 @@ whole mode splits into four pieces, each its own spec and plan:
   chance 10% to 45% (was 5% to 25%), drops game 50%/10% and rivalry 75%/70%
   player/perk, Climb-only slot 50%. 300 runs: Prince wins the act 23%, Deity
   8.7%; the median team at the boss $4,820 (was $3,990).
+- **Skill moves the odds, 2026-10-19** (the user: "1 in 40 isn't crazy, I just
+  want to make it so skill improves those odds a ton. When I think of skill in
+  that context, I think roster building and deck scaling"). A Rest Day can now
+  cut a card (MIN_DECK 7). The sim plays three drafters (drafter=careless |
+  plain | careful; scripts/analysis/runClimbSim.js), 300 runs each, act won:
+
+  | | careless | plain | careful | careful, no cutting |
+  |---|---|---|---|---|
+  | Prince | 13.0% | 23.3% | 23.7% | 20.0% |
+  | Deity | 2.0% | 8.7% | 12.7% | 9.0% |
+  | Deity, cap step $300 | 0.7% | — | 3.0% | — |
+
+  At Deity careful play wins six times as often as careless (1 in 8 against 1
+  in 50); cutting alone is worth +3.7 points. The $450 cap step widens the gap
+  rather than flattening it (more room for the right players), so it stays.
 - **A game is one quarter:** it starts at Q4 section 1, so it is three
   sections with crunch time if within CRUNCH_MARGIN and overtime if tied. The
   rest is the normal engine; the coach plays at the run's rung.

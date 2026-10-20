@@ -35,6 +35,19 @@ describe('the start screen', () => {
     expect(out).not.toContain(`>${star.name}<`);
     expect(out).toContain('1 more of your players do not fit');
   });
+
+  // The user, 2026-10-20: "We need the same sorting for building a climb 5 as we have for team builder".
+  it('has the team builder’s filter row: search, team, position, salary and sort', () => {
+    const owned = FIVE.map(c => ({ key: cardKey(c), card: c, count: 1 }));
+    const out = html(<ClimbStart owned={owned} onStart={noop} />);
+    for (const label of ['Search players', 'Team', 'Position', 'Max salary', 'Sort']) expect(out).toContain(`aria-label="${label}"`);
+    expect(out).toContain('Speed ↓');
+    expect(out).toContain('Name A-Z');
+    // Salary, high to low, until a sort is chosen.
+    const order = [...FIVE].sort((a, b) => b.salary - a.salary).map(c => out.indexOf(c.name.replace(/'/g, '&#x27;')));
+    expect(order).toEqual([...order].sort((a, b) => a - b));
+    expect(html(<ClimbStart owned={[]} onStart={noop} />)).not.toContain('aria-label="Sort"');
+  });
 });
 
 describe("the start screen's saved fives", () => {

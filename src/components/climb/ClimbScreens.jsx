@@ -9,7 +9,8 @@ import { AI_LEVELS, payNote } from '../../game/aiLevels.js';
 import { capOf } from '../../game/coinRewards.js';
 import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
-import { capSal, playerOnRoster } from '../../game/teamRules.js';
+import { capSal, playerOnRoster, DEFAULT_FILTERS, filterPool, sortPool } from '../../game/teamRules.js';
+import PoolFilters from '../PoolFilters.jsx';
 import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
@@ -188,13 +189,18 @@ function PotLine({ run }) {
 export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null, busy = false }) {
   const [rung, setRung] = useState('prince');
   const [picked, setPicked] = useState([]);
+  // THE TEAM BUILDER'S FILTER ROW (the user, 2026-10-20: "We need the same
+  // sorting for building a climb 5 as we have for team builder"): search,
+  // team, position, salary and sort, the one PoolFilters both builders use.
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const ownedKeys = useMemo(() => new Set(owned.map(o => o.key)), [owned]);
+  const teams = useMemo(() => [...new Set(owned.map(o => o.card.team))].sort(), [owned]);
   const fives = saved.filter(t => t.climb);
   const list = useMemo(() => [...owned].sort((a, b) => (b.card.salary ?? 0) - (a.card.salary ?? 0) || a.card.name.localeCompare(b.card.name)), [owned]);
   const cards = picked.map(k => list.find(o => o.key === k)?.card).filter(Boolean);
   const total = capSal(cards);
   // What is left must still buy the rest of the five: a player fits when
-  // he and the cheapest others for the open spots fit under the cap.
+  // they and the cheapest others for the open spots fit under the cap.
   const byPrice = useMemo(() => [...list].sort((a, b) => (a.card.salary ?? 0) - (b.card.salary ?? 0)), [list]);
   const fits = o => {
     if (picked.length >= 5 || playerOnRoster(cards, o.card)) return false;
@@ -213,9 +219,16 @@ export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null,
     if (picked.includes(o.key)) { setPicked(picked.filter(k => k !== o.key)); return; }
     if (fits(o)) setPicked([...picked, o.key]);
   };
-  const chosen = list.filter(o => picked.includes(o.key));
-  const open = list.filter(o => !picked.includes(o.key) && fits(o));
-  const hidden = list.length - chosen.length - open.length;
+  // Your five stay on top in the order you picked them; the filters narrow
+  // and order everyone else.
+  const chosen = picked.map(k => list.find(o => o.key === k)).filter(Boolean);
+  const shown = useMemo(() => {
+    const byCard = new Map(list.map(o => [o.card, o]));
+    return sortPool(filterPool(list.map(o => o.card), filters), filters.sort).map(c => byCard.get(c));
+  }, [list, filters]);
+  const rest = shown.filter(o => !picked.includes(o.key));
+  const open = rest.filter(fits);
+  const hidden = rest.length - open.length;
   const ready = picked.length === 5 && total <= CLIMB.startCap;
   return (
     <div className={styles.screen}>
@@ -252,6 +265,7 @@ export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null,
       )}
       <h3 className={styles.h3}>Your five <span className={total > CLIMB.startCap ? styles.over : styles.muted}>{dollars(total)} of {dollars(CLIMB.startCap)} · {picked.length}/5</span></h3>
       {list.length === 0 && <p className={styles.muted}>Open your starter pack first: a climb starts with players you own.</p>}
+      {list.length > 0 && <PoolFilters value={filters} onChange={setFilters} teams={teams} />}
       <div className={styles.grid}>
         {[...chosen, ...open].map(o => {
           const on = picked.includes(o.key);

@@ -265,7 +265,7 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
             <Skeleton rows={3} height={44} label="Loading collections" />
           ) : noCards ? (
             <div className={s.empty}>
-              <p>Collect a player and every collection that wants him starts counting.</p>
+              <p>Collect a player and every collection that wants them starts counting.</p>
               <button className={s.secondary} onClick={() => onGo('collection')}>
                 {starter && !starter.opened ? 'Open your Starter Pack' : 'Go to Collection'}
               </button>

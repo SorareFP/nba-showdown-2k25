@@ -463,6 +463,35 @@ describe('offensive reactions', () => {
     expect(getTeam(r.game, 'A').rebounds).toBe(0);
     expect(r.game.lastCheckMiss.claimed).toBe(true);
   });
+
+  // The user, 2026-10-20: "should give a rebound to the player if they score on the shot check".
+  it('Putback Specialist: a make puts the rebound on the scorer’s line, a miss does not, a Challenge takes it back', () => {
+    const putback = die => {
+      // Starters off the roster, so their box-score lines exist.
+      const g = game({ hand: ['putback_specialist'], rebounds: 2, A: CARDS.slice(0, 5).map(c => ({ ...c, shotLine: 15 })) });
+      g.lastCheckMiss = { teamKey: 'A', type: '3pt', playerIdx: 0, claimed: false };
+      vi.spyOn(Math, 'random').mockReturnValue(die);
+      const r = play(g, 'putback_specialist', { playerIdx: 1 });
+      vi.restoreAllMocks();
+      expect(r.ok).toBe(true);
+      return r.game;
+    };
+    const line = (g, key = 'A') => getTeam(g, key).stats.find(s => s.id === getTeam(g, key).starters[1].id);
+    const made = putback(0.99);
+    expect(line(made).reb).toBe(1);
+    expect(line(made).pts).toBe(2);
+    expect(made.lastShotCheck.rebPaid).toEqual([{ playerId: getTeam(made, 'A').starters[1].id, n: 1 }]);
+    expect(getTeam(made, 'A').rebounds).toBe(0);   // the line, not the bank
+    expect(log(made, 'Putback Specialist').some(e => /\+1 REB \(/.test(e.msg))).toBe(true);
+    expect(line(putback(0)).reb).toBe(0);
+    // Overturned: the make and its rebound come off the line.
+    getTeam(made, 'B').hand = ['coaches_challenge'];
+    made.phase = 'scoring';
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    const cc = play(made, 'coaches_challenge', {}, 'B');
+    expect(cc.ok, cc.msg).toBe(true);
+    expect(line(cc.game).reb).toBe(0);
+  });
 });
 
 // ── Reactions: defense ─────────────────────────────────────────────────────

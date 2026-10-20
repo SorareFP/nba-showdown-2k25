@@ -51,10 +51,10 @@ describe('the negotiating table', () => {
       contracts: Object.fromEntries(Object.entries(d0.contracts).filter(([k]) => k !== mine)),
     };
     const plain = html(<Negotiator d={d} cardKey={mine} moves={solo} />);
-    expect(plain).not.toContain('He would take about');
+    expect(plain).not.toContain('They would take about');
     expect(plain).not.toContain('−10%');
     const staffed = html(<Negotiator d={{ ...d, staff: { [HUMAN_ID]: { cap: 2 } } }} cardKey={mine} moves={solo} />);
-    expect(staffed).toContain('He would take about');
+    expect(staffed).toContain('They would take about');
     expect(staffed).toContain('−10%');
   });
 });

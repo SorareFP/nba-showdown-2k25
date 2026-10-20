@@ -816,7 +816,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (opts.assignments && opts.assignments.length === 5) {
         const seBefore = [...(g.offMatchups[oppTeam] || [0, 1, 2, 3, 4])];
         const seLocked = screenLockSlots(g, oppTeam).find(i => opts.assignments[i] !== seBefore[i]);
-        if (seLocked != null) return fail(`Their screen on ${oppT.starters[seLocked]?.name} is Uncancelable this section: he keeps his defender`);
+        if (seLocked != null) return fail(`Their screen on ${oppT.starters[seLocked]?.name} is Uncancelable this section: they keep their defender`);
         g.offMatchups[oppTeam] = [...opts.assignments];
         g.lastDefSwitch = recordDefSwitch(teamKey, 'switch_everything', seBefore, g.offMatchups[oppTeam]);
         addLog(g, teamKey, `Switch Everything: ${myT.name} reassigned their entire defense`);
@@ -1367,6 +1367,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
           creditLine(g, oppKey2, a.playerId, 'ast', -a.n);
           if (ccAn && lsc.astPaid) ccAn.assistsFromCards = Math.max(0, (ccAn.assistsFromCards || 0) - a.n);
         }
+        for (const b of lsc.rebPaid ?? []) creditLine(g, oppKey2, b.playerId, 'reb', -b.n);
       }
       // Reverse shot stats
       if (oldResult.type === '3pt') {
@@ -1405,6 +1406,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
           creditLine(g, oppKey2, a.playerId, 'ast', a.n);
           if (ccAn && lsc.astPaid) ccAn.assistsFromCards = (ccAn.assistsFromCards || 0) + a.n;
         }
+        for (const b of lsc.rebPaid ?? []) creditLine(g, oppKey2, b.playerId, 'reb', b.n);
       }
 
       // Close Out cold marker on miss still applies if original had it
@@ -1813,7 +1815,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player.name} has already rolled this segment.`);
       const dp = oppT?.starters?.[(g.offMatchups?.[teamKey] || [])[idx] ?? idx];
       const adv = dp ? calcAdv(player, dp, g.tempEff[teamKey] || {}, idx) : null;
-      if (!adv || adv.powerAdv <= 0) return fail(`${player.name} has no Power advantage over his defender`);
+      if (!adv || adv.powerAdv <= 0) return fail(`${player.name} has no Power advantage over their defender`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['reb2' + idx] = 1;
       addLog(g, teamKey, `Post Domination: ${player.name}'s rebounds are doubled this period`);
@@ -1857,7 +1859,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       miss.claimed = true;
       // "+": at +5, and a hit is +1 Assist.
       addLog(g, teamKey, `Putback Specialist${plus ? '+' : ''}: −2 REB → ${player?.name} announces a Paint check at +${plus ? 5 : 3}.`);
-      announceCheck(g, { teamKey, playerIdx: idx, type: 'paint', bonus: (plus ? 5 : 3) + _assistShotBonus, cardLabel: `Putback Specialist${plus ? '+' : ''}`, ...(plus ? { onHit: 'ast' } : {}) });
+      // A MAKE IS THEIR REBOUND TOO (the user, 2026-10-20: "should give a
+      // rebound to the player if they score on the shot check"): the putback
+      // is an offensive board, so it goes on the scorer's line.
+      announceCheck(g, { teamKey, playerIdx: idx, type: 'paint', bonus: (plus ? 5 : 3) + _assistShotBonus, cardLabel: `Putback Specialist${plus ? '+' : ''}`, onHitReb: 1, ...(plus ? { onHit: 'ast' } : {}) });
       break;
     }
     // ── THE GLASS (2026-09-23) ─────────────────────────────────────────────
@@ -2023,7 +2028,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       gainRebounds(myT, gain);
       // Your defender on the shooter cleans the glass: the boards are his.
       creditLine(g, teamKey, guard?.id, 'reb', gain);
-      addLog(g, teamKey, `Glass Cleaner${plus ? '+' : ''}: ${shooter ? shooter.name + ' misses — ' : ''}+${gain} REB${gain > gcBase ? ` (${guard.name} out-muscles him)` : ''}`);
+      addLog(g, teamKey, `Glass Cleaner${plus ? '+' : ''}: ${shooter ? shooter.name + ' misses — ' : ''}+${gain} REB${gain > gcBase ? ` (${guard.name} out-muscles them)` : ''}`);
       break;
     }
     case 'box_out': {
@@ -2066,7 +2071,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player.name} has already rolled this segment.`);
       const dpG = oppT?.starters?.[(g.offMatchups?.[teamKey] || [])[idx] ?? idx];
       const advG = dpG ? calcAdv(player, dpG, g.tempEff[teamKey] || {}, idx) : null;
-      if (!advG || advG.speedAdv <= 0) return fail(`${player.name} has no Speed advantage over his defender`);
+      if (!advG || advG.speedAdv <= 0) return fail(`${player.name} has no Speed advantage over their defender`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['ast2' + idx] = 1;
       addLog(g, teamKey, `Point God: ${player.name}'s assists are doubled this period`);
@@ -2164,7 +2169,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
  *
  * A check is a plain descriptor:
  *   { teamKey, playerIdx, type, bonus, cardLabel }
- * plus optional flags: `onHitAst` (assists on a hit), `onHitHot` (a hot marker
+ * plus optional flags: `onHitAst` (assists on a hit), `onHitReb` (rebounds on
+ * the shooter's line on a hit — Putback Specialist), `onHitHot` (a hot marker
  * on a hit — Heat Check), `specialRoll: 'fwd'` (the wider 1-3/18-20 range),
  * `noCardBonus`, and the defence's answers (`smother`, `closeOutBonus`,
  * `contest`, `denial`, `rimProtector`) which a reaction writes onto it.
@@ -2192,6 +2198,7 @@ export function applyShotCheck(g, psc) {
   // Every assist this make pays and whose line it went on: the Challenge's
   // receipt (noteLastCheck).
   const astPaid = [];
+  const rebPaid = [];
   let astTo = null;
 
   const r = shotCheck(player, psc.type, bonus, ps, getFatigue(g, psc.teamKey, psc.playerIdx));
@@ -2235,6 +2242,10 @@ export function applyShotCheck(g, psc) {
       astPaid.push({ playerId: astTo, n: hitAst });
       if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards += hitAst;
     }
+    if (psc.onHitReb) {
+      creditLine(g, psc.teamKey, player?.id, 'reb', psc.onHitReb);
+      rebPaid.push({ playerId: player?.id ?? null, n: psc.onHitReb });
+    }
     if (psc.onHitHot) ps.hot = (ps.hot || 0) + 1;
   } else if (psc.rimProtector) {
     const protT = getTeam(g, psc.rimProtector);
@@ -2254,6 +2265,7 @@ export function applyShotCheck(g, psc) {
     const passer = psc.hitAstToTeammate && astTo ? myT.starters.find(s => s?.id === astTo) : null;
     msg += ` +${hitAst} AST${passer ? ` (${passer.name})` : ''}`;
   }
+  if (r.hit && psc.onHitReb) msg += ` +${psc.onHitReb} REB (${player?.name})`;
   if (r.hit && psc.onHitHot) msg += ' 🔥';
   if (!r.hit && psc.rimProtector) msg += ` — Rim Protector! +${psc.rimProtectorReb ?? 2} REB for the defence`;
   g.log = [...g.log, { team: psc.teamKey, msg }];
@@ -2261,7 +2273,7 @@ export function applyShotCheck(g, psc) {
   // Track for Coach's Challenge — the one record every check route writes.
   noteLastCheck(g, {
     teamKey: psc.teamKey, playerIdx: psc.playerIdx, player, type: psc.type, result: r, label,
-    bonus, specialRoll: psc.specialRoll, onHit: psc.onHit, closeOutApplied: !!psc.closeOutBonus, astPaid,
+    bonus, specialRoll: psc.specialRoll, onHit: psc.onHit, closeOutApplied: !!psc.closeOutBonus, astPaid, rebPaid,
   });
   return r;
 }

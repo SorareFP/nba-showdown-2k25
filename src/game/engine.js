@@ -1091,7 +1091,7 @@ export function climbCheckParts(g, teamKey, type, idx = null) {
   const theirs = g?.buffs?.[teamKey === 'A' ? 'B' : 'A'] || {};
   const parts = [];
   if (type === '3pt' && mine.let_it_fly) parts.push({ label: 'Let It Fly', n: 1 });
-  if (type === 'paint' && mine.bruise_brothers) parts.push({ label: 'Bruise Brothers', n: 1 });
+  if (type === 'paint' && mine.bruise_brothers) parts.push({ label: 'Bruise Crew', n: 1 });
   if (type === 'paint' && theirs.shut_the_door) parts.push({ label: 'Shut the Door', n: -1 });
   // Splash: +1 for every two threes the team has made this game, up to +3.
   if (type === '3pt' && mine.splash) {
@@ -1207,7 +1207,8 @@ export function creditPaintScore(g, teamKey, playerIdx, player) {
  * own (Hammer Set's two, Pin-Down Screen's one to a teammate) and Short-Roll
  * Playmaker's on a paint score. A Challenge that overturns the make takes
  * them back from the pool and from those lines (the user, 2026-10-01: a
- * cancelled stat "never" happened).
+ * cancelled stat "never" happened). `rebPaid` is the same receipt for the
+ * rebounds a make credits (Putback Specialist's one, 2026-10-20).
  */
 /**
  * THE MISS A POST-MISS CARD ANSWERS — Glass Cleaner and Rebound and Push
@@ -1230,7 +1231,7 @@ export function noteCheckMiss(g, teamKey, type, playerIdx, hit) {
  */
 export const answerEventKey = g => `${g?.checkSeq || 0}/${g?.rollSeq || 0}`;
 
-export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, label, bonus = 0, pool = 'card', specialRoll, onHit, closeOutApplied = false, astPaid = [] }) {
+export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, label, bonus = 0, pool = 'card', specialRoll, onHit, closeOutApplied = false, astPaid = [], rebPaid = [] }) {
   g.checkSeq = (g.checkSeq || 0) + 1;
   // WHO GUARDED THE SHOT, as the check was taken (2026-09-30). A Challenge
   // reaches back through the section, and a switch card may have moved the
@@ -1243,7 +1244,7 @@ export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, lab
   const rec = {
     seq: g.checkSeq,
     teamKey, playerIdx, playerId: player?.id, type, result, pts: result.pts,
-    cardLabel: label, bonus, pool, specialRoll, onHit, closeOutApplied, astPaid,
+    cardLabel: label, bonus, pool, specialRoll, onHit, closeOutApplied, astPaid, rebPaid,
     defenderId: getTeam(g, defKey)?.starters?.[defIdx]?.id ?? null,
   };
   g.lastShotCheck = rec;

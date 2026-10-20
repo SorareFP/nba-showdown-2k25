@@ -297,7 +297,7 @@ export function ImportPanel({ d, moves, collection = null }) {
       </div>
       <p className={dy.intro}>
         A card you own that is not in this league can join your team for Franchise Points — earned as each year closes by
-        your finish, the playoff series you win and a title, weighted by the coach rung. The player signs at his value
+        your finish, the playoff series you win and a title, weighted by the coach rung. The player signs at their value
         for {IMPORT_YEARS} years, under the {CAP_DP}-DP cap, in the offseason.
       </p>
       <div className={styles.tableWrap}>
@@ -440,7 +440,7 @@ export function FrontOffice({ d, moves, uid = null, collection = null }) {
                   {moves.protect && !protectProblem(d, me, k.key) && (
                     shielded === k.key
                       ? <span className={styles.muted} title="Prime Extension: no retirement roll at the turn of this year"> 🛡 protected</span>
-                      : <button type="button" className={dy.linkBtn} title="Prime Extension: he skips this year's retirement roll" onClick={() => moves.protect(k.key)}> Protect</button>
+                      : <button type="button" className={dy.linkBtn} title="Prime Extension: they skip this year's retirement roll" onClick={() => moves.protect(k.key)}> Protect</button>
                   )}
                 </td>
               </tr>
@@ -490,10 +490,10 @@ export function WaiverWire({ d, moves }) {
                   <td>{mine ? 'You' : teamOf(d, w.from)?.name}</td>
                   <td><strong>{w.dp}</strong> × {w.years}</td>
                   <td>
-                    {mine && <span className={styles.muted}>If he is claimed, his DP comes off your books</span>}
+                    {mine && <span className={styles.muted}>If they are claimed, their DP comes off your books</span>}
                     {!mine && claimed && <button type="button" className={dy.linkBtn} onClick={() => moves.unclaim?.(w.key)}>✓ Claimed — withdraw</button>}
                     {!mine && !claimed && (
-                      <button type="button" className={dy.linkBtn} disabled={Boolean(why)} title={why ?? `Take his ${w.dp} DP × ${w.years} if nobody ahead of you claims him`} onClick={() => moves.claim?.(w.key)}>
+                      <button type="button" className={dy.linkBtn} disabled={Boolean(why)} title={why ?? `Take their ${w.dp} DP × ${w.years} if nobody ahead of you claims them`} onClick={() => moves.claim?.(w.key)}>
                         Claim
                       </button>
                     )}
@@ -609,22 +609,22 @@ export function Negotiator({ d, cardKey, moves, onClose = null, letGo = null }) 
       <PlayerHead d={d} q={q} cardKey={cardKey} onClose={onClose} />
 
       <div className={dy.askLine}>
-        His ask: <strong>{q.ask} DP</strong> a season for {plural(years, 'year')}
+        Their ask: <strong>{q.ask} DP</strong> a season for {plural(years, 'year')}
         {q.ask >= MAX_DP && <span className={dy.buff} title={`A max deal: ${MAX_DP} DP a season is the most anyone can ask`}>max</span>}
         {q.discount < 1 && <span className={dy.buff} title="Hometown Discount (staff): your own player asks 10% less of you">−10%</span>}
-        {years !== q.preferred && <span className={styles.muted}> · he wants {q.preferred}</span>}
+        {years !== q.preferred && <span className={styles.muted}> · they want {q.preferred}</span>}
       </div>
       {q.floor != null && (
         // Read the Room (staff, 2026-09-23): the personality and the floor,
         // which the table otherwise never shows.
         <div className={dy.rival} title="Read the Room: the Cap Strategist's read">
-          🔎 <Trait pid={q.pid} /> {personality(q.pid).blurb} He would take about <strong>{q.floor} DP</strong> for {plural(years, 'year')}.
+          🔎 <Trait pid={q.pid} /> {personality(q.pid).blurb} They would take about <strong>{q.floor} DP</strong> for {plural(years, 'year')}.
         </div>
       )}
       {q.rival && (
         <div className={dy.rival}>
           📨 {teamOf(d, q.rival.teamId)?.name} have offered {q.rival.dp} DP × {plural(q.rival.years, 'year')}.
-          Beat it before the week is out or he signs there.
+          Beat it before the week is out or they sign there.
         </div>
       )}
 
@@ -648,9 +648,9 @@ export function Negotiator({ d, cardKey, moves, onClose = null, letGo = null }) 
           disabled={full || walked || !fits(q.ask)}
           onClick={() => { setDp(q.ask); send(q.ask); }}
         >
-          Meet his ask
+          Meet their ask
         </button>
-        {letGo && <button type="button" className={styles.ghost} onClick={letGo}>Let him go</button>}
+        {letGo && <button type="button" className={styles.ghost} onClick={letGo}>Let them go</button>}
       </div>
       <div className={styles.muted}>
         Room: {Math.max(0, q.room)} DP under your {q.limit > CAP_DP ? `apron (Bird rights, ${q.limit})` : 'cap'}. A {MIN_DP}-DP minimum deal always fits.
@@ -693,22 +693,22 @@ export function BidPanel({ d, cardKey, moves, onClose = null }) {
     <aside className={dy.nego}>
       <PlayerHead d={d} q={q} cardKey={cardKey} onClose={onClose} />
       <div className={dy.askLine}>
-        His ask: <strong>{q.ask} DP</strong> a season for {plural(years, 'year')}
+        Their ask: <strong>{q.ask} DP</strong> a season for {plural(years, 'year')}
         {q.ask >= MAX_DP && <span className={dy.buff} title={`A max deal: ${MAX_DP} DP a season is the most anyone can ask`}>max</span>}
         {q.discount < 1 && <span className={dy.buff} title="Hometown Discount (staff): your own player asks 10% less of you">−10%</span>}
-        {years !== q.preferred && <span className={styles.muted}> · he wants {q.preferred}</span>}
+        {years !== q.preferred && <span className={styles.muted}> · they want {q.preferred}</span>}
       </div>
       {q.floor != null && (
         // Read the Room (staff, 2026-09-23): the personality and the floor,
         // which the table otherwise never shows.
         <div className={dy.rival} title="Read the Room: the Cap Strategist's read">
-          🔎 <Trait pid={q.pid} /> {personality(q.pid).blurb} He would take about <strong>{q.floor} DP</strong> for {plural(years, 'year')}.
+          🔎 <Trait pid={q.pid} /> {personality(q.pid).blurb} They would take about <strong>{q.floor} DP</strong> for {plural(years, 'year')}.
         </div>
       )}
       {q.rival && (
         <div className={dy.rival}>
           📨 {teamOf(d, q.rival.teamId)?.name} have offered {q.rival.dp} DP × {plural(q.rival.years, 'year')}.
-          He weighs it against the sealed bids when the week turns.
+          They weigh it against the sealed bids when the week turns.
         </div>
       )}
       <TermsPicker years={years} preferred={q.preferred} onYears={pickYears} dp={dp} onDp={setDp} />
@@ -721,7 +721,7 @@ export function BidPanel({ d, cardKey, moves, onClose = null }) {
         {standing && <button type="button" className={styles.ghost} disabled={busy} onClick={() => save(others)}>Withdraw my bid</button>}
       </div>
       <div className={styles.muted}>
-        No other coach sees it. Under his ask he may still take it, if it is the best he gets; under what he will take at all, it signs nobody.
+        No other coach sees it. Under their ask they may still take it, if it is the best they get; under what they will take at all, it signs nobody.
       </div>
     </aside>
   );
@@ -750,7 +750,7 @@ const pct = p => `${Math.round(p * 100)}%`;
 /** What went with a retiring player: the deal still to run, a deal just out, or nothing. */
 function retiredDeal(r) {
   if (!r.deal) return 'a free agent';
-  if (r.deal.rights) return r.deal.rights === 'expiring' ? 'his deal had just run out' : 'unsigned';
+  if (r.deal.rights) return r.deal.rights === 'expiring' ? 'their deal had just run out' : 'unsigned';
   return `${r.deal.dp} DP × ${plural(r.deal.years, 'year')} left — off your books, no dead money`;
 }
 
@@ -780,7 +780,7 @@ export function RetirementBoard({ d, moves }) {
       </div>
       <p className={dy.intro}>
         Everyone is a year older. From {RETIRE_FROM} a player may retire at the turn of the year — one in six at {RETIRE_FROM},
-        more each year, certain at {RETIRE_BY}. His contract ends with him (no dead money), and he never comes back.
+        more each year, certain at {RETIRE_BY}. Their contract ends with them (no dead money), and they never come back.
       </p>
 
       <div className={styles.label}>Your team</div>
@@ -811,7 +811,7 @@ export function RetirementBoard({ d, moves }) {
             {moves.protect && !protectProblem(d, me, w.key) && (
               shielded === w.key
                 ? <span className={styles.muted}> · 🛡 protected</span>
-                : <button type="button" className={dy.linkBtn} title="Prime Extension: he skips next year's retirement roll" onClick={() => moves.protect(w.key)}> Protect</button>
+                : <button type="button" className={dy.linkBtn} title="Prime Extension: they skip next year's retirement roll" onClick={() => moves.protect(w.key)}> Protect</button>
             )}
           </span>
         </div>
@@ -951,7 +951,7 @@ export function DraftRoom({ d, moves }) {
       <p className={dy.intro}>
         {fantasy
           ? `Draft anyone — then you have to SIGN them, under a ${CAP_DP}-DP cap. The number beside each player is what they will ask you for; the bar keeps your running total.`
-          : `A class of ${d.draft?.pool?.length || classFor(d).length || 0} drawn by rarity — one rare is guaranteed, a legendary is a long shot. Two rounds; you can pass. A pick signs on the rookie scale, priced by the SLOT, not the player: 10 DP at the first pick down to 5 at the end of round one, 3 down to 2 in round two, three years. He is your rights until the season starts — sign him any time before, up to the ${APRON_DP} apron. Everyone not taken goes back into the draft pool.`}
+          : `A class of ${d.draft?.pool?.length || classFor(d).length || 0} drawn by rarity — one rare is guaranteed, a legendary is a long shot. Two rounds; you can pass. A pick signs on the rookie scale, priced by the SLOT, not the player: 10 DP at the first pick down to 5 at the end of round one, 3 down to 2 in round two, three years. They are your rights until the season starts — sign them any time before, up to the ${APRON_DP} apron. Everyone not taken goes back into the draft pool.`}
         {moves.friends && ' Every coach has twelve hours on the clock; when it runs out, the AI picks for them.'}
       </p>
       {!fantasy && scout >= 1 && clock && upcoming.some(t => t !== me) && (
@@ -968,14 +968,14 @@ export function DraftRoom({ d, moves }) {
       {stealOpen && (
         <div className={dy.wire}>
           <div className={styles.label}>Second-Round Steal</div>
-          <div className={styles.muted}>After the last pick, take one player nobody drafted — he signs at the last slot's scale.</div>
+          <div className={styles.muted}>After the last pick, take one player nobody drafted — they sign at the last slot's scale.</div>
           <div className={dy.list}>
             {stealRows.map(({ k }) => {
               const why = stealProblem(d, me, k);
               return (
                 <div key={k} className={dy.draftRow}>
                   <PlayerCell cardKey={k} age={ageOf(d, k)} />
-                  <button type="button" className={dy.linkBtn} disabled={Boolean(why)} title={why ?? 'Steal him'} onClick={() => moves.steal?.(k)}>Steal</button>
+                  <button type="button" className={dy.linkBtn} disabled={Boolean(why)} title={why ?? 'Steal them'} onClick={() => moves.steal?.(k)}>Steal</button>
                 </div>
               );
             })}
@@ -1196,7 +1196,7 @@ export function PendingRights({ d, moves }) {
     <div className={dy.nego} style={{ marginBottom: 12 }}>
       <div className={styles.label}>Your picks — rights until the season starts</div>
       <div className={styles.muted}>
-        Each signs at his slot's scale, up to the {APRON_DP} apron; {rookieCommitted(d, me)} DP on the scale for all of them. Unsigned when the season starts, they become free agents.
+        Each signs at their slot's scale, up to the {APRON_DP} apron; {rookieCommitted(d, me)} DP on the scale for all of them. Unsigned when the season starts, they become free agents.
       </div>
       <RightsList d={d} moves={moves} />
     </div>
@@ -1213,7 +1213,7 @@ export function RookieSigning({ d, moves }) {
         <PhaseButton moves={moves} onDone={moves.closeRookies} label="Open free agency →" />
       </div>
       <p className={dy.intro}>
-        A pick signs on the rookie scale — his slot's price, no haggling — and can take you past the cap up to the {APRON_DP} apron.
+        A pick signs on the rookie scale — their slot's price, no haggling — and can take you past the cap up to the {APRON_DP} apron.
         A full roster has to waive someone first (Front office, below). Your picks stay <strong>your rights</strong> through free agency
         and the preseason: sign them whenever they fit. Anyone still unsigned when the season starts becomes a free agent.
         {keys.length > 0 && ` You hold ${plural(keys.length, 'pick')} — ${rookieCommitted(d, me)} DP on the scale.`}
@@ -1305,8 +1305,8 @@ export function FreeAgency({ d, moves }) {
         {pre
           ? `${d.fa ? 'Free agency has closed; whoever is left signs for less. ' : ''}You need ${MIN_ROSTER}–${MAX_ROSTER} players to start the season.`
           : sealed
-            ? `Sealed bids: no coach sees another's. Bid for anyone who fits — up to ten a week — and when every coach is ready the week turns: each free agent takes the best deal by his own lights, a coach's or an AI team's (a Ring Chaser takes less from a contender), and every unsigned player's price drops 10%. ${bids ? `${plural(bids, 'AI offer')} out this week.` : ''}`
-            : `The AI teams bid too, and every rival offer still on the table at the end of the week signs. To take a player from them your deal has to beat theirs — as HE sees it, so a Ring Chaser takes less from a contender. Every unsigned player's price drops 10% a week. ${bids ? `${plural(bids, 'rival offer')} out this week.` : ''}`}
+            ? `Sealed bids: no coach sees another's. Bid for anyone who fits — up to ten a week — and when every coach is ready the week turns: each free agent takes the best deal by their own lights, a coach's or an AI team's (a Ring Chaser takes less from a contender), and every unsigned player's price drops 10%. ${bids ? `${plural(bids, 'AI offer')} out this week.` : ''}`
+            : `The AI teams bid too, and every rival offer still on the table at the end of the week signs. To take a player from them your deal has to beat theirs — as the player sees it, so a Ring Chaser takes less from a contender. Every unsigned player's price drops 10% a week. ${bids ? `${plural(bids, 'rival offer')} out this week.` : ''}`}
       </p>
       {pre && (
         <div className={`${dy.ready} ${problem ? dy.readyBad : ''}`}>
@@ -1456,7 +1456,7 @@ export function TradeDesk({ d, moves, defaultOpen = false }) {
             The AI trades on a front office's logic (after Bill Simmons' Trade Value): a star is worth more than two halves
             of one, years of control are worth paying for, a cheap contract is an asset and an overpaid one a burden, a
             position it is short at is worth more, and a rebuilding team wants picks where a contender wants players.
-            Nobody gets better or worse with age — it only matters when a player might retire before his deal is out.
+            Nobody gets better or worse with age — it only matters when a player might retire before their deal is out.
             It wants to win a deal by a little. Contracts move with the players; both rosters stay at {MAX_ROSTER} or fewer
             and neither payroll may grow past its apron — {APRON_DP} for you, {aiApronDp(d)} for an AI team. An AI team
             already past its apron only trades down: taking any DP back, it must send out more. A side over the{' '}
@@ -1467,9 +1467,9 @@ export function TradeDesk({ d, moves, defaultOpen = false }) {
           </p>
           <p className={dy.intro}>
             A side that would end with more than {MAX_ROSTER} players <strong>waives its weakest to make room</strong> —
-            {TRADE_RELIEF === 1 ? ' one man' : ` up to ${TRADE_RELIEF}`} at most, shown in the deal before you make it. He goes on waivers:
-            claimed, his DP comes off that side's books; unclaimed, it stays there this season as dead money, so it counts
-            against that side's apron now. The AI takes a deal like that only if it still wins without him. AI teams make
+            {TRADE_RELIEF === 1 ? ' one player' : ` up to ${TRADE_RELIEF}`} at most, shown in the deal before you make it. They go on waivers:
+            claimed, their DP comes off that side's books; unclaimed, it stays there this season as dead money, so it counts
+            against that side's apron now. The AI takes a deal like that only if it still wins without them. AI teams make
             you offers too — each turn of the offseason and each round up to the deadline, one a team at most, never below
             {' '}{Math.round(OFFER_FAIRNESS * 100)}% of what they ask you to give by your own team's needs. They wait under
             Trade offers until the next turn.
@@ -1518,7 +1518,7 @@ export function TradeDesk({ d, moves, defaultOpen = false }) {
                       type="button" className={dy.linkBtn}
                       onClick={() => { if (hint.key) setGive([...give, hint.key]); else setGivePicks([...givePicks, hint.pick]); setHint(null); }}
                     >
-                      Add {hint.key ? 'him' : 'it'}
+                      Add {hint.key ? 'them' : 'it'}
                     </button>
                   </>
                 )
@@ -1566,7 +1566,7 @@ function ReliefLines({ d, relief = {}, me }) {
       <Face cardKey={key} />
       <span>
         To make room, {team === me ? 'you waive' : `${teamOf(d, team)?.name} waive`} <strong>{cardOf(key)?.name}</strong> — on
-        waivers; his {d.contracts[key]?.dp} DP stays on {team === me ? 'your' : 'their'} books this season unless he is claimed.
+        waivers; their {d.contracts[key]?.dp} DP stays on {team === me ? 'your' : 'their'} books this season unless they are claimed.
       </span>
     </div>
   ));

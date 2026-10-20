@@ -355,7 +355,7 @@ describe('waivers with friends (2026-09-18)', () => {
     // On waivers, not a free agent: no sealed bid can be made on him.
     expect(bidProblem(d, B, { key, dp: 2, years: 2 })).toMatch(/not a free agent/);
     // The waiving coach cannot claim his own man; a claim can be taken back.
-    expect(() => friendsAct(d, A, 'claim', { key }, { now: T0 })).toThrow(/you waived him/);
+    expect(() => friendsAct(d, A, 'claim', { key }, { now: T0 })).toThrow(/you waived them/);
     let x = friendsAct(d, B, 'claim', { key }, { now: T0 }).dynasty;
     expect(x.waivers[0].claims).toEqual([B]);
     expect(friendsAct(x, B, 'unclaim', { key }, { now: T0 }).dynasty.waivers[0].claims).toEqual([]);
@@ -364,7 +364,7 @@ describe('waivers with friends (2026-09-18)', () => {
     expect(y.contracts[key]).toMatchObject({ teamId: B, dp: 1, years: 3, how: 'waivers' });
     expect(y.dead.filter(m => m.teamId === A && m.key === key)).toEqual([]);
     expect(y.waivers).toEqual([]);
-    expect(y.news.some(n => /^Bo.* claimed .* off waivers — his salary comes off Ann.*'s books\.$/.test(n.text))).toBe(true);
+    expect(y.news.some(n => /^Bo.* claimed .* off waivers — their salary comes off Ann.*'s books\.$/.test(n.text))).toBe(true);
     // Without his claim the first AI team in the order takes the bargain instead.
     x = nextFaWeek(d, [], { rng: seeded(8) });
     expect(x.contracts[key].teamId).toBe(ai[0]);

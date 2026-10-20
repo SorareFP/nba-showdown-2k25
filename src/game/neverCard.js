@@ -11,7 +11,7 @@
 export const NEVER_CARD_NAMES = ['Enes Kanter', 'Enes Freedom', 'Enes Kanter Freedom', 'Royce White'];
 
 /** Word for word, the user's. */
-export const AUTO_REJECT_MESSAGE = "That guys sucks, he's not getting a card.";
+export const AUTO_REJECT_MESSAGE = "That player sucks, they're not getting a card.";
 
 /** Accents off, letters only, lower case: how the card scripts compare names. */
 export function normName(name) {

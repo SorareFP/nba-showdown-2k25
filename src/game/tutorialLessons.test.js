@@ -235,10 +235,10 @@ describe('the lineup lessons are alive', () => {
     // penalty he plays through (2026-09-18) — said from mustRest.
     const next = 3 * SECTION_MINUTES;
     if (next >= MAX_STRAIGHT_MINUTES) {
-      expect(t).toContain(`Start him again and he reaches ${next}, the ${MAX_STRAIGHT_MINUTES}-minute limit: he must sit the section after.`);
+      expect(t).toContain(`Start them again and they reach ${next}, the ${MAX_STRAIGHT_MINUTES}-minute limit: they must sit the section after.`);
       expect(t).not.toContain(`reaches ${next}: ${fatigueForMinutes(next)}`);
     } else {
-      expect(t).toContain(`Start him again and he reaches ${next}: ${fatigueForMinutes(next)}`);
+      expect(t).toContain(`Start them again and they reach ${next}: ${fatigueForMinutes(next)}`);
     }
     // The S3 lessons wait for S3: at S2 three lessons in a row repeated his
     // 8 minutes and spent the forward limit lesson before its screen.
@@ -376,7 +376,7 @@ describe('fatigue on checks, and markers', () => {
     expect(liveIds(g)).not.toContain('s1_markers');
     getPS(g, 'A', FIRST_FIVE_A[0]).hot = 1;
     expect(liveIds(g)).toContain('s1_markers');
-    expect(text('s1_markers', g)).toContain(`+${markerStep()} on his scoring rolls AND his 3PT and paint checks`);
+    expect(text('s1_markers', g)).toContain(`+${markerStep()} on their scoring rolls AND their 3PT and paint checks`);
     expect(markerStep()).toBeGreaterThan(0);
     // A hot and a cold on one man cancel, and the lesson says so instead of "+0".
     getPS(g, 'A', FIRST_FIVE_A[0]).cold = 1;
@@ -734,7 +734,7 @@ describe('the fourth section: Crunch Time', () => {
     for (const ps of g.teamA.stats) expect(ps.minutes).toBeLessThanOrEqual(SECTION_MINUTES);
     expect(text('s4_crunch_intro', g)).toContain(`the margin is ${g.crunch.margin}, inside ${CRUNCH_MARGIN}`);
     // The contest is explained before it is bumped, under the name every lesson uses.
-    expect(text('s4_crunch_intro', g)).toContain(`Def Boost is always taken off the 3PT and paint checks of the man he guards — his contest; in Crunch Time he takes ${crunchContestBump()} more`);
+    expect(text('s4_crunch_intro', g)).toContain(`Def Boost is always taken off the 3PT and paint checks of the player they guard — their contest; in Crunch Time they take ${crunchContestBump()} more`);
     for (const t of TUTORIAL_TOOLTIPS) {
       for (const v of [t.text, t.detail]) {
         const s = typeof v === 'function' ? (() => { try { return v(g); } catch { return ''; } })() : (v || '');
@@ -1092,7 +1092,7 @@ describe("Go Under's price is an instruction only while the choice is yours", ()
     expect(g.pendingChoice).toBe(null);
     const after = text('s2_switch_cancelled', g);
     expect(after).not.toContain(PICK);
-    expect(after).toContain(`Its price was yours: you chose ${shooter} for the 3PT check at +2, and he ${g.log.at(-1).msg.includes('MISS') ? 'missed' : 'hit'}`);
+    expect(after).toContain(`Its price was yours: you chose ${shooter} for the 3PT check at +2, and they ${g.log.at(-1).msg.includes('MISS') ? 'missed' : 'hit'}`);
     // The coach switches and YOU cancel with Go Under: the choice is now the coach's.
     if (g.matchupTurn === 'A') g = passTurn(g, 'A');
     g = play(g, 'B', 'high_screen_roll');

@@ -29,13 +29,18 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'putback-rebound-and-their', date: '2026-10-20', title: 'Putback Specialist grabs the board',
+    body: "A make on Putback Specialist's paint check now puts the rebound on the scorer's line, the way a putback is an offensive board. Every Climb-only card has art now, and every card, prompt and rules page says they and their for a player (Bruise Brothers is Bruise Crew).",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'climb-build-arounds', date: '2026-10-20', title: 'The Climb: build a team, not a pile',
-    body: "A Rest Day can now cut a card from your deck for good, so the cards you built around come up more often. The map scouts the boss from the first floor: its best five, its playbook and the rares in its deck. And two new Climb-only cards reward a deck built for them: Splash (your threes get +1 for every two your team has made this game, up to +3) and On Fire (a player who makes three checks in a row is +3 until he misses). And every playbook now has a system: a player who fits it is In System — Speed 12+ for Speed or Power 12+ for Paint, +1 on his shot checks; Defense +1 or better for Defense, the checks against him −1. Player offers who fit glow.",
+    body: "A Rest Day can now cut a card from your deck for good, so the cards you built around come up more often. The map scouts the boss from the first floor: its best five, its playbook and the rares in its deck. And two new Climb-only cards reward a deck built for them: Splash (your threes get +1 for every two your team has made this game, up to +3) and On Fire (a player who makes three checks in a row is +3 until they miss). And every playbook now has a system: a player who fits it is In System — Speed 12+ for Speed or Power 12+ for Paint, +1 on their shot checks; Defense +1 or better for Defense, the checks against them −1. Player offers who fit glow.",
     to: 'climb', cta: 'The Climb',
   },
   {
     id: 'climb-perks-chemistry', date: '2026-10-19', title: 'The Climb: perks and Climb-only cards',
-    body: "Beat a Rivalry and it drops a perk for the rest of the run: Gym Rat (+1 Power on a player you choose), Extra Reps (his Shot Line 1 better), Signature Move (+1 3PT Bonus) or Film Study (practise a card on the spot). Take one of three, or none (a Rivalry usually drops one, a Game now and then). Your cap rises $450 a floor now, and rarer cards come more often as you climb, so every step up builds a bigger team. Rewards can now offer cards you will only ever find in a climb, each playbook its own: Let It Fly and Pace and Space for Speed, Bruise Brothers and Weight Room for Paint, Conditioning and Shut the Door for Defense, and for anyone Chemistry, Stay Hot (your hot markers carry into the next game) and Ice Bath (after this game, your fatigue is gone). A reward card one of your players fits now glows and names him, and players are offered at three prices. And Second Closer, ATO Masterpiece, Hack-A-____ and Transition Outlet have their \"+\" versions to practise.",
+    body: "Beat a Rivalry and it drops a perk for the rest of the run: Gym Rat (+1 Power on a player you choose), Extra Reps (their Shot Line 1 better), Signature Move (+1 3PT Bonus) or Film Study (practise a card on the spot). Take one of three, or none (a Rivalry usually drops one, a Game now and then). Your cap rises $450 a floor now, and rarer cards come more often as you climb, so every step up builds a bigger team. Rewards can now offer cards you will only ever find in a climb, each playbook its own: Let It Fly and Pace and Space for Speed, Bruise Crew and Weight Room for Paint, Conditioning and Shut the Door for Defense, and for anyone Chemistry, Stay Hot (your hot markers carry into the next game) and Ice Bath (after this game, your fatigue is gone). A reward card one of your players fits now glows and names them, and players are offered at three prices. And Second Closer, ATO Masterpiece, Hack-A-____ and Transition Outlet have their \"+\" versions to practise.",
     to: 'climb', cta: 'The Climb',
   },
   {
@@ -55,12 +60,12 @@ export const NEWS = [
   },
   {
     id: 'record-breakers', date: '2026-10-14', title: 'Record Breakers',
-    body: "A new set for the seasons a record fell, in a platinum frame with the record lit up on a plaque across the photo. LeBron James' 2022-23 is the first (38,388, the night he passed Kareem), with Curry and Ray Allen's three-point marks, Westbrook's 182nd triple-double, Karl Malone's free throws, Stockton's 1,164 assists, Calderón's free throws and Korver's threes. Those are earned by matching the feat, which is coming soon, never from a pack. Four blocks and steals records (Hakeem, Stockton, Mark Eaton, Alvin Robertson) join the boosters as their photos are finished. Curry's 2015-16, Westbrook's 2016-17 and Stockton's 1994-95 already carry the plaque.",
+    body: "A new set for the seasons a record fell, in a platinum frame with the record lit up on a plaque across the photo. LeBron James' 2022-23 is the first (38,388, the night LeBron passed Kareem), with Curry and Ray Allen's three-point marks, Westbrook's 182nd triple-double, Karl Malone's free throws, Stockton's 1,164 assists, Calderón's free throws and Korver's threes. Those are earned by matching the feat, which is coming soon, never from a pack. Four blocks and steals records (Hakeem, Stockton, Mark Eaton, Alvin Robertson) join the boosters as their photos are finished. Curry's 2015-16, Westbrook's 2016-17 and Stockton's 1994-95 already carry the plaque.",
     to: 'shop', cta: 'Pack Shop',
   },
   {
     id: 'unsigned-players-free-agents', date: '2026-10-14', title: 'Unsigned players come off their teams',
-    body: "Jordan Hawkins is a Bull now. And eight 2026-27 cards belong to players no NBA team has on its roster: Nicolas Batum, Sharife Cooper, Tyrese Martin, Gabe Vincent, Rob Dillingham, Gary Harris, Aaron Holiday and Jonas Valančiūnas. They are Free Agents now, on a plain FA card: no team, division, conference or set collection asks for them, and no pack deals them. A copy you own still plays, burns and sells. When one signs, he joins his new team, its collection and the packs again.",
+    body: "Jordan Hawkins is a Bull now. And eight 2026-27 cards belong to players no NBA team has on its roster: Nicolas Batum, Sharife Cooper, Tyrese Martin, Gabe Vincent, Rob Dillingham, Gary Harris, Aaron Holiday and Jonas Valančiūnas. They are Free Agents now, on a plain FA card: no team, division, conference or set collection asks for them, and no pack deals them. A copy you own still plays, burns and sells. When one signs, they join their new team, its collection and the packs again.",
     to: 'goals', cta: 'Collections',
   },
   {
@@ -105,7 +110,7 @@ export const NEWS = [
   },
   {
     id: 'passing-lane-last-passer', date: '2026-10-07', title: "Passing Lane's extra assist comes off the last passer",
-    body: "Passing Lane cancels the assists a roll just won, and those still come off the roller's line. The one extra assist it takes when your defender has the Speed edge was coming off the roller too, so he could lose an assist from an earlier roll. It now comes off whoever had the team's most recent assist before that roll, and the log names them.",
+    body: "Passing Lane cancels the assists a roll just won, and those still come off the roller's line. The one extra assist it takes when your defender has the Speed edge was coming off the roller too, so they could lose an assist from an earlier roll. It now comes off whoever had the team's most recent assist before that roll, and the log names them.",
     to: 'play', cta: 'Play',
   },
   {
@@ -174,7 +179,7 @@ export const NEWS = [
   },
   {
     id: 'dogged-until-benched-curry-11', date: '2026-10-01', title: 'Dogged lasts until benched; Curry shoots threes on 11',
-    body: "Dogged now does what it says: the −2 Speed and −2 Power stay on the player in every section until he sits one, wherever he lines up. It used to wear off at the end of the section. And Stephen Curry's 2015-16 card (45% from three on 11 attempts a game) is the one card in the game whose three-point check needs an 11. Every other card's floor stays at 12.",
+    body: "Dogged now does what it says: the −2 Speed and −2 Power stay on the player in every section until they sit one, wherever they line up. It used to wear off at the end of the section. And Stephen Curry's 2015-16 card (45% from three on 11 attempts a game) is the one card in the game whose three-point check needs an 11. Every other card's floor stays at 12.",
     to: 'collection', cta: 'Collection',
   },
   {
@@ -239,7 +244,7 @@ export const NEWS = [
   },
   {
     id: 'super-season-value', date: '2026-09-24', title: 'Every Super Season is a career\'s best card',
-    body: 'A player\'s Super Season is now the season that makes his most valuable card, priced the same way as salary, not picked by a stats formula. 104 moved, among them Maya Moore to 2013, Michael Jordan to 1989-90, Larry Bird to 1987-88 and Kobe Bryant to 2008-09. A Super Season you own keeps its place and now shows the new year. Some replaced seasons come back as Throwbacks; the rest stay out of packs, and you can ask for any of them through Free Agents. Salaries were re-measured too, with rebounds and assists priced at what they buy in a game.',
+    body: 'A player\'s Super Season is now the season that makes their most valuable card, priced the same way as salary, not picked by a stats formula. 104 moved, among them Maya Moore to 2013, Michael Jordan to 1989-90, Larry Bird to 1987-88 and Kobe Bryant to 2008-09. A Super Season you own keeps its place and now shows the new year. Some replaced seasons come back as Throwbacks; the rest stay out of packs, and you can ask for any of them through Free Agents. Salaries were re-measured too, with rebounds and assists priced at what they buy in a game.',
     to: 'goals', cta: 'Collections',
   },
   {
@@ -249,7 +254,7 @@ export const NEWS = [
   },
   {
     id: 'zigzag-court', date: '2026-09-24', title: 'The court fits a big monitor',
-    body: 'On a wide screen the ten players now stand as cards in two zig-zags, your five on the left and the coach\'s on the right, instead of five rows, so a whole game fits without scrolling. The number on each card pairs the matchups; hover a card to bring it to the front and outline the man it faces, and hold for a second to see the whole card. Laptops and phones keep the rows.',
+    body: 'On a wide screen the ten players now stand as cards in two zig-zags, your five on the left and the coach\'s on the right, instead of five rows, so a whole game fits without scrolling. The number on each card pairs the matchups; hover a card to bring it to the front and outline the player it faces, and hold for a second to see the whole card. Laptops and phones keep the rows.',
     to: 'play', cta: 'Play',
   },
   {
@@ -274,7 +279,7 @@ export const NEWS = [
   },
   {
     id: 'wave-two-twins', date: '2026-09-23', title: 'Five new strategy cards',
-    body: 'The twins the deck was missing, now in packs: Blow-By (Speed 13+ and hot: +2 pts, another hot marker), Point God (a Speed edge before he rolls: his assists doubled), Passing Lane (cancel a roll\'s assists, one more with the Speed edge), Clamp the Reserve (an opposing $400 man still to roll keeps the lower die) and Feeling It (your hot marker draws two). Placeholder art for now.',
+    body: 'The twins the deck was missing, now in packs: Blow-By (Speed 13+ and hot: +2 pts, another hot marker), Point God (a Speed edge before they roll: their assists doubled), Passing Lane (cancel a roll\'s assists, one more with the Speed edge), Clamp the Reserve (an opposing $400 player still to roll keeps the lower die) and Feeling It (your hot marker draws two). Placeholder art for now.',
     to: 'shop', cta: 'Pack Shop',
   },
   {
@@ -294,12 +299,12 @@ export const NEWS = [
   },
   {
     id: 'franchise-points', date: '2026-09-22', title: 'Franchise Points, and a deck you can change',
-    body: 'A dynasty now pays its coaches in Franchise Points as each year closes: your regular-season finish (first of the league is 10), 3 for every playoff series you win, 10 for the title, all weighted by the coach rung. Spend them in the offseason to bring a card you own into the league — a common for 2, a rare for 8, a legendary for 32 — and the player signs at his value for two years under the cap. And your strategy deck is no longer frozen at the start: change it in the Front Office or between rounds, alone or with friends.',
+    body: 'A dynasty now pays its coaches in Franchise Points as each year closes: your regular-season finish (first of the league is 10), 3 for every playoff series you win, 10 for the title, all weighted by the coach rung. Spend them in the offseason to bring a card you own into the league — a common for 2, a rare for 8, a legendary for 32 — and the player signs at their value for two years under the cap. And your strategy deck is no longer frozen at the start: change it in the Front Office or between rounds, alone or with friends.',
     to: 'dynasty', cta: 'Dynasty',
   },
   {
     id: 'reward-identities', date: '2026-09-22', title: 'Reward cards wear their identity',
-    body: 'Every Team and Set reward now prints in the look of what it is — gold for a Super Season, green for a Rookie, the Throwback brush for a season that was neither, its own for a playoff run — with the reward pill on top. Three franchise rewards were re-picked after Kawhi Leonard\'s move to Toronto and Brandon Ingram\'s to the Clippers: Toronto pays Vince Carter\'s 1999-2000, Washington John Wall\'s 2016-17 (his Super Season card), and the Clippers Elton Brand\'s 2002-03. New cards: Super Seasons for Wall, Brand (2005-06), Gilbert Arenas (2005-06), DeAndre Jordan (2014-15) and Anthony Parker (2006-07), Rookie cards for Wall, Brand, Arenas and Jordan, Bradley Beal\'s 2020-21 as a Throwback, and Ivica Zubac\'s 2024-25 back in Super Season. Because those sets grew, the Super Season and Rookie collections — and the East and West conference collections, which swapped Kawhi and Ingram — reopen for anyone who had finished them; the capstone you already earned is yours.',
+    body: 'Every Team and Set reward now prints in the look of what it is — gold for a Super Season, green for a Rookie, the Throwback brush for a season that was neither, its own for a playoff run — with the reward pill on top. Three franchise rewards were re-picked after Kawhi Leonard\'s move to Toronto and Brandon Ingram\'s to the Clippers: Toronto pays Vince Carter\'s 1999-2000, Washington John Wall\'s 2016-17 (Wall\'s Super Season card), and the Clippers Elton Brand\'s 2002-03. New cards: Super Seasons for Wall, Brand (2005-06), Gilbert Arenas (2005-06), DeAndre Jordan (2014-15) and Anthony Parker (2006-07), Rookie cards for Wall, Brand, Arenas and Jordan, Bradley Beal\'s 2020-21 as a Throwback, and Ivica Zubac\'s 2024-25 back in Super Season. Because those sets grew, the Super Season and Rookie collections — and the East and West conference collections, which swapped Kawhi and Ingram — reopen for anyone who had finished them; the capstone you already earned is yours.',
     to: 'collection', cta: 'See the rewards',
   },
   {
@@ -334,7 +339,7 @@ export const NEWS = [
   },
   {
     id: 'cards-reworked', date: '2026-09-16', title: 'Three cards reworked',
-    body: 'Burst of Momentum fires on a top-tier roll of 3+ points (a top band never paid 5, so it never fired). Post Domination reads the matchup: a player with a Power advantage over his defender, before he rolls, doubles his rebounds this period. Dogged fires at any opponent with minutes on the fatigue tracker. Burst and Post Domination join the default fifty; Cross-Court Dime and Turnover leave it.',
+    body: 'Burst of Momentum fires on a top-tier roll of 3+ points (a top band never paid 5, so it never fired). Post Domination reads the matchup: a player with a Power advantage over their defender, before they roll, doubles their rebounds this period. Dogged fires at any opponent with minutes on the fatigue tracker. Burst and Post Domination join the default fifty; Cross-Court Dime and Turnover leave it.',
     to: 'play', cta: 'Play a game',
   },
   {
@@ -389,7 +394,7 @@ export const NEWS = [
   },
   {
     id: 'matchup-pm', date: '2026-09-10', title: 'Matchup +/- and a deeper box score',
-    body: 'Every point is now charged to the defender guarding the scorer. Season stats show each player\'s matchup +/-, plus starts, paint checks, blocks and points for and against while he was on the floor.',
+    body: 'Every point is now charged to the defender guarding the scorer. Season stats show each player\'s matchup +/-, plus starts, paint checks, blocks and points for and against while they were on the floor.',
     to: 'season', cta: 'See season stats',
   },
   {

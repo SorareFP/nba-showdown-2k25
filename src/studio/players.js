@@ -600,8 +600,8 @@ export const SOURCES = {
       'it allocates team wins, so it docks a good player on a bad team. VORP is in it for ' +
       'DURABILITY — it is BPM weighted by playing time, so a full season can outrank a shorter ' +
       'one at a higher rate; it does not make the score team-independent. A player whose best ' +
-      `season is the CURRENT one gets no card here — his base card already is that season — but ` +
-      `his ${CURRENT_SET} card now carries a SUPER SEASON badge instead, so the fact is on a ` +
+      `season is the CURRENT one gets no card here — their base card already is that season — but ` +
+      `their ${CURRENT_SET} card now carries a SUPER SEASON badge instead, so the fact is on a ` +
       'card rather than only in a file. THE SPEED+POWER BUDGET IS REAL EPM, the same composite ' +
       'the base set uses: dunksandthrees\' season-epm covers 2002-2026 and every season carded ' +
       'here falls inside it, and every card in every set is now placed against that whole ' +
@@ -612,11 +612,11 @@ export const SOURCES = {
   [ROOKIE_SET]: specialSource(ROOKIE_SET, ROOKIE_FILE, {
     sub: `rookie-year cards · ${ROOKIE_FILE?.excludedCount ?? 0} badged instead`,
     hint:
-      'EACH ACTIVE PLAYER\'S ROOKIE SEASON, on the team he played it for — which is why some of ' +
+      'EACH ACTIVE PLAYER\'S ROOKIE SEASON, on the team they played it for — which is why some of ' +
       'these say SEA or NJN. A player whose rookie year IS the current season gets no card ' +
       'here, the same rule and the same reason as the Super Season set, and the same ' +
-      `consolation: a badge on his ${CURRENT_SET} card. In practice every one of those players ` +
-      'is ALSO having his best season — a first season is the only season — and Super Season ' +
+      `consolation: a badge on their ${CURRENT_SET} card. In practice every one of those players ` +
+      'is ALSO having their best season — a first season is the only season — and Super Season ' +
       'outranks Rookie, so what they actually print is the gold pill. Same real-EPM Speed+Power ' +
       'budget, same remaining Basketball-Reference substitutions, same provisional numbers.',
   }),
@@ -647,7 +647,7 @@ export const SOURCES = {
       String.fromCharCode(39) + 's own rows — but the skill is the SEASON' +
       String.fromCharCode(39) + 's: Speed+Power trusts the whole year' +
       String.fromCharCode(39) + 's minutes, so a one-game stint carries a real stat line without ' +
-      'pricing the man at replacement. Re-run `node scripts/cardgen/generateDissonance.js`.',
+      'pricing the player at replacement. Re-run `node scripts/cardgen/generateDissonance.js`.',
   }),
   [RECORD_BREAKERS_SET]: specialSource(RECORD_BREAKERS_SET, RECORD_BREAKERS_FILE, {
     sub: 'records, carded',
@@ -676,7 +676,7 @@ export const SOURCES = {
     missingHint: '`node scripts/cardgen/generateSetRewards.js`',
     hint:
       'COLLECT EVERY CARD IN A SPECIAL SET, earn its capstone. Each card was built for its home ' +
-      'set with the others the user named (a pairing with no card anywhere, by his rule) and the ' +
+      'set with the others the user named (a pairing with no card anywhere, by the user’s rule) and the ' +
       'strongest by salary was MOVED here — it keeps its numbers, season, era mark and origin ' +
       'badge under the SET REWARD pill, and leaves the home set so the set is completable ' +
       'without it. Re-run `node scripts/cardgen/generateSetRewards.js` after the home sets.',
@@ -697,7 +697,7 @@ export const SOURCES = {
       '— nothing publishes a plus/minus estimate for it — so the Speed+Power budget and the Def ' +
       'Boost run on a BPM EQUIVALENT fitted on fifteen NBA seasons using only the inputs the ' +
       'WNBA pages also carry, every input centred on its own league. That equivalent is what ' +
-      'places her on the same scale as an NBA card: she sits where an NBA player with the same ' +
+      'places the player on the same scale as an NBA card: they sit where an NBA player with the same ' +
       'box-score profile sits among 4,780 NBA player-seasons rated by the same model. Whether ' +
       'that is the RIGHT cross-league equivalence is a design decision, not something the data ' +
       'establishes — the two leagues have never played each other. SECOND, a WNBA game is 40 ' +
@@ -705,8 +705,8 @@ export const SOURCES = {
       "than the NBA's 8.33 — every chart on every card is scaled by that. Six players are " +
       'carded on 2025 AND 2026 pooled by volume, because their 2026 seasons were injury-' +
       'shortened and Basketball-Reference publishes the prior WNBA season in full. Teams are ' +
-      "resolved against wnba.com's live roster, so a player who moved shows her CURRENT club " +
-      'rather than the TOT aggregate her stat row carries. Re-run ' +
+      "resolved against wnba.com's live roster, so a player who moved shows their CURRENT club " +
+      'rather than the TOT aggregate their stat row carries. Re-run ' +
       '`node scripts/cardgen/wnba/generateWnbaCards.js`.',
     missingHint:
       '`node scripts/cardgen/wnba/fetchWnba.js`, `node scripts/cardgen/wnba/fitBpmModel.js` ' +
@@ -718,12 +718,12 @@ export const SOURCES = {
   [WNBA_SUPER_SEASON_SET]: specialSource(WNBA_SUPER_SEASON_SET, WNBA_SUPER_SEASON_FILE, {
     sub: `${WNBA_SUPER_SEASON_FILE?.firstSeason ?? 1997}-${WNBA_SUPER_SEASON_FILE?.lastSeason ?? 2024} · named roster`,
     hint:
-      'SIXTEEN RETIRED WNBA GREATS, each on her best individual season — the Super Season ' +
+      'SIXTEEN RETIRED WNBA GREATS, each on their best individual season — the Super Season ' +
       'question asked of the WNBA. Three things about it differ from every other set here. ' +
       'FIRST, the roster is a NAMED LIST (card-data/wnba-legends.json), not a threshold: no ' +
       'rule can add a seventeenth player or drop one of the sixteen. SECOND, the WNBA publishes ' +
       'no BPM in any season, so the best season is chosen on the FITTED BPM equivalent, rated ' +
-      'against her own season\'s league — the run reports how far back that can honestly be ' +
+      'against their own season\'s league — the run reports how far back that can honestly be ' +
       'applied, and the answer is in the file\'s `audit` block. THIRD, the shooting numbers are ' +
       'ERA-SHIFTED onto the current league\'s scale, because this set spans 1997 to 2024 and a ' +
       '1997 true-shooting percentage compared with 2026 would read as a bad shooter rather ' +
@@ -743,7 +743,7 @@ export const SOURCES = {
       'bridge in EPM\'s place, Speed+Power against the NBA BPM-equivalent archive, shooting ' +
       'calibrated on the current WNBA pool. The archive reaches the league\'s own 1997, so a ' +
       'first archived season IS the rookie season. A player whose rookie year is the current ' +
-      'one gets no card here — her base card already is that season. Re-run ' +
+      'one gets no card here — their base card already is that season. Re-run ' +
       '`node scripts/cardgen/wnba/generateWnbaRookies.js`.',
   }),
 

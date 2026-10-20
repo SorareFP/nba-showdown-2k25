@@ -183,7 +183,7 @@ function goUnderPrice(g, cancel, rest) {
   const took = entries.slice(at + 1).find(x => x.team === 'A' && /^Go Under: .+ takes the 3PT check: /.test(x.msg));
   if (took) {
     const [shooter, result] = took.msg.replace(/^Go Under: /, '').split(' takes the 3PT check: ');
-    return `Its price was yours: you chose ${shooter} for the 3PT check at +2, and ${/→ MISS/.test(result) ? 'he missed' : 'he hit'} (${result}).`;
+    return `Its price was yours: you chose ${shooter} for the 3PT check at +2, and ${/→ MISS/.test(result) ? 'they missed' : 'they hit'} (${result}).`;
   }
   return 'Its price was a 3PT check at +2 for one of the two players you screened, your choice of which.';
 }
@@ -312,9 +312,9 @@ function secondLineupText(g) {
     // read on this game with his minutes moved on a section.
     const who = rosterWithMinutes(g).find(r => r.p.name === names[0]).p;
     if (mustRest(withMinutes(g, 'A', who, next), 'A', who)) {
-      return `${now} Start ${one ? 'him' : 'them'} again and ${one ? 'he reaches' : 'they reach'} ${next}, the ${MAX_STRAIGHT_MINUTES}-minute limit: ${one ? 'he' : 'they'} must sit the section after.`;
+      return `${now} Start them again and they reach ${next}, the ${MAX_STRAIGHT_MINUTES}-minute limit: they must sit the section after.`;
     }
-    return `${now} Start ${one ? 'him' : 'them'} again and ${one ? 'he reaches' : 'they reach'} ${next}: ${penalty(next)} on every scoring roll and every 3PT or paint check.`;
+    return `${now} Start them again and they reach ${next}: ${penalty(next)} on every scoring roll and every 3PT or paint check.`;
   });
   return `Section 2 lineup. ${[...groups, ...extraMinutesReasons(g, played)].join(' ')}`;
 }
@@ -339,7 +339,7 @@ function extraMinutesReasons(g, played) {
 function fatigueWarningText(g) {
   const tired = rosterWithMinutes(g).filter(r => fatigueForMinutes(r.min) < 0);
   const names = tired.map(r => `${r.p.name} (${r.min} min, ${fatigueForMinutes(r.min)})`);
-  return `Section ${g.section} — check fatigue. ${listNames(names)} ${tired.length === 1 ? 'is' : 'are'} tired: the penalty rides on every scoring roll AND every 3PT and paint check. Consider resting ${tired.length === 1 ? 'him' : 'them'}.`;
+  return `Section ${g.section} — check fatigue. ${listNames(names)} ${tired.length === 1 ? 'is' : 'are'} tired: the penalty rides on every scoring roll AND every 3PT and paint check. Consider resting them.`;
 }
 
 /** The players one section from the twelve-straight limit, and any already over it. */
@@ -352,7 +352,7 @@ function nearLimit(g) {
 }
 function twelveLimitText(g) {
   const { over, near } = nearLimit(g);
-  const parts = [`${MAX_STRAIGHT_MINUTES} straight minutes is the limit: a player with ${MAX_STRAIGHT_MINUTES} or more on the tracker must sit the next section — his tile reads MUST REST and cannot be picked.`];
+  const parts = [`${MAX_STRAIGHT_MINUTES} straight minutes is the limit: a player with ${MAX_STRAIGHT_MINUTES} or more on the tracker must sit the next section — their tile reads MUST REST and cannot be picked.`];
   if (over.length) parts.push(`${listNames(over.map(r => r.p.name))} ${over.length === 1 ? 'is' : 'are'} there now.`);
   // No names here (2026-09-18): s3_fatigue_warning has just named the same
   // players with their minutes, on the same screen.
@@ -360,7 +360,7 @@ function twelveLimitText(g) {
     const m = near[0].min;
     const one = near.length === 1;
     const whom = one ? near[0].p.name : near.length === 5 ? 'Your five' : `Your ${near.length}`;
-    parts.push(`${whom} at ${m} minutes ${one ? 'is' : 'are'} one section from ${MAX_STRAIGHT_MINUTES}: start ${one ? 'him' : 'them'} now and ${one ? 'he sits' : 'they sit'} out the next section whether you like it or not.`);
+    parts.push(`${whom} at ${m} minutes ${one ? 'is' : 'are'} one section from ${MAX_STRAIGHT_MINUTES}: start them now and they sit out the next section whether you like it or not.`);
   }
   // A player who rotated his fives has nobody near (2026-09-18) — and he is
   // the one s2_draft_reminder nudged to rotate, so the limit is still taught.
@@ -377,7 +377,7 @@ function twelveLimitText(g) {
 function substitutionText() {
   const at8 = restMinutes(8);
   const at12 = restMinutes(12);
-  return `Smart substitution: sit a tired player for a fresh one. A player at 8 minutes who sits this section comes back at ${at8}${at8 === 0 ? ' — fresh' : ''}; one at 12 comes back at ${at12}, still ${fatigueForMinutes(at12)}, and needs another section off. The bench also wipes his markers, hot and cold.`;
+  return `Smart substitution: sit a tired player for a fresh one. A player at 8 minutes who sits this section comes back at ${at8}${at8 === 0 ? ' — fresh' : ''}; one at 12 comes back at ${at12}, still ${fatigueForMinutes(at12)}, and needs another section off. The bench also wipes their markers, hot and cold.`;
 }
 
 // ── Scoring lessons ──────────────────────────────────────────────────────────
@@ -407,7 +407,7 @@ function fatigueChecksText(g) {
   if (!t) return 'Fatigue rides on shot checks as well as rolls.';
   const three = checkNeed(g, 'A', t.i, '3pt');
   const paint = checkNeed(g, 'A', t.i, 'paint');
-  return `${t.p.name} is carrying ${t.fat} from the fatigue tracker, and it is not only his scoring roll that pays: his 3PT and paint checks take it too. Right now a 3PT check ${needText(three.need)} on the die and a paint check ${needText(paint.need)}. Free throws are exempt.`;
+  return `${t.p.name} is carrying ${t.fat} from the fatigue tracker, and it is not only their scoring roll that pays: their 3PT and paint checks take it too. Right now a 3PT check ${needText(three.need)} on the die and a paint check ${needText(paint.need)}. Free throws are exempt.`;
 }
 
 /**
@@ -432,8 +432,8 @@ function markerText(g) {
   const head = !r
     ? 'Markers ride on rolls and checks alike.'
     : net === 0
-      ? `${r.p.name} is carrying ${carrying} — they cancel out, so his scoring rolls and his 3PT and paint checks are back to even.`
-      : `${r.p.name} is carrying ${carrying} — ${net > 0 ? '+' : ''}${net} on his scoring rolls AND his 3PT and paint checks.`;
+      ? `${r.p.name} is carrying ${carrying} — they cancel out, so their scoring rolls and their 3PT and paint checks are back to even.`
+      : `${r.p.name} is carrying ${carrying} — ${net > 0 ? '+' : ''}${net} on their scoring rolls AND their 3PT and paint checks.`;
   return `${head} A natural ${HOT_FROM}-20 on a roll or a check adds a hot marker (+${step}); a natural 1-${COLD_TO} adds a cold one (−${step}). They stack.`;
 }
 
@@ -452,7 +452,7 @@ function forfeitText(g) {
   // Cross-Court Dime also costs assists, which forfeitNet takes off the net —
   // said, so "checks minus roll" is not left a number short (2026-09-18).
   const ast = FORFEIT_CARDS[id]?.assists || 0;
-  const lead = `${name} replaces a player's scoring roll with shot checks, so its price is the roll he gives up${ast ? `, plus ${ast} assists` : ''}.`;
+  const lead = `${name} replaces a player's scoring roll with shot checks, so its price is the roll they give up${ast ? `, plus ${ast} assists` : ''}.`;
   if (!rows.length) return `${lead} Nobody on your floor is a legal target right now.`;
   const best = rows[0];
   const worst = rows[rows.length - 1];
@@ -503,7 +503,7 @@ function onlyPlacements(g) {
 }
 function placementUndoText(g) {
   const mine = getTeam(g, 'A').starters[getTeam(g, 'A').starters.length - 1];
-  return `Placed the wrong player? ↩ Undo in the bar takes ${mine ? mine.name : 'your last placement'} back off the floor — and the coach's reply with him — until you place again. The coach then answers the player you put down instead.`;
+  return `Placed the wrong player? ↩ Undo in the bar takes ${mine ? mine.name : 'your last placement'} back off the floor — and the coach's reply with them — until you place again. The coach then answers the player you put down instead.`;
 }
 
 function putBackText(g) {
@@ -532,7 +532,7 @@ function crunchIntroText(g) {
   const base = contestPerDefBoost();
   const bump = crunchContestBump();
   const contest = base > 0 && bump > 0
-    ? ` A defender's Def Boost is always taken off the 3PT and paint checks of the man he guards — his contest; in Crunch Time he takes ${bump} more.`
+    ? ` A defender's Def Boost is always taken off the 3PT and paint checks of the player they guard — their contest; in Crunch Time they take ${bump} more.`
     : '';
   return `🚨 Crunch Time is armed: the margin is ${m}, inside ${CRUNCH_MARGIN}. For this section each side holds one Clutch Possession and one Timeout, and crunch-only cards stay in hand when drawn.${contest}`;
 }
@@ -821,7 +821,7 @@ export const TUTORIAL_TOOLTIPS = [
   {
     id: 's2_assists_intro',
     text: "Did you notice your assist and rebound tracks? You can spend them on bonus shot checks! Check the buttons below each player.",
-    detail: () => `${SPEND_COSTS.assistBoost} AST = +1 to a shot check. ${SPEND_COSTS.assistThree} AST = a 3PT check, ${SPEND_COSTS.assistPaint} AST = a paint check, for any player — their bonus rides on the die, and the button shows the roll he needs. Rebounds spend the same way: ${SPEND_COSTS.reboundPaint} REB buys a paint check for any player. While you lead the rebound track by ${REB_LEAD_FOR_BONUS}+, your next paint check of any kind (rebounds, assists or a card) is at +${REB_LEAD_BONUS}, once a section. The track counts rebounds won, so spending never moves it. The first time you reach 5 assists you draw a bonus card!`,
+    detail: () => `${SPEND_COSTS.assistBoost} AST = +1 to a shot check. ${SPEND_COSTS.assistThree} AST = a 3PT check, ${SPEND_COSTS.assistPaint} AST = a paint check, for any player — their bonus rides on the die, and the button shows the roll they need. Rebounds spend the same way: ${SPEND_COSTS.reboundPaint} REB buys a paint check for any player. While you lead the rebound track by ${REB_LEAD_FOR_BONUS}+, your next paint check of any kind (rebounds, assists or a card) is at +${REB_LEAD_BONUS}, once a section. The track counts rebounds won, so spending never moves it. The first time you reach 5 assists you draw a bonus card!`,
     section: 2,
     priority: 70,
     trigger: { phase: 'scoring', condition: (g) => g.quarter === 1 && g.section === 2 && g.scoringPasses >= 99 },
@@ -887,7 +887,7 @@ export const TUTORIAL_TOOLTIPS = [
     // deals one into Q1S3 when the deck still holds one.
     id: 's3_forfeit_tip',
     text: forfeitText,
-    detail: `Your best scorer is usually the worst target: his roll is the most you give up. The family: ${listNames(FORFEIT_NAMES)}.`,
+    detail: `Your best scorer is usually the worst target: their roll is the most you give up. The family: ${listNames(FORFEIT_NAMES)}.`,
     highlight: FORFEIT_HIGHLIGHT,
     section: 3,
     priority: 80,

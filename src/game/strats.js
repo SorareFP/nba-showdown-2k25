@@ -214,7 +214,7 @@ export const STRATS = [
   { id:'post_domination',     name:'Post Domination',    phase:'pre_roll', side:'off', copies:1, locked:false, color:'#5B21B6', rarity:'rare',
     // A MATCHUP DOOR (2026-09-16): two Power-15+ players on the floor was a
     // door 3.4% of cap-legal tens could open. Now the way Bully Ball reads.
-    desc:'Choose a player with a Power advantage over his defender, before he rolls: his rebounds from scoring rolls are doubled this period.' },
+    desc:'Choose a player with a Power advantage over their defender, before they roll: their rebounds from scoring rolls are doubled this period.' },
   { id:'unsung_hero',         name:'Unsung Hero',        phase:'pre_roll', side:'off', copies:2, locked:false, color:'#0F766E', rarity:'common',
     desc:'Choose a player with salary $400 or less who has not rolled: they roll two D20 and keep the higher this period.' },
   { id:'transition_outlet',   name:'Transition Outlet',  phase:'scoring',  side:'off', copies:2, locked:false, color:'#0E7490', rarity:'common',
@@ -223,7 +223,7 @@ export const STRATS = [
   { id:'find_the_open_man',   name:'Extra Pass',         phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',
     desc:'The opponent has a Double Team on the floor: a player of yours they are NOT trapping gets +4 to their scoring roll.' },
   { id:'putback_specialist',  name:'Putback Specialist', phase:'reaction', side:'off', copies:2, locked:false, color:'#0284C7', rarity:'uncommon',
-    desc:'After your player misses a shot check, spend 2 Rebounds: any player of yours announces a Paint Shot Check at +3.' },
+    desc:'After your player misses a shot check, spend 2 Rebounds: any player of yours announces a Paint Shot Check at +3. Hit: the rebound is theirs.' },
   // Reactions — defense
   { id:'rim_protector',       name:'Rim Protector',      phase:'reaction', side:'def', copies:2, locked:false, color:'#1D4ED8', rarity:'common',
     desc:'Opponent announces a Paint Shot Check and your defender on them has Power + Defensive Bonus of 15+: −4 to the check. Miss: +2 Rebounds for you.' },
@@ -251,7 +251,7 @@ export const STRATS = [
     desc:'Player has Speed 13+ and a hot marker: +2 pts and add another hot marker.' },
   { id:'point_god',           name:'Point God',          phase:'pre_roll', side:'off', copies:1, locked:false, color:'#1D4ED8', rarity:'rare',
     // Post Domination's Speed twin: the same matchup door, on the other stat.
-    desc:'Choose a player with a Speed advantage over his defender, before he rolls: his assists from scoring rolls are doubled this period.' },
+    desc:'Choose a player with a Speed advantage over their defender, before they roll: their assists from scoring rolls are doubled this period.' },
   { id:'passing_lane',        name:'Passing Lane',       phase:'reaction', side:'def', copies:2, locked:false, color:'#047857', rarity:'common',
     // Box Out, for the other currency.
     desc:'Right after an opponent\'s scoring roll wins assists: cancel them. −1 more from their track if your defender on them has more Speed.' },
@@ -307,7 +307,7 @@ export const STRATS = [
     desc:'Stays in play this game: your 3PT Shot Checks are +1.' },
   { id:'pace_and_space',      name:'Pace and Space',     phase:'matchup',  side:'off', copies:1, locked:false, color:'#0284C7', rarity:'uncommon', climbOnly:true,
     desc:'Stays in play this game: +1 Speed to every player of yours.' },
-  { id:'bruise_brothers',     name:'Bruise Brothers',    phase:'matchup',  side:'off', copies:1, locked:false, color:'#B45309', rarity:'uncommon', climbOnly:true,
+  { id:'bruise_brothers',     name:'Bruise Crew',        phase:'matchup',  side:'off', copies:1, locked:false, color:'#B45309', rarity:'uncommon', climbOnly:true,
     desc:'Stays in play this game: your Paint Shot Checks are +1.' },
   { id:'weight_room',         name:'Weight Room',        phase:'matchup',  side:'off', copies:1, locked:false, color:'#92400E', rarity:'uncommon', climbOnly:true,
     desc:'Choose a player: +3 Power for the rest of this game.' },
@@ -324,7 +324,7 @@ export const STRATS = [
   { id:'splash',              name:'Splash',             phase:'matchup',  side:'off', copies:1, locked:false, color:'#0369A1', rarity:'uncommon', climbOnly:true,
     desc:'Stays in play this game: your 3PT Shot Checks get +1 for every two threes your team has made this game (up to +3).' },
   { id:'on_fire',             name:'On Fire',            phase:'matchup',  side:'off', copies:1, locked:false, color:'#EA580C', rarity:'uncommon', climbOnly:true,
-    desc:'Stays in play this game: a player of yours who makes three shot checks in a row is On Fire — his shot checks are +3 until he misses.' },
+    desc:'Stays in play this game: a player of yours who makes three shot checks in a row is On Fire — their shot checks are +3 until they miss.' },
 ];
 
 /** The Climb-only cards that last a game (g.buffs): one rule in canPlay, one in execCard. */
@@ -386,7 +386,7 @@ export const PLUS = {
   power_move: { desc: "Choose a player: +4 Power. If their Power advantage is already ≥5: +6 Power instead." },
   back_to_basket: { desc: "Player with Power 12+ and a Paint Bonus attempts a Paint Shot Check at +3." },
   offensive_board: { desc: "Spend 2 rebounds: take a second scoring roll with a different player." },
-  putback_specialist: { desc: "After your player misses a shot check, spend 2 Rebounds: any player of yours announces a Paint Shot Check at +5. Hit: +1 Assist." },
+  putback_specialist: { desc: "After your player misses a shot check, spend 2 Rebounds: any player of yours announces a Paint Shot Check at +5. Hit: the rebound is theirs, and +1 Assist." },
   glass_cleaner: { desc: "After an opponent misses any shot check: +4 Rebounds. +1 more if your defender on the shooter has more Power than them." },
   box_out: { desc: "Right after an opponent's scoring roll wins rebounds: cancel them, and you gain 1 Rebound. −2 more from their track if your defender on them has more Power." },
   drop_coverage: { desc: "Opponent announces a Paint Shot Check and your defender on them has a Defensive Bonus: −4 to the check." },

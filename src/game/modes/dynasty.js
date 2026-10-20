@@ -966,7 +966,7 @@ function release(d, teamId, key) {
   const wire = { key, from: teamId, dp: k.dp, years: k.years, year: d.year, claims: [] };
   return say(
     { ...cut, waivers: [...waiverList(d), wire] },
-    `${teamOf(d, teamId)?.name} waived ${cardOf(key)?.name} — on waivers until the league moves on. A claim takes his ${k.dp} DP × ${k.years} off their books; unclaimed, it stays as dead money this season.`,
+    `${teamOf(d, teamId)?.name} waived ${cardOf(key)?.name} — on waivers until the league moves on. A claim takes their ${k.dp} DP × ${k.years} off their books; unclaimed, it stays as dead money this season.`,
   );
 }
 
@@ -1029,18 +1029,18 @@ export function claimProblem(d, teamId, key) {
 
 /** Why `teamId` cannot take the waiver `w` — his seat and his DP on its books — or null. */
 function fitProblem(d, teamId, w) {
-  if (w.from === teamId) return 'you waived him';
+  if (w.from === teamId) return 'you waived them';
   if (!teamOf(d, teamId)) return 'no such team';
   if (seatsTaken(d, teamId) >= MAX_ROSTER) return `your roster is full at ${MAX_ROSTER} — waive someone first`;
   const apron = apronFor(d, teamId);
   // An AI team keeps the scale of its unsigned picks back, as it does in free agency.
   const booked = payroll(d, teamId) + (teamOf(d, teamId)?.human ? 0 : rookieCommitted(d, teamId));
-  if (booked + w.dp > apron) return `his ${w.dp} DP would take you past the ${apron} apron`;
+  if (booked + w.dp > apron) return `their ${w.dp} DP would take you past the ${apron} apron`;
   // An AI team's claim fits its card-salary ceiling too, its unsigned picks
   // counted as their DP is above (aiSalaryCap, the user, 2026-09-18), and a
   // cheap card kept back for each seat still short of eight (seatsHeld).
   const held = rookieSalaryHeld(d, teamId) + seatsHeld(d, teamId, seatsTaken(d, teamId) + 1);
-  if (!salaryFits(d, teamId, [w.key], [], held)) return `his $${salaryOf(w.key)} card would take them past the $${aiSalaryCap(d)} salary ceiling`;
+  if (!salaryFits(d, teamId, [w.key], [], held)) return `the $${salaryOf(w.key)} card would take them past the $${aiSalaryCap(d)} salary ceiling`;
   return null;
 }
 
@@ -1107,7 +1107,7 @@ export function resolveWaivers(d) {
     const taker = waiverOrder(x).filter(id => id !== w.from).find(id => claims(x, id, w));
     const name = cardOf(w.key)?.name;
     if (!taker) {
-      x = say(x, `Nobody claimed ${name} — he is a free agent, and his ${w.dp} DP stays on ${from?.name}'s books this season.`);
+      x = say(x, `Nobody claimed ${name} — they are a free agent, and their ${w.dp} DP stays on ${from?.name}'s books this season.`);
       continue;
     }
     // His dead money on the waiving team, the one entry THIS waive booked
@@ -1124,7 +1124,7 @@ export function resolveWaivers(d) {
       dead: at < 0 ? (x.dead ?? []) : x.dead.filter((_, i) => i !== at),
     };
     touched.add(taker);
-    x = say(x, `${teamOf(x, taker)?.name} claimed ${name} off waivers — his salary comes off ${from?.name}'s books.`);
+    x = say(x, `${teamOf(x, taker)?.name} claimed ${name} off waivers — their salary comes off ${from?.name}'s books.`);
   }
   return touched.size ? syncSeasonRosters(x, [...touched]) : x;
 }
@@ -1274,7 +1274,7 @@ export const STAFF_ROLES = {
     aging: true,
     tiers: [
       { name: 'Load Management', cost: 3, blurb: 'Your players\' retirement risk starts a year later.' },
-      { name: 'Prime Extension', cost: 6, blurb: 'Name one player a season: he skips that year\'s retirement roll.' },
+      { name: 'Prime Extension', cost: 6, blurb: 'Name one player a season: they skip that year\'s retirement roll.' },
       { name: 'Fountain of Youth', cost: 12, blurb: 'The whole retirement window shifts two years for your team.' },
     ],
   },
@@ -1344,7 +1344,7 @@ export function protectProblem(d, teamId, key) {
   if (staffTier(d, teamId, 'science') < 2) return 'Prime Extension takes Sports Science at tier 2';
   if (d.phase === DPHASE.done) return 'The dynasty is over';
   const mine = d.contracts?.[key]?.teamId === teamId || d.rights?.[key]?.teamId === teamId;
-  if (!mine) return 'He is not yours';
+  if (!mine) return 'That player is not yours';
   return null;
 }
 
@@ -1363,7 +1363,7 @@ export function stealProblem(d, teamId, key) {
   if (d.phase !== DPHASE.rookieDraft || !d.draft || d.draft.kind === 'fantasy') return 'The steal comes at the end of a rookie draft';
   if (!draftDone(d)) return 'Wait for the last pick';
   if (d.draft.stolen?.[teamId]) return 'One steal a draft';
-  if (!draftAvailable(d).includes(key)) return 'He was drafted';
+  if (!draftAvailable(d).includes(key)) return 'That player was drafted';
   if (rosterKeys(d, teamId).length + rightsOf(d, teamId).length >= MAX_ROSTER) return `Your roster is full (${MAX_ROSTER})`;
   return null;
 }
@@ -1518,7 +1518,7 @@ export function rookieProblem(d, teamId, key) {
   // Its other unsigned picks count as seats — the draft kept their cards'
   // room (aiDraftChoice) — so two picks into a five-man roster keep $150.
   const seatsAfter = size + rightsOf(d, teamId, 'rookie').length;
-  if (!salaryFits(d, teamId, [key], [], seatsHeld(d, teamId, seatsAfter))) return `his $${salaryOf(key)} card would take them past the $${aiSalaryCap(d)} salary ceiling`;
+  if (!salaryFits(d, teamId, [key], [], seatsHeld(d, teamId, seatsAfter))) return `the $${salaryOf(key)} card would take them past the $${aiSalaryCap(d)} salary ceiling`;
   return null;
 }
 
@@ -1598,7 +1598,7 @@ function lapseRookies(d) {
   let x = d;
   for (const team of d.teams) {
     for (const key of rightsOf(x, team.id, 'rookie')) {
-      x = say(renounce(x, team.id, key), `${team.name}'s rights to ${cardOf(key)?.name} lapse unsigned — he is a free agent.`);
+      x = say(renounce(x, team.id, key), `${team.name}'s rights to ${cardOf(key)?.name} lapse unsigned — they are a free agent.`);
     }
   }
   return x;

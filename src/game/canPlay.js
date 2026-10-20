@@ -1033,8 +1033,8 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
         const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i];
         return dp && calcAdv(p, dp, g.tempEff[teamKey] || {}, i).powerAdv > 0;
       });
-      if (edge.length === 0) return no('Need a player with a Power advantage over his defender, still to roll');
-      return ok('Double his rebounds this period');
+      if (edge.length === 0) return no('Need a player with a Power advantage over their defender, still to roll');
+      return ok('Double their rebounds this period');
     }
     case 'unsung_hero':
       if (preRollTargets(g, teamKey, p => (p.salary || 0) <= 400).length === 0) return no('Need a $400-or-less player still to roll');
@@ -1046,8 +1046,8 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
         const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i];
         return dp && calcAdv(p, dp, g.tempEff[teamKey] || {}, i).speedAdv > 0;
       });
-      if (edge.length === 0) return no('Need a player with a Speed advantage over his defender, still to roll');
-      return ok('Double his assists this period');
+      if (edge.length === 0) return no('Need a player with a Speed advantage over their defender, still to roll');
+      return ok('Double their assists this period');
     }
     case 'blow_by': {
       // Rimshaker's Speed twin (2026-09-23).

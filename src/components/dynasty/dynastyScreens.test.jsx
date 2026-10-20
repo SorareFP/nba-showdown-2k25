@@ -96,8 +96,8 @@ describe('each phase', () => {
     expect(d.phase).toBe(DPHASE.signing);
     const out = view(d);
     expect(out).toContain('Sign your draftees');
-    expect(out).toContain('His ask');
-    expect(out).toContain('Meet his ask');
+    expect(out).toContain('Their ask');
+    expect(out).toContain('Meet their ask');
   });
 
   it('free agency shows the day, the market and the rival offers; the preseason the ready check', () => {
@@ -294,7 +294,7 @@ describe('each phase', () => {
     const d = waive(waive(cheap, ai, theirs), HUMAN_ID, mine);
     const page = view(d);
     expect(page).toContain('Waiver wire');
-    expect(page).toContain('If he is claimed, his DP comes off your books');
+    expect(page).toContain('If they are claimed, their DP comes off your books');
     // An open claim — the button is live, not greyed with a reason.
     expect(page).toMatch(/<button(?![^>]*disabled)[^>]*>\s*Claim\s*<\/button>/);
     expect(view(claimWaiver(d, HUMAN_ID, theirs))).toContain('Claimed — withdraw');

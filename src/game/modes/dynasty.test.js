@@ -1687,12 +1687,12 @@ describe('waivers (2026-09-18)', () => {
     expect(payroll(y, a)).toBe(Object.values(y.contracts).filter(k => k.teamId === a).reduce((n, k) => n + k.dp, 0));
     expect(waiverList(y)).toEqual([]);
     const name = getCardByKey(key).name;
-    expect(y.news.some(n => n.text === `${teamOf(y, c).name} claimed ${name} off waivers — his salary comes off ${teamOf(y, a).name}'s books.`)).toBe(true);
+    expect(y.news.some(n => n.text === `${teamOf(y, c).name} claimed ${name} off waivers — their salary comes off ${teamOf(y, a).name}'s books.`)).toBe(true);
     expect(y.season.teams.find(t => t.id === c).roster.map(cardKey)).toContain(key);
     expectConserved(y);
   });
 
-  it('an overpaid contract goes unclaimed: the dead money stays and he is a free agent', () => {
+  it('an overpaid contract goes unclaimed: the dead money stays and they are a free agent', () => {
     const { d: d0, ids: [, a, b, c] } = wireLeague({ worstFirst: ([, a, b, c]) => [c, b, a] });
     const key = worstOf(d0, a);
     const d = setDeal(d0, key, { dp: 30, years: 3 });
@@ -1730,7 +1730,7 @@ describe('waivers (2026-09-18)', () => {
     // You cannot claim your own waive, and an AI team cannot put in a claim.
     expect(() => claimWaiver(open.x, open.a, open.key)).toThrow(/only a coach/);
     const mineWaived = waive(wireLeague().d, HUMAN_ID, best(wireLeague().d, HUMAN_ID));
-    expect(() => claimWaiver(mineWaived, HUMAN_ID, waiverList(mineWaived)[0].key)).toThrow(/you waived him/);
+    expect(() => claimWaiver(mineWaived, HUMAN_ID, waiverList(mineWaived)[0].key)).toThrow(/you waived them/);
   });
 
   it('a claim never takes a team past its apron or its roster size', () => {

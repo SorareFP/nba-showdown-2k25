@@ -23,7 +23,7 @@ import styles from './Climb.module.css';
 const dollars = n => `$${Math.round(n).toLocaleString('en-US')}`;
 const PLAYBOOK_NAME = { speed: 'Speed', paint: 'Paint', defense: 'Defense' };
 const PLAYBOOK_LINE = {
-  speed: 'Threes off movement, drives, the faster man.',
+  speed: 'Threes off movement, drives, the faster player.',
   paint: 'The paint, the post and the glass.',
   defense: 'Contests, rim protection, wearing them down.',
 };
@@ -523,7 +523,7 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onPickPerk = () =
           <div className={styles.offers} data-player-offer="true">
             {o.players.map(k => {
               const card = rosterCards({ roster: [k] }).cards[0];
-              // What signing him leaves (2026-10-19): the three come at three prices.
+              // What signing them leaves (2026-10-19): the three come at three prices.
               return <PlayerTile key={k} cardKey={k} card={card} big inSystem={CLIMB.system && fitsSystem(run.playbook, card)} extra={<> · leaves {dollars(room - (card?.salary ?? 0))}</>} onClick={busy ? null : () => onPickPlayer(k)}>Sign</PlayerTile>;
             })}
           </div>

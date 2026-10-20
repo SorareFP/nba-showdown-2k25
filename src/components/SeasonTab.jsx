@@ -1377,7 +1377,7 @@ export function SeasonStatsPanel({ season, by, myId }) {
       ))}
       {open && (
         <div className={styles.legend}>
-          Every game counts, played or simmed. ALW is what the man he guarded scored on him; M+/- is his own points minus that. A block is a miss his Defensive Bonus contest turned. Matchup and advanced numbers count from games played on or after 2026-09-10.
+          Every game counts, played or simmed. ALW is what the player they guarded scored on them; M+/- is their own points minus that. A block is a miss their Defensive Bonus contest turned. Matchup and advanced numbers count from games played on or after 2026-09-10.
         </div>
       )}
     </section>

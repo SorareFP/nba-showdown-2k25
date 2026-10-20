@@ -31,10 +31,10 @@ describe('In System', () => {
     expect(fitsSystem('defense', { defBoost: 1 })).toBe(true);
     expect(fitsSystem('defense', { defBoost: 0 })).toBe(false);
     expect(fitsSystem(null, { speed: 20 })).toBe(false);
-    expect(systemLine('speed')).toBe('In System: Speed 12+, +1 on his shot checks');
+    expect(systemLine('speed')).toBe('In System: Speed 12+, +1 on their shot checks');
   });
 
-  it('gives a fitting shooter +1 on his shot checks, never a free throw', () => {
+  it('gives a fitting shooter +1 on their shot checks, never a free throw', () => {
     const g = board({ A: 'speed' });
     expect(climbCheckParts(g, 'A', '3pt', 0)).toEqual([{ label: 'In System', n: 1 }]);
     expect(climbCheckParts(g, 'A', 'paint', 0)).toEqual([{ label: 'In System', n: 1 }]);

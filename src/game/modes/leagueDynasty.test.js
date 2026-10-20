@@ -201,7 +201,7 @@ describe('waivers with friends (2026-09-18)', () => {
 
     l = act(l, 'u1', 'waive', { key });
     expect(l.state.waivers.map(w => w.key)).toEqual([key]);
-    expect(() => act(l, 'u1', 'claim', { key })).toThrow(/you waived him/);
+    expect(() => act(l, 'u1', 'claim', { key })).toThrow(/you waived them/);
     l = act(l, 'u2', 'claim', { key });
     expect(l.state.waivers[0].claims).toEqual([u2]);
     // Nothing moves until the phase does: both ready, the season tips off.
@@ -242,6 +242,6 @@ describe('waivers with friends (2026-09-18)', () => {
     const annRoster = l.state.season.teams.find(t => t.id === u1).roster;
     expect(annRoster.every(k => typeof k === 'string')).toBe(true);
     expect(annRoster).toContain(shed);
-    expect(l.state.news.some(n => /claimed .* off waivers — his salary comes off/.test(n.text))).toBe(true);
+    expect(l.state.news.some(n => /claimed .* off waivers — their salary comes off/.test(n.text))).toBe(true);
   });
 });

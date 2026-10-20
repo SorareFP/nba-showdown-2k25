@@ -174,7 +174,7 @@ describe('requests', () => {
   });
 
   it('refuses the never-card names with the user\'s message, and the form can tell from the search text', () => {
-    expect(AUTO_REJECT_MESSAGE).toBe("That guys sucks, he's not getting a card.");
+    expect(AUTO_REJECT_MESSAGE).toBe("That player sucks, they're not getting a card.");
     expect(checkRequest({ row: rows[4] })).toEqual({ ok: false, code: 'auto-rejected', msg: AUTO_REJECT_MESSAGE });
     // It waits for "Enes F", "Enes K", "Royce W" (the user, 2026-09-10), or a surname only he carries.
     for (const t of ['Enes K', 'enes kanter', 'Enes F', 'Enes Freedom', 'Royce W', 'ROYCE WHITE', 'Kanter', 'freedom']) {

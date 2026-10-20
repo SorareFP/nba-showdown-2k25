@@ -667,8 +667,8 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
       },
       defensive_anchor: (p, i) => {
         const db = p.defBoost || 0;
-        const man = guardedBy(teamKey, i);
-        return `Def ${sgn(db)} counts ${sgn(2 * db)} this section${man ? `: on ${man.name}` : ''}, and on every check they contest`;
+        const guarded = guardedBy(teamKey, i);
+        return `Def ${sgn(db)} counts ${sgn(2 * db)} this section${guarded ? `: on ${guarded.name}` : ''}, and on every check they contest`;
       },
       unsung_hero: (p, i) => `${rollLine(teamKey, i)} — two dice, keep the higher`,
       stretch_five: (p, i) => needLine(teamKey, i, '3pt'),
@@ -783,7 +783,7 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
     // (2026-09-25). Each row's preview shows both rolls it moves: the target's
     // edge gone, and the helper's own man open at +3.
     const h = await pickFiltered(helpers,
-      `Who rotates over onto ${chosen.off?.name}? (beating ${chosen.def?.name} by +${chosen.adv}; the helper's own man is left open, +3)`,
+      `Who rotates over onto ${chosen.off?.name}? (beating ${chosen.def?.name} by +${chosen.adv}; the helper's own matchup is left open, +3)`,
       teamKey, undefined, 'helperIdx');
     if (h === null) return null;
     opts.helperIdx = h;
@@ -1561,7 +1561,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
               .map(i => team.starters[i]?.name).filter(Boolean);
             return (
               <span key={k} className={styles.phaseSub} style={{ color: k === 'A' ? 'var(--orange)' : 'var(--blue)' }}>
-                🎯 Team {k} has an open man: +{pts} on their next roll
+                🎯 Team {k} has an open player: +{pts} on their next roll
                 {barred.length ? ` — anyone but ${barred.join(' or ')}` : ''}
               </span>
             );
@@ -2015,7 +2015,7 @@ function LiveEffects({ game, teamKey, idx }) {
   }
   // Both marks are FLAT keys, 'A_0' (execCard.js writes them so, engine.js
   // reads them so); a nested read here meant neither chip ever showed.
-  if (game.ghosted?.[`${teamKey}_${idx}`])    push('ghost', styles.liveGood, '👻 no defender', 'Ghost Screen: no defender — no matchup edge or penalty, and no contest on his checks');
+  if (game.ghosted?.[`${teamKey}_${idx}`])    push('ghost', styles.liveGood, '👻 no defender', 'Ghost Screen: no defender — no matchup edge or penalty, and no contest on their checks');
   if (game.ignFatigue?.[`${teamKey}_${idx}`]) push('wind',  styles.liveGood, 'ignores FAT', 'Second Wind: fatigue penalty ignored this segment');
   const om = game.openMan?.[teamKey];
   if (om && typeof om === 'object' && om.except?.includes(idx)) push('trapped', styles.liveBad, 'trapped', 'Doubled — cannot be the open teammate');

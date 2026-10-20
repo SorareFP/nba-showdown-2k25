@@ -21,7 +21,7 @@ export const PERKS = Object.freeze({
   }),
   extra_reps: Object.freeze({
     name: 'Extra Reps', icon: '🎯', target: 'player', stat: 'shotLine', step: -1,
-    text: 'Choose one of your players: his Shot Line improves by 1 for the rest of the run.',
+    text: 'Choose one of your players: their Shot Line improves by 1 for the rest of the run.',
   }),
   signature_move: Object.freeze({
     name: 'Signature Move', icon: '✍️', target: 'player', stat: 'threePtBoost', step: 1,

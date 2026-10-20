@@ -237,8 +237,8 @@ export const MOOD_TEXT = {
   close: 'Close — they want a little more.',
   apart: 'Not there yet.',
   insulted: 'Insulted. That cost you their patience.',
-  outbid: 'Another team is offering him a better deal.',
-  walked: 'He is done talking to you.',
+  outbid: 'Another team is offering them a better deal.',
+  walked: 'They are done talking to you.',
 };
 
 /**

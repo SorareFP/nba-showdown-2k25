@@ -347,7 +347,7 @@ export default function RulebookTab() {
           <div className={s.glossaryDef}>+2 / −2 per marker. From natural 19–20 / 1–2. Cleared on the bench or at halftime.</div>
 
           <div className={s.glossaryTerm}>Card Window</div>
-          <div className={s.glossaryDef}>The matchup or scoring phase before rolling. Playing hands the turn over; two passes in a row close it.</div>
+          <div className={s.glossaryDef}>The matchup or scoring phase before rolling. Playing hands the turn over; two passes in a row close it. The home side (the one that answers in the snake) opens every scoring phase.</div>
 
           <div className={s.glossaryTerm}>Standing Card</div>
           <div className={s.glossaryDef}>A card in effect for the whole section while its players are on the floor (Twin Towers, Run the Floor).</div>

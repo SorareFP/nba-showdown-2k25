@@ -246,7 +246,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <dt>Announced Check</dt><dd>A 3PT or paint check the defence may react to before it is rolled.</dd>
             <dt>Top Tier</dt><dd>A roll that reaches the last row of a player's chart.</dd>
             <dt>Hot / Cold Marker</dt><dd>+2 / &minus;2 per marker to rolls and checks. From natural 19–20 / 1–2. Cleared by a section on the bench, or at halftime.</dd>
-            <dt>Card Window</dt><dd>The matchup or scoring phase before rolling. Play hands the turn over; two passes in a row close it.</dd>
+            <dt>Card Window</dt><dd>The matchup or scoring phase before rolling. Play hands the turn over; two passes in a row close it. The home side opens every scoring phase.</dd>
             <dt>Priority</dt><dd>Whose turn it is in a card window. Playing a card gives it away.</dd>
             <dt>Standing Card</dt><dd>A card that stays in effect for the section while its players are on the floor.</dd>
             <dt>Snake</dt><dd>The placement order A-B-B-A-A-B-B-A-A-B. In a season the visitor leads and the home side answers; in a sandbox game Team A leads.</dd>

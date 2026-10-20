@@ -234,7 +234,11 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     lastDefSwitch: null,    // the opponent's last defensive switch — what Overhelp / Burned on the Switch answer
     lastAutoScore: null,    // points taken with no roll and no check — what Verticality answers
     secStart: { A: 0, B: 0 }, // the score when this section began: on-floor points (endSection)
-    scoringTurn: 'B',
+    // THE HOME SIDE (2026-10-20): whoever does not lead the snake. It opens
+    // every scoring phase — the user: "home team" (the coach used to open
+    // them all, home or away).
+    home: opts.placementFirst === 'B' ? 'A' : 'B',
+    scoringTurn: opts.placementFirst === 'B' ? 'A' : 'B',
     scoringPasses: 0,
     pendingShotCheck: null,
     lastShotCheck: null, // { teamKey, playerIdx, playerId, type, result, pts, cardLabel }
@@ -2147,7 +2151,7 @@ export function endSection(g) {
   ng.teamA.starters = []; ng.teamB.starters = [];
   ng.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
   ng.matchupTurn = 'A'; ng.matchupPasses = 0; ng.lastMatchupCard = null; ng.lastDefSwitch = null;
-  ng.scoringTurn = 'B'; ng.scoringPasses = 0;
+  ng.scoringTurn = ng.home ?? 'B'; ng.scoringPasses = 0;
   ng.blockedRolls = {};
   ng.endSectionVotes = { A: false, B: false };
 

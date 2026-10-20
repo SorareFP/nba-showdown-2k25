@@ -58,7 +58,13 @@ export const FLOOR_CAPS = [1200, 1250, 1350, 2000, 2100, 2350, 2700];
 export const KIT_ONLY_FLOORS = 3;
 export const CLIMB = {
   startCap: 2200,
-  capPerFloor: 300,
+  // THE RUN GROWS FASTER (2026-10-19; the user: "the key here is to
+  // find/allow some more variance and also the ability to really scale a deck.
+  // Each move up the ladder should feel like a big step", and "I *like* the
+  // difficulty, it just might be slightly too hard"). Measured with the coach
+  // at its rung (300 runs each): Prince wins the act 23% (was 8.7%), Deity
+  // 8.7% (was 2.3%); the median team at the boss $4,820 (was $3,990).
+  capPerFloor: 450,
   floorCap: f => FLOOR_CAPS[Math.min(FLOOR_CAPS.length, Math.max(1, f)) - 1],
   rivalryExtra: 250,
   bossCap: 4800,
@@ -66,18 +72,18 @@ export const CLIMB = {
   bossSize: 8,
   coachDeckSize: f => (f <= KIT_ONLY_FLOORS ? KIT_SIZE : 15 + Math.round((f - 1) * 10 / 7)),
   recovery: { base: 10, by10: 12, by20: 14 },
-  rareChance: f => 0.05 + 0.2 * (f - 1) / 6,
+  rareChance: f => 0.1 + 0.35 * (f - 1) / 6,   // 10% at floor 1 to 45% at floor 7 (was 5% to 25%)
   // A player offer's three prices, as shares of the room left (2026-10-19),
   // and how many of each band's priciest it draws from.
   offerBands: [[0, 0.35], [0.35, 0.7], [0.7, 1]],
   offerBest: 12,
-  climbOnlyChance: 0.35,   // the reward's "anywhere" slot, while a Climb-only card is left (2026-10-19)
+  climbOnlyChance: 0.5,   // the reward's "anywhere" slot, while a Climb-only card is left (2026-10-19; was 0.35)
   // THE DROPS (the user, 2026-10-19: "percent chances of games dropping
   // certain thing. Like all games drop strategy cards, rivalries *could* drop
   // a perk"). Strategy cards come with every win; a player offer and a perk
   // are chances by the stop's kind, smoothed the way Slay the Spire's potions
   // are: a miss raises the next chance by the step, a drop lowers it.
-  drops: { game: { player: 0.4, perk: 0.05 }, rivalry: { player: 0.75, perk: 0.5 } },
+  drops: { game: { player: 0.5, perk: 0.1 }, rivalry: { player: 0.75, perk: 0.7 } },   // was 0.4/0.05 and 0.75/0.5
   dropStep: { player: 0.1, perk: 0.05 },
   maxRoster: 10,
 };

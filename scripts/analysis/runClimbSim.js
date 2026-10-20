@@ -12,6 +12,7 @@
 //   rec, rec10, rec20  minutes of recovery between games, by the win's margin
 //   decks              the coach's deck size floor by floor, the boss last: decks=15,15,15,19,20,21,22,25
 //   start              your starting cap (the five you bring)
+//   human              your side's iq (0..1; default 1, the coach's own play)
 //
 // The coach plays both sides (simulateGame). "You" are a simple drafter: a
 // random five under $2,200, the playbook that fits, a random boon, a random
@@ -27,6 +28,7 @@ import { climbRng, KIND_WEIGHTS, stopById } from '../../src/game/modes/climbMap.
 import { leanOf } from '../../src/game/modes/climbKits.js';
 import { PERKS, practicable, perkProblem } from '../../src/game/modes/climbPerks.js';
 import { simulateGame } from '../../src/game/modes/simulate.js';
+import * as ai from '../../src/game/ai.js';
 import { fatigueForMinutes } from '../../src/game/engine.js';
 import { isPlus, PLUS } from '../../src/game/strats.js';
 import { CARDS } from '../../src/game/cards.js';
@@ -35,7 +37,7 @@ import { capSal } from '../../src/game/teamRules.js';
 
 const args = process.argv.slice(2);
 const positional = args.filter(a => !a.includes('='));
-const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : k === 'policy' || k === 'decks' ? v : Number(v)]));
+const overrides = Object.fromEntries(args.filter(a => a.includes('=')).map(a => a.split('=')).map(([k, v]) => [k, k === 'caps' ? v.split(',').map(Number) : k === 'policy' || k === 'decks' || k === 'rare' ? v : Number(v)]));
 // policy=rest       rest at every Rest Day
 // policy=practice   practise at every Rest Day but the one before the boss
 // (default)         rest when worn (-12 or worse) or before the boss, else practise
@@ -63,11 +65,42 @@ if (overrides.decks) {
   const sizes = String(overrides.decks).split(',').map(Number);
   CLIMB.coachDeckSize = f => sizes[Math.min(sizes.length, f) - 1];
 }
+// The scaling dials (2026-10-19, "each move up the ladder should feel like a
+// big step"): capstep=450 (cap per floor), rare=0.1,0.45 (rare chance floor 1
+// to 7), playerg / playerr / perkg / perkr (drop chances), climbonly=0.5.
+if (overrides.capstep != null) CLIMB.capPerFloor = overrides.capstep;
+if (overrides.rare) { const [r1, r7] = String(overrides.rare).split(',').map(Number); CLIMB.rareChance = f => r1 + (r7 - r1) * (f - 1) / 6; }
+if (overrides.playerg != null) CLIMB.drops.game.player = overrides.playerg;
+if (overrides.playerr != null) CLIMB.drops.rivalry.player = overrides.playerr;
+if (overrides.perkg != null) CLIMB.drops.game.perk = overrides.perkg;
+if (overrides.perkr != null) CLIMB.drops.rivalry.perk = overrides.perkr;
+if (overrides.climbonly != null) CLIMB.climbOnlyChance = overrides.climbonly;
 // start=2400: your starting cap (the five you bring)
 if (overrides.start != null) { CLIMB.startCap = overrides.start; CLIMB_FIVE.cap = overrides.start; }
 if (overrides.rec != null) CLIMB.recovery.base = overrides.rec;
 if (overrides.rec10 != null) CLIMB.recovery.by10 = overrides.rec10;
 if (overrides.rec20 != null) CLIMB.recovery.by20 = overrides.rec20;
+
+// human=0.6: "you" play at this iq (aiLevels.js's first lever: the chance of
+// the considered play), the coach at full strength. The default, 1, is the
+// coach on both sides; a person misplays, so the simulated runs read easier
+// than the user finds them (2026-10-19: "This game is very very hard to win").
+const HUMAN_IQ = overrides.human ?? 1;
+const humanBrain = HUMAN_IQ >= 1 ? null : {
+  ...ai,
+  aiPlacementPick: (g, k, o = {}) => ai.aiPlacementPick(g, k, { ...o, iq: HUMAN_IQ }),
+  aiDraftPick: (g, k, o = {}) => ai.aiDraftPick(g, k, { ...o, iq: HUMAN_IQ }),
+  aiTurn: (g, k, o = {}) => ai.aiTurn(g, k, { ...o, iq: HUMAN_IQ }),
+  aiScoringDecision: (g, k, o = {}) => ai.aiScoringDecision(g, k, { ...o, iq: HUMAN_IQ }),
+  aiSpendDecision: (g, k, o = {}) => ai.aiSpendDecision(g, k, { ...o, iq: HUMAN_IQ }),
+  aiReactionDecision: (g, k, t, o = {}) => ai.aiReactionDecision(g, k, t, { ...o, iq: HUMAN_IQ }),
+};
+
+// THE COACH AT ITS RUNG (2026-10-19): the real game's coach searches
+// samplesOf(rung) of your lineups (Prince 16, Deity 64); the sim used 16 at
+// every rung, so Deity read easier than it plays.
+const { samplesOf } = await import('../../src/game/aiLevels.js');
+const coachBrain = { ...ai, aiPlacementPick: (g, k, o = {}) => ai.aiPlacementPick(g, k, { ...o, samples: samplesOf(RUNG) }) };
 
 const pick = (rng, list) => list[Math.floor(rng() * list.length)];
 
@@ -130,7 +163,7 @@ for (let i = 0; i < RUNS; i += 1) {
       if (starters.some(c => fatigueForMinutes(run.fatigue[c.id] ?? 0) <= -6)) tiredOpens += 1;
       games += 1;
       ourSalary[stop.floor - 1].push(capSal(p.rosterA));
-      const sim = simulateGame(p.rosterA, p.rosterB, { deckA: p.deckA, deckB: p.deckB, rng: climbRng(seed, 'game', stop.id), keepGame: true, gameOpts: p.gameOpts });
+      const sim = simulateGame(p.rosterA, p.rosterB, { deckA: p.deckA, deckB: p.deckB, rng: climbRng(seed, 'game', stop.id), keepGame: true, gameOpts: p.gameOpts, brains: { ...(humanBrain ? { A: humanBrain } : {}), B: coachBrain } });
       const result = resultFromGame(sim.game, stop.id);
       const t = byKind[stop.kind];
       t.played += 1; byFloor[stop.floor - 1].played += 1;

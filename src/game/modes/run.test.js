@@ -17,9 +17,12 @@ const FIVE = [...CARDS].sort((a, b) => a.salary - b.salary || a.id.localeCompare
 const KEYS = FIVE.map(cardKey);
 const total = deck => Object.values(deck).reduce((t, n) => t + n, 0);
 const start = (over = {}) => newRun({ id: 'r1', seed: 42, rung: 'prince', rosterKeys: KEYS, now: 1, ...over });
+// Drops off (dropOdds -1: no player offer, no perk) unless a test is about them;
+// the drops are chances since 2026-10-19 (rollDrops).
+const QUIET = { player: -1, perk: -1 };
 const camped = (boon = null, over = {}) => {
   const r = start(over);
-  return chooseCamp(r, { playbook: 'speed', boon: boon ?? r.camp.boons[0], cuts: boon === 'cut_two' ? ['catch_and_shoot', 'first_step'] : [] });
+  return { ...chooseCamp(r, { playbook: 'speed', boon: boon ?? r.camp.boons[0], cuts: boon === 'cut_two' ? ['catch_and_shoot', 'first_step'] : [] }), dropOdds: QUIET };
 };
 /** Win the fight at this stop. */
 const win = (run, stopId, margin = 5, endMinutes = {}) => recordResult(chooseStop(run, stopId), { stopId, won: true, margin, endMinutes });
@@ -126,7 +129,7 @@ describe('the map and the games', () => {
     expect([recoveryFor(1), recoveryFor(9), recoveryFor(10), recoveryFor(19), recoveryFor(20), recoveryFor(40)]).toEqual([10, 10, 12, 12, 14, 14]);
     const id = FIVE[0].id;
     const close = win(camped(), '1-0', 9, { [id]: 16 });
-    expect(close.cap).toBe(2500);
+    expect(close.cap).toBe(CLIMB.startCap + CLIMB.capPerFloor);
     expect(close.fatigue[id]).toBe(6);
     expect(win(camped(), '1-0', 10, { [id]: 16 }).fatigue[id]).toBe(4);
     expect(win(camped(), '1-0', 20, { [id]: 16 }).fatigue[id]).toBe(2);
@@ -152,8 +155,8 @@ describe('rewards', () => {
       return rares / (n * 3);
     };
     const f1 = count({ kind: 'game', floor: 1 }, 700);
-    expect(f1).toBeGreaterThanOrEqual(0.03);
-    expect(f1).toBeLessThanOrEqual(0.07);
+    expect(f1).toBeGreaterThanOrEqual(0.06);   // 10% a slot at floor 1 (2026-10-19)
+    expect(f1).toBeLessThanOrEqual(0.14);
     expect(count({ kind: 'game', floor: 6 }, 300)).toBeGreaterThan(f1 * 2);
     for (let i = 0; i < 50; i += 1) {
       expect(stratOffer(r, { kind: 'rivalry', floor: 2 }, climbRng(i, 'riv')).some(id => STRAT_MAP[id].rarity === 'rare')).toBe(true);
@@ -177,10 +180,10 @@ describe('rewards', () => {
     expect(skipped.status).toBe('map');
   });
 
-  it('offer players after a Rivalry and every second Game win, all under the cap, none when nothing fits', () => {
+  it('offer players when the drop comes (a chance, CLIMB.drops), all under the cap, none when nothing fits', () => {
     let r = win(camped(), '1-0');
-    expect(r.offers.players).toEqual([]);
-    r = skipOffers(r);
+    expect(r.offers.players).toEqual([]);   // drops off
+    r = { ...skipOffers(r), dropOdds: { player: 1, perk: -1 } };
     // The second Game win: stand below any Game on floors 2-6.
     const g2 = r.map.floors.slice(1, 6).flat().find(s => s.kind === 'game');
     const below = r.map.floors[g2.floor - 2].find(s => s.next.includes(g2.id));
@@ -197,7 +200,7 @@ describe('rewards', () => {
       expect(added.roster).toHaveLength(6);
     }
     const riv = camped().map.floors.flat().find(s => s.kind === 'rivalry');
-    const atRiv = { ...camped(), status: 'map', at: stopById(camped().map, riv.id).floor > 1 ? camped().map.floors[riv.floor - 2].find(s => s.next.includes(riv.id)).id : null };
+    const atRiv = { ...camped(), dropOdds: { player: 1, perk: -1 }, status: 'map', at: stopById(camped().map, riv.id).floor > 1 ? camped().map.floors[riv.floor - 2].find(s => s.next.includes(riv.id)).id : null };
     expect(win(atRiv, riv.id).offers.players.length).toBeGreaterThan(0);
     const full = { ...atRiv, roster: [...KEYS, ...[...CARDS].sort((a, b) => a.salary - b.salary).slice(0, 5).map(cardKey)] };
     expect(win(full, riv.id).offers.players).toEqual([]);
@@ -206,7 +209,7 @@ describe('rewards', () => {
   });
 
   it('give two picks after each of the three games the boon covers', () => {
-    const r = chooseCamp({ ...start(), camp: { ...start().camp, boons: ['extra_picks', 'cap_400', 'free_rest'] } }, { playbook: 'speed', boon: 'extra_picks' });
+    const r = { ...chooseCamp({ ...start(), camp: { ...start().camp, boons: ['extra_picks', 'cap_400', 'free_rest'] } }, { playbook: 'speed', boon: 'extra_picks' }), dropOdds: QUIET };
     const w = win(r, '1-0');
     expect(w.offers.picks).toBe(2);
     expect(w.extraPicks).toBe(2);
@@ -229,12 +232,12 @@ describe('the Rest Day', () => {
     expect(r.status).toBe('rest');
     const rested = restDay(r, { choice: 'rest' });
     expect(rested.fatigue).toEqual({});
-    expect(rested.cap).toBe(r.cap + 300);
+    expect(rested.cap).toBe(r.cap + CLIMB.capPerFloor);
     expect(rested.status).toBe('map');
     const smith = restDay(r, { choice: 'practice', cardId: 'catch_and_shoot' });
     expect(smith.deck.catch_and_shoot).toBe(1);
     expect(smith.deck['catch_and_shoot+']).toBe(1);
-    expect(smith.cap).toBe(r.cap + 300);
+    expect(smith.cap).toBe(r.cap + CLIMB.capPerFloor);
     expect(smith.fatigue).toEqual(r.fatigue);
   });
 

@@ -14,7 +14,7 @@ const camped = () => {
 };
 /** A run on the reward screen after its first Rivalry, by walking the map to one. */
 function afterRivalry() {
-  let r = camped();
+  let r = { ...camped(), dropOdds: { player: -1, perk: 1 } };   // a perk with every Rivalry here
   for (let guard = 0; guard < 12; guard += 1) {
     const stops = openStops(r);
     const riv = stops.find(s => s.kind === 'rivalry');

@@ -17,7 +17,8 @@ import { getStrat } from '../../game/strats.js';
 const html = el => renderToStaticMarkup(el);
 const FIVE = [...CARDS].sort((a, b) => a.salary - b.salary || a.id.localeCompare(b.id)).slice(100, 105);
 const fresh = () => newRun({ id: 'r1', seed: 42, rung: 'prince', rosterKeys: FIVE.map(cardKey), now: 1 });
-const camped = () => chooseCamp(fresh(), { playbook: 'speed', boon: fresh().camp.boons[0] });
+// Drops off unless a test is about them (they are chances since 2026-10-19).
+const camped = () => ({ ...chooseCamp(fresh(), { playbook: 'speed', boon: fresh().camp.boons[0] }), dropOdds: { player: -1, perk: -1 } });
 const won = () => recordResult(chooseStop(camped(), '1-0'), { stopId: '1-0', won: true, margin: 6, endMinutes: { [FIVE[0].id]: 12 } });
 const noop = () => {};
 

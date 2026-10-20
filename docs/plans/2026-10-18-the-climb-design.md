@@ -78,6 +78,15 @@ whole mode splits into four pieces, each its own spec and plan:
   1,350, 2,000, 2,100, 2,350, 2,700**. 300 runs at Prince: floors 1-3 won
   95/93/93% (were 83/71/72), 14% of runs over by floor 3 (46%), floors 4-6
   80-85%, 55% reach the boss (31%), the boss still ~15%.
+- **The run grows faster, 2026-10-19** (the user: "the key here is to
+  find/allow some more variance and also the ability to really scale a deck.
+  Each move up the ladder should feel like a big step"; "I *like* the
+  difficulty, it just might be slightly too hard"). The sim now plays the
+  coach at its rung (placement samples by rung; it had used Prince's at every
+  rung, so Deity read easy: act won 2.3%). Cap +$450 a floor (was $300), rare
+  chance 10% to 45% (was 5% to 25%), drops game 50%/10% and rivalry 75%/70%
+  player/perk, Climb-only slot 50%. 300 runs: Prince wins the act 23%, Deity
+  8.7%; the median team at the boss $4,820 (was $3,990).
 - **A game is one quarter:** it starts at Q4 section 1, so it is three
   sections with crunch time if within CRUNCH_MARGIN and overtime if tied. The
   rest is the normal engine; the coach plays at the run's rung.

@@ -87,6 +87,8 @@ export const CLIMB = {
   drops: { game: { player: 0.5, perk: 0.1 }, rivalry: { player: 0.75, perk: 0.7 } },   // was 0.4/0.05 and 0.75/0.5
   dropStep: { player: 0.1, perk: 0.05 },
   maxRoster: 10,
+  // IN SYSTEM (2026-10-20, systemFit.js): the run's playbook pays the players who fit it.
+  system: true,
 };
 
 export const BOONS = ['extra_picks', 'cut_two', 'cap_400', 'rare_strat', 'free_rest'];
@@ -321,7 +323,11 @@ export function presetFor(run) {
     deckB: { ...g.deckB },
     aiLevel: run.rung,
     returnTab: 'climb',
-    gameOpts: { startQuarter: 4, fatigue: { A: { ...run.fatigue } }, ...(run.carryHot ? { hot: { A: { ...run.carryHot } } } : {}) },
+    gameOpts: {
+      startQuarter: 4, fatigue: { A: { ...run.fatigue } },
+      ...(run.carryHot ? { hot: { A: { ...run.carryHot } } } : {}),
+      ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
+    },
     climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung },
   };
 }

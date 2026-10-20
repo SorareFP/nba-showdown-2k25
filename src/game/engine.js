@@ -14,6 +14,7 @@ export const SNAKE = [0, 1, 1, 0, 0, 1, 1, 0, 0, 1]; // 0=A, 1=B
 // ── Deck ───────────────────────────────────────────────────────────────────
 import { STRATS } from './strats.js';
 import { DEFAULT_DECK_COPIES } from './defaultDeckWeights.js';
+import { fitsSystem } from './systemFit.js';
 
 export function buildDeck(deckConfig) {
   let d = [];
@@ -188,6 +189,8 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     // the MLB Showdown icon system reborn). Injected rather than imported so
     // the engine stays pure; src/game/clutchAwards.js carries the data.
     clutchDice: opts.clutchDice ?? {},
+    // IN SYSTEM (the Climb, 2026-10-20): { A: playbook } for a run's games; null elsewhere.
+    system: opts.system ?? null,
     // Set by endSection when the final section begins within the margin —
     // { active, margin, used: {A,B}, extra: {A,B}, timeoutUsed: {A,B} }.
     crunch: null,
@@ -1100,6 +1103,19 @@ export function climbCheckParts(g, teamKey, type, idx = null) {
   if (mine.on_fire && idx != null) {
     const p = getTeam(g, teamKey)?.starters?.[idx];
     if (p && (getPS(g, teamKey, p.id)?.streak || 0) >= 3) parts.push({ label: 'On Fire', n: 3 });
+  }
+  // IN SYSTEM (2026-10-20, systemFit.js): a run's playbook pays the players who
+  // fit it — Speed and Paint +1 on a fitting shooter's checks, Defense −1 on
+  // the checks taken against a fitting defender. Never a free throw.
+  const sys = g?.system;
+  if (sys && type !== 'ft' && idx != null) {
+    const oppKey = teamKey === 'A' ? 'B' : 'A';
+    const p = getTeam(g, teamKey)?.starters?.[idx];
+    if (sys[teamKey] && sys[teamKey] !== 'defense' && fitsSystem(sys[teamKey], p)) parts.push({ label: 'In System', n: 1 });
+    if (sys[oppKey] === 'defense' && !isGhosted(g, teamKey, idx)) {
+      const defIdx = (g.offMatchups?.[teamKey] || [])[idx] ?? idx;
+      if (fitsSystem('defense', getTeam(g, oppKey)?.starters?.[defIdx])) parts.push({ label: 'Their system', n: -1 });
+    }
   }
   return parts;
 }

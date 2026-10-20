@@ -28,6 +28,7 @@ import { climbRng, KIND_WEIGHTS, stopById } from '../../src/game/modes/climbMap.
 import { leanOf } from '../../src/game/modes/climbKits.js';
 import { PERKS, practicable, perkProblem, boostsOf, boostedCard } from '../../src/game/modes/climbPerks.js';
 import { cardFit } from '../../src/game/cardFit.js';
+import { fitsSystem } from '../../src/game/systemFit.js';
 import { STRAT_MAP } from '../../src/game/strats.js';
 import { simulateGame } from '../../src/game/modes/simulate.js';
 import * as ai from '../../src/game/ai.js';
@@ -78,6 +79,8 @@ if (overrides.perkg != null) CLIMB.drops.game.perk = overrides.perkg;
 if (overrides.perkr != null) CLIMB.drops.rivalry.perk = overrides.perkr;
 if (overrides.climbonly != null) CLIMB.climbOnlyChance = overrides.climbonly;
 if (overrides.rivpicks != null) CLIMB.rivalryPicks = overrides.rivpicks;
+// system=0 turns In System off (systemFit.js, 2026-10-20), to measure what it adds.
+if (overrides.system != null) CLIMB.system = !!overrides.system;
 // start=2400: your starting cap (the five you bring)
 if (overrides.start != null) { CLIMB.startCap = overrides.start; CLIMB_FIVE.cap = overrides.start; }
 if (overrides.rec != null) CLIMB.recovery.base = overrides.rec;
@@ -173,7 +176,10 @@ function takeRewards(run, rng) {
       run = pickStrat(run, want[0]);
     }
     if (run.status === 'reward' && run.offers?.players?.length) {
-      const best = [...run.offers.players].sort((a, b) => (rosterCards({ roster: [b] }).cards[0]?.salary ?? 0) - (rosterCards({ roster: [a] }).cards[0]?.salary ?? 0))[0];
+      // In System first (when it is on), then the dearest.
+      const card = k => rosterCards({ roster: [k] }).cards[0];
+      const sys = k => (CLIMB.system && fitsSystem(run.playbook, card(k)) ? 1 : 0);
+      const best = [...run.offers.players].sort((a, b) => sys(b) - sys(a) || (card(b)?.salary ?? 0) - (card(a)?.salary ?? 0))[0];
       run = pickPlayer(run, best);
     }
     if (run.status === 'reward' && run.offers?.perks?.length) {

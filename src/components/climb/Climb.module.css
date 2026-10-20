@@ -158,6 +158,9 @@
 /* A reward card one of your players fits (cardFit.js, 2026-10-19): a soft glow
    and who it is for; one nobody fits says so, quietly. */
 .fits { border-color: var(--green) !important; box-shadow: 0 0 0 1px var(--green), 0 0 18px rgba(34, 197, 94, 0.35); }
+/* In System (systemFit.js, 2026-10-20): the playbook's line on Training Camp, the tick on the map's roster. */
+.systemLine { display: block; margin-top: 4px; font-size: 0.85em; color: var(--green); }
+.systemDot { color: var(--green); font-weight: 700; }
 .fitLine { color: var(--green); font-weight: 700; font-size: clamp(12px, 0.85vw, 15px); }
 .fitMiss { color: var(--text-muted); font-size: clamp(12px, 0.8vw, 14px); font-style: italic; }
 

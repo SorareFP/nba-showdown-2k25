@@ -29,8 +29,8 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
-    id: 'climb-build-arounds', date: '2026-10-20', title: 'The Climb: build a deck, not a pile',
-    body: "A Rest Day can now cut a card from your deck for good, so the cards you built around come up more often. The map scouts the boss from the first floor: its best five, its playbook and the rares in its deck. And two new Climb-only cards reward a deck built for them: Splash (your threes get +1 for every two your team has made this game, up to +3) and On Fire (a player who makes three checks in a row is +3 until he misses).",
+    id: 'climb-build-arounds', date: '2026-10-20', title: 'The Climb: build a team, not a pile',
+    body: "A Rest Day can now cut a card from your deck for good, so the cards you built around come up more often. The map scouts the boss from the first floor: its best five, its playbook and the rares in its deck. And two new Climb-only cards reward a deck built for them: Splash (your threes get +1 for every two your team has made this game, up to +3) and On Fire (a player who makes three checks in a row is +3 until he misses). And every playbook now has a system: a player who fits it is In System — Speed 12+ for Speed or Power 12+ for Paint, +1 on his shot checks; Defense +1 or better for Defense, the checks against him −1. Player offers who fit glow.",
     to: 'climb', cta: 'The Climb',
   },
   {

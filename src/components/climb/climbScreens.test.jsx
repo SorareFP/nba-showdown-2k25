@@ -243,3 +243,28 @@ describe('the map\'s scouting report', () => {
     expect(out).toContain('Scouting the boss');
   });
 });
+
+// IN SYSTEM (systemFit.js, 2026-10-20): the playbook pays the players who fit it.
+describe('In System on the Climb screens', () => {
+  it('prints each playbook\'s line at Training Camp with how many of your five fit', () => {
+    const out = html(<TrainingCamp run={fresh()} onChoose={noop} />);
+    expect(out.match(/data-system=/g)).toHaveLength(3);
+    expect(out).toContain('In System: Speed 12+');
+    expect(out).toContain('In System: Power 12+');
+    expect(out).toContain('of your five');
+  });
+
+  it('glows a player offer who fits the run\'s playbook, and ticks him on the map', () => {
+    const base = won();
+    const fast = [...CARDS].find(c => c.speed >= 12 && !/'/.test(c.name));
+    const slow = [...CARDS].find(c => c.speed < 12 && !/'/.test(c.name));
+    const offered = { ...base, offers: { ...base.offers, strats: [], picks: 0, players: [cardKey(fast), cardKey(slow)] } };
+    const out = html(<RewardPicker run={offered} onPickStrat={noop} onPickPlayer={noop} onSkip={noop} />);
+    expect(out.match(/data-in-system="true"/g)).toHaveLength(1);
+    expect(out).toContain('✓ In System');
+    const signed = { ...base, roster: [...base.roster, cardKey(fast)] };
+    const map = html(<ClimbMap run={signed} onGo={noop} onRetire={noop} onFreeRest={noop} />);
+    expect(map).toContain('In System: Speed 12+');
+    expect((map.match(/data-in-system="true"/g) ?? []).length).toBe(rosterCardsOf(signed).filter(c => c.speed >= 12).length);
+  });
+});

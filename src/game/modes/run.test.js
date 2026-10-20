@@ -108,7 +108,7 @@ describe('the map and the games', () => {
     expect(p.key).toBe('climb:r1:1-0');
     expect(p.rosterA.map(c => c.id)).toEqual(FIVE.map(c => c.id));
     expect(p.rosterB).toHaveLength(5);
-    expect(p.gameOpts).toEqual({ startQuarter: 4, fatigue: { A: { [FIVE[0].id]: 4 } } });
+    expect(p.gameOpts).toEqual({ startQuarter: 4, fatigue: { A: { [FIVE[0].id]: 4 } }, system: { A: 'speed' } });
     expect(p.returnTab).toBe('climb');
     expect(p.climb).toEqual({ runId: 'r1', stopId: '1-0', kind: 'game', floor: 1, rung: 'prince' });
     expect(p.deckA).toEqual(r.deck);

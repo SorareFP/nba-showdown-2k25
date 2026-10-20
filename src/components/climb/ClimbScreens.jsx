@@ -17,6 +17,7 @@ import { FLOORS, stopById, nextStops } from '../../game/modes/climbMap.js';
 import { PLAYBOOKS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
 import { PERKS, boostsOf, boostedCard, perkProblem, practicable } from '../../game/modes/climbPerks.js';
 import { cardFit } from '../../game/cardFit.js';
+import { fitsSystem, systemLine } from '../../game/systemFit.js';
 import styles from './Climb.module.css';
 
 const dollars = n => `$${Math.round(n).toLocaleString('en-US')}`;
@@ -41,9 +42,9 @@ const KIND = {
 };
 
 /** A player card tile: the face opens the whole card. */
-function PlayerTile({ cardKey, card, children, selected = false, onClick = null, extra = null, big = false }) {
+function PlayerTile({ cardKey, card, children, selected = false, onClick = null, extra = null, big = false, inSystem = false }) {
   return (
-    <div className={`${styles.tile} ${selected ? styles.selected : ''} ${big ? styles.offer : ''}`}>
+    <div className={`${styles.tile} ${selected ? styles.selected : ''} ${big ? styles.offer : ''} ${inSystem ? styles.fits : ''}`} data-in-system={inSystem ? 'true' : undefined}>
       <ZoomImg
         player={cardKey}
         className={styles.face}
@@ -54,6 +55,7 @@ function PlayerTile({ cardKey, card, children, selected = false, onClick = null,
       />
       <div className={styles.tileName}>{card?.name}</div>
       <div className={styles.tileMeta}>{dollars(card?.salary ?? 0)}{extra}</div>
+      {inSystem && <div className={styles.fitLine}>✓ In System</div>}
       {onClick && <button type="button" className={styles.tileBtn} onClick={onClick}>{children}</button>}
     </div>
   );
@@ -299,6 +301,11 @@ export function TrainingCamp({ run, onChoose, busy = false }) {
                 <strong>{PLAYBOOK_NAME[pb]}</strong>
                 {run.camp?.fits === pb && <span className={styles.badge}>fits your team</span>}
                 <span className={styles.muted}>{PLAYBOOK_LINE[pb]}</span>
+                {CLIMB.system && (
+                  <span className={styles.systemLine} data-system={pb}>
+                    {systemLine(pb)} · {rosterCards(run).cards.filter(c => fitsSystem(pb, c)).length} of your five
+                  </span>
+                )}
               </button>
               <div className={styles.kitFaces}>
                 {Object.entries(KITS[pb]).map(([id, n]) => (
@@ -386,6 +393,7 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
   const links = run.map.floors.flat().flatMap(s => s.next.map(id => [s, stopById(run.map, id)]));
   const boss = useMemo(() => bossTeam(run), [run.seed, run.rung]);
   const { cards } = rosterCards(run);
+  const boosts = boostsOf(run);
   const mult = capOf(run.rung);
   const capAt = s => s.kind === 'boss' ? CLIMB.bossCap * mult
     : s.kind === 'rest' ? null
@@ -456,13 +464,15 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
         <PerkList run={run} />
         <ScoutReport run={run} />
         <h3 className={styles.h3}>Your team</h3>
+        {CLIMB.system && run.playbook && <p className={styles.deckLine}>{systemLine(run.playbook)}</p>}
         <ul className={styles.roster}>
           {cards.map(c => {
             const min = run.fatigue?.[c.id] ?? 0;
             const pen = fatigueForMinutes(min);
+            const inSystem = CLIMB.system && fitsSystem(run.playbook, boostedCard(c, boosts[c.id]));
             return (
-              <li key={c.id}>
-                <span>{c.name}</span>
+              <li key={c.id} data-in-system={inSystem ? 'true' : undefined}>
+                <span>{c.name}{inSystem && <span className={styles.systemDot} title="In System"> ✓</span>}</span>
                 <span className={pen < 0 ? styles.tired : styles.muted}>{min ? `${min} min${pen < 0 ? ` (${pen})` : ''}` : 'fresh'}</span>
               </li>
             );
@@ -514,7 +524,7 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onPickPerk = () =
             {o.players.map(k => {
               const card = rosterCards({ roster: [k] }).cards[0];
               // What signing him leaves (2026-10-19): the three come at three prices.
-              return <PlayerTile key={k} cardKey={k} card={card} big extra={<> · leaves {dollars(room - (card?.salary ?? 0))}</>} onClick={busy ? null : () => onPickPlayer(k)}>Sign</PlayerTile>;
+              return <PlayerTile key={k} cardKey={k} card={card} big inSystem={CLIMB.system && fitsSystem(run.playbook, card)} extra={<> · leaves {dollars(room - (card?.salary ?? 0))}</>} onClick={busy ? null : () => onPickPlayer(k)}>Sign</PlayerTile>;
             })}
           </div>
           <div className={styles.actions}><button type="button" onClick={() => onSkip('players')} disabled={busy}>Skip the players</button></div>

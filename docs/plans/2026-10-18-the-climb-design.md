@@ -102,6 +102,27 @@ whole mode splits into four pieces, each its own spec and plan:
   At Deity careful play wins six times as often as careless (1 in 8 against 1
   in 50); cutting alone is worth +3.7 points. The $450 cap step widens the gap
   rather than flattening it (more room for the right players), so it stays.
+- **The rest of the list, 2026-10-19/20** (the user: "keep going down the list"),
+  each measured the same way, Deity, 300 runs, act won (one standard error is
+  about ±2 points at these rates):
+
+  | | careless | careful |
+  |---|---|---|
+  | before (the table above) | 2.0% | 12.7% |
+  | richer Rivalries (sure perk, two picks) | 4.3% | 11.3% |
+  | the same with a tougher Rivalry coach (+$400) | 5.3% | 10.0% |
+  | + Splash and On Fire (build-around cards) | 2.7% | 10.7% |
+  | + In System | 3.3% | 12.3% |
+  | careful choosing its playbook by In System count | — | 9.0% |
+
+  Richer Rivalries narrowed the gap and were not adopted. Scouting the boss
+  is information, which the sim does not use, so it is not in the table.
+  Splash, On Fire and In System are kept: neither moved the gap beyond the
+  noise in the sim, but the sim's careful drafter is a few rules — it never
+  builds around Splash or lines a five up for In System — and both reward
+  exactly the choices it skips. Picking the playbook by In System count did
+  worse than the one Training Camp marks as fitting (the kit's own card
+  conditions matter more than +1), so the drafter keeps Training Camp's.
 - **A game is one quarter:** it starts at Q4 section 1, so it is three
   sections with crunch time if within CRUNCH_MARGIN and overtime if tied. The
   rest is the normal engine; the coach plays at the run's rung.

@@ -785,7 +785,8 @@ export function RunOver({ run, onBank, onNew, onAbandon = null, busy = false }) 
         <p className={styles.lede}>Banked: {banked.coins.toLocaleString('en-US')} coins{banked.booster ? ' and a Booster (open it from Collection, under your boxes)' : ''}.</p>
       ) : (
         <>
-          <p className={styles.lede}>The pot: {pot.coins.toLocaleString('en-US')} coins{pot.booster ? ' and a Booster' : ''}.</p>
+          <p className={styles.lede}>{run.status === 'won' ? 'The climb is won. ' : ''}Bank the pot to collect it: {pot.coins.toLocaleString('en-US')} coins{pot.booster ? ' and a Booster' : ''}.</p>
+          {onAbandon && <p className={styles.muted}>The bank did not go through. Try again; if it keeps failing, giving up the run starts you fresh, but its pot is lost.</p>}
           <div className={styles.actions}>
             <button type="button" className={styles.primary} onClick={onBank} disabled={busy}>Bank the pot</button>
             {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}

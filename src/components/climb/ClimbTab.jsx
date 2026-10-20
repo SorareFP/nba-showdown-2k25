@@ -49,6 +49,11 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   const gate = useRef(false);
   const [freeRest, setFreeRest] = useState(false);
   const [freePractice, setFreePractice] = useState(false);
+  // GIVE UP ONLY WHEN BANKING FAILS (2026-10-20, the user: "Why on earth would
+  // someone quit and give up the pot?"). Giving up is the way out of a run the
+  // server will not bank; while banking works, banking (or retiring) is always
+  // better, so the button waits for a refused bank of THIS run.
+  const [bankFailedFor, setBankFailedFor] = useState(null);
   // A look at the map from a Rest Day (2026-10-19); a new step closes it.
   const [peekMap, setPeekMap] = useState(false);
   useEffect(() => { setPeekMap(false); }, [run?.status, run?.restAt]);
@@ -128,7 +133,8 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   });
 
   const bank = r => act(async () => {
-    const res = await server.bank(uid, r.id);
+    let res;
+    try { res = await server.bank(uid, r.id); } catch (e) { setBankFailedFor(r.id); throw e; }
     await commit({ ...r, banked: { coins: res?.coins ?? 0, booster: Boolean(res?.booster) } });
     toast(`Banked ${(res?.coins ?? 0).toLocaleString('en-US')} coins${res?.booster ? ' and a Booster' : ''}.`);
   });
@@ -191,7 +197,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
       return (
         <>
           {rosterCards(run).blocked && <p className={styles.note}>Fewer than five of your players are still in the game&apos;s pool. Retire to bank the pot.</p>}
-          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} onFreePractice={() => setFreePractice(true)} onAbandon={giveUp} />
+          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} onFreePractice={() => setFreePractice(true)} onAbandon={bankFailedFor === run.id ? giveUp : null} />
         </>
       );
     case 'game': {
@@ -231,7 +237,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         />
       );
     default:
-      return <RunOver run={run} busy={busy} onBank={() => bank(run)} onNew={() => setRun(null)} onAbandon={giveUp} />;
+      return <RunOver run={run} busy={busy} onBank={() => bank(run)} onNew={() => setRun(null)} onAbandon={bankFailedFor === run.id ? giveUp : null} />;
   }
   }
 }

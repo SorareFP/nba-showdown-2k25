@@ -169,6 +169,19 @@ describe('the end of a run', () => {
     const lost = html(<RunOver run={{ ...camped(), status: 'lost', cleared: ['1-0'] }} onBank={noop} onNew={noop} />);
     expect(lost).toContain('the pot is lost');
   });
+
+  // The user, 2026-10-20: "Why on earth would someone quit and give up the
+  // pot?" A won pot shows only Bank; Give up is the way out of a bank the
+  // server refused (ClimbTab passes onAbandon only then), and it says so.
+  it('offers only Bank on a won pot, and Give up only once a bank has failed', () => {
+    const w = { ...camped(), status: 'won', cleared: ['1-0', 'boss'] };
+    const out = html(<RunOver run={w} onBank={noop} onNew={noop} />);
+    expect(out).toContain('The climb is won');
+    expect(out).not.toContain('Give up this run');
+    const failed = html(<RunOver run={w} onBank={noop} onNew={noop} onAbandon={noop} />);
+    expect(failed).toContain('Give up this run');
+    expect(failed).toContain('did not go through');
+  });
 });
 
 // A LOOK FROM THE REST DAY (the user, 2026-10-19): the map read-only, you at

@@ -145,6 +145,19 @@ describe('the Practice screen', () => {
     expect(out).toContain('>Rest<');
     expect(out).not.toMatch(/smith/i);
   });
+
+  // TWO-A-DAYS (2026-10-20): its practice waits on the map, and the screen it
+  // opens is Practice alone — no Rest, no Cut.
+  it('offers a Two-a-Days practice from the map, on a practice-only screen', () => {
+    const r = { ...restRun(), status: 'map', restAt: null, freePractice: 1 };
+    expect(html(<ClimbMap run={r} onGo={noop} onRetire={noop} onFreeRest={noop} />)).toMatch(/data-free-practice="true"/);
+    expect(html(<ClimbMap run={{ ...r, freePractice: 0 }} onGo={noop} onRetire={noop} onFreeRest={noop} />)).not.toMatch(/data-free-practice/);
+    const out = html(<RestDay run={r} practiceOnly free onRest={noop} onPractice={noop} />);
+    expect(out).toContain('Two-a-Days');
+    expect(out).not.toContain('>Rest<');
+    expect(out).not.toMatch(/data-cut=/);
+    expect(out).toMatch(/data-practice="catch_and_shoot"/);
+  });
 });
 
 describe('the end of a run', () => {

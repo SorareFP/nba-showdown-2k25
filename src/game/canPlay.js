@@ -201,6 +201,26 @@ export function pushGuardIdx(g, teamKey) {
 /** Own the Glass — the lead on the Rebound Track it needs (the banks' difference, as the track shows it). */
 export const OWN_THE_GLASS_LEAD = 6;
 
+/**
+ * RIDE YOUR STAR's player (the Climb, 2026-10-20): the highest-salary starter,
+ * the earlier slot on a tie. One rule for the board, the engine and the coach.
+ */
+export function starSlot(starters) {
+  let best = -1;
+  (starters || []).forEach((p, i) => { if (p && (best < 0 || (p.salary || 0) > (starters[best].salary || 0))) best = i; });
+  return best;
+}
+
+/** Play Through Contact's players: a Power edge over their defender, read through calcAdv. */
+export function contactTargets(g, teamKey) {
+  const myT = getTeam(g, teamKey);
+  const oppT = getOpp(g, teamKey);
+  return (myT?.starters || []).map((p, idx) => ({ p, idx })).filter(({ p, idx }) => {
+    const dp = p && oppT?.starters?.[(g.offMatchups?.[teamKey] || [])[idx] ?? idx];
+    return dp && calcAdv(p, dp, g.tempEff?.[teamKey] || {}, idx).powerAdv > 0;
+  });
+}
+
 export function preRollTargets(g, teamKey, cond = () => true) {
   const rolls = g.rollResults?.[teamKey] || [];
   const blocked = g.blockedRolls?.[teamKey] || {};
@@ -499,7 +519,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
   // ── MATCHUP PHASE ──────────────────────────────────────────────────────
   if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper','pick_up_full_court',
     'spain_pick_roll','mismatch_hunter','strength_in_numbers','energizer','defensive_identity','defensive_anchor','swarming_defense',
-    'short_roll_playmaker','pick_and_roll_maestro'].includes(cardId)) {
+    'short_roll_playmaker','pick_and_roll_maestro','full_court_press'].includes(cardId)) {
     if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
     if (g.matchupTurn !== teamKey) return no("It's not your turn");
     const advOf = (p, i) => {
@@ -523,7 +543,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     if (cardId === 'mismatch_hunter') {
       const some = myT.starters.some((p, i) => { const a = p && advOf(p, i); return a && Math.max(a.speedAdv, a.powerAdv) >= 4; });
       if (!some) return no('Need a player with a +4 Speed or Power advantage');
-      return ok('+2 roll for the mismatch');
+      return ok(`+${plus ? 4 : 2} roll for the mismatch`);
     }
     if (cardId === 'strength_in_numbers') {
       const all = myT.starters.length === 5 && myT.starters.every((p, i) => { const a = p && advOf(p, i); return a && Math.max(a.speedAdv, a.powerAdv) >= 1; });
@@ -532,18 +552,19 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     }
     if (cardId === 'energizer') {
       if (!myT.starters.some(p => p && (p.salary || 0) < 250)) return no('Need a player under $250');
-      return ok('+3/+3 on defense for a cheap player');
+      return ok(plus ? '+5/+5 on defense for a cheap player' : '+3/+3 on defense for a cheap player');
     }
     if (cardId === 'defensive_identity') {
       const n = myT.starters.filter(p => (p?.defBoost || 0) > 0).length;
       if (n < 3) return no(`Need three players with a Defensive Bonus (have ${n})`);
-      return ok('All five +2/+2 on defense');
+      return ok(plus ? 'All five +4/+4 on defense' : 'All five +2/+2 on defense');
     }
     if (cardId === 'defensive_anchor') {
       if (!myT.starters.some(p => (p?.defBoost || 0) >= 1)) return no('Need a defender with a Defensive Bonus');
       return ok('Their Defensive Bonus counts double this section');
     }
     if (cardId === 'swarming_defense') return ok('Their highest-paid player may roll twice, keep lower');
+    if (cardId === 'full_court_press') return ok(`Your five +${plus ? 4 : 3} Speed on defense; 2 more minutes each after`);
 
     if (cardId === 'high_screen_roll') return ok('Swap which defenders guard your players');
 
@@ -554,7 +575,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
 
     if (cardId === 'stagger_action') {
       if (!staggerPair(myT.starters)) return no('Need a Speed 13+ player and a different player with a positive 3PT Bonus');
-      return ok('Both gain +2 Speed this segment');
+      return ok(`Both gain +${plus ? 4 : 2} Speed this segment`);
     }
 
     if (cardId === 'second_wind') {
@@ -820,7 +841,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     if (cardId === 'feeling_it') {
       const hasHot = myT.starters.some(p => { const ps = getPS(g, teamKey, p.id); return (ps?.hot || 0) > 0; });
       if (!hasHot) return no('One of your players needs a hot marker');
-      return ok('Draw 2 strategy cards');
+      return ok(`Draw ${plus ? 3 : 2} strategy cards`);
     }
     // Unsung Hero's defensive mirror (2026-09-23): the same shared list the
     // board's picker, the AI and the engine's refusal read.
@@ -949,6 +970,24 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     return ok(`Cancel their ${lr.reb} REB`);
   }
   switch (cardId) {
+    // THE CLIMB'S WAVE TWO (2026-10-20).
+    case 'up_tempo':
+      return ok(`Draw ${plus ? 3 : 2} cards; every starter adds 1 minute after the section`);
+    case 'ride_your_star': {
+      const star = starSlot(myT.starters);
+      if (star < 0) return no('Nobody on the floor');
+      if (!preRollTargets(g, teamKey).some(t => t.idx === star)) return no(`${myT.starters[star].name}, your highest-paid starter, has already rolled`);
+      return ok(`${myT.starters[star].name} +4 roll; ${plus ? 2 : 3} more minutes after`);
+    }
+    case 'signature_set': {
+      if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');
+      return ok(`+${g.signatureBonus?.[teamKey] ?? 2} roll to a player still to roll`);
+    }
+    case 'crash_every_board':
+      return ok(`+${plus ? 4 : 3} REB; your two biggest add 2 minutes after`);
+    case 'play_through_contact':
+      if (contactTargets(g, teamKey).length === 0) return no('Need a player with a Power advantage over their defender');
+      return ok(`A Paint check at +${plus ? 5 : 3}; a hit is a hot marker`);
     case 'green_light':
       if (greenLightTargets(g, teamKey).length === 0) return no('Everyone has rolled, is shut out, or has had a Green Light this section');
       return ok(plus ? 'Three 3PT checks at +2 instead of the roll' : 'Three 3PT checks instead of the roll');

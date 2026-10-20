@@ -1344,6 +1344,10 @@ function evaluateCard(game, teamKey, handCardId, strat, opts = {}) {
     chemistry: 6,   // Climb-only: a set-up, best early in a game
     let_it_fly: 6, pace_and_space: 6, bruise_brothers: 6, weight_room: 6,
     conditioning: 5, shut_the_door: 6, stay_hot: 4, ice_bath: 5, splash: 5, on_fire: 5,
+    // The Climb's wave two (2026-10-20): powers best early, plays when they fit.
+    get_stops: 5, talk_on_defense: 4, ball_movement: 5, wear_them_down: 5, film_session: 6,
+    leave_it_all: 7, two_a_days: 4, signature_set: 6, up_tempo: 5, ride_your_star: 6,
+    full_court_press: 5, crash_every_board: 4, play_through_contact: 6,
     ato_masterpiece: 8,
     fresh_legs: 6,
     ice_the_hot_hand: 7,
@@ -1885,9 +1889,30 @@ export function aiBuildCardOpts(game, teamKey, handCardId) {
       starters.forEach((p, i) => { const v = p ? expectedOutput(p, 0) : -Infinity; if (v > bestW.v) bestW = { i, v }; });
       return { playerIdx: bestW.i };
     }
+    case 'signature_set': {
+      // The best roll still to come takes it.
+      const open = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && rolls[i] == null && !blocked[i]);
+      let bestS = { i: open[0]?.i ?? 0, v: -Infinity };
+      for (const { p, i } of open) { const v = expectedOutput(p, 0); if (v > bestS.v) bestS = { i, v }; }
+      return { playerIdx: bestS.i };
+    }
+    case 'play_through_contact': {
+      // The biggest Power edge.
+      const mu = game.offMatchups?.[teamKey] || [];
+      let bestC = { i: 0, e: -Infinity };
+      starters.forEach((p, i) => {
+        const dp = p && oppT.starters?.[mu[i] ?? i];
+        const e = dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).powerAdv : -Infinity;
+        if (e > bestC.e) bestC = { i, e };
+      });
+      return { playerIdx: bestC.i };
+    }
     case 'let_it_fly': case 'pace_and_space': case 'bruise_brothers':
     case 'conditioning': case 'shut_the_door': case 'stay_hot': case 'ice_bath':
     case 'splash': case 'on_fire':
+    case 'get_stops': case 'talk_on_defense': case 'ball_movement': case 'wear_them_down':
+    case 'film_session': case 'leave_it_all': case 'two_a_days':
+    case 'up_tempo': case 'ride_your_star': case 'full_court_press': case 'crash_every_board':
     case 'desperation_press':
     case 'chemistry':
     case 'second_closer': {

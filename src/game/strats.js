@@ -325,10 +325,46 @@ export const STRATS = [
     desc:'Stays in play this game: your 3PT Shot Checks get +1 for every two threes your team has made this game (up to +3).' },
   { id:'on_fire',             name:'On Fire',            phase:'matchup',  side:'off', copies:1, locked:false, color:'#EA580C', rarity:'uncommon', climbOnly:true,
     desc:'Stays in play this game: a player of yours who makes three shot checks in a row is On Fire — their shot checks are +3 until they miss.' },
+  // ── THE CLIMB, WAVE TWO (2026-10-20, the user: "I love 'em, go for all") ──
+  // POWERS from the "+" draft (docs/plans/2026-10-20-the-climb-plus-every-card.md):
+  // played once, they pay on a trigger for the rest of the game. And the GRIND
+  // cards (docs/plans/2026-10-20-the-climb-grind-cards.md): minutes on the
+  // tracker are the price, added at the end of the section (`extraMinutes`,
+  // endSection) so the cost never hurts the roll the card is helping.
+  { id:'get_stops',          name:'Get Stops',        phase:'matchup', side:'def', copies:1, locked:false, color:'#14532D', rarity:'uncommon', climbOnly:true,
+    desc:"Stays in play this game: each time you play a defense card, gain 1 Rebound." },
+  { id:'talk_on_defense',    name:'Talk on Defense',  phase:'matchup', side:'def', copies:1, locked:false, color:'#3F6212', rarity:'uncommon', climbOnly:true,
+    desc:"Stays in play this game: each time you play a switching card (Switch the Screen, Veer Switch, Switch Everything, Go Under, Fight Over), your defenders get +1 Speed this section." },
+  { id:'ball_movement',      name:'Ball Movement',    phase:'matchup', side:'off', copies:1, locked:false, color:'#0284C7', rarity:'uncommon', climbOnly:true,
+    desc:"Stays in play this game: each time you hit a 3PT Shot Check, gain 1 Assist." },
+  { id:'wear_them_down',     name:'Wear Them Down',   phase:'matchup', side:'off', copies:1, locked:false, color:'#78350F', rarity:'uncommon', climbOnly:true,
+    desc:"Stays in play this game: each time you hit a Paint Shot Check, the defender on that player has −1 Power for the rest of the game (up to −3 each)." },
+  { id:'film_session',       name:'Film Session',     phase:'matchup', side:'off', copies:1, locked:false, color:'#4338CA', rarity:'uncommon', climbOnly:true,
+    desc:"Stays in play this game: at the start of each section, draw 1 card." },
+  { id:'signature_set',      name:'Signature Set',    phase:'pre_roll', side:'off', copies:1, locked:false, color:'#BE185D', rarity:'uncommon', climbOnly:true,
+    desc:"A player of yours who has not rolled gets +2 to their scoring roll this section. After each game you play it in, it gives 1 more for the rest of the run (up to +6)." },
+  { id:'leave_it_all',       name:'Leave It All Out There', phase:'matchup', side:'off', copies:1, locked:false, color:'#B91C1C', rarity:'uncommon', climbOnly:true,
+    desc:"Every player of yours gets +3 to their scoring roll this section. After this game it leaves your deck." },
+  { id:'up_tempo',           name:'Up-Tempo',         phase:'scoring', side:'off', copies:1, locked:false, color:'#0EA5E9', rarity:'uncommon', climbOnly:true,
+    desc:"Draw 2 cards. At the end of this section, each of your starters adds 1 minute." },
+  { id:'ride_your_star',     name:'Ride Your Star',   phase:'pre_roll', side:'off', copies:1, locked:false, color:'#CA8A04', rarity:'uncommon', climbOnly:true,
+    desc:"Your highest-salary starter, still to roll, gets +4 to their scoring roll this section. At the end of the section they add 3 minutes." },
+  { id:'full_court_press',   name:'Full-Court Press', phase:'matchup', side:'def', copies:1, locked:false, color:'#15803D', rarity:'uncommon', climbOnly:true,
+    desc:"Your five get +3 Speed on defense this section. At the end of it, each adds 2 minutes." },
+  { id:'crash_every_board',  name:'Crash Every Board', phase:'scoring', side:'off', copies:1, locked:false, color:'#A16207', rarity:'uncommon', climbOnly:true,
+    desc:"Gain 3 Rebounds. At the end of this section, your two highest-Power starters each add 2 minutes." },
+  { id:'play_through_contact', name:'Play Through Contact', phase:'scoring', side:'off', copies:1, locked:false, color:'#9A3412', rarity:'uncommon', climbOnly:true,
+    desc:"A player with a Power advantage takes a Paint Shot Check at +3. Hit: a hot marker. At the end of this section they add 3 minutes." },
+  { id:'two_a_days',         name:'Two-a-Days',       phase:'matchup', side:'off', copies:1, locked:false, color:'#6D28D9', rarity:'uncommon', climbOnly:true,
+    desc:"After this game, practise one card in your deck into its \"+\" (from the map), and your players carry 4 more minutes into the next game. Two-a-Days then leaves your deck." },
 ];
 
 /** The Climb-only cards that last a game (g.buffs): one rule in canPlay, one in execCard. */
-export const CLIMB_GAME_CARDS = Object.freeze(['let_it_fly', 'pace_and_space', 'bruise_brothers', 'weight_room', 'conditioning', 'shut_the_door', 'stay_hot', 'ice_bath', 'splash', 'on_fire']);
+export const CLIMB_GAME_CARDS = Object.freeze(['let_it_fly', 'pace_and_space', 'bruise_brothers', 'weight_room', 'conditioning', 'shut_the_door', 'stay_hot', 'ice_bath', 'splash', 'on_fire',
+  'get_stops', 'talk_on_defense', 'ball_movement', 'wear_them_down', 'film_session', 'leave_it_all', 'two_a_days']);
+
+/** The switching cards Talk on Defense pays on: the defence's own switches and screen calls. */
+export const TALK_CARDS = Object.freeze(['switch_the_screen', 'veer_switch', 'switch_everything', 'go_under', 'fight_over']);
 
 /**
  * A Climb game card's number from its g.buffs flag (execCard stores it since
@@ -491,6 +527,20 @@ export const PLUS = {
   splash: { desc: "Stays in play this game: your 3PT Shot Checks get +1 for every three your team has made this game (up to +3)." },
   stay_hot: { desc: "Stays in play this game: your players carry the hot markers they finish it with into the next game (up to 3 each)." },
   weight_room: { desc: "Choose a player: +5 Power for the rest of this game." },
+  // The Climb's wave two (2026-10-20), each with its "+" as approved.
+  get_stops: { desc: "Stays in play this game: each time you play a defense card, gain 2 Rebounds." },
+  talk_on_defense: { desc: "Stays in play this game: each time you play a switching card (Switch the Screen, Veer Switch, Switch Everything, Go Under, Fight Over), your defenders get +2 Speed this section." },
+  ball_movement: { desc: "Innate: starts the game in your hand. Stays in play this game: each time you hit a 3PT Shot Check, gain 1 Assist.", innate: true },
+  wear_them_down: { desc: "Stays in play this game: each time you hit a Paint Shot Check, the defender on that player has −1 Power for the rest of the game (up to −5 each)." },
+  film_session: { desc: "Innate: starts the game in your hand. Stays in play this game: at the start of each section, draw 1 card.", innate: true },
+  signature_set: { desc: "A player of yours who has not rolled gets +2 to their scoring roll this section. After each game you play it in, it gives 2 more for the rest of the run (up to +6)." },
+  leave_it_all: { desc: "Every player of yours gets +4 to their scoring roll this section. After this game it leaves your deck." },
+  up_tempo: { desc: "Draw 3 cards. At the end of this section, each of your starters adds 1 minute." },
+  ride_your_star: { desc: "Your highest-salary starter, still to roll, gets +4 to their scoring roll this section. At the end of the section they add 2 minutes." },
+  full_court_press: { desc: "Your five get +4 Speed on defense this section. At the end of it, each adds 2 minutes." },
+  crash_every_board: { desc: "Gain 4 Rebounds. At the end of this section, your two highest-Power starters each add 2 minutes." },
+  play_through_contact: { desc: "A player with a Power advantage takes a Paint Shot Check at +5. Hit: a hot marker. At the end of this section they add 3 minutes." },
+  two_a_days: { desc: "After this game, practise one card in your deck into its \"+\" (from the map), and your players carry 2 more minutes into the next game. Two-a-Days+ then leaves your deck." },
 };
 
 const PLUS_STRATS = new Map();

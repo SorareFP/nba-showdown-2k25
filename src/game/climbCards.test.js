@@ -38,13 +38,13 @@ const play = (g, key, id, opts = {}) => {
 };
 
 describe('the game-long Climb cards', () => {
-  it('are ten Climb-only cards, each leaning to its playbook or to none', () => {
-    expect(CLIMB_GAME_CARDS).toHaveLength(10);
+  it('are seventeen Climb-only cards, each leaning to its playbook or to none', () => {
+    expect(CLIMB_GAME_CARDS).toHaveLength(17);
     for (const id of CLIMB_GAME_CARDS) expect(STRAT_MAP[id], id).toMatchObject({ climbOnly: true });
-    expect(['let_it_fly', 'pace_and_space', 'splash'].map(leanOf)).toEqual(['speed', 'speed', 'speed']);
-    expect(['bruise_brothers', 'weight_room'].map(leanOf)).toEqual(['paint', 'paint']);
-    expect(['conditioning', 'shut_the_door'].map(leanOf)).toEqual(['defense', 'defense']);
-    expect(['stay_hot', 'ice_bath', 'on_fire'].map(leanOf)).toEqual([null, null, null]);
+    expect(['let_it_fly', 'pace_and_space', 'splash', 'ball_movement', 'up_tempo'].map(leanOf)).toEqual(['speed', 'speed', 'speed', 'speed', 'speed']);
+    expect(['bruise_brothers', 'weight_room', 'wear_them_down', 'crash_every_board', 'play_through_contact'].map(leanOf)).toEqual(['paint', 'paint', 'paint', 'paint', 'paint']);
+    expect(['conditioning', 'shut_the_door', 'get_stops', 'talk_on_defense', 'full_court_press'].map(leanOf)).toEqual(['defense', 'defense', 'defense', 'defense', 'defense']);
+    expect(['stay_hot', 'ice_bath', 'on_fire', 'film_session', 'signature_set', 'leave_it_all', 'ride_your_star', 'two_a_days'].map(leanOf)).toEqual([null, null, null, null, null, null, null, null]);
   });
 
   it('are set up in the matchup, on your turn, once each a game', () => {

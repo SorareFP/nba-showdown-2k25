@@ -100,6 +100,11 @@ export const CLIMB = {
   // are: a miss raises the next chance by the step, a drop lowers it.
   drops: { game: { player: 0.5, perk: 0.1 }, rivalry: { player: 0.75, perk: 0.7 } },   // was 0.4/0.05 and 0.75/0.5
   dropStep: { player: 0.1, perk: 0.05 },
+  // A RIVALRY ALWAYS OFFERS A PLAYER (2026-10-20, the user, of a Rivalry won
+  // with no player: "no card reward for a rivalry game is insane ... It's
+  // impossible to win without it"). The riskier stop pays the run's real
+  // currency every time; the smoothing still runs for Games.
+  surePlayer: ['rivalry'],
   maxRoster: 10,
   // IN SYSTEM (2026-10-20, systemFit.js): the run's playbook pays the players who fit it.
   system: true,
@@ -209,6 +214,9 @@ export function newRun({ id, seed, rung, rosterKeys, now = Date.now(), mapVersio
     gameWins: 0,
     extraPicks: 0,
     freeRest: 0,
+    // Two-a-Days' practices waiting on the map, and Signature Set's growth (2026-10-20).
+    freePractice: 0,
+    signature: 0,
     perks: [],
     dropOdds: { player: 0, perk: 0 },
     camp: { fits: fitsOf(cards), boons: shuffled(BOONS, rng).slice(0, 3) },
@@ -365,6 +373,7 @@ export function presetFor(run) {
       placementFirst: g.home ? 'B' : 'A',
       ...(run.carryHot ? { hot: { A: { ...run.carryHot } } } : {}),
       ...(run.conditioned ? { buffs: { A: { conditioning_carry: true } } } : {}),
+      ...(run.signature ? { signatureBonus: { A: Math.min(SIGNATURE_MAX, 2 + run.signature) } } : {}),
       ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
     },
     climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung },
@@ -445,7 +454,10 @@ function playerOffer(run, rng) {
  * run. A win clears the stop and the floor: the cap rises, every tracker
  * comes down by the recovery, and the offers are dealt.
  */
-export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, carryHot = null, iceBath = null, conditioned = false }) {
+/** Signature Set's ceiling: +2 grown to +6 (2026-10-20). */
+export const SIGNATURE_MAX = 6;
+
+export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, carryHot = null, iceBath = null, conditioned = false, leaves = [], twoADays = 0, signatureStep = 0 }) {
   if (run.status !== 'game' || run.game?.stopId !== stopId) return run;
   if (!won) return { ...run, status: 'lost', lostAt: stopId, game: null };
   const stop = stopById(run.map, stopId);
@@ -462,12 +474,23 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, ca
   // Stay Hot's markers and Conditioning+ ride into the next game only
   // (2026-10-19, the "+" cards 2026-10-20).
   const iced = iceBath && (run.deck?.[iceBath] ?? 0) > 0;
+  // The one-shots of wave two (Leave It All Out There, Two-a-Days) leave the
+  // deck like Ice Bath; Two-a-Days' extra session lands after any Ice Bath, as
+  // minutes on every tracker and a practice to take from the map.
+  let deck = iced && !isPlus(iceBath) ? takeCard(run.deck, iceBath) : run.deck;
+  for (const id of leaves ?? []) if ((deck?.[id] ?? 0) > 0) deck = takeCard(deck, id);
+  const rested = iced ? {} : fatigue;
+  const tired = twoADays > 0
+    ? { ...rested, ...Object.fromEntries(rosterCards(run).cards.map(c => [c.id, (rested[c.id] ?? 0) + twoADays])) }
+    : rested;
   const next = {
     ...run, at: stopId, cleared, cap: run.cap + CLIMB.capPerFloor, gameWins, game: null,
-    fatigue: iced ? {} : fatigue,
-    deck: iced && !isPlus(iceBath) ? takeCard(run.deck, iceBath) : run.deck,
+    fatigue: tired,
+    deck,
     carryHot: carryHot && Object.keys(carryHot).length ? carryHot : null,
     conditioned: Boolean(conditioned),
+    freePractice: (run.freePractice ?? 0) + (twoADays > 0 ? 1 : 0),
+    signature: Math.min(SIGNATURE_MAX - 2, (run.signature ?? 0) + (signatureStep || 0)),
   };
   const rng = climbRng(run.seed, 'offers', stopId);
   // The player offer is always drawn, so the cards' draw after it is the same
@@ -519,13 +542,17 @@ export function rollDrops(run, stop, stopId, playerPool, perkPool) {
   const base = CLIMB.drops[stop.kind] ?? { player: 0, perk: 0 };
   const roll = climbRng(run.seed, 'drops', stopId);
   const hit = what => roll() < Math.min(1, Math.max(0, base[what] + odds[what]));
-  const gotPlayer = hit('player') && playerPool.length > 0;
+  // The player die is still thrown on a sure stop, so the perk's die after it is the same.
+  const playerDie = hit('player');
+  const sure = CLIMB.surePlayer.includes(stop.kind);
+  const gotPlayer = (sure || playerDie) && playerPool.length > 0;
   const gotPerk = hit('perk') && perkPool.length > 0;
   const nudge = (what, got) => Math.min(0.6, Math.max(-0.4, odds[what] + (got ? -1 : 1) * CLIMB.dropStep[what]));
   return {
     players: gotPlayer ? playerPool : [],
     perks: gotPerk ? perkPool : [],
-    dropOdds: { player: nudge('player', gotPlayer), perk: nudge('perk', gotPerk) },
+    // A sure drop leaves the smoothing where it was: it is not luck to even out.
+    dropOdds: { player: sure ? odds.player : nudge('player', gotPlayer), perk: nudge('perk', gotPerk) },
   };
 }
 
@@ -607,6 +634,12 @@ export function takeFreeRest(run, choice) {
   return { ...applyRest(run, choice), freeRest: run.freeRest - 1 };
 }
 
+/** Two-a-Days' practice, taken from the map: one copy to its "+" (2026-10-20). */
+export function takeFreePractice(run, cardId) {
+  if (run.status !== 'map' || !(run.freePractice > 0)) fail('No Two-a-Days practice to take');
+  return { ...applyRest(run, { choice: 'practice', cardId }), freePractice: run.freePractice - 1 };
+}
+
 /** Bank the pot and end the run — between stops only. */
 export function retire(run) {
   if (run.status !== 'map') fail('Retire between stops');
@@ -645,6 +678,10 @@ export function resultFromGame(game, stopId) {
     ...(buffs.stay_hot ? { carryHot: Object.fromEntries((game?.teamA?.stats ?? []).filter(s => (s.hot ?? 0) > 0).map(s => [s.id, Math.min(buffNumber(buffs.stay_hot, 2), s.hot)])) } : {}),
     // Conditioning+: the next game's fatigue costs nothing too.
     ...(buffNumber(buffs.conditioning, 0) >= 2 ? { conditioned: true } : {}),
+    // Wave two (2026-10-20): the one-shots played, Two-a-Days' minutes, Signature Set's growth.
+    ...(['leave_it_all', 'two_a_days'].some(id => typeof buffs[id] === 'string') ? { leaves: ['leave_it_all', 'two_a_days'].map(id => buffs[id]).filter(v => typeof v === 'string') } : {}),
+    ...(typeof buffs.two_a_days === 'string' ? { twoADays: isPlus(buffs.two_a_days) ? 2 : 4 } : {}),
+    ...(buffNumber(buffs.signature_set, 0) > 0 ? { signatureStep: buffNumber(buffs.signature_set, 0) } : {}),
     // Ice Bath: the copy played, which leaves the deck once the fatigue goes.
     ...(buffs.ice_bath ? { iceBath: typeof buffs.ice_bath === 'string' ? buffs.ice_bath : 'ice_bath' } : {}),
   };

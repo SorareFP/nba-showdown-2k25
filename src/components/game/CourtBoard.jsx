@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, placementRolls, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
-import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer, screenLockSlots, HACK_A } from '../../game/canPlay.js';
+import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, contactTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer, screenLockSlots, HACK_A } from '../../game/canPlay.js';
 import { checkNeedFor } from '../../game/checkTerms.js';
 import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
@@ -340,6 +340,8 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
     'back_to_basket', 'putback_dunk', 'chip_on_shoulder', 'defensive_stopper',
     'second_wind', 'crowd_favorite', 'delayed_slip', 'energy_injection',
     'catch_and_shoot', 'green_light',
+    // The Climb's wave two (2026-10-20).
+    'signature_set', 'play_through_contact',
     // Roll-replacing / roll-modifying cards — must be pre-roll only.
     'cross_court_dime', 'you_stand_over_there', 'elevator_doors',
     'pin_down_screen', 'from_way_downtown', 'power_move', 'first_step',
@@ -472,7 +474,17 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
       }
       case 'iso_heavy': case 'unsung_hero': {
         eligible = preRollTargets(game, teamKey, cardId === 'unsung_hero' ? (p => (p.salary || 0) <= 400) : undefined).map(({ p, idx }) => ({ p, origIdx: idx }));
-        label = cardId === 'iso_heavy' ? 'Who takes over? (+3, teammates −2)' : 'Select a $400-or-less player (two dice, keep higher)';
+        label = cardId === 'iso_heavy' ? `Who takes over? (+${plus ? 5 : 3}, teammates −2)` : `Select a $400-or-less player (${plus ? 'three dice, keep highest' : 'two dice, keep higher'})`;
+        break;
+      }
+      case 'signature_set': {
+        eligible = preRollTargets(game, teamKey).map(({ p, idx }) => ({ p, origIdx: idx }));
+        label = `Signature Set — who runs it? (+${game.signatureBonus?.[teamKey] ?? 2} to their roll)`;
+        break;
+      }
+      case 'play_through_contact': {
+        eligible = contactTargets(game, teamKey).map(({ p, idx }) => ({ p, origIdx: idx }));
+        label = `Who plays through contact? (a Paint check at +${plus ? 5 : 3}, 3 more minutes after the section)`;
         break;
       }
       case 'kick_out_three': {
@@ -1072,8 +1084,9 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
 
   // ── Weight Room (Climb-only): who gets +3 Power this game ─────────────────
   if (cardId === 'weight_room') {
-    const idx = await pickFiltered(filterStarters(myT.starters, () => true), '🏋️ Weight Room — who gets +3 Power for the rest of this game?', teamKey, undefined, 'playerIdx',
-      p => `Power ${p.power} → ${p.power + 3}`);
+    const wr = plus ? 5 : 3;
+    const idx = await pickFiltered(filterStarters(myT.starters, () => true), `🏋️ Weight Room — who gets +${wr} Power for the rest of this game?`, teamKey, undefined, 'playerIdx',
+      p => `Power ${p.power} → ${p.power + wr}`);
     if (idx === null) return null;
     opts.playerIdx = idx;
   }
@@ -2070,6 +2083,10 @@ function LiveEffects({ game, teamKey, idx }) {
   if (te['astOnScore' + idx]) push('ast',  styles.liveGood, '+AST on score', 'A score adds an assist');
   if (te['paintAst' + idx])   push('past', styles.liveGood, '+AST inside', 'A paint score adds an assist (Short-Roll Playmaker)');
   if (te.paintAstBy === idx)  push('pastAll', styles.liveGood, '+AST inside (team)', 'Any of your paint scores adds an assist for this player (Short-Roll Playmaker+)');
+  // A Grind card's price, still to come (the Climb, 2026-10-20).
+  const lp = getTeam(game, teamKey)?.starters?.[idx];
+  const lps = lp ? getPS(game, teamKey, lp.id) : null;
+  if (lps?.extraMinutes) push('xmin', styles.liveBad, `+${lps.extraMinutes} min after`, 'Minutes a card adds to the tracker at the end of this section');
   if (te['crowd_' + idx])     push('crowd', styles.liveGood, '2+ pts → 🔥', 'Crowd Favorite: two points this section, rolls or shot checks, earns a hot marker');
   if (de && (de.speedBoost || de.powerBoost)) {
     push('def', styles.liveDef, 'D +' + (de.speedBoost || 0) + '/+' + (de.powerBoost || 0),

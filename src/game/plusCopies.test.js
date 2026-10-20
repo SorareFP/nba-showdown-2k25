@@ -71,7 +71,7 @@ describe('the "+" helpers', () => {
   // plus-every-card.md): every card a run can offer. No legendary, no promo.
   it('has "+" text for every card a run can offer, each one different from its card', () => {
     const want = new Set(STRATS.filter(s => !s.promo && s.rarity !== 'legendary').map(s => s.id));
-    expect(want.size).toBe(109);
+    expect(want.size).toBe(122);
     for (const id of [...KIT_CARD_IDS, 'help_defender']) expect(want.has(id), id).toBe(true);
     expect(new Set(Object.keys(PLUS))).toEqual(want);
     for (const id of want) {

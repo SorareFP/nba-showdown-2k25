@@ -5,9 +5,9 @@
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass, noteCheckMiss, climbCheckBonus } from './engine.js';
 import { checkTerms } from './checkTerms.js';
-import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots, HACK_A } from './canPlay.js';
+import { preRollTargets, starSlot, contactTargets, burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots, HACK_A } from './canPlay.js';
 import { lookupChart } from './cards.js';
-import { getStrat, baseId, isPlus, PLUS, SCREEN_CARDS, CLIMB_GAME_CARDS } from './strats.js';
+import { getStrat, baseId, isPlus, PLUS, SCREEN_CARDS, CLIMB_GAME_CARDS, TALK_CARDS, buffNumber } from './strats.js';
 
 /**
  * POINTS A CARD SCORES GO ON THE SCOREBOARD AND ON THE PLAYER'S LINE, together.
@@ -237,7 +237,47 @@ export function execCard(game, teamKey, cardId, opts = {}) {
   const res = resolveCard(game, teamKey, baseId(cardId), { ...opts, plus: isPlus(cardId), handId: cardId });
   if (!res.ok) return res;
   if (SCREEN_CARDS.includes(baseId(cardId))) bumpChemistry(res.game, teamKey);
+  climbPowers(res.game, teamKey, baseId(cardId));
   return { ...res, game: handOverPriority(game, res.game, teamKey) };
+}
+
+/**
+ * THE CLIMB'S POWERS THAT PAY ON A PLAY (2026-10-20, wave two): Get Stops (a
+ * defense card is a Rebound, two for the "+") and Talk on Defense (a
+ * switching card is +1 Speed on defense for the five this section, +2). The
+ * flags are g.buffs numbers; the card that set one does not pay itself.
+ */
+function climbPowers(g, teamKey, id) {
+  const buffs = g.buffs?.[teamKey];
+  if (!buffs) return;
+  const t = getTeam(g, teamKey);
+  if (buffs.get_stops && id !== 'get_stops' && getStrat(id)?.side === 'def') {
+    const n = buffNumber(buffs.get_stops, 1);
+    gainRebounds(t, n);
+    // The board goes to the player on the floor who has been grabbing them.
+    const boards = pid => getPS(g, teamKey, pid)?.reb || 0;
+    const grabber = (t.starters || []).filter(Boolean).reduce((best, p) => (best == null || boards(p.id) > boards(best.id) ? p : best), null);
+    creditLine(g, teamKey, grabber?.id, 'reb', n);
+    if (g.analytics?.[teamKey]) g.analytics[teamKey].reboundsGenerated += n;
+    addLog(g, teamKey, `Get Stops: a stop is a board — +${n} REB${grabber ? ` (${grabber.name})` : ''}`);
+  }
+  if (buffs.talk_on_defense && TALK_CARDS.includes(id)) {
+    const n = buffNumber(buffs.talk_on_defense, 1);
+    if (!g.tempDefEff) g.tempDefEff = {};
+    if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
+    (t.starters || []).forEach((p, i) => {
+      if (!p) return;
+      const cur = g.tempDefEff[teamKey][i] || { speedBoost: 0, powerBoost: 0 };
+      g.tempDefEff[teamKey][i] = { ...cur, speedBoost: (cur.speedBoost || 0) + n };
+    });
+    addLog(g, teamKey, `Talk on Defense: the switch is called out — your defenders +${n} Speed this section`);
+  }
+}
+
+/** A Grind card's price (2026-10-20): minutes added at the end of the section (endSection, `extraMinutes`). */
+function addExtraMinutes(g, teamKey, p, n) {
+  const s = p?.id ? getPS(g, teamKey, p.id) : null;
+  if (s && n > 0) s.extraMinutes = (s.extraMinutes || 0) + n;
 }
 
 /**
@@ -415,7 +455,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     // copies of the players, so every reader sees the new number.
     case 'let_it_fly': case 'pace_and_space': case 'bruise_brothers': case 'weight_room':
     case 'conditioning': case 'shut_the_door': case 'stay_hot': case 'ice_bath':
-    case 'splash': case 'on_fire': {
+    case 'splash': case 'on_fire':
+    case 'get_stops': case 'talk_on_defense': case 'ball_movement': case 'wear_them_down':
+    case 'film_session': case 'leave_it_all': case 'two_a_days': {
       if (g.buffs?.[teamKey]?.[cardId]) return fail('Already in play this game');
       const bump = (match, stat, n) => {
         const seen = new Set();
@@ -434,14 +476,93 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         line = `Weight Room${plus ? '+' : ''}: ${who.name} +${wr} Power for the rest of this game.`;
       }
       if (cardId === 'pace_and_space') bump(() => true, 'speed', plus ? 2 : 1);
+      // LEAVE IT ALL OUT THERE (2026-10-20): the whole five, this section;
+      // the run takes the copy out of the deck after the game (resultFromGame).
+      if (cardId === 'leave_it_all') {
+        if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+        const li = plus ? 4 : 3;
+        myT.starters.forEach((p, i) => { if (p) g.tempEff[teamKey]['r' + i] = (g.tempEff[teamKey]['r' + i] || 0) + li; });
+        line = `Leave It All Out There${plus ? '+' : ''}: every player +${li} to their scoring roll this section. It leaves your deck after this game.`;
+      }
       // THE CARD'S NUMBER is the flag (the "+" cards, 2026-10-20), read by
       // buffNumber: a check bonus, Splash's threes per +1, On Fire's streak,
       // Stay Hot's cap, Conditioning's games. A game saved before stored `true`.
-      const buffVal = cardId === 'ice_bath' ? (opts.handId ?? 'ice_bath')
+      // The run-level ones keep the copy played, so the run knows which leaves.
+      const buffVal = ['ice_bath', 'leave_it_all', 'two_a_days'].includes(cardId) ? (opts.handId ?? cardId)
         : ({ let_it_fly: plus ? 2 : 1, bruise_brothers: plus ? 2 : 1, shut_the_door: plus ? 2 : 1,
-             splash: plus ? 1 : 2, on_fire: plus ? 2 : 3, stay_hot: plus ? 3 : 2, conditioning: plus ? 2 : 1 })[cardId] ?? true;
+             splash: plus ? 1 : 2, on_fire: plus ? 2 : 3, stay_hot: plus ? 3 : 2, conditioning: plus ? 2 : 1,
+             get_stops: plus ? 2 : 1, talk_on_defense: plus ? 2 : 1, wear_them_down: plus ? 5 : 3 })[cardId] ?? true;
       g.buffs = { ...(g.buffs ?? {}), [teamKey]: { ...(g.buffs?.[teamKey] ?? {}), [cardId]: buffVal } };
       addLog(g, teamKey, line);
+      break;
+    }
+
+    // ── THE CLIMB'S WAVE TWO, the plays (2026-10-20) ─────────────────────
+    case 'signature_set': {
+      // CHOSEN: `idx` would silently be slot 0 without this.
+      if (opts.playerIdx == null || !player) return fail('Choose one of your players');
+      if (!preRollTargets(g, teamKey).some(t => t.idx === idx)) return fail(`${player.name} has already rolled this section`);
+      // The run grows it: +2, and 1 more (2 for the "+") after each game it is
+      // played in, up to +6 (run.js presetFor -> newGame signatureBonus).
+      const sig = g.signatureBonus?.[teamKey] ?? 2;
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + sig;
+      const step = plus ? 2 : 1;
+      g.buffs = { ...(g.buffs ?? {}), [teamKey]: { ...(g.buffs?.[teamKey] ?? {}), signature_set: Math.max(buffNumber(g.buffs?.[teamKey]?.signature_set, 0), step) } };
+      addLog(g, teamKey, `Signature Set${plus ? '+' : ''}: ${player.name} runs it — +${sig} to their scoring roll this section`);
+      break;
+    }
+    case 'up_tempo': {
+      const utN = plus ? 3 : 2;
+      const drew = cardDraw(g, teamKey, utN);
+      myT.starters.forEach(p => addExtraMinutes(g, teamKey, p, 1));
+      addLog(g, teamKey, `Up-Tempo${plus ? '+' : ''}: ${drew ? `${drew} card${drew > 1 ? 's' : ''} drawn` : 'the deck is empty'} — every starter adds 1 minute after the section`);
+      break;
+    }
+    case 'ride_your_star': {
+      const star = starSlot(myT.starters);
+      const sp = myT.starters[star];
+      if (!sp) return fail('Nobody on the floor');
+      if (!preRollTargets(g, teamKey).some(t => t.idx === star)) return fail(`${sp.name} has already rolled this section`);
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['r' + star] = (g.tempEff[teamKey]['r' + star] || 0) + 4;
+      const rsMin = plus ? 2 : 3;
+      addExtraMinutes(g, teamKey, sp, rsMin);
+      addLog(g, teamKey, `Ride Your Star${plus ? '+' : ''}: ${sp.name} stays on — +4 to their scoring roll, ${rsMin} more minutes after the section`);
+      break;
+    }
+    case 'full_court_press': {
+      const fcp = plus ? 4 : 3;
+      if (!g.tempDefEff) g.tempDefEff = {};
+      if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
+      myT.starters.forEach((p, i) => {
+        if (!p) return;
+        const cur = g.tempDefEff[teamKey][i] || { speedBoost: 0, powerBoost: 0 };
+        g.tempDefEff[teamKey][i] = { ...cur, speedBoost: (cur.speedBoost || 0) + fcp };
+        addExtraMinutes(g, teamKey, p, 2);
+      });
+      addLog(g, teamKey, `Full-Court Press${plus ? '+' : ''}: your five +${fcp} Speed on defense this section — 2 more minutes each after it`);
+      break;
+    }
+    case 'crash_every_board': {
+      const ceb = plus ? 4 : 3;
+      gainRebounds(myT, ceb);
+      // The two biggest go to the glass: the boards are theirs, and so are the minutes.
+      const bigs = myT.starters.map((p, i) => ({ p, i })).filter(({ p }) => p)
+        .sort((a, b) => (b.p.power || 0) - (a.p.power || 0) || a.i - b.i).slice(0, 2);
+      const share = [Math.ceil(ceb / 2), Math.floor(ceb / 2)];
+      bigs.forEach(({ p }, k) => { creditLine(g, teamKey, p.id, 'reb', bigs.length === 1 ? ceb : share[k]); addExtraMinutes(g, teamKey, p, 2); });
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].reboundsGenerated += ceb;
+      addLog(g, teamKey, `Crash Every Board${plus ? '+' : ''}: +${ceb} REB — ${bigs.map(b => b.p.name).join(' and ')} add 2 minutes each after the section`);
+      break;
+    }
+    case 'play_through_contact': {
+      if (opts.playerIdx == null || !player) return fail('Choose one of your players');
+      if (!contactTargets(g, teamKey).some(t => t.idx === idx)) return fail(`${player.name} has no Power advantage over their defender`);
+      const ptc = plus ? 5 : 3;
+      addExtraMinutes(g, teamKey, player, 3);
+      addLog(g, teamKey, `Play Through Contact${plus ? '+' : ''}: ${player.name} takes the hit — a Paint check at +${ptc}, 3 more minutes after the section`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: 'paint', bonus: ptc + _assistShotBonus, cardLabel: `Play Through Contact${plus ? '+' : ''}`, onHitHot: true });
       break;
     }
 

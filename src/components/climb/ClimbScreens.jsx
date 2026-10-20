@@ -514,7 +514,7 @@ function reachableFrom(map, fromId) {
  */
 // `backLabel`: the read-only map is also the Climb bar's (ClimbHud, 2026-10-20),
 // from any screen; during a run game the stop being played is "here".
-export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onAbandon = null, busy = false, onBack = null, backLabel = '← Back to the Rest Day' }) {
+export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onFreePractice = () => {}, onAbandon = null, busy = false, onBack = null, backLabel = '← Back to the Rest Day' }) {
   const peek = Boolean(onBack);
   const here = peek && run.status === 'rest' ? run.restAt : peek && run.status === 'game' ? (run.game?.stopId ?? run.at) : run.at;
   const open = new Set(peek ? [] : openStops(run).map(s => s.id));
@@ -613,6 +613,7 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
         {!peek && (
           <div className={styles.sideActions}>
             {run.freeRest > 0 && <button type="button" onClick={onFreeRest} disabled={busy}>Take the free Rest Day</button>}
+            {run.freePractice > 0 && <button type="button" data-free-practice="true" onClick={onFreePractice} disabled={busy}>Two-a-Days: practise a card{run.freePractice > 1 ? ` (${run.freePractice})` : ''}</button>}
             <button type="button" className={styles.danger} onClick={onRetire} disabled={busy}>Retire and bank the pot</button>
             {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}
           </div>
@@ -708,7 +709,8 @@ export function practiceTiles(run, showPlus) {
 // `onViewMap`: a look at the map (the user, 2026-10-19). From a Rest Day stop
 // it opens the map read-only and comes back here; the free Rest Day was taken
 // from the map, so for it this is simply the way back (nothing is spent yet).
-export function RestDay({ run, onRest, onPractice, onCut = null, busy = false, free = false, onViewMap = null }) {
+// `practiceOnly`: Two-a-Days' practice (2026-10-20) — the Practice buttons alone.
+export function RestDay({ run, onRest, onPractice, onCut = null, busy = false, free = false, onViewMap = null, practiceOnly = false }) {
   const [showPlus, setShowPlus] = useState(false);
   const { cards } = rosterCards(run);
   const tired = cards.filter(c => (run.fatigue?.[c.id] ?? 0) > 0);
@@ -716,21 +718,21 @@ export function RestDay({ run, onRest, onPractice, onCut = null, busy = false, f
   const deckCount = Object.values(run.deck ?? {}).reduce((t, n) => t + n, 0);
   return (
     <div className={styles.screen}>
-      <h2 className={styles.title}>{free ? 'A day off' : 'Rest Day'}</h2>
-      <p className={styles.lede}>One of three: rest the whole team, practise one copy of a card into its "+", or cut one card from your deck for good.</p>
+      <h2 className={styles.title}>{practiceOnly ? 'Two-a-Days' : free ? 'A day off' : 'Rest Day'}</h2>
+      <p className={styles.lede}>{practiceOnly ? 'The extra session: practise one copy of a card into its "+".' : 'One of three: rest the whole team, practise one copy of a card into its "+", or cut one card from your deck for good.'}</p>
       {onViewMap && (
         <div className={styles.actions}>
           <button type="button" data-view-map="true" onClick={onViewMap} disabled={busy}>{free ? '← Back to the map' : '🗺 See the map and what comes next'}</button>
         </div>
       )}
-      <section className={styles.restCard}>
+      {!practiceOnly && <section className={styles.restCard}>
         <h3 className={styles.h3}>Rest</h3>
         <p className={styles.muted}>{tired.length ? `${tired.map(c => `${c.name} (${run.fatigue[c.id]} min)`).join(', ')} come back fresh.` : 'Everyone is fresh already.'}</p>
         <div className={styles.actions}><button type="button" className={styles.primary} onClick={onRest} disabled={busy}>Rest</button></div>
-      </section>
+      </section>}
       <section className={styles.restCard}>
         <div className={styles.practiceHead}>
-          <h3 className={styles.h3}>Practice or cut <span className={styles.muted}>upgrade one copy, or take one out for good (a deck keeps at least {MIN_DECK})</span></h3>
+          <h3 className={styles.h3}>{practiceOnly ? 'Practice' : 'Practice or cut'} <span className={styles.muted}>{practiceOnly ? 'upgrade one copy' : `upgrade one copy, or take one out for good (a deck keeps at least ${MIN_DECK})`}</span></h3>
           <label className={styles.toggle}>
             <input type="checkbox" checked={showPlus} onChange={e => setShowPlus(e.target.checked)} />
             Show practiced versions

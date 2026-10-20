@@ -3,8 +3,8 @@
 **APPROVED AND BUILT 2026-10-20** (the user: "I think you can just push all of
 the + cards and I'll let you know if any need buffed/nerfed/reworked"). Two
 texts were shortened to fit the face: Coach's Challenge+ and Double Team+. The
-seven proposed Climb-only cards below are NOT built: they wait for their own
-approval. Second draft follows (the strategy card approval rule). The user: "Can we now move on to adding + versions of every
+seven proposed Climb-only cards below were approved with the Grind cards
+("I love 'em, go for all") and BUILT the same day. Second draft follows (the strategy card approval rule). The user: "Can we now move on to adding + versions of every
 card in the climb?" Thirty cards already have an approved "+" (the kits and the
 four kit additions, docs/plans/2026-10-18-the-climb-upgrades.md). These are the
 other **79**: every card a run can offer (no promo; the four legendaries are

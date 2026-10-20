@@ -17,7 +17,11 @@ import { STRATS, getStrat } from './strats.js';
 import { getStratRarity, STRAT_BURN_VALUES, RARITY_ORDER } from './rarity.js';
 import { generatePack } from './packEngine.js';
 
-const idsAt = band => STRATS.filter(s => s.rarity === band).map(s => s.id);
+// The bands are the PACK's: a Climb-only card never reaches a pack, the
+// market or a collection, so it is not in the pyramid (2026-10-20, when the
+// Climb's wave two passed the commons in number).
+const PACK_STRATS = STRATS.filter(s => !s.climbOnly);
+const idsAt = band => PACK_STRATS.filter(s => s.rarity === band).map(s => s.id);
 
 describe('the bands themselves', () => {
   it('gives every card a band the rest of the game knows', () => {
@@ -34,8 +38,8 @@ describe('the bands themselves', () => {
     expect(n('uncommon')).toBeGreaterThan(n('rare'));
     expect(n('rare')).toBeGreaterThan(n('legendary'));
     // The shape that was wrong before: a quarter of the set cannot be rare.
-    expect(n('rare') / STRATS.length).toBeLessThan(0.2);
-    expect(n('common') / STRATS.length).toBeGreaterThan(0.4);
+    expect(n('rare') / PACK_STRATS.length).toBeLessThan(0.2);
+    expect(n('common') / PACK_STRATS.length).toBeGreaterThan(0.4);
   });
 
   it('keeps the apex band small and deliberate', () => {

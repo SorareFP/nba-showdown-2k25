@@ -17,7 +17,7 @@ import { climbStart, climbGame, climbBank } from '../../firebase/serverWrites.js
 import { ownedPlayers, capSal } from '../../game/teamRules.js';
 import {
   newRun, chooseCamp, chooseStop, presetFor, recordResult, pickStrat, pickPlayer, pickPerk, skipOffers,
-  restDay, takeFreeRest, retire, rosterCards, recordServerWin, abandon,
+  restDay, takeFreeRest, takeFreePractice, retire, rosterCards, recordServerWin, abandon,
 } from '../../game/modes/run.js';
 import { stopById } from '../../game/modes/climbMap.js';
 import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud } from './ClimbScreens.jsx';
@@ -48,6 +48,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   const [busy, setBusy] = useState(false);
   const gate = useRef(false);
   const [freeRest, setFreeRest] = useState(false);
+  const [freePractice, setFreePractice] = useState(false);
   // A look at the map from a Rest Day (2026-10-19); a new step closes it.
   const [peekMap, setPeekMap] = useState(false);
   useEffect(() => { setPeekMap(false); }, [run?.status, run?.restAt]);
@@ -165,6 +166,17 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
     case 'camp':
       return <TrainingCamp run={run} busy={busy} onChoose={choice => act(() => commit(chooseCamp(run, choice)))} />;
     case 'map':
+      // TWO-A-DAYS' PRACTICE (2026-10-20): taken from the map, practice only.
+      if (freePractice && run.freePractice > 0) {
+        return (
+          <RestDay
+            run={run} free practiceOnly busy={busy}
+            onViewMap={() => setFreePractice(false)}
+            onRest={() => {}}
+            onPractice={cardId => act(async () => { await commit(takeFreePractice(run, cardId)); setFreePractice(false); })}
+          />
+        );
+      }
       if (freeRest) {
         return (
           <RestDay
@@ -179,7 +191,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
       return (
         <>
           {rosterCards(run).blocked && <p className={styles.note}>Fewer than five of your players are still in the game&apos;s pool. Retire to bank the pot.</p>}
-          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} onAbandon={giveUp} />
+          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} onFreePractice={() => setFreePractice(true)} onAbandon={giveUp} />
         </>
       );
     case 'game': {

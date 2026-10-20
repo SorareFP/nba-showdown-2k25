@@ -1036,6 +1036,199 @@ def s_on_fire(d, s):
     text(d, (W - 285, 300), 'ON FIRE!', size=60, fill=RED, anchor='mm')
 
 
+# -- the Climb's wave two (2026-10-20; the user: "I love 'em, go for all") ----
+def stop_sign(d, c, r=80, label='STOP'):
+    pts = [(c[0] + r * math.cos(math.radians(22.5 + 45 * i)), c[1] + r * math.sin(math.radians(22.5 + 45 * i))) for i in range(8)]
+    poly(d, pts, fill=RED, width=6)
+    text(d, c, label, size=int(r * 0.5), fill=WHITE, shadow=None, anchor='mm')
+    line(d, (c[0], c[1] + r), (c[0], c[1] + r + 170), fill=GREY, width=10)
+
+
+def bubble(d, x, y, label, w=230, h=100, tail=(-60, 90)):
+    """A speech bubble centred on (x, y), its tail pointing down-left."""
+    pts = [(x + w / 2 * math.cos(t), y + h / 2 * math.sin(t)) for t in [i * math.pi / 12 for i in range(24)]]
+    poly(d, pts, fill=WHITE, width=5)
+    poly(d, [(x - 30, y + h / 2 - 6), (x + 10, y + h / 2 - 6), (x + tail[0], y + tail[1])], fill=WHITE, width=5)
+    text(d, (x, y), label, size=int(h * 0.42), fill=BLACK, shadow=None, anchor='mm')
+
+
+def tv(d, x, y, w=380, h=250):
+    """A film-room TV on a cart, an X-and-O play on the screen."""
+    poly(d, [(x - w / 2, y - h), (x + w / 2, y - h), (x + w / 2, y), (x - w / 2, y)], fill=GREY, width=7)
+    poly(d, [(x - w / 2 + 22, y - h + 22), (x + w / 2 - 22, y - h + 22), (x + w / 2 - 22, y - 22), (x - w / 2 + 22, y - 22)], fill=(40, 120, 60), width=4)
+    for i, (sx, sy) in enumerate([(-110, -170), (-30, -110), (60, -170), (110, -80)]):
+        if i % 2:
+            circle(d, (x + sx, y + sy), 16, outline=WHITE, width=4)
+        else:
+            line(d, (x + sx - 14, y + sy - 14), (x + sx + 14, y + sy + 14), fill=WHITE, width=4)
+            line(d, (x + sx - 14, y + sy + 14), (x + sx + 14, y + sy - 14), fill=WHITE, width=4)
+    arrow(d, (x - 110, y - 150), (x + 40, y - 90), fill=YELLOW, width=4)
+    line(d, (x - w / 2 + 40, y), (x - w / 2 + 40, y + 120), width=8)
+    line(d, (x + w / 2 - 40, y), (x + w / 2 - 40, y + 120), width=8)
+
+
+def minicard(d, x, y, fill=NAVY, tilt=0):
+    """A strategy card, drawn small."""
+    w, h = 90, 130
+    pts = [(-w / 2, -h / 2), (w / 2, -h / 2), (w / 2, h / 2), (-w / 2, h / 2)]
+    a = math.radians(tilt)
+    pts = [(x + px * math.cos(a) - py * math.sin(a), y + px * math.sin(a) + py * math.cos(a)) for px, py in pts]
+    poly(d, pts, fill=fill, width=5)
+    star(d, (x, y), 22, fill=GOLD)
+
+
+def s_get_stops(d, s):
+    # GET STOPS: the defense says no, and the board is yours.
+    court(d)
+    stop_sign(d, (220, 260), 90)
+    player(d, W / 2 - 60, H * 0.95, BLUE, pose='wide', number=3)
+    player(d, W / 2 + 220, H * 0.95, RED, pose='stand', number=9)
+    ball(d, (W / 2 + 80, H * 0.95 - 330), r=28)
+    arrow(d, (W / 2 + 70, H * 0.95 - 300), (W / 2 - 40, H * 0.95 - 380), fill=GREEN, width=7)
+    text(d, (W - 260, 300), '+1 REB', size=70, fill=GREEN, anchor='mm')
+
+
+def s_talk_on_defense(d, s):
+    # TALK ON DEFENSE: "SWITCH!" -- the call that keeps everyone a step quicker.
+    court(d)
+    player(d, W / 2 - 260, H * 0.95, BLUE, pose='wide', number=4)
+    player(d, W / 2 + 120, H * 0.95, BLUE, pose='wave', number=11)
+    bubble(d, W / 2 - 230, 250, 'SWITCH!', w=280, h=110, tail=(-40, 120))
+    bubble(d, W / 2 + 260, 210, 'GOT IT!', w=250, h=100, tail=(-80, 120))
+    speed_lines(d, W / 2 - 330, H * 0.95 - 120, n=3, length=90)
+    text(d, (W - 170, 420), '+1', size=90, fill=GREEN, anchor='mm')
+
+
+def s_ball_movement(d, s):
+    # BALL MOVEMENT: three passes, one open three.
+    court(d)
+    a, b, c = (W / 2 - 360, H * 0.95), (W / 2 + 40, H * 0.82), (W / 2 + 360, H * 0.95)
+    player(d, a[0], a[1], BLUE, pose='stand', number=1)
+    player(d, b[0], b[1], BLUE, pose='stand', number=2)
+    player(d, c[0], c[1], BLUE, pose='shoot', number=3)
+    arrow(d, (a[0] + 60, a[1] - 190), (b[0] - 60, b[1] - 200), fill=ORANGE, width=6)
+    arrow(d, (b[0] + 60, b[1] - 200), (c[0] - 60, c[1] - 190), fill=ORANGE, width=6)
+    ball(d, (c[0] + 60, c[1] - 360), r=26)
+    text(d, (W / 2 + 40, 170), '+1 AST', size=72, fill=GREEN, anchor='mm')
+
+
+def s_wear_them_down(d, s):
+    # WEAR THEM DOWN: every bucket inside leans on the same tired defender.
+    court(d)
+    player(d, W / 2 - 120, H * 0.95, BLUE, pose='back', number=34, h=250)
+    player(d, W / 2 + 80, H * 0.95, RED, pose='box', number=8, h=200)
+    for k, (dx, dy) in enumerate(((150, -230), (200, -180), (120, -170))):
+        drop(d, (W / 2 + dx, H * 0.95 + dy), r=12)
+    ball(d, (W / 2 - 200, H * 0.95 - 170), r=26)
+    battery(d, W - 250, 230)
+    text(d, (W - 250, 350), '-1 PWR', size=56, fill=RED, anchor='mm')
+
+
+def s_film_session(d, s):
+    # FILM SESSION: the coach's tape, a new card every section.
+    court(d)
+    tv(d, W / 2 + 130, H * 0.62)
+    player(d, W / 2 - 330, H * 0.95, BLUE, pose='sit', number=0)
+    minicard(d, W / 2 - 330, 230, tilt=-12)
+    text(d, (W / 2 - 200, 200), '+1', size=80, fill=GREEN, anchor='mm')
+
+
+def s_signature_set(d, s):
+    # SIGNATURE SET: the play the team runs better every game.
+    court(d)
+    clipboard(d, 230, 380)
+    star(d, (230, 200), 50, fill=GOLD)
+    player(d, W / 2 + 120, H * 0.95, BLUE, pose='shoot', number=30)
+    ball(d, (W / 2 + 190, H * 0.95 - 390), r=28)
+    text(d, (W - 230, 260), '+2', size=70, fill=GREEN, anchor='mm')
+    arrow(d, (W - 230, 320), (W - 230, 430), fill=GREEN, width=6)
+    text(d, (W - 230, 490), '+6', size=80, fill=GREEN, anchor='mm')
+
+
+def s_leave_it_all(d, s):
+    # LEAVE IT ALL OUT THERE: diving on the floor for everything, once.
+    court(d)
+    player(d, W / 2 - 40, H * 0.97, BLUE, pose='dive', number=5)
+    ball(d, (W / 2 + 160, H * 0.97 - 190), r=28)
+    burst(d, (W / 2 + 160, H * 0.97 - 190), 70, fill=YELLOW)
+    ball(d, (W / 2 + 160, H * 0.97 - 190), r=28)
+    for dx in (-150, -90, -20):
+        drop(d, (W / 2 + dx, H * 0.97 - 300), r=13)
+    text(d, (W / 2, 160), 'ALL IN', size=96, fill=RED, anchor='mm')
+    text(d, (W - 220, 360), '+3', size=90, fill=GREEN, anchor='mm')
+
+
+def s_up_tempo(d, s):
+    # UP-TEMPO: push it -- more trips, more plays, more running.
+    court(d)
+    x = W / 2 - 140
+    player(d, x, H * 0.95, BLUE, pose='run', number=2)
+    speed_lines(d, x - 90, H * 0.95 - 170, n=4)
+    ball(d, (x + 110, H * 0.95 - 140), r=26)
+    arrow(d, (x + 160, 330), (W - 330, 330), fill=ORANGE, width=10)
+    minicard(d, W - 260, 470, tilt=-10)
+    minicard(d, W - 170, 480, tilt=12)
+    stopwatch(d, (210, 260), 64)
+    drop(d, (x + 40, H * 0.95 - 290), r=12)
+
+
+def s_ride_your_star(d, s):
+    # RIDE YOUR STAR: the coach leaves the best player in, tired or not.
+    court(d)
+    x = W / 2 + 40
+    player(d, x, H * 0.95, BLUE, pose='arms_up', number=23, h=250)
+    star(d, (x, H * 0.95 - 330), 60, fill=GOLD)
+    for dx in (-90, 90):
+        drop(d, (x + dx, H * 0.95 - 250), r=13)
+    bench(d, 230, H * 0.92, w=260)
+    text(d, (230, H * 0.92 - 90), 'nope', size=44, fill=GREY, anchor='mm')
+    text(d, (W - 200, 360), '+4', size=96, fill=GREEN, anchor='mm')
+
+
+def s_full_court_press(d, s):
+    # FULL-COURT PRESS: three hands up across the whole floor.
+    court(d)
+    for k, x in enumerate((W / 2 - 360, W / 2, W / 2 + 360)):
+        player(d, x, H * 0.95 - (k % 2) * 40, BLUE, pose='wide', number=(10, 21, 32)[k])
+        drop(d, (x + 60, H * 0.95 - (k % 2) * 40 - 270), r=11)
+    arrow(d, (W / 2 - 300, 300), (W / 2 + 300, 300), fill=RED, width=8)
+    text(d, (W / 2, 210), 'PRESS!', size=80, fill=RED, anchor='mm')
+
+
+def s_crash_every_board(d, s):
+    # CRASH EVERY BOARD: everybody goes to the glass.
+    court(d)
+    ball(d, (W / 2 + 30, H * 0.40 - 170), r=30)
+    player(d, W / 2 - 160, H * 0.95, BLUE, pose='arms_up', number=50, h=250)
+    player(d, W / 2 + 200, H * 0.95, BLUE, pose='arms_up', number=44, h=250)
+    player(d, W / 2 + 20, H * 0.98, RED, pose='box', number=7, h=190)
+    text(d, (200, 260), '+3 REB', size=64, fill=GREEN, anchor='mm')
+
+
+def s_play_through_contact(d, s):
+    # PLAY THROUGH CONTACT: the bump, and the bucket anyway.
+    court(d)
+    player(d, W / 2 - 60, H * 0.95, BLUE, pose='shoot', number=21, h=240)
+    player(d, W / 2 + 120, H * 0.95, RED, pose='box', number=12)
+    burst(d, (W / 2 + 40, H * 0.95 - 170), 60, fill=YELLOW)
+    text(d, (W / 2 + 40, H * 0.95 - 170), 'BAM', size=34, fill=RED, shadow=None, anchor='mm')
+    ball(d, (W / 2 + 10, H * 0.95 - 410), r=28)
+    flame(d, (210, 330), 50)
+    text(d, (W - 220, 300), '+3', size=90, fill=GREEN, anchor='mm')
+
+
+def s_two_a_days(d, s):
+    # TWO-A-DAYS: practice twice; better and more tired.
+    court(d)
+    calendar(d, 210, 360, label='x2')
+    player(d, W / 2 + 60, H * 0.95, BLUE, pose='flex', number=6)
+    barbell(d, W / 2 + 60, H * 0.95 - 340, w=300)
+    for dx in (-110, 110):
+        drop(d, (W / 2 + 60 + dx, H * 0.95 - 250), r=13)
+    circle(d, (W - 220, 300), 70, fill=GOLD, width=6)
+    text(d, (W - 220, 300), '+', size=110, fill=NAVY, shadow=None, anchor='mm')
+
+
 SCENES = {
     'blitz': s_blitz,
     'kick_out_three': s_kick_out_three, 'grab_and_go': s_grab_and_go,
@@ -1058,6 +1251,12 @@ SCENES = {
     'bruise_brothers': s_bruise_brothers, 'weight_room': s_weight_room, 'conditioning': s_conditioning,
     'shut_the_door': s_shut_the_door, 'stay_hot': s_stay_hot, 'ice_bath': s_ice_bath,
     'splash': s_splash, 'on_fire': s_on_fire,
+    # Wave two (2026-10-20).
+    'get_stops': s_get_stops, 'talk_on_defense': s_talk_on_defense, 'ball_movement': s_ball_movement,
+    'wear_them_down': s_wear_them_down, 'film_session': s_film_session, 'signature_set': s_signature_set,
+    'leave_it_all': s_leave_it_all, 'up_tempo': s_up_tempo, 'ride_your_star': s_ride_your_star,
+    'full_court_press': s_full_court_press, 'crash_every_board': s_crash_every_board,
+    'play_through_contact': s_play_through_contact, 'two_a_days': s_two_a_days,
 }
 
 

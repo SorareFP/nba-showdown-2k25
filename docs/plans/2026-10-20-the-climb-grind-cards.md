@@ -1,7 +1,12 @@
 # The Climb: Grind cards (minutes for upside)
 
-**FIRST DRAFT 2026-10-20, awaiting the user's approval** (the strategy card
-approval rule). The user: "Energy and card-draw are also StS mechanics that
+**APPROVED AND BUILT 2026-10-20** (the user: "I love 'em, go for all"), with
+the seven new Climb-only cards from the "+" draft. Built as drafted; Ride Your
+Star's star must still be to roll, Signature Set's player too, and Talk on
+Defense's switching cards are Switch the Screen, Veer Switch, Switch
+Everything, Go Under and Fight Over (strats.js TALK_CARDS).
+
+The user: "Energy and card-draw are also StS mechanics that
 really help build and scale decks, but I don't necessary want to add the energy
 economy they have. Maybe we could add climb cards that add minutes of fatigue
 but have upside."

@@ -195,6 +195,8 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     clutchDice: opts.clutchDice ?? {},
     // IN SYSTEM (the Climb, 2026-10-20): { A: playbook } for a run's games; null elsewhere.
     system: opts.system ?? null,
+    // SIGNATURE SET's size this game (the Climb, 2026-10-20): { A: 2..6 }, grown by the run.
+    signatureBonus: opts.signatureBonus ?? null,
     // A run's carried Climb flags (Conditioning+ covers the next game).
     ...(opts.buffs ? { buffs: opts.buffs } : {}),
     // Set by endSection when the final section begins within the margin —
@@ -1266,10 +1268,47 @@ export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, lab
   // Veer Switch).
   const defKey = teamKey === 'A' ? 'B' : 'A';
   const defIdx = (g.offMatchups?.[teamKey] || [])[playerIdx] ?? playerIdx;
+  const paid = [...astPaid];
+  // THE CLIMB'S CHECK POWERS (2026-10-20, wave two): Ball Movement (a made
+  // three is an Assist, kept on the record so a Challenge takes it back) and
+  // Wear Them Down (a made paint check costs the defender a Power for the
+  // game, up to the card's number).
+  const powers = g.buffs?.[teamKey];
+  if (powers && result?.hit) {
+    const team = getTeam(g, teamKey);
+    if (type === '3pt' && powers.ball_movement) {
+      // The extra pass is somebody's: the teammate with the most assists this game.
+      const dimes = p => getPS(g, teamKey, p.id)?.ast || 0;
+      const passer = (team.starters || []).filter((p, i) => p && i !== playerIdx).reduce((best, p) => (best == null || dimes(p) > dimes(best) ? p : best), null);
+      team.assists += 1;
+      const pps = passer ? getPS(g, teamKey, passer.id) : null;
+      if (pps) pps.ast = (pps.ast || 0) + 1;
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += 1;
+      paid.push({ playerId: passer?.id ?? null, n: 1 });
+      g.log = [...g.log, { team: teamKey, msg: `Ball Movement: the extra pass — +1 AST${passer ? ` (${passer.name})` : ''}` }];
+    }
+    const defender = getTeam(g, defKey)?.starters?.[defIdx];
+    if (type === 'paint' && powers.wear_them_down && defender) {
+      const cap = buffNumber(powers.wear_them_down, 3);
+      g.wear = { ...(g.wear ?? {}), [teamKey]: { ...(g.wear?.[teamKey] ?? {}) } };
+      const worn = g.wear[teamKey][defender.id] || 0;
+      if (worn < cap) {
+        g.wear[teamKey][defender.id] = worn + 1;
+        const dt = getTeam(g, defKey);
+        const seen = new Set();
+        for (const p of [...(dt.roster || []), ...(dt.starters || [])]) {
+          if (!p || seen.has(p) || p.id !== defender.id) continue;
+          seen.add(p);
+          p.power = (p.power || 0) - 1;
+        }
+        g.log = [...g.log, { team: teamKey, msg: `Wear Them Down: ${defender.name} −1 Power for the game (${worn + 1} of ${cap})` }];
+      }
+    }
+  }
   const rec = {
     seq: g.checkSeq,
     teamKey, playerIdx, playerId: player?.id, type, result, pts: result.pts,
-    cardLabel: label, bonus, pool, specialRoll, onHit, closeOutApplied, astPaid, rebPaid,
+    cardLabel: label, bonus, pool, specialRoll, onHit, closeOutApplied, astPaid: paid, rebPaid,
     defenderId: getTeam(g, defKey)?.starters?.[defIdx]?.id ?? null,
   };
   g.lastShotCheck = rec;
@@ -2030,6 +2069,8 @@ export function endSection(g) {
         }
         // Second Wind penalty: +4 extra minutes of fatigue
         if (ps.secondWindPenalty) { ps.minutes += typeof ps.secondWindPenalty === 'number' ? ps.secondWindPenalty : 4; delete ps.secondWindPenalty; }
+        // A Grind card's price (the Climb, 2026-10-20): the minutes it promised.
+        if (ps.extraMinutes) { ps.minutes += ps.extraMinutes; delete ps.extraMinutes; }
       }
     });
   });
@@ -2149,6 +2190,17 @@ export function endSection(g) {
     if (k === 'A') { ng.teamA = { ...ng.teamA, hand: drawn.hand, deck: drawn.deck }; }
     else           { ng.teamB = { ...ng.teamB, hand: drawn.hand, deck: drawn.deck }; }
     if (drawn.bottomed.length) ng.log = [...ng.log, ...bottomedLines(k, t.name, drawn.bottomed)];
+  });
+  // FILM SESSION (the Climb, 2026-10-20): one card more as each section opens,
+  // past the seven.
+  ['A', 'B'].forEach(k => {
+    if (!ng.buffs?.[k]?.film_session) return;
+    const t = getTeam(ng, k);
+    const fs = drawCards(t.hand, t.deck, 1, { overCap: true, crunchActive: Boolean(ng.crunch?.active) });
+    t.hand = fs.hand;
+    t.deck = fs.deck;
+    if (fs.bottomed.length) ng.log = [...ng.log, ...bottomedLines(k, t.name, fs.bottomed)];
+    if (fs.drawn.length) ng.log = [...ng.log, { team: k, msg: `Film Session: ${t.name} draws a card.` }];
   });
 
   // Save current starters before clearing for bench recovery check

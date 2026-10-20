@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-wave-two', date: '2026-10-20', title: 'The Climb: thirteen new cards, and a player from every Rivalry',
+    body: "Beat a Rivalry and you now always get a player to choose from. Thirteen new Climb-only cards join the rewards. Powers that pay all game: Get Stops (a defense card is a Rebound), Talk on Defense (a switch is +1 Speed on defense for your five), Ball Movement (a made three is an Assist), Wear Them Down (a made paint check wears that defender's Power down) and Film Session (an extra card each section; its + is in your opening hand, like Ball Movement+). Signature Set grows a little every game you play it, up to +6, and Leave It All Out There is +3 to every roll for one section, once. And the Grind cards trade minutes for an edge, the minutes landing after the section: Up-Tempo, Ride Your Star, Full-Court Press, Crash Every Board, Play Through Contact, and Two-a-Days, which practises a card after the game in return for tired legs.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'climb-plus-every-card', date: '2026-10-20', title: 'The Climb: a "+" for every card',
     body: "A Rest Day can now practise any card a run can offer, not just the kit cards: seventy-nine new \"+\" versions, each one something a better-drilled team really does. Bigger numbers (Defensive Identity+ is +4/+4 to all five), looser doors (Blow-By+ and Rimshaker+ from 12), no discard (Lob City+, Pin-Down Screen+, Outside Pick+, Denial+), or a card drawn (Point God+, Post Domination+). Two new riders: Extra Pass+ Runs It Back — it goes back into your deck after you play it — and Chemistry+ is Innate, in your hand from the tip. Conditioning+ covers the next game too, and Ice Bath+ stays in your deck. Tell us which ones need a buff or a nerf.",
     to: 'climb', cta: 'The Climb',

@@ -103,6 +103,11 @@ const LEAN_OVERRIDES = Object.freeze({
   passing_lane: 'speed',
   box_out: 'paint',
   glass_cleaner: 'paint',
+  // The Climb's wave two (2026-10-20), as the drafts placed them.
+  get_stops: 'defense', talk_on_defense: 'defense', full_court_press: 'defense',
+  ball_movement: 'speed', up_tempo: 'speed',
+  wear_them_down: 'paint', crash_every_board: 'paint', play_through_contact: 'paint',
+  film_session: null, signature_set: null, leave_it_all: null, ride_your_star: null, two_a_days: null,
 });
 
 /**

@@ -168,6 +168,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
             onViewMap={() => setFreeRest(false)}
             onRest={() => act(async () => { await commit(takeFreeRest(run, { choice: 'rest' })); setFreeRest(false); })}
             onPractice={cardId => act(async () => { await commit(takeFreeRest(run, { choice: 'practice', cardId })); setFreeRest(false); })}
+            onCut={cardId => act(async () => { await commit(takeFreeRest(run, { choice: 'cut', cardId })); setFreeRest(false); })}
           />
         );
       }
@@ -208,6 +209,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
           onViewMap={() => setPeekMap(true)}
           onRest={() => act(() => commit(restDay(run, { choice: 'rest' })))}
           onPractice={cardId => act(() => commit(restDay(run, { choice: 'practice', cardId })))}
+          onCut={cardId => act(() => commit(restDay(run, { choice: 'cut', cardId })))}
         />
       );
     default:

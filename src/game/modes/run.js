@@ -507,16 +507,29 @@ export function skipOffers(run, part = null) {
 
 // ── Rest ─────────────────────────────────────────────────────────────────────
 
+/**
+ * The fewest cards a deck can be cut to: a full hand. CUTTING (the user,
+ * 2026-10-19: "Go for both"): skill in a run is roster building and deck
+ * scaling, and a thin deck that draws its best cards every game is Slay the
+ * Spire's biggest skill lever; a Rest Day's third choice cuts one copy for good.
+ */
+export const MIN_DECK = 7;
+const deckSize = deck => Object.values(deck ?? {}).reduce((t, n) => t + n, 0);
+
 function applyRest(run, { choice, cardId }) {
   if (choice === 'rest') return { ...run, fatigue: {} };
-  if (choice !== 'practice') fail('Rest or Practice');
+  if (choice === 'cut') {
+    if (deckSize(run.deck) <= MIN_DECK) fail(`A deck keeps at least ${MIN_DECK} cards`);
+    return { ...run, deck: takeCard(run.deck, cardId) };
+  }
+  if (choice !== 'practice') fail('Rest, Practice or Cut');
   if (isPlus(cardId)) fail('That copy is already upgraded');
   if (!PLUS[cardId]) fail(`${STRAT_MAP[cardId]?.name ?? cardId}: no upgrade yet`);
   const deck = addCard(takeCard(run.deck, cardId), plusId(cardId));
   return { ...run, deck };
 }
 
-/** A Rest Day: rest everyone, or practice — upgrade one copy to its "+". Either clears the floor. */
+/** A Rest Day: rest everyone, practice (one copy to its "+"), or cut one copy. Any of the three clears the floor. */
 export function restDay(run, choice) {
   if (run.status !== 'rest') fail('Not at a Rest Day');
   const done = applyRest(run, choice);

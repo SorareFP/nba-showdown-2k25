@@ -200,3 +200,5 @@
 .toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--text); cursor: pointer; }
 .toggle input { accent-color: var(--orange); width: 16px; height: 16px; }
 .dim { opacity: 0.45; }
+/* Cut (2026-10-19): the quiet button under Practice. */
+.screen .cutBtn { margin-top: 4px; border-color: var(--red); color: #FCA5A5; }

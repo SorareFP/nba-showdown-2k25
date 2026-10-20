@@ -393,3 +393,31 @@ describe('a player offer', () => {
     expect(typeof rollDrops).toBe('function');
   });
 });
+
+// CUTTING (the user, 2026-10-19: "Go for both"): a Rest Day's third choice.
+import { MIN_DECK } from './run.js';
+describe('cutting a card at a Rest Day', () => {
+  const toRest = () => {
+    const r = camped();
+    const rest = r.map.floors.flat().find(s => s.kind === 'rest' && s.floor > 1);
+    const from = r.map.floors[rest.floor - 2].find(s => s.next.includes(rest.id));
+    return chooseStop({ ...r, at: from.id }, rest.id);
+  };
+  it('takes one copy out for good and clears the floor; a "+" copy can go too', () => {
+    const r = toRest();
+    const cut = restDay(r, { choice: 'cut', cardId: 'catch_and_shoot' });
+    expect(cut.deck.catch_and_shoot).toBe(r.deck.catch_and_shoot - 1);
+    expect(total(cut.deck)).toBe(total(r.deck) - 1);
+    expect(cut.status).toBe('map');
+    expect(cut.cap).toBe(r.cap + CLIMB.capPerFloor);
+    const plusRun = { ...r, deck: { ...r.deck, 'close_out+': 1 } };
+    expect(restDay(plusRun, { choice: 'cut', cardId: 'close_out+' }).deck['close_out+'] ?? 0).toBe(0);
+    expect(() => restDay(r, { choice: 'cut', cardId: 'green_light' })).toThrow();
+  });
+  it('never cuts a deck below a full hand', () => {
+    const r = toRest();
+    const thin = { ...r, deck: { high_screen_roll: 2, switch_the_screen: 1, veer_switch: 1, go_under: 1, overhelp: 1, burned_switch: 1 } };
+    expect(total(thin.deck)).toBe(MIN_DECK);
+    expect(() => restDay(thin, { choice: 'cut', cardId: 'overhelp' })).toThrow(/at least/);
+  });
+});

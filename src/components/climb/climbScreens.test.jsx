@@ -223,3 +223,14 @@ describe('a reward card one of your players fits', () => {
     expect(out.match(/data-fits=/g).length).toBe(2);   // High Screen & Roll asks nothing fixed
   });
 });
+
+// CUTTING (2026-10-19): a Rest Day's third choice, a Cut button on every card.
+describe('the Rest Day\'s cut', () => {
+  it('offers Cut on every card of the deck when the screen can cut', () => {
+    const r = camped();
+    const out = html(<RestDay run={r} onRest={noop} onPractice={noop} onCut={noop} />);
+    expect(out).toContain('cut one card from your deck for good');
+    expect(out.match(/data-cut=/g).length).toBe(Object.keys(r.deck).length);
+    expect(html(<RestDay run={r} onRest={noop} onPractice={noop} />)).not.toContain('data-cut=');
+  });
+});

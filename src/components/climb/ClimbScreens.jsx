@@ -10,7 +10,7 @@ import { capOf } from '../../game/coinRewards.js';
 import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster } from '../../game/teamRules.js';
-import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam } from '../../game/modes/run.js';
+import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, MIN_DECK } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops } from '../../game/modes/climbMap.js';
@@ -538,15 +538,16 @@ export function practiceTiles(run, showPlus) {
 // `onViewMap`: a look at the map (the user, 2026-10-19). From a Rest Day stop
 // it opens the map read-only and comes back here; the free Rest Day was taken
 // from the map, so for it this is simply the way back (nothing is spent yet).
-export function RestDay({ run, onRest, onPractice, busy = false, free = false, onViewMap = null }) {
+export function RestDay({ run, onRest, onPractice, onCut = null, busy = false, free = false, onViewMap = null }) {
   const [showPlus, setShowPlus] = useState(false);
   const { cards } = rosterCards(run);
   const tired = cards.filter(c => (run.fatigue?.[c.id] ?? 0) > 0);
   const tiles = practiceTiles(run, showPlus);
+  const deckCount = Object.values(run.deck ?? {}).reduce((t, n) => t + n, 0);
   return (
     <div className={styles.screen}>
       <h2 className={styles.title}>{free ? 'A day off' : 'Rest Day'}</h2>
-      <p className={styles.lede}>One of two: rest the whole team, or practice and upgrade one copy of a card.</p>
+      <p className={styles.lede}>One of three: rest the whole team, practise one copy of a card into its "+", or cut one card from your deck for good.</p>
       {onViewMap && (
         <div className={styles.actions}>
           <button type="button" data-view-map="true" onClick={onViewMap} disabled={busy}>{free ? '← Back to the map' : '🗺 See the map and what comes next'}</button>
@@ -559,7 +560,7 @@ export function RestDay({ run, onRest, onPractice, busy = false, free = false, o
       </section>
       <section className={styles.restCard}>
         <div className={styles.practiceHead}>
-          <h3 className={styles.h3}>Practice <span className={styles.muted}>upgrade one copy</span></h3>
+          <h3 className={styles.h3}>Practice or cut <span className={styles.muted}>upgrade one copy, or take one out for good (a deck keeps at least {MIN_DECK})</span></h3>
           <label className={styles.toggle}>
             <input type="checkbox" checked={showPlus} onChange={e => setShowPlus(e.target.checked)} />
             Show practiced versions
@@ -577,6 +578,13 @@ export function RestDay({ run, onRest, onPractice, busy = false, free = false, o
                 </div>
                 {t.canPractice && (
                   <button type="button" data-practice={t.id} className={styles.tileBtn} onClick={() => onPractice(t.id)} disabled={busy}>Practice</button>
+                )}
+                {onCut && (
+                  <button type="button" data-cut={t.id} className={`${styles.tileBtn} ${styles.cutBtn}`} disabled={busy || deckCount <= MIN_DECK}
+                    onClick={() => onCut(t.plusCount && t.plusCount === t.count ? plusId(t.id) : t.id)}
+                    title={deckCount <= MIN_DECK ? `A deck keeps at least ${MIN_DECK} cards` : `Cut one ${t.count > t.plusCount ? 'plain ' : ''}copy for good`}>
+                    Cut
+                  </button>
                 )}
               </div>
             );

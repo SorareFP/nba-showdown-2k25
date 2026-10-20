@@ -28,12 +28,14 @@ const EXCLUDE = '-card -cards -topps -panini -facebook -instagram -threads';
 const images = q => `https://www.google.com/search?tbm=isch&tbs=isz:l&q=${encodeURIComponent(`${q} ${EXCLUDE}`)}`;
 
 /** The search a human would type for a player-season, minus the part they would forget. */
-export function searchUrl(name, team, seasonLabel, league, rookie = false) {
+// `extra`: words the hunt adds for a purpose ("game action" for a posed photo).
+export function searchUrl(name, team, seasonLabel, league, rookie = false, extra = null) {
   const parts = [
     name, team?.city, team?.name,
     league === 'WNBA' ? 'WNBA' : null,
     searchSeason(seasonLabel, rookie),
     rookie ? 'rookie' : null,
+    extra,
   ].filter(Boolean).join(' ');
   return images(parts);
 }
@@ -49,7 +51,7 @@ export const leagueOfSet = setId => (String(setId).startsWith('wnba') ? 'WNBA' :
  * Everything the hunt says about one player card: the season label to look
  * for, the era-resolved team code and its uniform era, and the search.
  */
-export function huntTarget(setId, card) {
+export function huntTarget(setId, card, extra = null) {
   const league = leagueOfSet(setId);
   // The generators write era-resolved codes; resolving again is a no-op for
   // those and a correction for any that are not.
@@ -58,5 +60,5 @@ export function huntTarget(setId, card) {
   const label = card.seasonLabel ?? (league === 'WNBA' ? '2026' : '2025-26');
   // A capstone reward MIGRATED out of a rookie set is still a rookie card.
   const rookie = /rookie$/.test(setId) || /rookie$/.test(card.migratedFrom?.set ?? '');
-  return { league, code, era: team?.era ?? '', team, label, rookie, url: searchUrl(card.name, team, label, league, rookie) };
+  return { league, code, era: team?.era ?? '', team, label, rookie, url: searchUrl(card.name, team, label, league, rookie, extra) };
 }

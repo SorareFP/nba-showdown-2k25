@@ -152,6 +152,12 @@ export function flaggedPhotos({ allPhotoFlags = {}, allPhotoTimes = {}, sources 
         id: p.id,
         name: p.name,
         note: typeof flag.note === 'string' ? flag.note : '',
+        // TWO KINDS (2026-10-20). 'jersey': the photo is wrong (a former
+        // team's jersey) and must go. 'media': the photo is right but posed —
+        // media day, a press conference, a warm-up shirt — and an action shot
+        // would be better (the user: "mark if it's a press conference/media day
+        // photo too so I can be on the lookout for action photos").
+        kind: flag.kind === 'media' ? 'media' : 'jersey',
         flaggedAt: flag.at,
       });
     }

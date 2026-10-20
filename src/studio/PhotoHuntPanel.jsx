@@ -54,7 +54,8 @@ export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dorman
 export function flaggedRows(sources, flagged = []) {
   return flagged.map(f => {
     const card = sources[f.sourceKey]?.players?.find(p => p.id === f.id);
-    const t = card ? huntTarget(f.set, card) : null;
+    // A posed photo's search asks for the game (2026-10-20).
+    const t = card ? huntTarget(f.set, card, f.kind === 'media' ? 'game action' : null) : null;
     return { ...f, where: t?.code ?? '', era: t?.era ?? '', url: t?.url ?? null };
   });
 }
@@ -62,7 +63,32 @@ export function flaggedRows(sources, flagged = []) {
 export default function PhotoHuntPanel({ sources, allPhotos, allPlaceholders, unseen = [], flagged = [], onDismissFlag, onOpen, onUploaded, onClose }) {
   const groups = useMemo(() => huntRows(sources, { allPhotos, allPlaceholders }), [sources, allPhotos, allPlaceholders]);
   const total = groups.reduce((n, g) => n + g.rows.length, 0);
-  const toReplace = useMemo(() => flaggedRows(sources, flagged), [sources, flagged]);
+  const toReplace = useMemo(() => flaggedRows(sources, flagged.filter(f => f.kind !== 'media')), [sources, flagged]);
+  const wantAction = useMemo(() => flaggedRows(sources, flagged.filter(f => f.kind === 'media')), [sources, flagged]);
+  /** One flagged row: drop a file on it, search, keep the photo, or open the card. */
+  const flagRow = f => (
+    <li key={f.key}
+      className={`${s.row} ${s.rowReplace} ${dropping === f.key ? s.rowDrop : ''}`}
+      data-flagged-row={f.key}
+      data-flag-kind={f.kind}
+      onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; }}
+      onDragEnter={e => { e.preventDefault(); setDropping(f.key); }}
+      onDragLeave={() => setDropping(d => (d === f.key ? null : d))}
+      onDrop={e => { e.preventDefault(); drop(f.set, f.id, e.dataTransfer.files?.[0]); }}
+    >
+      <span className={s.name}>{f.name}</span>
+      <span className={s.when}>{f.sourceLabel}</span>
+      <span className={s.where}>{f.note}</span>
+      <span className={s.tag}>{busy === f.key ? 'saving…' : ''}</span>
+      {f.url
+        ? <a className={s.search} href={f.url} target="_blank" rel="noopener noreferrer">🔎 Search</a>
+        : <span />}
+      {onDismissFlag
+        ? <button type="button" className={s.ghost} title="The photo is fine: take the flag off" onClick={() => onDismissFlag(f.set, f.id)}>Keep photo</button>
+        : <span />}
+      <button type="button" className={s.ghost} onClick={() => onOpen(f.sourceKey, f.id)}>Open</button>
+    </li>
+  );
   const [dropping, setDropping] = useState(null);
   const [busy, setBusy] = useState(null);
   const [note, setNote] = useState(null);
@@ -123,33 +149,18 @@ export default function PhotoHuntPanel({ sources, allPhotos, allPlaceholders, un
         )}
         {/* Photos that are there but wrong — a former team's jersey — until a
             newer file replaces each one (photoSeen.js flaggedPhotos). */}
-        {flagged.length > 0 && (
+        {toReplace.length > 0 && (
           <section className={s.group} data-testid="hunt-flagged">
-            <h3 className={s.groupTitle}>Photo to replace <span className={s.count}>{flagged.length}</span></h3>
-            <ul className={s.list}>
-              {toReplace.map(f => (
-                <li key={f.key}
-                  className={`${s.row} ${s.rowReplace} ${dropping === f.key ? s.rowDrop : ''}`}
-                  data-flagged-row={f.key}
-                  onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; }}
-                  onDragEnter={e => { e.preventDefault(); setDropping(f.key); }}
-                  onDragLeave={() => setDropping(d => (d === f.key ? null : d))}
-                  onDrop={e => { e.preventDefault(); drop(f.set, f.id, e.dataTransfer.files?.[0]); }}
-                >
-                  <span className={s.name}>{f.name}</span>
-                  <span className={s.when}>{f.sourceLabel}</span>
-                  <span className={s.where}>{f.note}</span>
-                  <span className={s.tag}>{busy === f.key ? 'saving…' : ''}</span>
-                  {f.url
-                    ? <a className={s.search} href={f.url} target="_blank" rel="noopener noreferrer">🔎 Search</a>
-                    : <span />}
-                  {onDismissFlag
-                    ? <button type="button" className={s.ghost} title="The photo is fine: take the flag off" onClick={() => onDismissFlag(f.set, f.id)}>Keep photo</button>
-                    : <span />}
-                  <button type="button" className={s.ghost} onClick={() => onOpen(f.sourceKey, f.id)}>Open</button>
-                </li>
-              ))}
-            </ul>
+            <h3 className={s.groupTitle}>Photo to replace <span className={s.count}>{toReplace.length}</span></h3>
+            <ul className={s.list}>{toReplace.map(flagRow)}</ul>
+          </section>
+        )}
+        {/* Right team, but posed (2026-10-20): an action shot would be better.
+            The search asks for the game; a newer file clears the flag too. */}
+        {wantAction.length > 0 && (
+          <section className={s.group} data-testid="hunt-media">
+            <h3 className={s.groupTitle}>Could use an action shot <span className={s.count}>{wantAction.length}</span></h3>
+            <ul className={s.list}>{wantAction.map(flagRow)}</ul>
           </section>
         )}
         {total === 0 && <p className={s.empty}>Every card you can edit has its photo.</p>}

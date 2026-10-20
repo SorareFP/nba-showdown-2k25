@@ -56,4 +56,12 @@ describe('a photo to replace', () => {
     const [row] = flaggedRows({ pool }, [{ ...flag, id: 'Gone', key: '2026-27:Gone' }]);
     expect(row).toMatchObject({ id: 'Gone', url: null, where: '' });
   });
+
+  // The user, 2026-10-20: mark media day and press photos "so I can be on the lookout for action photos".
+  it('a posed photo (kind media) searches for the game, a wrong one does not', () => {
+    const [posed] = flaggedRows({ pool }, [{ ...flag, kind: 'media', note: 'media day' }]);
+    expect(posed.url).toContain(encodeURIComponent('Aaron Wiggins Atlanta Hawks 2026'));
+    expect(posed.url).toContain(encodeURIComponent('game action'));
+    expect(flaggedRows({ pool }, [flag])[0].url).not.toContain('action');
+  });
 });

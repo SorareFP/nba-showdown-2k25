@@ -22,6 +22,8 @@ export default function PlayerList({
   isNew = null,
   // Why this card's photo is flagged for a replacement, or nothing (flaggedPhotos).
   flagNote = null,
+  // 'jersey' (replace it) or 'media' (posed: an action shot would be better).
+  flagKind = null,
   selectedId,
   onSelect,
   onDropFile,
@@ -148,11 +150,17 @@ export default function PlayerList({
                       new photo
                     </span>
                   )}
-                  {flagNote?.(player.id) != null && (
-                    <span className={styles.rowNew} data-flagged-photo="true" title={`Photo to replace: ${flagNote(player.id) || 'flagged'}`}>
-                      replace photo
-                    </span>
-                  )}
+                  {flagNote?.(player.id) != null && (flagKind?.(player.id) === 'media'
+                    ? (
+                      <span className={styles.rowNew} data-media-photo="true" title={`Could use an action shot: ${flagNote(player.id) || 'posed'}`}>
+                        {flagNote(player.id) || 'media day'}
+                      </span>
+                    )
+                    : (
+                      <span className={styles.rowNew} data-flagged-photo="true" title={`Photo to replace: ${flagNote(player.id) || 'flagged'}`}>
+                        replace photo
+                      </span>
+                    ))}
                 </span>
                 <span className={uploadingId === player.id ? styles.rowBusy : styles.rowMeta}>
                   {uploadingId === player.id ? 'saving…' : `${player.team ?? '—'} ${player.pos ?? ''}`}

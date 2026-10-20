@@ -342,9 +342,13 @@ export default function Studio() {
     [allPhotoFlags, allPhotoTimes]
   );
   const flaggedHere = useMemo(
-    () => new Map(flagged.filter(f => f.set === activeSet).map(f => [f.id, f.note])),
+    () => new Map(flagged.filter(f => f.set === activeSet).map(f => [f.id, f])),
     [flagged, activeSet]
   );
+  // The two kinds (photoSeen.js): a wrong photo to replace, a posed one that
+  // could use an action shot.
+  const toReplace = useMemo(() => flagged.filter(f => f.kind !== 'media'), [flagged]);
+  const wantAction = useMemo(() => flagged.filter(f => f.kind === 'media'), [flagged]);
   const keepFlaggedPhoto = async (set, id) => {
     await dismissPhotoFlag(id, set);
     const state = await fetchStudioState(activeSet);
@@ -832,12 +836,12 @@ export default function Studio() {
         </div>
       )}
 
-      {flagged.length > 0 && (
+      {toReplace.length > 0 && (
         <div className={styles.unseenBar} role="status" data-testid="flagged-photos">
           <span className={styles.unseenLead}>
-            👕 {flagged.length} photo{flagged.length === 1 ? '' : 's'} to replace:
+            👕 {toReplace.length} photo{toReplace.length === 1 ? '' : 's'} to replace:
           </span>
-          {flagged.slice(0, UNSEEN_SHOWN).map(f => (
+          {toReplace.slice(0, UNSEEN_SHOWN).map(f => (
             <button
               key={f.key}
               type="button"
@@ -850,9 +854,35 @@ export default function Studio() {
               <span className={styles.unseenSet}>{f.note}</span>
             </button>
           ))}
-          {flagged.length > UNSEEN_SHOWN && (
+          {toReplace.length > UNSEEN_SHOWN && (
             <button type="button" className={styles.noticeDismiss} onClick={() => setShowHunt(true)}>
-              +{flagged.length - UNSEEN_SHOWN} more — see all
+              +{toReplace.length - UNSEEN_SHOWN} more — see all
+            </button>
+          )}
+        </div>
+      )}
+
+      {wantAction.length > 0 && (
+        <div className={styles.unseenBar} role="status" data-testid="media-photos">
+          <span className={styles.unseenLead}>
+            📸 {wantAction.length} media-day or press photo{wantAction.length === 1 ? '' : 's'} — an action shot would be better:
+          </span>
+          {wantAction.slice(0, UNSEEN_SHOWN).map(f => (
+            <button
+              key={f.key}
+              type="button"
+              className={styles.unseenChip}
+              data-media-flagged={f.key}
+              title={`${f.name} · ${f.sourceLabel} — ${f.note || 'posed'}. A new photo clears it.`}
+              onClick={() => openCard(f.sourceKey, f.id)}
+            >
+              {f.name}
+              <span className={styles.unseenSet}>{f.note}</span>
+            </button>
+          ))}
+          {wantAction.length > UNSEEN_SHOWN && (
+            <button type="button" className={styles.noticeDismiss} onClick={() => setShowHunt(true)}>
+              +{wantAction.length - UNSEEN_SHOWN} more — see all
             </button>
           )}
         </div>
@@ -936,7 +966,8 @@ export default function Studio() {
             photoIds={photoIds}
             stateOf={stateOf}
             isNew={id => unseenHere.has(id)}
-            flagNote={id => flaggedHere.get(id)}
+            flagNote={id => flaggedHere.get(id)?.note}
+            flagKind={id => flaggedHere.get(id)?.kind ?? null}
             selectedId={selectedId}
             onSelect={setSelectedId}
             onDropFile={handleDropFile}

@@ -143,6 +143,12 @@ describe('flaggedPhotos', () => {
     expect(out.map(f => f.id)).toEqual(['Luka_Doncic', 'Stephen_Curry']);
   });
 
+  it('tells a wrong photo (jersey, the default) from a posed one (media)', () => {
+    const flags = { '2026-27': { Luka_Doncic: { at: NOW, note: 'Mavericks jersey, now LAL' }, Stephen_Curry: { at: NOW, note: 'media day', kind: 'media' } } };
+    const out = flaggedPhotos({ allPhotoFlags: flags, allPhotoTimes: { '2026-27': { Luka_Doncic: NOW - HOUR, Stephen_Curry: NOW - HOUR } }, sources: SOURCES });
+    expect(out.map(f => [f.id, f.kind])).toEqual([['Luka_Doncic', 'jersey'], ['Stephen_Curry', 'media']]);
+  });
+
   it('ignores a flag for a card no editable source lists, and a malformed one', () => {
     const flags = { '2025-26': { Stephen_Curry: { at: NOW } }, '2026-27': { Nobody: { at: NOW }, Jalen_Brunson: { note: 'no time' } } };
     expect(flaggedPhotos({ allPhotoFlags: flags, sources: SOURCES })).toEqual([]);

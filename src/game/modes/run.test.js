@@ -421,3 +421,19 @@ describe('cutting a card at a Rest Day', () => {
     expect(() => restDay(thin, { choice: 'cut', cardId: 'overhelp' })).toThrow(/at least/);
   });
 });
+
+// SCOUTING THE BOSS (2026-10-19): the boss game's own roster and deck, from floor 1.
+import { bossScout } from './run.js';
+describe('the scouting report', () => {
+  it('is the boss game\'s own team: its players by salary, its playbook, its rares', () => {
+    const r = camped();
+    const s = bossScout(r);
+    const setup = gameSetup(r, 'boss');
+    expect(s.players.map(cardKey).sort()).toEqual([...setup.rosterB].sort());
+    expect(s.players).toHaveLength(CLIMB.bossSize);
+    for (let i = 1; i < s.players.length; i += 1) expect(s.players[i - 1].salary).toBeGreaterThanOrEqual(s.players[i].salary);
+    expect(['speed', 'paint', 'defense']).toContain(s.playbook);
+    expect(s.opponent).toEqual(setup.opponent);
+    for (const id of s.rares) expect(['rare', 'legendary']).toContain(STRAT_MAP[id.replace(/\+$/, '')].rarity);
+  });
+});

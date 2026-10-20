@@ -77,6 +77,7 @@ if (overrides.playerr != null) CLIMB.drops.rivalry.player = overrides.playerr;
 if (overrides.perkg != null) CLIMB.drops.game.perk = overrides.perkg;
 if (overrides.perkr != null) CLIMB.drops.rivalry.perk = overrides.perkr;
 if (overrides.climbonly != null) CLIMB.climbOnlyChance = overrides.climbonly;
+if (overrides.rivpicks != null) CLIMB.rivalryPicks = overrides.rivpicks;
 // start=2400: your starting cap (the five you bring)
 if (overrides.start != null) { CLIMB.startCap = overrides.start; CLIMB_FIVE.cap = overrides.start; }
 if (overrides.rec != null) CLIMB.recovery.base = overrides.rec;

@@ -77,6 +77,7 @@ export const CLIMB = {
   // and how many of each band's priciest it draws from.
   offerBands: [[0, 0.35], [0.35, 0.7], [0.7, 1]],
   offerBest: 12,
+  rivalryPicks: 1,
   climbOnlyChance: 0.5,   // the reward's "anywhere" slot, while a Climb-only card is left (2026-10-19; was 0.35)
   // THE DROPS (the user, 2026-10-19: "percent chances of games dropping
   // certain thing. Like all games drop strategy cards, rivalries *could* drop
@@ -242,6 +243,21 @@ export function bossTeam(run) {
   const abbr = bossFranchise(run);
   const team = TEAMS[abbr] ?? {};
   return { abbr, name: team.name ?? abbr, city: team.city ?? '', logo: team.logo ?? null };
+}
+
+/**
+ * THE SCOUTING REPORT (2026-10-19; the user: skill is "roster building and deck
+ * scaling", so the boss you are building to beat is shown from floor 1, as Slay
+ * the Spire shows its act boss). The boss game's own setup — the same seeded
+ * roster and deck it will deal — with its players by salary and its playbook.
+ */
+export function bossScout(run) {
+  const setup = gameSetup(run, 'boss');
+  const players = setup.rosterB.map(k => getCardByKey(k)).filter(Boolean).sort((a, b) => (b.salary ?? 0) - (a.salary ?? 0));
+  const near = nearestArchetype(players);
+  const playbook = PLAYBOOK_OF_ARCHETYPE[near?.id] ?? null;
+  const rares = Object.keys(setup.deckB).filter(id => ['rare', 'legendary'].includes(STRAT_MAP[baseId(id)]?.rarity));
+  return { opponent: setup.opponent, cap: setup.cap, players, playbook, rares, deckSize: Object.values(setup.deckB).reduce((t, n) => t + n, 0) };
 }
 
 /** The franchises the run's fights meet, in order, never the boss's and never twice. */
@@ -411,7 +427,8 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, ca
   const playerPool = playerOffer(next, rng);
   const perkPool = perkOffer(next, climbRng(run.seed, 'perks', stopId), rosterCards(next).cards.map(c => c.id));
   const { players, perks, dropOdds } = rollDrops(run, stop, stopId, playerPool, perkPool);
-  const picks = 1 + (run.extraPicks > 0 ? 1 : 0);
+  // A Rivalry's win takes CLIMB.rivalryPicks cards (2026-10-19: riskier, richer Rivalries).
+  const picks = (stop.kind === 'rivalry' ? CLIMB.rivalryPicks : 1) + (run.extraPicks > 0 ? 1 : 0);
   return {
     ...next,
     dropOdds,

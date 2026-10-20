@@ -234,3 +234,12 @@ describe('the Rest Day\'s cut', () => {
     expect(html(<RestDay run={r} onRest={noop} onPractice={noop} />)).not.toContain('data-cut=');
   });
 });
+
+describe('the map\'s scouting report', () => {
+  it('names the boss and its best player from floor 1', () => {
+    const r = camped();
+    const out = html(<ClimbMap run={r} onGo={noop} onRetire={noop} onFreeRest={noop} />);
+    expect(out).toContain('data-scout="true"');
+    expect(out).toContain('Scouting the boss');
+  });
+});

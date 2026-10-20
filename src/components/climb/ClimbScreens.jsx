@@ -10,7 +10,7 @@ import { capOf } from '../../game/coinRewards.js';
 import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster } from '../../game/teamRules.js';
-import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, MIN_DECK } from '../../game/modes/run.js';
+import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops } from '../../game/modes/climbMap.js';
@@ -113,6 +113,33 @@ function PerkTile({ run, id, onPick, busy }) {
       </select>
       <button type="button" className={styles.tileBtn} disabled={busy || !target} onClick={() => onPick(id, target)}>Take</button>
     </div>
+  );
+}
+
+/**
+ * SCOUTING THE BOSS (2026-10-19): who you are building to beat — the boss
+ * game's own roster and deck (bossScout), its five best by salary, its
+ * playbook and the rare cards it holds — on the map from floor 1.
+ */
+function ScoutReport({ run }) {
+  const scout = useMemo(() => { try { return bossScout(run); } catch { return null; } }, [run.seed, run.rung]); // eslint-disable-line
+  if (!scout) return null;
+  const o = scout.opponent;
+  return (
+    <details className={styles.scout} data-scout="true" open>
+      <summary className={styles.h3}>Scouting the boss <span className={styles.muted}>{o.classic ? 'classic ' : ''}{o.city} {o.name}</span></summary>
+      <p className={styles.deckLine}>
+        {dollars(scout.cap)} of players{scout.playbook ? ` · plays ${PLAYBOOK_NAME[scout.playbook]}` : ''} · a {scout.deckSize}-card deck
+      </p>
+      <ul className={styles.roster}>
+        {scout.players.slice(0, 5).map(c => (
+          <li key={cardKey(c)}><span>{c.name}</span><span className={styles.muted}>S{c.speed} P{c.power} · line {c.shotLine}</span></li>
+        ))}
+      </ul>
+      {scout.rares.length > 0 && (
+        <p className={styles.deckLine}>Its rares: {scout.rares.map(id => getStrat(baseId(id))?.name).join(', ')}</p>
+      )}
+    </details>
   );
 }
 
@@ -427,6 +454,7 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
         <div className={styles.stat}><span>Cap</span><strong>{dollars(capSal(cards))} of {dollars(run.cap)}</strong></div>
         <DeckLine run={run} />
         <PerkList run={run} />
+        <ScoutReport run={run} />
         <h3 className={styles.h3}>Your team</h3>
         <ul className={styles.roster}>
           {cards.map(c => {

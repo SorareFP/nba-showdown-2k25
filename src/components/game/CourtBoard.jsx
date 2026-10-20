@@ -342,13 +342,13 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
     'catch_and_shoot', 'green_light',
     // Roll-replacing / roll-modifying cards — must be pre-roll only.
     'cross_court_dime', 'you_stand_over_there', 'elevator_doors',
-    'pin_down_screen', 'from_way_downtown', 'power_move',
+    'pin_down_screen', 'from_way_downtown', 'power_move', 'first_step',
     // The answers to a defensive switch — see lastDefSwitch in engine.js.
     'overhelp', 'burned_switch',
     // Wave one of the docx backlog (2026-09-06).
     'spain_pick_roll', 'mismatch_hunter', 'energizer', 'defensive_anchor',
     'five_out', 'hammer_set', 'iso_heavy', 'crash_and_kick', 'pick_and_pop', 'extra_pass',
-    'stretch_five', 'post_domination', 'unsung_hero', 'transition_outlet',
+    'stretch_five', 'post_domination', 'point_god', 'unsung_hero', 'transition_outlet',
     'find_the_open_man', 'putback_specialist', 'hustle_play',
     // The glass (2026-09-23): who takes the kick-out three, who owns the glass.
     'kick_out_three', 'own_the_glass',
@@ -512,6 +512,17 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
         label = 'Double whose rebounds? (a Power edge, not yet rolled)';
         break;
       }
+      // Its Speed twin had no picker, so it always tried slot 0 (2026-10-20,
+      // found beside First Step's).
+      case 'point_god': {
+        eligible = filterStarters(myT.starters, (p, i) => {
+          if (rolls[i] != null) return false;
+          const dp = defenders[offMatchups[i] ?? i];
+          return dp && calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).speedAdv > 0;
+        });
+        label = 'Double whose assists? (a Speed edge, not yet rolled)';
+        break;
+      }
       case 'transition_outlet': {
         eligible = filterStarters(myT.starters, (p, i) => { const dp = defenders[offMatchups[i] ?? i]; return dp && calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).speedAdv > 0; });
         label = 'Select a player with a Speed advantage (check at +2)';
@@ -639,7 +650,8 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
       case 'cross_court_dime':
       case 'you_stand_over_there':
       case 'pin_down_screen':
-      case 'power_move': {
+      case 'power_move':
+      case 'first_step': {
         eligible = preRollTargets(game, teamKey).map(({ p, idx }) => ({ p, origIdx: idx }));
         label = 'Select player (must not have rolled yet)';
         break;
@@ -679,6 +691,12 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
         const a = d ? calcAdv(p, d, game.tempEff?.[teamKey] || {}, i) : null;
         return a && r != null ? `Power ${sgn(a.rawPowerDiff)} vs ${d.name} · roll ${sgn(r)} · about ${chartMean(p, r, 'reb').toFixed(1)} REB a roll, doubled` : '';
       },
+      point_god: (p, i) => {
+        const d = defOf(teamKey, i);
+        const r = rollOf(teamKey, i);
+        const a = d ? calcAdv(p, d, game.tempEff?.[teamKey] || {}, i) : null;
+        return a && r != null ? `Speed ${sgn(a.rawSpeedDiff)} vs ${d.name} · roll ${sgn(r)} · about ${chartMean(p, r, 'ast').toFixed(1)} AST a roll, doubled` : '';
+      },
       hustle_play: p => ((p.defBoost || 0) > 0 ? `Def ${sgn(p.defBoost)}: the check −${p.defBoost}` : 'Def +0: no effect'),
       crowd_favorite: (p, i) => {
         if (rolls[i] != null) return `Has rolled (${rolls[i].pts ?? 0} pts): the 2 more must come from shot checks`;
@@ -689,10 +707,19 @@ export async function buildOpts(game, teamKey, handCardId, base, openModalRaw, u
         const d = defOf(teamKey, i);
         if (!d) return '';
         const a = calcAdv(p, d, game.tempEff?.[teamKey] || {}, i);
-        const bump = a.powerAdv >= 5 ? 3 : 2;
+        const bump = plus ? (a.powerAdv >= 5 ? 6 : 4) : (a.powerAdv >= 5 ? 3 : 2);
         const r = rollOf(teamKey, i);
         const same = rollWith(teamKey, i, { p: bump }) === r;
         return `Power ${sgn(a.rawPowerDiff)} → ${sgn(a.rawPowerDiff + bump)} vs ${d.name}${same ? ` · roll stays ${sgn(r)} (the Speed edge is bigger)` : ''}`;
+      },
+      first_step: (p, i) => {
+        const d = defOf(teamKey, i);
+        if (!d) return '';
+        const a = calcAdv(p, d, game.tempEff?.[teamKey] || {}, i);
+        const bump = plus ? (a.speedAdv >= 5 ? 6 : 4) : (a.speedAdv >= 5 ? 3 : 2);
+        const r = rollOf(teamKey, i);
+        const same = rollWith(teamKey, i, { s: bump }) === r;
+        return `Speed ${sgn(a.rawSpeedDiff)} → ${sgn(a.rawSpeedDiff + bump)} vs ${d.name}${same ? ` · roll stays ${sgn(r)} (the Power edge is bigger)` : ''}`;
       },
       // The roll it frees is in the preview; the bill comes after.
       second_wind: (p, i) => {

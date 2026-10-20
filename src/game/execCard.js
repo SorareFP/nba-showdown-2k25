@@ -933,6 +933,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // The Speed twin of Power Move — and the card that gives Beat Him to
       // the Spot something to answer, since the Speed side had no plain
       // common boost while Power did.
+      if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       const fsBonus = plus ? (adv.speedAdv >= 5 ? 6 : 4) : (adv.speedAdv >= 5 ? 3 : 2);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['s' + idx] = (g.tempEff[teamKey]['s' + idx] || 0) + fsBonus;
@@ -941,6 +942,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'power_move': {
+      if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       const bonus = plus ? (adv.powerAdv >= 5 ? 6 : 4) : (adv.powerAdv >= 5 ? 3 : 2);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['p' + idx] = (g.tempEff[teamKey]['p' + idx] || 0) + bonus;

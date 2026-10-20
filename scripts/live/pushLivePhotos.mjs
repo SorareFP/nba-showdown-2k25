@@ -25,8 +25,10 @@ const PHOTOS = join(ROOT, 'card-art', 'sets', '2026-27', 'photos');
 const BRANCH = 'live-photos';
 const dry = process.argv.includes('--dry');
 
+// Every format the Studio stores (src/studio/api.js IMAGE_EXT): a photo the
+// filter skips is a Live face with no photo.
 const files = readdirSync(PHOTOS, { withFileTypes: true })
-  .filter(f => f.isFile() && !f.name.startsWith('_') && /\.(jpe?g|png|webp)$/i.test(f.name))
+  .filter(f => f.isFile() && !f.name.startsWith('_') && /\.(jpe?g|jfif|png|webp|gif|avif)$/i.test(f.name))
   .map(f => f.name)
   .sort();
 if (!files.length) throw new Error(`No photos in ${PHOTOS}`);

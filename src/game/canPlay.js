@@ -1,7 +1,7 @@
 // NBA Showdown 2026 — Card playability rules
 // Returns { canPlay: bool, reason: string }
 
-import { CRUNCH_CARDS, TIMEOUT_RIDERS, baseId, isPlus, CLIMB_GAME_CARDS, getStrat } from './strats.js';
+import { CRUNCH_CARDS, TIMEOUT_RIDERS, baseId, isPlus, CLIMB_GAME_CARDS, getStrat, PLUS } from './strats.js';
 import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, isOpeningSection, reboundTrackLead, challengeTarget, rerollOdds, answerEventKey } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
@@ -137,7 +137,8 @@ export function staggerPair(starters) {
  * Returned as { slot, off, def, defIdx, adv } so the picker, the coach and the
  * engine all agree on who is eligible.
  */
-export function foulTroubleTargets(g, teamKey) {
+// `minAdv`: 4, or 3 for Foul Trouble+ (2026-10-20).
+export function foulTroubleTargets(g, teamKey, minAdv = 4) {
   const myT = getTeam(g, teamKey);
   const oppT = getOpp(g, teamKey);
   const oppKey = teamKey === 'A' ? 'B' : 'A';
@@ -151,7 +152,7 @@ export function foulTroubleTargets(g, teamKey) {
     if (!def || already.has(def.id)) return;
     const a = calcAdv(off, def, g.tempEff?.[teamKey] || {}, slot);
     const adv = Math.max(a.speedAdv, a.powerAdv);
-    if (adv >= 4) out.push({ slot, off, def, defIdx, adv });
+    if (adv >= minAdv) out.push({ slot, off, def, defIdx, adv });
   });
   return out;
 }
@@ -373,7 +374,7 @@ function shotReaction(g, teamKey, cardId, plus = false) {
       if (!(psc.bonus > 0) && !plus) return no('That check carries no card bonus to smother');
       return ok(plus ? 'No card bonus, and −1' : 'Their card bonus −3 (min 0)');
     case 'denial':
-      if (myT.hand.filter(id => baseId(id) !== 'denial').length === 0) return no('No card to discard');
+      if (!plus && myT.hand.filter(id => baseId(id) !== 'denial').length === 0) return no('No card to discard');
       return ok('They lose 2 AST, or the check is at −3');
     case 'hustle_play':
       if ((shooter?.salary || 0) <= 800) return no('The shooter must be paid above $800');
@@ -480,8 +481,11 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
     if (g.matchupTurn !== teamKey) return no("It's not your turn");
     if (g.buffs?.[teamKey]?.[cardId]) return no('Already in play this game');
+    // Last game's Conditioning+ already covers this one; a "+" copy still
+    // carries to the next.
+    if (cardId === 'conditioning' && !plus && g.buffs?.[teamKey]?.conditioning_carry) return no("Last game's Conditioning+ already covers this game");
     if (cardId === 'weight_room' && !(myT.starters || []).some(Boolean)) return no('Nobody on the floor');
-    return ok(getStrat(cardId)?.desc ?? 'For the rest of this game');
+    return ok((plus && PLUS[cardId]?.desc) || getStrat(cardId)?.desc || 'For the rest of this game');
   }
 
   // CHEMISTRY (Climb-only, 2026-10-19): set up in the matchup, on your turn, once a game.
@@ -719,8 +723,8 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     // would give it one, but nobody knows that yet when the card is played.
     if (g.quarter === 4 && g.section === 3) return no('No section left for them to sit out');
     if ((oppT.roster || []).length < 6) return no('The opponent has no bench — nobody to replace them');
-    const ft = foulTroubleTargets(g, teamKey);
-    if (!ft.length) return no('Need one of your players beating their defender by 4+ on Speed or Power');
+    const ft = foulTroubleTargets(g, teamKey, plus ? 3 : 4);
+    if (!ft.length) return no(`Need one of your players beating their defender by ${plus ? 3 : 4}+ on Speed or Power`);
     return ok('Send a beaten defender to the bench for the whole next section');
   }
 
@@ -846,7 +850,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
       // shape: a tempEff mark endSection wipes.
       if (g.tempEff?.[teamKey]?.putbackUsed) return no('Putback Dunk is once per section');
       if (reboundTrackLead(g, teamKey) <= 0) return no('Your team must lead in rebounds');
-      if (!myT.starters.some(p => p.power >= 14)) return no('Need a player with Power 14+ in lineup');
+      if (!myT.starters.some(p => p.power >= (plus ? 12 : 14))) return no(`Need a player with Power ${plus ? 12 : 14}+ in lineup`);
       return ok();
     }
 
@@ -857,7 +861,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     }
 
     // Pin-Down Screen costs a discard, so it needs another card to pay with.
-    if (cardId === 'pin_down_screen' && myT.hand.filter(id => baseId(id) !== cardId).length === 0) return no('Need another card to discard');
+    if (cardId === 'pin_down_screen' && !plus && myT.hand.filter(id => baseId(id) !== cardId).length === 0) return no('Need another card to discard');
     // You Stand Over There and Pin-Down Screen: someone must still have a roll
     // to come, or the picker finds nobody. See preRollTargets.
     if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');
@@ -883,7 +887,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
 
   if (cardId === 'flare_screen') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
-    if (!(g.rollResults[teamKey] || []).some(r => r?.die === 20)) return no('A player must have rolled a natural 20');
+    if (!(g.rollResults[teamKey] || []).some(r => r?.die >= (plus ? 19 : 20))) return no(`A player must have rolled a natural ${plus ? '19 or 20' : '20'}`);
     return ok();
   }
 
@@ -947,10 +951,10 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
   switch (cardId) {
     case 'green_light':
       if (greenLightTargets(g, teamKey).length === 0) return no('Everyone has rolled, is shut out, or has had a Green Light this section');
-      return ok('Three 3PT checks instead of the roll');
+      return ok(plus ? 'Three 3PT checks at +2 instead of the roll' : 'Three 3PT checks instead of the roll');
     case 'five_out':
       if (preRollTargets(g, teamKey, p => (p.threePtBoost || 0) > 0).length === 0) return no('Every 3PT shooter has already rolled');
-      return ok('Two 3PT checks at +1 instead of the roll');
+      return ok(`Two 3PT checks at +${plus ? 3 : 1} instead of the roll`);
     case 'hammer_set': {
       const some = myT.starters.some((p, i) => {
         if (!p || (p.threePtBoost || 0) > 0) return false;
@@ -958,33 +962,33 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
         return dp && calcAdv(p, dp, g.tempEff[teamKey] || {}, i).speedAdv > 0;
       });
       if (!some) return no('Need a non-shooter with a Speed advantage');
-      return ok('A 3PT check at normal difficulty; hit = +2 AST');
+      return ok(plus ? 'A 3PT check at +3; hit = +2 AST' : 'A 3PT check at normal difficulty; hit = +2 AST');
     }
     case 'iso_heavy':
       if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');
-      return ok('One player +3, teammates −2');
+      return ok(`One player +${plus ? 5 : 3}, teammates −2`);
     case 'three_point_barrage': {
       const n = myT.starters.filter(p => (p?.threePtBoost || 0) > 0).length;
       if (n < 3) return no(`Need three players with a 3PT Bonus (have ${n})`);
-      return ok(`${n} 3PT checks`);
+      return ok(`${n} 3PT checks${plus ? ' at +2' : ''}`);
     }
     case 'grab_and_go':
       if (myT.rebounds < 3) return no(`Need 3 rebounds (have ${myT.rebounds})`);
-      return ok('−3 REB → +2 AST');
+      return ok(`−3 REB → +${plus ? 3 : 2} AST`);
     case 'own_the_glass': {
       const lead = reboundTrackLead(g, teamKey);
       if (lead < OWN_THE_GLASS_LEAD) return no(`Lead the Rebound Track by ${OWN_THE_GLASS_LEAD} (you are at ${lead >= 0 ? '+' : ''}${lead})`);
       if (myT.rebounds < 5) return no(`Need 5 rebounds (have ${myT.rebounds})`);
-      return ok('−5 REB → two Paint checks at +1');
+      return ok(`−5 REB → two Paint checks at +${plus ? 3 : 1}`);
     }
     case 'crash_and_kick':
       if (myT.rebounds < 3) return no(`Need 3 rebounds (have ${myT.rebounds})`);
       if (myT.assists < 1) return no(`Need 1 assist (have ${myT.assists})`);
-      return ok('A 3PT check at +2');
+      return ok(`A 3PT check at +${plus ? 4 : 2}`);
     case 'pick_and_pop':
       if (myT.assists < 2) return no(`Need 2 assists (have ${myT.assists})`);
       if (!myT.starters.some(p => (p?.threePtBoost || 0) > 0)) return no('Need a player with a 3PT Bonus');
-      return ok('A 3PT check at +1; hit = +2 AST back');
+      return ok(`A 3PT check at +${plus ? 3 : 1}; hit = +2 AST back`);
     case 'extra_pass':
       if (myT.assists < 2) return no(`Need 2 assists (have ${myT.assists})`);
       return ok('Any player, any check, no card bonuses');
@@ -1007,7 +1011,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
         : 'Two paint checks at +2, and their paint checks go to −2');
     }
     case 'outside_pick':
-      if (myT.hand.filter(id => baseId(id) !== 'outside_pick').length === 0) return no('No card to discard');
+      if (!plus && myT.hand.filter(id => baseId(id) !== 'outside_pick').length === 0) return no('No card to discard');
       return ok('A 3PT check at +5 — hit for 3 and an assist');
     case 'inside_out': {
       const ps = g.lastPaintScore;
@@ -1016,12 +1020,12 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     }
     case 'lob_city':
       if (!myT.starters.some(p => p && ((p.speed || 0) >= 15 || (p.power || 0) >= 15))) return no('Need a player with Speed or Power 15+');
-      if (myT.hand.filter(id => baseId(id) !== 'lob_city').length === 0) return no('No card to discard');
+      if (!plus && myT.hand.filter(id => baseId(id) !== 'lob_city').length === 0) return no('No card to discard');
       return ok('Speed 15+ players add an assist, Power 15+ players score 2');
     case 'stretch_five': {
       const big = myT.starters.some(p => p && String(p.pos || '').split(/[-/]/).some(t => t === 'C' || t === 'PF') && ((p.shotLine ?? 18) - (p.threePtBoost || 0)) <= 14);
       if (!big) return no('Need a C or PF who converts threes at 14 or lower');
-      return ok('Their 3PT check, then a teammate\'s paint check at +2');
+      return ok(`Their 3PT check, then a teammate's paint check at +${plus ? 4 : 2}`);
     }
     case 'post_domination': {
       // REWORKED 2026-09-16. The door was two players at Power 15+ on the
@@ -1034,11 +1038,11 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
         return dp && calcAdv(p, dp, g.tempEff[teamKey] || {}, i).powerAdv > 0;
       });
       if (edge.length === 0) return no('Need a player with a Power advantage over their defender, still to roll');
-      return ok('Double their rebounds this period');
+      return ok(plus ? 'Double their rebounds this period, and draw a card' : 'Double their rebounds this period');
     }
     case 'unsung_hero':
       if (preRollTargets(g, teamKey, p => (p.salary || 0) <= 400).length === 0) return no('Need a $400-or-less player still to roll');
-      return ok('Two dice, keep the higher');
+      return ok(plus ? 'Three dice, keep the highest' : 'Two dice, keep the higher');
     case 'point_god': {
       // Post Domination's Speed twin (2026-09-23): the same matchup door, read
       // through calcAdv, for a player still to roll.
@@ -1047,12 +1051,12 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
         return dp && calcAdv(p, dp, g.tempEff[teamKey] || {}, i).speedAdv > 0;
       });
       if (edge.length === 0) return no('Need a player with a Speed advantage over their defender, still to roll');
-      return ok('Double their assists this period');
+      return ok(plus ? 'Double their assists this period, and draw a card' : 'Double their assists this period');
     }
     case 'blow_by': {
       // Rimshaker's Speed twin (2026-09-23).
-      const hasHot = myT.starters.some(p => { const ps = getPS(g, teamKey, p.id) || {}; return p.speed >= 13 && (ps.hot || 0) > 0; });
-      if (!hasHot) return no('Need a Speed 13+ player with a hot marker');
+      const hasHot = myT.starters.some(p => { const ps = getPS(g, teamKey, p.id) || {}; return p.speed >= (plus ? 12 : 13) && (ps.hot || 0) > 0; });
+      if (!hasHot) return no(`Need a Speed ${plus ? 12 : 13}+ player with a hot marker`);
       return ok('+2 pts and another hot marker');
     }
     case 'transition_outlet': {
@@ -1098,14 +1102,14 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
         const dp = oppT.starters[defIdx];
         if (!dp) return false;
         const adv = calcAdv(p, dp, g.tempEff[teamKey], i);
-        return Math.max(adv.speedAdv, adv.powerAdv) >= 3;
+        return Math.max(adv.speedAdv, adv.powerAdv) >= (plus ? 2 : 3);
       });
-      if (!hasAdv3) return no('Need a player with Speed or Power advantage ≥3');
+      if (!hasAdv3) return no(`Need a player with Speed or Power advantage ≥${plus ? 2 : 3}`);
       return ok();
     }
     case 'rimshaker': {
-      const hasHot = myT.starters.some(p => { const ps = getPS(g, teamKey, p.id) || {}; return p.power >= 13 && (ps.hot || 0) > 0; });
-      if (!hasHot) return no('Need a Power 13+ player with a hot marker');
+      const hasHot = myT.starters.some(p => { const ps = getPS(g, teamKey, p.id) || {}; return p.power >= (plus ? 12 : 13) && (ps.hot || 0) > 0; });
+      if (!hasHot) return no(`Need a Power ${plus ? 12 : 13}+ player with a hot marker`);
       return ok();
     }
     case 'drive_the_lane': {
@@ -1132,7 +1136,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
       if (!myT.starters.some(p => p.power >= (plus ? 12 : 13) && (p.paintBoost || 0) > 0)) return no(`Need Power ${plus ? 12 : 13}+ player with a Paint Bonus`);
       return ok();
     case 'cross_court_dime':
-      if (myT.assists < 3) return no(`Need 3 assists (have ${myT.assists})`);
+      if (myT.assists < (plus ? 2 : 3)) return no(`Need ${plus ? 2 : 3} assists (have ${myT.assists})`);
       if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');
       return ok();
     case 'energy_injection': {
@@ -1143,7 +1147,7 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     case 'crowd_favorite':
       if (!myT.starters.some(p => p.salary <= 350)) return no('Need a player with salary ≤$350 in lineup');
       return ok('2+ pts this section, rolls or shot checks → hot marker');
-    case 'switch_everything': return ok('Reassign your entire defense — all opponent advantages doubled');
+    case 'switch_everything': return ok(plus ? 'Reassign your entire defense — opponent advantages grow by half' : 'Reassign your entire defense — all opponent advantages doubled');
     case 'this_is_my_house': {
       const targets = myHouseTargets(g, teamKey);
       if (targets.length === 0) {

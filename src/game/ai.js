@@ -1005,7 +1005,8 @@ export function switchEverythingChanges(game, teamKey) {
  * Measured over 150 simulated games the old rule played it 100 times, one in
  * six of them for a net LOSS, the worst at −8.1 of weighted roll bonus.
  */
-export function switchEverythingValue(game, teamKey) {
+// `plus`: a Switch Everything+ copy, whose price is half again, not double.
+export function switchEverythingValue(game, teamKey, plus = false) {
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const plain = game.tempEff?.[oppKey] || {};
   const m = matchupCosts(game, teamKey, plain);
@@ -1013,7 +1014,7 @@ export function switchEverythingValue(game, teamKey) {
   const now = assignmentTotal(m, game.offMatchups?.[oppKey] || [0, 1, 2, 3, 4]);
   // Already doubled (a second copy in the same segment): the price is paid,
   // so the reassignment is all upside and is judged on its own.
-  const after = bestAssignment(game, teamKey, { ...plain, doubleAdv: true });
+  const after = bestAssignment(game, teamKey, plus ? { ...plain, halfAdv: true } : { ...plain, doubleAdv: true });
   if (!after?.matchups) return { gain: 0, matchups: null };
   return { gain: now - after.total, matchups: after.matchups };
 }
@@ -1230,7 +1231,7 @@ function evaluateCard(game, teamKey, handCardId, strat, opts = {}) {
     return h && h.swing > 0 ? Math.min(10, 4 + 4 * h.swing) : 0;
   }
   if (cardId === 'switch_everything') {
-    const { gain } = switchEverythingValue(game, teamKey);
+    const { gain } = switchEverythingValue(game, teamKey, isPlus(handCardId));
     return gain >= SWITCH_FLOOR ? Math.min(10, 3 + 2 * gain) : 0;
   }
   if (cardId === 'high_screen_roll') {
@@ -1291,7 +1292,7 @@ function evaluateCard(game, teamKey, handCardId, strat, opts = {}) {
   // nobody above zero is not played — the table value below is what it is
   // worth when there IS a player it pays on (forfeitNet).
   if (FORFEIT_CARDS[cardId]) {
-    const best = bestForfeitTarget(game, teamKey, cardId);
+    const best = bestForfeitTarget(game, teamKey, handCardId);
     if (!best || best.net <= 0) return 0;
   }
 
@@ -1423,11 +1424,13 @@ function evaluateCard(game, teamKey, handCardId, strat, opts = {}) {
 // The coach plays the card on the player for whom that NET is largest, and
 // does not play it at all when no player nets above zero. The same function
 // is what a coach tip reads off for a human about to make the Shai play.
+// `plus`: what the "+" copy changes (The Climb, 2026-10-20) — a bonus added
+// to every check, or a cheaper cost.
 export const FORFEIT_CARDS = {
-  green_light:          { checks: [{ type: '3pt', bonus: 0 }, { type: '3pt', bonus: 0 }, { type: '3pt', bonus: 0 }] },
-  you_stand_over_there: { checks: [{ type: '3pt', bonus: 0 }, { type: '3pt', bonus: 0 }] },
-  five_out:             { checks: [{ type: '3pt', bonus: 1 }, { type: '3pt', bonus: 1 }], needsThree: true },
-  cross_court_dime:     { checks: [{ type: 'paint', bonus: 0 }, { type: '3pt', bonus: 0 }], assists: 3 },
+  green_light:          { checks: [{ type: '3pt', bonus: 0 }, { type: '3pt', bonus: 0 }, { type: '3pt', bonus: 0 }], plus: { bonus: 2 } },
+  you_stand_over_there: { checks: [{ type: '3pt', bonus: 0 }, { type: '3pt', bonus: 0 }], plus: { bonus: 2 } },
+  five_out:             { checks: [{ type: '3pt', bonus: 1 }, { type: '3pt', bonus: 1 }], needsThree: true, plus: { bonus: 2 } },
+  cross_court_dime:     { checks: [{ type: 'paint', bonus: 0 }, { type: '3pt', bonus: 0 }], assists: 3, plus: { assists: 2 } },
 };
 /** What a made check scores (SPEND_COSTS' own reading: a three is 3, a paint bucket 2). */
 const CHECK_PTS = { '3pt': 3, paint: 2 };
@@ -1443,6 +1446,7 @@ export function forfeitNet(game, teamKey, idx, handCardId) {
   const cardId = baseId(handCardId);
   const spec = FORFEIT_CARDS[cardId];
   if (!spec) return null;
+  const up = isPlus(handCardId) ? (spec.plus ?? {}) : {};
   const myT = getTeam(game, teamKey);
   const oppT = getOpp(game, teamKey);
   const p = myT?.starters?.[idx];
@@ -1455,7 +1459,7 @@ export function forfeitNet(game, teamKey, idx, handCardId) {
   let checks = 0;
   for (const c of spec.checks) {
     const { need } = checkNeed(game, teamKey, idx, c.type);
-    const pHit = Math.min(1, Math.max(0, (21 - (need - c.bonus)) / 20));
+    const pHit = Math.min(1, Math.max(0, (21 - (need - c.bonus - (up.bonus || 0))) / 20));
     checks += CHECK_PTS[c.type] * pHit;
   }
   // The roll given up is priced at the matchup the dice would use (matchupAdv:
@@ -1463,7 +1467,7 @@ export function forfeitNet(game, teamKey, idx, handCardId) {
   const adv = matchupAdv(game, teamKey, idx) || { rollBonus: 0 };
   const ps = getPS(game, teamKey, p.id) || {};
   const roll = expectedOutput(p, adv.rollBonus + getFatigue(game, teamKey, idx) + ((ps.hot || 0) - (ps.cold || 0)) * 2);
-  const cost = (spec.assists || 0) * ASSIST_WORTH;
+  const cost = (up.assists ?? spec.assists ?? 0) * ASSIST_WORTH;
   return { idx, player: p, checks, roll, cost, net: checks - roll - cost };
 }
 
@@ -1594,7 +1598,7 @@ export function aiBuildCardOpts(game, teamKey, handCardId) {
     case 'cross_court_dime': {
       // WHO GIVES UP THE LEAST — see forfeitNet. The old pick took the best 3PT
       // shooter, which on a good team is the player whose roll is worth most.
-      const best = bestForfeitTarget(game, teamKey, cardId);
+      const best = bestForfeitTarget(game, teamKey, handCardId);
       return { playerIdx: best ? best.idx : 0 };
     }
 
@@ -1752,7 +1756,7 @@ export function aiBuildCardOpts(game, teamKey, handCardId) {
     case 'switch_everything': {
       // The assignment that is best UNDER THE DOUBLING, not the one that
       // would be best if the card were free — see switchEverythingValue.
-      const { matchups } = switchEverythingValue(game, teamKey);
+      const { matchups } = switchEverythingValue(game, teamKey, isPlus(handCardId));
       return matchups ? { assignments: matchups } : {};
     }
 
@@ -1855,16 +1859,15 @@ export function aiBuildCardOpts(game, teamKey, handCardId) {
       const byMin = starters
         .map((p, i) => ({ i, min: getPS(game, teamKey, p.id)?.minutes || 0 }))
         .sort((a, b) => b.min - a.min);
-      return { playerIdx: byMin[0]?.i ?? 0, player2Idx: byMin[1]?.i };
+      return { playerIdx: byMin[0]?.i ?? 0, player2Idx: byMin[1]?.i, player3Idx: isPlus(handCardId) ? byMin[2]?.i : undefined };
     }
 
     case 'ice_the_hot_hand': {
-      let bestIce = { i: 0, hot: -1 };
-      (oppT.starters || []).forEach((p, i) => {
-        const hot = getPS(game, oppKey, p.id)?.hot || 0;
-        if (hot > bestIce.hot) bestIce = { i, hot };
-      });
-      return { targetIdx: bestIce.i };
+      const iceOrder = (oppT.starters || [])
+        .map((p, i) => ({ i, hot: getPS(game, oppKey, p.id)?.hot || 0 }))
+        .sort((a, b) => b.hot - a.hot);
+      const ice2 = isPlus(handCardId) && iceOrder[1]?.hot > 0 ? iceOrder[1].i : undefined;
+      return { targetIdx: iceOrder[0]?.i ?? 0, target2Idx: ice2 };
     }
 
     case 'reset': {

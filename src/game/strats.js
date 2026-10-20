@@ -330,6 +330,15 @@ export const STRATS = [
 /** The Climb-only cards that last a game (g.buffs): one rule in canPlay, one in execCard. */
 export const CLIMB_GAME_CARDS = Object.freeze(['let_it_fly', 'pace_and_space', 'bruise_brothers', 'weight_room', 'conditioning', 'shut_the_door', 'stay_hot', 'ice_bath', 'splash', 'on_fire']);
 
+/**
+ * A Climb game card's number from its g.buffs flag (execCard stores it since
+ * the "+" cards, 2026-10-20); `fallback` is the plain card's, for a game saved
+ * when the flag was `true`.
+ */
+export function buffNumber(v, fallback) {
+  return v === true ? fallback : (Number(v) || fallback);
+}
+
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));
 
 /**
@@ -395,6 +404,93 @@ export const PLUS = {
   rim_protector: { desc: "Opponent announces a Paint Shot Check and your defender on them has Power + Defensive Bonus of 13+: −5 to the check. Miss: +3 Rebounds for you." },
   help_defender: { desc: "An opponent yet to roll has a Speed or Power advantage of +3 or more: one of your other defenders rotates over. They get no positive matchup bonus this section." },
   cold_spell: { desc: "Opponent rolls a natural 1 to 5 on their scoring roll: apply a cold marker + reduce their Rebound Track by 1." },
+  // EVERY OTHER CARD A RUN CAN OFFER (79), approved 2026-10-20 ("I think you
+  // can just push all of the + cards"): docs/plans/2026-10-20-the-climb-plus-every-card.md.
+  // `runItBack` goes back into the deck after a play (execCard); `innate`
+  // starts the game in the opening hand (engine.js makeTeam).
+  // commons
+  anticipate_pass: { desc: "Opponent has 6+ assists: spend 1 of your assists to remove 4 from their track." },
+  beat_to_the_spot: { desc: "Play after an opponent activates a card that boosts Speed. Their Speed boost is cancelled, and they suffer −1 Assist." },
+  clamp_the_reserve: { desc: "Choose an opposing player with salary $400 or less who has not rolled: they roll three D20 and keep the lowest this period." },
+  crash_and_kick: { desc: "Spend 3 Rebounds and 1 Assist: a player of your choice announces a 3PT Shot Check at +4." },
+  crowd_favorite: { desc: "Player with salary ≤$350: if they score 2+ pts this section (rolls or shot checks), they gain two hot markers." },
+  defensive_stopper: { desc: "Choose a player who was benched last segment. They gain +8 Speed and +8 Power on defense this segment." },
+  delayed_slip: { desc: "Choose a player with Speed ≥12 and Power ≥10. If they have no matchup advantage, give them +4 to scoring roll and +1 Rebound." },
+  denial: { desc: "No discard. Opponent announces a shot check: they lose 2 Assists — if they have fewer than 2, the check is at −3 instead." },
+  energizer: { desc: "Choose a player with salary below $250: +5 Speed and +5 Power on defense this period." },
+  energy_injection: { desc: "Two players with salary <$400 each get +4 to their scoring roll. If either scores 4+: +1 assist." },
+  extra_pass: { desc: "Spend 2 Assists: any player announces a 3PT or Paint Shot Check. No card bonuses apply to this check. Run It Back: it goes back into your deck, to be drawn again this game.", runItBack: true },
+  find_the_open_man: { desc: "The opponent has a Double Team on the floor: a player of yours they are NOT trapping gets +6 to their scoring roll." },
+  feeling_it: { desc: "One of your players has a hot marker: draw 3 strategy cards." },
+  fight_over: { desc: "Cancel opponent's screen-and-roll card. The faster of the two involved offensive players gets +1 to their scoring roll." },
+  from_way_downtown: { desc: "3PT Shot Check at +3. Roll 1–3: cold marker. Roll 18–20: hot marker." },
+  grab_and_go: { desc: "Spend 3 Rebounds: +3 Assists." },
+  hammer_set: { desc: "A player WITHOUT a 3PT Bonus who holds a Speed advantage announces a 3PT Shot Check at +3. Hit: +2 Assists." },
+  hustle_play: { desc: "An opponent with salary above $800 announces a shot check: a player of yours under $400 contests it, subtracting their Defensive Bonus and 2 more." },
+  iso_heavy: { desc: "One player takes over: +5 to their scoring roll this period. Every teammate rolls at −2." },
+  mismatch_hunter: { desc: "Choose a player with a Speed or Power advantage of +4 or more: their scoring roll gains an additional +4." },
+  offensive_foul: { desc: "Play after an opponent activates a card that boosts Power. Their Power boost is cancelled, and they suffer −1 Rebound." },
+  pick_and_pop: { desc: "Spend 2 Assists: a player with a 3PT Bonus announces a 3PT Shot Check at +3. Hit: gain 2 Assists back." },
+  rebound_tap_out: { desc: "Spend 2 rebounds: +1 assist to a player with a 3PT Bonus. That player makes a 3PT Shot Check at +3." },
+  second_wind: { desc: "Choose a fatigued player. They ignore their fatigue penalty this segment (+2 minutes on their tracker after)." },
+  turnover: { desc: "Opponent has a cold marker: draw 3 strategy cards." },
+  unsung_hero: { desc: "Choose a player with salary $400 or less who has not rolled: they roll three D20 and keep the highest this period." },
+  verticality: { desc: "An opponent card just scored with no roll and no check: if your defender on that player has a Defensive Bonus or matches their Power, those points are wiped, and you gain 1 Rebound." },
+  // uncommons
+  and_one: { desc: "Speed or Power advantage ≥2: +1 pt. Advantage ≥4: also attempt a free throw check. 🔒 Uncancelable." },
+  blitz: { desc: "Opponent announces a 3PT or Paint Shot Check: blitz the shooter. The offense must give that check to another player on the floor, with the card bonus less 2." },
+  blow_by: { desc: "Player has Speed 12+ and a hot marker: +2 pts and add another hot marker." },
+  burst_of_momentum: { desc: "Player hits their top tier AND scores 3+ pts this segment: +2 AST, +2 REB, and a hot marker. Once per player per section." },
+  chip_on_shoulder: { desc: "Player with salary ≤$250 gets +5 Speed and +5 Power this segment. If they now have a positive roll bonus, draw a card." },
+  coaches_challenge: { desc: "Re-roll any opponent shot check (not a scoring roll); they must accept the new result. Limit: 2 per game per team, and an overturned make does not count." },
+  cross_court_dime: { desc: "Spend 2 assists: player skips scoring roll and makes one Paint + one 3PT Shot Check instead." },
+  defensive_anchor: { desc: "Choose a defender with a Defensive Bonus: it counts double this section — against the player they guard, and on every shot check they contest. Draw a card." },
+  double_team: { desc: "Send two at the ball: choose an opposing player who hasn't rolled — their defender gets +6 Speed/+6 Power this segment. The rotation recovers: your opponent gets +1 on the next scoring roll they choose. Once per section." },
+  elevator_doors: { desc: "Choose a player with a 3PT Bonus. They attempt a 3PT Shot Check at an additional +5." },
+  five_out: { desc: "Choose a player with a 3PT Bonus who has not rolled: they take two 3PT Shot Checks at +3 instead of their scoring roll." },
+  flare_screen: { desc: "A player rolled a natural 19 or 20: they make a 3PT Shot Check. Success: +3 pts + draw a card." },
+  foul_trouble: { desc: "Choose an opposing defender your player is beating by 3 or more on Speed or Power: they pick up the foul that sits them for the whole next section." },
+  green_light: { desc: "Select one player to attempt three 3PT Shot Checks at +2 each instead of their scoring roll. Once per player per section." },
+  heat_check: { desc: "A player hit their highest scoring tier: attempt a 3PT Shot Check at +1. Success: +3 pts + hot marker. 🔒 Uncancelable." },
+  inside_out: { desc: "After one of your players scores in the paint: a teammate takes a free 3PT Shot Check at +2." },
+  kick_out_three: { desc: "After your player misses a shot check, spend 2 Rebounds: a different player of yours with a 3PT Bonus of +1 or more announces a 3PT Shot Check at +3." },
+  outside_pick: { desc: "No discard: this player takes a 3PT Shot Check at +5. Hit: 3 points and +1 Assist." },
+  pin_down_screen: { desc: "No discard. Choose a player to attempt a 3PT Shot Check at +5. Success: 3 pts + 1 assist to a teammate." },
+  putback_dunk: { desc: "Your team leads in rebounds and a player has Power 12+: score 2 points automatically. Once per section." },
+  rebound_and_push: { desc: "Right after an opponent misses a shot check, spend 2 Rebounds: your defender on the shooter announces a Paint Shot Check at +3." },
+  rimshaker: { desc: "Player has Power 12+ and a hot marker: +2 pts and add another hot marker." },
+  short_roll_playmaker: { desc: "Designate a player with Speed 8+ and Power 8+: they add +1 Assist every time ANY OF YOUR PLAYERS HITS A PAINT CHECK this period. A scoring roll is not a paint check." },
+  stagger_action: { desc: "One player with Speed 13+ and one with a 3PT Bonus each gain +4 Speed for this segment." },
+  swarming_defense: { desc: "Target the opposing player with the highest salary and roll a D20: on 6+ they roll their scoring twice this period and keep the lower." },
+  uncontested_layup: { desc: "Any of your players with +2 Speed AND +2 Power advantage over their matchup automatically scores 2 pts, and +1 Assist." },
+  you_stand_over_there: { desc: "Before a player makes their scoring roll: they skip it and attempt two 3PT Shot Checks at +2 each instead." },
+  // rares
+  defensive_identity: { desc: "If three or more of your players have a Defensive Bonus, all five get +4 Speed and +4 Power on defense this period." },
+  desperation_press: { desc: "CRUNCH TIME, and you are trailing: the next two opposing scoring rolls that land in their top tier must be re-rolled. The second results stand." },
+  dogged: { desc: "Target a fatigued opposing player, however little: −3 Speed and −3 Power until benched for a segment." },
+  fresh_legs: { desc: "Play during your Timeout: up to three chosen players each shed 4 minutes of fatigue." },
+  ice_the_hot_hand: { desc: "Play during your Timeout: strip all hot markers from two opposing players. The run stops here." },
+  lob_city: { desc: "Needs a player with Speed or Power 15+. No discard: every player with Speed 15+ adds an Assist, every player with Power 15+ scores 2." },
+  own_the_glass: { desc: "Your team leads the Rebound Track by 6 or more: spend 5 Rebounds: a player of yours announces two Paint Shot Checks at +3." },
+  pick_and_roll_maestro: { desc: "A player at Speed 14+ swaps defenders with a teammate. If their new defender is 3+ slower than they are, they take a Paint Shot Check: 2 points and +1 Assist." },
+  point_god: { desc: "Choose a player with a Speed advantage over their defender, before they roll: their assists from scoring rolls are doubled this period. Draw a card." },
+  post_domination: { desc: "Choose a player with a Power advantage over their defender, before they roll: their rebounds from scoring rolls are doubled this period. Draw a card." },
+  reset: { desc: "Play during your Timeout: clear all cold markers from one of your players, and they gain a hot marker. Deep breath." },
+  stretch_five: { desc: "A C or PF whose 3PT line is 14 or lower takes a 3PT Shot Check; then a teammate of your choice takes a Paint Shot Check at +4." },
+  switch_everything: { desc: "Fully reassign your defense: choose who guards each of the opponent's players. Opponent offensive advantages grow by half (rounded down) instead of doubling. 🔒 Uncancelable." },
+  three_point_barrage: { desc: "If three or more of your players have a 3PT Bonus, each of them takes a 3PT Shot Check at +2. You may spend 1 Assist for one more check." },
+  // Climb-only
+  bruise_brothers: { desc: "Stays in play this game: your Paint Shot Checks are +2." },
+  chemistry: { desc: "Innate: starts the game in your hand. Stays in play this game: each screen card you play gives your next scoring roll +1 more than the last: +1, then +2, then +3.", innate: true },
+  conditioning: { desc: "Your players' fatigue costs them nothing this game and the next." },
+  ice_bath: { desc: "After this game, your players' fatigue is cleared. Ice Bath+ stays in your deck." },
+  let_it_fly: { desc: "Stays in play this game: your 3PT Shot Checks are +2." },
+  on_fire: { desc: "Stays in play this game: a player of yours who makes two shot checks in a row is On Fire — their shot checks are +3 until they miss." },
+  pace_and_space: { desc: "Stays in play this game: +2 Speed to every player of yours." },
+  shut_the_door: { desc: "Stays in play this game: opposing Paint Shot Checks are −2." },
+  splash: { desc: "Stays in play this game: your 3PT Shot Checks get +1 for every three your team has made this game (up to +3)." },
+  stay_hot: { desc: "Stays in play this game: your players carry the hot markers they finish it with into the next game (up to 3 each)." },
+  weight_room: { desc: "Choose a player: +5 Power for the rest of this game." },
 };
 
 const PLUS_STRATS = new Map();

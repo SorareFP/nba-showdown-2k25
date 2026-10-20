@@ -15,7 +15,7 @@ import { generateMap, stopById, nextStops, potOf, climbRng, MAP_VERSION } from '
 import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, coachDeck } from './climbKits.js';
 import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard } from './climbPerks.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
-import { STRATS, STRAT_MAP, PLUS, baseId, isPlus, plusId } from '../strats.js';
+import { STRATS, STRAT_MAP, PLUS, baseId, isPlus, plusId, buffNumber } from '../strats.js';
 import { ALL_CARDS, DORMANT_KEYS, cardKey, getCardByKey } from '../cardSets.js';
 import { isFeatCard } from '../recordBreakers.js';
 import { capOf } from '../coinRewards.js';
@@ -364,6 +364,7 @@ export function presetFor(run) {
       startQuarter: 4, fatigue: { A: { ...run.fatigue } },
       placementFirst: g.home ? 'B' : 'A',
       ...(run.carryHot ? { hot: { A: { ...run.carryHot } } } : {}),
+      ...(run.conditioned ? { buffs: { A: { conditioning_carry: true } } } : {}),
       ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
     },
     climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung },
@@ -444,7 +445,7 @@ function playerOffer(run, rng) {
  * run. A win clears the stop and the floor: the cap rises, every tracker
  * comes down by the recovery, and the offers are dealt.
  */
-export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, carryHot = null, iceBath = null }) {
+export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, carryHot = null, iceBath = null, conditioned = false }) {
   if (run.status !== 'game' || run.game?.stopId !== stopId) return run;
   if (!won) return { ...run, status: 'lost', lostAt: stopId, game: null };
   const stop = stopById(run.map, stopId);
@@ -457,14 +458,16 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, ca
     if (left > 0) fatigue[c.id] = left;
   }
   const gameWins = run.gameWins + (stop.kind === 'game' ? 1 : 0);
-  // Ice Bath clears the trackers and leaves the deck; Stay Hot's markers ride
-  // into the next game only (2026-10-19).
+  // Ice Bath clears the trackers and leaves the deck (Ice Bath+ stays);
+  // Stay Hot's markers and Conditioning+ ride into the next game only
+  // (2026-10-19, the "+" cards 2026-10-20).
   const iced = iceBath && (run.deck?.[iceBath] ?? 0) > 0;
   const next = {
     ...run, at: stopId, cleared, cap: run.cap + CLIMB.capPerFloor, gameWins, game: null,
     fatigue: iced ? {} : fatigue,
-    deck: iced ? takeCard(run.deck, iceBath) : run.deck,
+    deck: iced && !isPlus(iceBath) ? takeCard(run.deck, iceBath) : run.deck,
     carryHot: carryHot && Object.keys(carryHot).length ? carryHot : null,
+    conditioned: Boolean(conditioned),
   };
   const rng = climbRng(run.seed, 'offers', stopId);
   // The player offer is always drawn, so the cards' draw after it is the same
@@ -637,8 +640,11 @@ export function resultFromGame(game, stopId) {
     won: margin > 0,
     margin,
     endMinutes: Object.fromEntries((game?.teamA?.stats ?? []).map(s => [s.id, s.minutes ?? 0])),
-    // Stay Hot: the hot markers his players end on, two at most (2026-10-19).
-    ...(buffs.stay_hot ? { carryHot: Object.fromEntries((game?.teamA?.stats ?? []).filter(s => (s.hot ?? 0) > 0).map(s => [s.id, Math.min(2, s.hot)])) } : {}),
+    // Stay Hot: the hot markers your players end on, two at most (three for
+    // Stay Hot+; 2026-10-19).
+    ...(buffs.stay_hot ? { carryHot: Object.fromEntries((game?.teamA?.stats ?? []).filter(s => (s.hot ?? 0) > 0).map(s => [s.id, Math.min(buffNumber(buffs.stay_hot, 2), s.hot)])) } : {}),
+    // Conditioning+: the next game's fatigue costs nothing too.
+    ...(buffNumber(buffs.conditioning, 0) >= 2 ? { conditioned: true } : {}),
     // Ice Bath: the copy played, which leaves the deck once the fatigue goes.
     ...(buffs.ice_bath ? { iceBath: typeof buffs.ice_bath === 'string' ? buffs.ice_bath : 'ice_bath' } : {}),
   };

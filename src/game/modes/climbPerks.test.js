@@ -46,17 +46,17 @@ describe('the perks', () => {
   });
 
   it('stop at three on any one number, and Film Study needs a card with a "+"', () => {
-    const run = { deck: { catch_and_shoot: 2, 'close_out+': 1, green_light: 1 }, perks: Array.from({ length: PERK_CAP }, () => ({ id: 'gym_rat', target: 'p1' })) };
+    const run = { deck: { catch_and_shoot: 2, 'close_out+': 1, twin_towers: 1 }, perks: Array.from({ length: PERK_CAP }, () => ({ id: 'gym_rat', target: 'p1' })) };
     expect(perkProblem(run, 'gym_rat', 'p1', ['p1', 'p2'])).toMatch(/Already/);
     expect(perkProblem(run, 'extra_reps', 'p1', ['p1', 'p2'])).toBeNull();
     expect(perkProblem(run, 'gym_rat', 'nobody', ['p1'])).toMatch(/your players/);
     expect(practicable(run.deck)).toEqual(['catch_and_shoot']);
-    expect(perkProblem(run, 'film_study', 'green_light', ['p1'])).toMatch(/"\+"/);
+    expect(perkProblem(run, 'film_study', 'twin_towers', ['p1'])).toMatch(/"\+"/);
     expect(perkProblem(run, 'film_study', 'catch_and_shoot', ['p1'])).toBeNull();
   });
 
   it('are offered three at a time, seeded, and only ones that can be taken', () => {
-    const run = { deck: { green_light: 1 }, perks: [] };
+    const run = { deck: { twin_towers: 1 }, perks: [] };
     const a = perkOffer(run, climbRng(1, 'perks'), ['p1']);
     expect(a).toHaveLength(3);
     expect(a).not.toContain('film_study');   // nothing in the deck has a "+"

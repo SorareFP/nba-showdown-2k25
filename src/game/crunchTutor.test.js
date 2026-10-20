@@ -107,7 +107,7 @@ describe('Crowd Favorite', () => {
     getPS(g, 'A', 'a0').pts = 9;   // earlier points do not count
     const { game: g2, ok } = execCard(g, 'A', 'crowd_favorite', { playerIdx: 0 });
     expect(ok).toBe(true);
-    expect(g2.tempEff.A.crowd_0).toEqual({ at: 9 });
+    expect(g2.tempEff.A.crowd_0).toEqual({ at: 9, markers: 1 });
     // A roll or a shot check — both land in ps.pts.
     getPS(g2, 'A', 'a0').pts += CROWD_FAVORITE_PTS;
     const ng = endSection(g2);

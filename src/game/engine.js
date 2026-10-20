@@ -1,7 +1,7 @@
 // NBA Showdown 2026 — Core Game Engine
 // Pure functions — no React, no side effects. State is a plain object.
 
-import { CRUNCH_CARDS, baseId } from './strats.js';
+import { CRUNCH_CARDS, baseId, buffNumber, isPlus, PLUS } from './strats.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -98,7 +98,11 @@ export function bottomedLines(teamKey, teamName, bottomed) {
 
 // ── New Game ───────────────────────────────────────────────────────────────
 function makeTeam(roster, name, deckConfig) {
-  const builtDeck = buildDeck(deckConfig);
+  const shuffled = buildDeck(deckConfig);
+  // INNATE (a "+" rider, the Climb 2026-10-20; Slay the Spire's Innate): the
+  // copy starts the game in your hand, so it goes on top before the deal.
+  const innate = shuffled.filter(id => isPlus(id) && PLUS[baseId(id)]?.innate);
+  const builtDeck = innate.length ? [...shuffled.filter(id => !innate.includes(id)), ...innate] : shuffled;
   // A fresh game is never in Crunch Time: a crunch-only card in the opening
   // seven goes under.
   const { hand, deck } = drawCards([], builtDeck, 7, { crunchActive: false });
@@ -191,6 +195,8 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     clutchDice: opts.clutchDice ?? {},
     // IN SYSTEM (the Climb, 2026-10-20): { A: playbook } for a run's games; null elsewhere.
     system: opts.system ?? null,
+    // A run's carried Climb flags (Conditioning+ covers the next game).
+    ...(opts.buffs ? { buffs: opts.buffs } : {}),
     // Set by endSection when the final section begins within the margin —
     // { active, margin, used: {A,B}, extra: {A,B}, timeoutUsed: {A,B} }.
     crunch: null,
@@ -323,6 +329,8 @@ export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defI
   // matchup line and the AI's reading all say the same number. A penalty is
   // handled above and is not doubled — the card doubles advantages.
   if (tempEff?.doubleAdv) { speedAdv *= 2; powerAdv *= 2; }
+  // Switch Everything+ (The Climb, 2026-10-20): half again, rounded down.
+  else if (tempEff?.halfAdv) { speedAdv += Math.floor(speedAdv / 2); powerAdv += Math.floor(powerAdv / 2); }
   return { speedAdv, powerAdv, rawSpeedDiff: rawSpeed, rawPowerDiff: rawPower, db, rollBonus: Math.max(speedAdv, powerAdv), hasPenalty: false };
 }
 
@@ -458,6 +466,7 @@ export function benchRest(ps) {
   ps.cold = 0;
   // Dogged lasts until he is benched (applyLingering).
   ps.dogged = 0;
+  ps.doggedPlus = 0;
   ps.minutes = restMinutes(ps.minutes);
 }
 
@@ -509,8 +518,9 @@ export function getFatigue(g, key, idx) {
   if (!player) return 0;
   const ps = getPS(g, key, player.id);
   if (g.ignFatigue?.[`${key}_${idx}`]) return 0;
-  // Conditioning (Climb-only, 2026-10-19): fatigue costs nothing this game.
-  if (g.buffs?.[key]?.conditioning) return 0;
+  // Conditioning (Climb-only, 2026-10-19): fatigue costs nothing this game;
+  // Conditioning+ the next one too (conditioning_carry, set by the run).
+  if (g.buffs?.[key]?.conditioning || g.buffs?.[key]?.conditioning_carry) return 0;
   return fatigueForMinutes(ps?.minutes || 0);
 }
 
@@ -1094,19 +1104,21 @@ export function climbCheckParts(g, teamKey, type, idx = null) {
   const mine = g?.buffs?.[teamKey] || {};
   const theirs = g?.buffs?.[teamKey === 'A' ? 'B' : 'A'] || {};
   const parts = [];
-  if (type === '3pt' && mine.let_it_fly) parts.push({ label: 'Let It Fly', n: 1 });
-  if (type === 'paint' && mine.bruise_brothers) parts.push({ label: 'Bruise Crew', n: 1 });
-  if (type === 'paint' && theirs.shut_the_door) parts.push({ label: 'Shut the Door', n: -1 });
-  // Splash: +1 for every two threes the team has made this game, up to +3.
+  if (type === '3pt' && mine.let_it_fly) parts.push({ label: 'Let It Fly', n: buffNumber(mine.let_it_fly, 1) });
+  if (type === 'paint' && mine.bruise_brothers) parts.push({ label: 'Bruise Crew', n: buffNumber(mine.bruise_brothers, 1) });
+  if (type === 'paint' && theirs.shut_the_door) parts.push({ label: 'Shut the Door', n: -buffNumber(theirs.shut_the_door, 1) });
+  // Splash: +1 for every two threes the team has made this game (every one
+  // for Splash+), up to +3.
   if (type === '3pt' && mine.splash) {
     const threes = (getTeam(g, teamKey)?.stats ?? []).reduce((t, s) => t + (s.threepm || 0), 0);
-    const n = Math.min(3, Math.floor(threes / 2));
+    const n = Math.min(3, Math.floor(threes / buffNumber(mine.splash, 2)));
     if (n) parts.push({ label: 'Splash', n });
   }
-  // On Fire: three makes in a row (noteLastCheck keeps the streak), +3 until a miss.
+  // On Fire: three makes in a row (two for On Fire+; noteLastCheck keeps the
+  // streak), +3 until a miss.
   if (mine.on_fire && idx != null) {
     const p = getTeam(g, teamKey)?.starters?.[idx];
-    if (p && (getPS(g, teamKey, p.id)?.streak || 0) >= 3) parts.push({ label: 'On Fire', n: 3 });
+    if (p && (getPS(g, teamKey, p.id)?.streak || 0) >= buffNumber(mine.on_fire, 3)) parts.push({ label: 'On Fire', n: 3 });
   }
   // IN SYSTEM (2026-10-20, systemFit.js): a run's playbook pays the players who
   // fit it — Speed and Paint +1 on a fitting shooter's checks, Defense −1 on
@@ -1177,15 +1189,24 @@ export function checkNeed(g, teamKey, idx, type, { extra = 0, banked = true } = 
  */
 export function creditPaintScore(g, teamKey, playerIdx, player) {
   g.lastPaintScore = { teamKey, playerIdx, playerId: player?.id };
+  g.lastPaintAstBy = null;
   const te = g.tempEff?.[teamKey] || {};
-  if (!te['paintAst' + playerIdx]) return 0;
+  // Short-Roll Playmaker+ (2026-10-20): any of your paint makes, and the
+  // assist is the playmaker's for a teammate's make.
+  const by = te.paintAstBy;
+  if (!te['paintAst' + playerIdx] && by == null) return 0;
   getTeam(g, teamKey).assists += 1;
-  // The assist is his (the user, 2026-10-01: "they should get the assist that
-  // they earned by making the shot").
-  const ps = player?.id ? getPS(g, teamKey, player.id) : null;
+  // The assist is the scorer's own when it is their card (the user,
+  // 2026-10-01: "they should get the assist that they earned by making the
+  // shot"); a "+" playmaker's when a teammate scores.
+  const passer = by != null && by !== playerIdx ? getTeam(g, teamKey).starters[by] : player;
+  const ps = passer?.id ? getPS(g, teamKey, passer.id) : null;
   if (ps) ps.ast = (ps.ast || 0) + 1;
+  g.lastPaintAstBy = passer?.id ?? null;
   if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += 1;
-  g.log = [...g.log, { team: teamKey, msg: `Short-Roll Playmaker: ${player?.name} scores inside — +1 AST` }];
+  g.log = [...g.log, { team: teamKey, msg: passer !== player
+    ? `Short-Roll Playmaker+: ${passer?.name} finds ${player?.name} inside — +1 AST`
+    : `Short-Roll Playmaker: ${player?.name} scores inside — +1 AST` }];
   return 1;
 }
 
@@ -1377,7 +1398,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     }
     noteLastCheck(ng, {
       teamKey, playerIdx, player, type: 'paint', result: r, label: `${SPEND_COSTS.assistPaint}-AST paint check`, bonus: partsP, pool: 'assistSpend',
-      astPaid: paintAstA ? [{ playerId: player.id, n: paintAstA }] : [],
+      astPaid: paintAstA ? [{ playerId: ng.lastPaintAstBy ?? player.id, n: paintAstA }] : [],
     });
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
@@ -1424,7 +1445,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     }
     noteLastCheck(ng, {
       teamKey, playerIdx, player, type: 'paint', result: r, label: 'Rebound Paint Check', bonus: partsR, pool: 'reboundBonus',
-      astPaid: paintAstR ? [{ playerId: player.id, n: paintAstR }] : [],
+      astPaid: paintAstR ? [{ playerId: ng.lastPaintAstBy ?? player.id, n: paintAstR }] : [],
     });
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
@@ -1621,9 +1642,11 @@ export function applyLingering(g) {
   for (const k of ['A', 'B']) {
     const t = getTeam(g, k);
     (t.starters ?? []).forEach((p, i) => {
-      const n = (p && (t.stats ?? []).find(s => s.id === p.id)?.dogged) || 0;
+      const st = p && (t.stats ?? []).find(s => s.id === p.id);
+      const n = st?.dogged || 0;
       if (!n) return;
-      const by = DOGGED_PENALTY * n;
+      // A Dogged+ play is one point more (The Climb, 2026-10-20).
+      const by = DOGGED_PENALTY * n + (st.doggedPlus || 0);
       if (!g.tempEff[k]) g.tempEff[k] = {};
       g.tempEff[k]['s' + i] = (g.tempEff[k]['s' + i] || 0) - by;
       g.tempEff[k]['p' + i] = (g.tempEff[k]['p' + i] || 0) - by;
@@ -1866,8 +1889,10 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   let die = Math.max(...dice);
   // Unsung Hero (two dice, keep the higher) and Swarming Defense (two dice,
   // keep the lower) — both set by a card this section on this roller's slot.
-  if (te['adv' + idx]) { const d = roll20(); dice.push(d); die = Math.max(die, d); }
-  if (te['dis' + idx]) { const d = roll20(); dice.push(d); die = Math.min(die, d); }
+  // Each mark is that many extra dice: 1 = two dice, 2 = three (Unsung Hero+
+  // and Clamp the Reserve+, 2026-10-20). An old save's `true` is one.
+  for (let k = 0; k < Number(te['adv' + idx] || 0); k += 1) { const d = roll20(); dice.push(d); die = Math.max(die, d); }
+  for (let k = 0; k < Number(te['dis' + idx] || 0); k += 1) { const d = roll20(); dice.push(d); die = Math.min(die, d); }
 
   const totalBonus = bonus + fat + mrkB;
   let finalRoll = Math.max(1, Math.min(die + totalBonus, 99));
@@ -2004,7 +2029,7 @@ export function endSection(g) {
           ps.ona = (ps.ona || 0) + Math.max(0, secFor[k === 'A' ? 'B' : 'A']);
         }
         // Second Wind penalty: +4 extra minutes of fatigue
-        if (ps.secondWindPenalty) { ps.minutes += 4; delete ps.secondWindPenalty; }
+        if (ps.secondWindPenalty) { ps.minutes += typeof ps.secondWindPenalty === 'number' ? ps.secondWindPenalty : 4; delete ps.secondWindPenalty; }
       }
     });
   });
@@ -2047,8 +2072,9 @@ export function endSection(g) {
       const at = typeof te[key] === 'object' ? (te[key].at || 0) : 0;
       const got = (ps.pts || 0) - at;
       if (got >= CROWD_FAVORITE_PTS) {
-        ps.hot = (ps.hot || 0) + 1;
-        ng.log = [...ng.log, { team: k, msg: `Crowd Favorite: ${p.name} scored ${got} this section → hot marker` }];
+        const markers = typeof te[key] === 'object' ? (te[key].markers || 1) : 1;
+        ps.hot = (ps.hot || 0) + markers;
+        ng.log = [...ng.log, { team: k, msg: `Crowd Favorite: ${p.name} scored ${got} this section → ${markers > 1 ? `${markers} hot markers` : 'hot marker'}` }];
       } else {
         ng.log = [...ng.log, { team: k, msg: `Crowd Favorite: ${p.name} scored ${got} this section — no marker` }];
       }

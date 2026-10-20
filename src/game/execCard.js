@@ -7,7 +7,7 @@ import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore,
 import { checkTerms } from './checkTerms.js';
 import { burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots, HACK_A } from './canPlay.js';
 import { lookupChart } from './cards.js';
-import { getStrat, baseId, isPlus, SCREEN_CARDS, CLIMB_GAME_CARDS } from './strats.js';
+import { getStrat, baseId, isPlus, PLUS, SCREEN_CARDS, CLIMB_GAME_CARDS } from './strats.js';
 
 /**
  * POINTS A CARD SCORES GO ON THE SCOREBOARD AND ON THE PLAYER'S LINE, together.
@@ -350,29 +350,31 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!fits(p1, p2) && !fits(p2, p1))
         return fail('Stagger Action needs a Speed 13+ player and a different player with a positive 3PT Bonus');
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['s' + idx]  = (g.tempEff[teamKey]['s' + idx]  || 0) + 2;
-      g.tempEff[teamKey]['s' + idx2] = (g.tempEff[teamKey]['s' + idx2] || 0) + 2;
-      addLog(g, teamKey, `Stagger Action: ${p1?.name} & ${p2?.name} each +2 Speed this segment`);
+      const saB = plus ? 4 : 2;
+      g.tempEff[teamKey]['s' + idx]  = (g.tempEff[teamKey]['s' + idx]  || 0) + saB;
+      g.tempEff[teamKey]['s' + idx2] = (g.tempEff[teamKey]['s' + idx2] || 0) + saB;
+      addLog(g, teamKey, `Stagger Action${plus ? '+' : ''}: ${p1?.name} & ${p2?.name} each +${saB} Speed this segment`);
       break;
     }
 
     case 'second_wind': {
       if (!g.ignFatigue) g.ignFatigue = {};
       g.ignFatigue[teamKey + '_' + idx] = true;
-      // Mark for +4 bonus fatigue at section end
+      // Mark for bonus fatigue at section end: 4 minutes, 2 for the "+".
       const swPs = getPS(g, teamKey, player.id);
-      if (swPs) swPs.secondWindPenalty = true;
-      addLog(g, teamKey, `Second Wind: ${player?.name} ignores fatigue this segment (+4 min penalty after)`);
+      if (swPs) swPs.secondWindPenalty = plus ? 2 : 4;
+      addLog(g, teamKey, `Second Wind${plus ? '+' : ''}: ${player?.name} ignores fatigue this segment (+${plus ? 2 : 4} min penalty after)`);
       break;
     }
 
     case 'chip_on_shoulder': {
       if ((player?.salary || 0) > 250) return fail(player?.name + ' salary must be ≤$250');
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['s' + idx] = (g.tempEff[teamKey]['s' + idx] || 0) + 3;
-      g.tempEff[teamKey]['p' + idx] = (g.tempEff[teamKey]['p' + idx] || 0) + 3;
+      const coB = plus ? 5 : 3;
+      g.tempEff[teamKey]['s' + idx] = (g.tempEff[teamKey]['s' + idx] || 0) + coB;
+      g.tempEff[teamKey]['p' + idx] = (g.tempEff[teamKey]['p' + idx] || 0) + coB;
       const dp = oppT.starters[(g.offMatchups[teamKey] || [])[idx] ?? idx];
-      let msg = `Chip on the Shoulder: ${player?.name} +3 Spd/Pwr`;
+      let msg = `Chip on the Shoulder${plus ? '+' : ''}: ${player?.name} +${coB} Spd/Pwr`;
       if (dp) {
         const newAdv = calcAdv(player, dp, g.tempEff[teamKey], idx);
         if (newAdv.rollBonus > 0) {
@@ -388,8 +390,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!satOutLast(g, teamKey, player)) return fail(`${player?.name} did not sit out last segment`);
       if (!g.tempDefEff) g.tempDefEff = {};
       if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
-      g.tempDefEff[teamKey][idx] = { speedBoost: 5, powerBoost: 5 };
-      addLog(g, teamKey, `Defensive Stopper: ${player?.name} +5 Spd/Pwr on defense this segment`);
+      const dsB = plus ? 8 : 5;
+      g.tempDefEff[teamKey][idx] = { speedBoost: dsB, powerBoost: dsB };
+      addLog(g, teamKey, `Defensive Stopper${plus ? '+' : ''}: ${player?.name} +${dsB} Spd/Pwr on defense this segment`);
       break;
     }
 
@@ -399,8 +402,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (myT.score >= oppT.score) return fail('Only playable while trailing');
       const dpOpp = teamKey === 'A' ? 'B' : 'A';
       if (!g.pressArmed) g.pressArmed = {};
-      g.pressArmed[dpOpp] = (g.pressArmed[dpOpp] || 0) + 1;
-      addLog(g, teamKey, 'Desperation Press: their next top-tier roll gets re-rolled. The second result stands.');
+      g.pressArmed[dpOpp] = (g.pressArmed[dpOpp] || 0) + (plus ? 2 : 1);
+      addLog(g, teamKey, plus
+        ? 'Desperation Press+: their next two top-tier rolls get re-rolled. The second results stand.'
+        : 'Desperation Press: their next top-tier roll gets re-rolled. The second result stands.');
       break;
     }
 
@@ -420,15 +425,22 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
           p[stat] = (p[stat] || 0) + n;
         }
       };
-      let line = `${getStrat(cardId)?.name}: ${getStrat(cardId)?.desc}`;
+      let line = `${getStrat(cardId)?.name}${plus ? '+' : ''}: ${(plus && PLUS[cardId]?.desc) || getStrat(cardId)?.desc}`;
       if (cardId === 'weight_room') {
         const who = myT.starters?.[opts.playerIdx];
         if (opts.playerIdx == null || !who) return fail('Choose one of your players');
-        bump(p => p.id === who.id, 'power', 3);
-        line = `Weight Room: ${who.name} +3 Power for the rest of this game.`;
+        const wr = plus ? 5 : 3;
+        bump(p => p.id === who.id, 'power', wr);
+        line = `Weight Room${plus ? '+' : ''}: ${who.name} +${wr} Power for the rest of this game.`;
       }
-      if (cardId === 'pace_and_space') bump(() => true, 'speed', 1);
-      g.buffs = { ...(g.buffs ?? {}), [teamKey]: { ...(g.buffs?.[teamKey] ?? {}), [cardId]: cardId === 'ice_bath' ? (opts.handId ?? 'ice_bath') : true } };
+      if (cardId === 'pace_and_space') bump(() => true, 'speed', plus ? 2 : 1);
+      // THE CARD'S NUMBER is the flag (the "+" cards, 2026-10-20), read by
+      // buffNumber: a check bonus, Splash's threes per +1, On Fire's streak,
+      // Stay Hot's cap, Conditioning's games. A game saved before stored `true`.
+      const buffVal = cardId === 'ice_bath' ? (opts.handId ?? 'ice_bath')
+        : ({ let_it_fly: plus ? 2 : 1, bruise_brothers: plus ? 2 : 1, shut_the_door: plus ? 2 : 1,
+             splash: plus ? 1 : 2, on_fire: plus ? 2 : 3, stay_hot: plus ? 3 : 2, conditioning: plus ? 2 : 1 })[cardId] ?? true;
+      g.buffs = { ...(g.buffs ?? {}), [teamKey]: { ...(g.buffs?.[teamKey] ?? {}), [cardId]: buffVal } };
       addLog(g, teamKey, line);
       break;
     }
@@ -469,15 +481,16 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
       // `idx` defaults to slot 0 for every card; this card's players are
       // CHOSEN, so a missing first choice is a refusal, not player one.
-      if (opts.playerIdx == null) return fail('Choose up to two players');
-      const legs = [opts.playerIdx, opts.player2Idx].filter(i => i != null && myT.starters[i]);
-      if (!legs.length) return fail('Choose up to two players');
+      const flMax = plus ? 'three' : 'two';
+      if (opts.playerIdx == null) return fail(`Choose up to ${flMax} players`);
+      const legs = [opts.playerIdx, opts.player2Idx, plus ? opts.player3Idx : null].filter(i => i != null && myT.starters[i]);
+      if (!legs.length) return fail(`Choose up to ${flMax} players`);
       for (const i of new Set(legs)) {
         const p = myT.starters[i];
         const pps = getPS(g, teamKey, p.id);
         if (pps) pps.minutes = Math.max(0, (pps.minutes || 0) - 4);
       }
-      addLog(g, teamKey, `Fresh Legs: ${[...new Set(legs)].map(i => myT.starters[i].name).join(' & ')} shed 4 minutes of fatigue`);
+      addLog(g, teamKey, `Fresh Legs${plus ? '+' : ''}: ${[...new Set(legs)].map(i => myT.starters[i].name).join(' & ')} shed 4 minutes of fatigue`);
       break;
     }
 
@@ -493,7 +506,15 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const had = tps?.hot || 0;
       if (!had) return fail(`${target.name} holds no hot markers`);
       tps.hot = 0;
-      addLog(g, teamKey, `Ice the Hot Hand: ${target.name} loses ${had} hot marker${had > 1 ? 's' : ''}. The run stops here.`);
+      addLog(g, teamKey, `Ice the Hot Hand${plus ? '+' : ''}: ${target.name} loses ${had} hot marker${had > 1 ? 's' : ''}. The run stops here.`);
+      // "+": a second opposing player, if one is named and still hot.
+      const target2 = plus && opts.target2Idx != null && opts.target2Idx !== opts.targetIdx ? oppT.starters[opts.target2Idx] : null;
+      const tps2 = target2 ? getPS(g, iceOpp, target2.id) : null;
+      if (tps2?.hot) {
+        const had2 = tps2.hot;
+        tps2.hot = 0;
+        addLog(g, teamKey, `Ice the Hot Hand+: ${target2.name} loses ${had2} hot marker${had2 > 1 ? 's' : ''} too.`);
+      }
       break;
     }
 
@@ -505,7 +526,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const hadCold = rps?.cold || 0;
       if (!hadCold) return fail(`${player?.name} holds no cold markers`);
       rps.cold = 0;
-      addLog(g, teamKey, `Reset: ${player?.name} clears ${hadCold} cold marker${hadCold > 1 ? 's' : ''}. Deep breath.`);
+      if (plus) rps.hot = (rps.hot || 0) + 1;
+      addLog(g, teamKey, `Reset${plus ? '+' : ''}: ${player?.name} clears ${hadCold} cold marker${hadCold > 1 ? 's' : ''}${plus ? ' and gains a hot marker 🔥' : ''}. Deep breath.`);
       break;
     }
 
@@ -553,9 +575,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const prevOpen = g.openMan[dtOpp];
       const prevPts = typeof prevOpen === 'number' ? prevOpen : (prevOpen?.pts ?? 0);
       const prevExcept = typeof prevOpen === 'object' ? (prevOpen?.except ?? []) : [];
-      g.openMan[dtOpp] = { pts: prevPts + 3, except: [...new Set([...prevExcept, tIdx])] };
+      const openPts = plus ? 1 : 3;
+      g.openMan[dtOpp] = { pts: prevPts + openPts, except: [...new Set([...prevExcept, tIdx])] };
       g.lastDoubleTeam = { teamKey, targetIdx: tIdx };
-      addLog(g, teamKey, `Double Team: ${target.name} trapped (+6/+6 defense) — someone's open, Team ${dtOpp} gets +3 on their next roll`);
+      addLog(g, teamKey, `Double Team${plus ? '+' : ''}: ${target.name} trapped (+6/+6 defense) — someone's open${plus ? ' but the rotation recovers' : ''}, Team ${dtOpp} gets +${openPts} on their next roll`);
       // ONCE PER SECTION (the user, 2026-09-09). tempEff clears with the section.
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey].doubleTeamUsed = true;
@@ -598,8 +621,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const beneficiary = ((p1?.speed || 0) >= (p2?.speed || 0)) ? p1 : p2;
       const bIdx = offT.starters.indexOf(beneficiary);
       if (!g.tempEff[lc.teamKey]) g.tempEff[lc.teamKey] = {};
-      g.tempEff[lc.teamKey]['r' + bIdx] = (g.tempEff[lc.teamKey]['r' + bIdx] || 0) + 2;
-      addLog(g, teamKey, `Fight Over: canceled HSR — ${beneficiary?.name} gets +2 to scoring roll · ${restoredLine(g, lc, myT)}`);
+      g.tempEff[lc.teamKey]['r' + bIdx] = (g.tempEff[lc.teamKey]['r' + bIdx] || 0) + (plus ? 1 : 2);
+      addLog(g, teamKey, `Fight Over${plus ? '+' : ''}: canceled HSR — ${beneficiary?.name} gets +${plus ? 1 : 2} to scoring roll · ${restoredLine(g, lc, myT)}`);
       g.lastMatchupCard = null;
       break;
     }
@@ -669,6 +692,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const slots = offT.starters.map((p, i) => (p && i !== psc.playerIdx ? i : -1)).filter(i => i >= 0);
       if (!slots.length) return fail('Nobody else on the floor to take it');
       psc.blitzed = teamKey;
+      // "+": the rotation is late, so the check that comes out is 2 harder.
+      if (plus) {
+        psc.contest = (psc.contest || 0) - 2;
+        psc.contestBy = psc.contestBy ? `${psc.contestBy} + Blitz+` : 'Blitz+';
+      }
       g.pendingChoice = { kind: 'blitz', teamKey: psc.teamKey, slots, by: teamKey, from: psc.playerIdx };
       const shooter = offT.starters[psc.playerIdx];
       addLog(g, teamKey, `Blitz: two at ${shooter?.name} — the ${psc.type === '3pt' ? '3PT' : 'Paint'} check has to go to someone else`);
@@ -697,8 +725,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (oppT.assists < 6) return fail(`Opponent needs 6+ assists (has ${oppT.assists})`);
       if (myT.assists < 1)  return fail('Need at least 1 assist to spend');
       myT.assists--;
-      oppT.assists -= 2;
-      addLog(g, teamKey, 'Anticipate the Pass: −1 your AST, −2 opponent AST');
+      oppT.assists -= plus ? 4 : 2;
+      addLog(g, teamKey, `Anticipate the Pass${plus ? '+' : ''}: −1 your AST, −${plus ? 4 : 2} opponent AST`);
       break;
     }
 
@@ -754,11 +782,12 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       myT.rebounds -= 2;
       myT.assists++;
       if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards++;
-      const r = _shotCheck(player, '3pt', 1, ps);
+      const rtB = plus ? 3 : 1;
+      const r = _shotCheck(player, '3pt', rtB, ps);
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
       if (creditCheckDefended(g, teamKey, idx, '3pt', r, matchupContest(g, teamKey, idx, '3pt'))) r.blk = true;
       trackShotCheck(g, teamKey, r, '3pt');
-      noteLastCheck(g, { teamKey, playerIdx: idx, player, type: '3pt', result: r, label: 'Rebound Tap-Out', bonus: 1 });
+      noteLastCheck(g, { teamKey, playerIdx: idx, player, type: '3pt', result: r, label: `Rebound Tap-Out${plus ? '+' : ''}`, bonus: rtB });
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
       if (r.hit) scorePts(g, teamKey, player?.id, r.pts);
@@ -822,8 +851,15 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         addLog(g, teamKey, `Switch Everything: ${myT.name} reassigned their entire defense`);
       }
       if (!g.tempEff[oppTeam]) g.tempEff[oppTeam] = {};
-      g.tempEff[oppTeam]['doubleAdv'] = true;
-      addLog(g, teamKey, '⚠️ All opponent offensive advantages doubled this segment!');
+      // "+": a drilled switch gives up smaller mismatches — half again, not
+      // double (calcAdv reads both; double wins if both are on).
+      if (plus) {
+        g.tempEff[oppTeam]['halfAdv'] = true;
+        addLog(g, teamKey, '⚠️ All opponent offensive advantages grow by half this segment (Switch Everything+)');
+      } else {
+        g.tempEff[oppTeam]['doubleAdv'] = true;
+        addLog(g, teamKey, '⚠️ All opponent offensive advantages doubled this segment!');
+      }
       break;
     }
 
@@ -832,8 +868,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const rr = (g.rollResults[teamKey] || [])[idx];
       if (!rr?.isTop) return fail(player?.name + ' didn\'t hit highest tier.');
       announceCheck(g, {
-        teamKey, playerIdx: idx, type: '3pt', bonus: -2 + _assistShotBonus,
-        cardLabel: `Heat Check: ${player.name}`, onHitHot: true,
+        teamKey, playerIdx: idx, type: '3pt', bonus: (plus ? 1 : -2) + _assistShotBonus,
+        cardLabel: `Heat Check${plus ? '+' : ''}: ${player.name}`, onHitHot: true,
       });
       break;
     }
@@ -848,9 +884,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       g.tempEff[teamKey] = g.tempEff[teamKey] || {};
       g.tempEff[teamKey].greenLightIds = [...(g.tempEff[teamKey].greenLightIds || []), player?.id];
       announceCheck(g, {
-        teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus,
-        cardLabel: 'Green Light #1', replaceRoll: idx, replacedBy: 'green_light',
-        then: [{ cardLabel: 'Green Light #2' }, { cardLabel: 'Green Light #3' }],
+        teamKey, playerIdx: idx, type: '3pt', bonus: (plus ? 2 : 0) + _assistShotBonus,
+        cardLabel: `Green Light${plus ? '+' : ''} #1`, replaceRoll: idx, replacedBy: 'green_light',
+        then: [{ cardLabel: `Green Light${plus ? '+' : ''} #2` }, { cardLabel: `Green Light${plus ? '+' : ''} #3` }],
       });
       break;
     }
@@ -859,8 +895,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // Sets pendingShotCheck — resolved by resolvePendingShotCheck
       removeFromHand(myT, handId);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
-      addLog(g, teamKey, `From Way Downtown: ${player?.name} announces 3PT check at +1.`);
-      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 1, cardLabel: 'From Way Downtown', specialRoll: 'fwd' });
+      addLog(g, teamKey, `From Way Downtown${plus ? '+' : ''}: ${player?.name} announces 3PT check at +${plus ? 3 : 1}.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: plus ? 3 : 1, cardLabel: `From Way Downtown${plus ? '+' : ''}`, specialRoll: 'fwd' });
       return { game: g, ok: true };
     }
 
@@ -869,9 +905,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (shut) return fail(shut);
       if (g.rollResults[teamKey]?.[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       announceCheck(g, {
-        teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus,
-        cardLabel: 'You Stand Over There #1', replaceRoll: idx, replacedBy: 'you_stand_over_there',
-        then: [{ cardLabel: 'You Stand Over There #2' }],
+        teamKey, playerIdx: idx, type: '3pt', bonus: (plus ? 2 : 0) + _assistShotBonus,
+        cardLabel: `You Stand Over There${plus ? '+' : ''} #1`, replaceRoll: idx, replacedBy: 'you_stand_over_there',
+        then: [{ cardLabel: `You Stand Over There${plus ? '+' : ''} #2` }],
       });
       break;
     }
@@ -892,8 +928,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!((player?.threePtBoost || 0) > 0)) return fail(player?.name + ' needs a 3PT Bonus');
       removeFromHand(myT, handId);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
-      addLog(g, teamKey, `Elevator Doors: ${player?.name} announces 3PT check at +3.`);
-      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 3, cardLabel: 'Elevator Doors' });
+      addLog(g, teamKey, `Elevator Doors${plus ? '+' : ''}: ${player?.name} announces 3PT check at +${plus ? 5 : 3}.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: plus ? 5 : 3, cardLabel: `Elevator Doors${plus ? '+' : ''}` });
       return { game: g, ok: true };
     }
 
@@ -903,11 +939,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // `discardIdx`, which nothing read, so the AI took a free three at +5.
       // Lob City's and Outside Pick's shape: no other card, no play; a named
       // card if it is in hand, else the last one.
-      const pdOthers = myT.hand.filter(id => baseId(id) !== 'pin_down_screen');
-      if (pdOthers.length === 0) return fail('No card to discard');
-      const pdDiscard = opts.discardId && pdOthers.includes(opts.discardId) ? opts.discardId : pdOthers[pdOthers.length - 1];
-      removeFromHand(myT, pdDiscard);
-      addLog(g, teamKey, `Pin-Down Screen: discards ${pdDiscard.replace(/_/g, ' ')}`);
+      if (!plus) {
+        const pdOthers = myT.hand.filter(id => baseId(id) !== 'pin_down_screen');
+        if (pdOthers.length === 0) return fail('No card to discard');
+        const pdDiscard = opts.discardId && pdOthers.includes(opts.discardId) ? opts.discardId : pdOthers[pdOthers.length - 1];
+        removeFromHand(myT, pdDiscard);
+        addLog(g, teamKey, `Pin-Down Screen: discards ${pdDiscard.replace(/_/g, ' ')}`);
+      }
       announceCheck(g, {
         teamKey, playerIdx: idx, type: '3pt', bonus: 5 + _assistShotBonus,
         // "1 assist to a teammate": not the shooter's (pinDownPasser).
@@ -956,12 +994,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // Speed +2 / Power +4 matchup read as a sum when it was a +2 Power boost
       // (the user, 2026-09-06).
       const maxA = Math.max(adv.speedAdv, adv.powerAdv);
-      if (maxA < 3) return fail(`Need Spd/Pwr advantage ≥3 (has ${maxA})`);
+      const aoMin = plus ? 2 : 3;
+      if (maxA < aoMin) return fail(`Need Spd/Pwr advantage ≥${aoMin} (has ${maxA})`);
       const stat = adv.powerAdv >= adv.speedAdv ? 'Power' : 'Speed';
       scorePts(g, teamKey, player?.id, 1);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 1;
-      addLog(g, teamKey, `And One!!! +1pt (${stat} advantage +${maxA} — Speed +${adv.speedAdv}, Power +${adv.powerAdv})`);
-      if (maxA >= 5) {
+      addLog(g, teamKey, `And One!!!${plus ? '+' : ''} +1pt (${stat} advantage +${maxA} — Speed +${adv.speedAdv}, Power +${adv.powerAdv})`);
+      if (maxA >= (plus ? 4 : 5)) {
         const r = _shotCheck(player, 'ft', 0, ps);
         recordShot(g, teamKey, player?.id, 'ft', r.hit);
         trackShotCheck(g, teamKey, r, 'ft');
@@ -975,7 +1014,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'rimshaker': {
-      if ((player?.power || 0) < 13) return fail('Need Power 13+');
+      if ((player?.power || 0) < (plus ? 12 : 13)) return fail(`Need Power ${plus ? 12 : 13}+`);
       if (!(ps.hot > 0)) return fail(player?.name + ' needs a hot marker');
       scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
@@ -1019,7 +1058,12 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
       g.lastAutoScore = { teamKey, playerIdx: idx, playerId: player?.id, pts: 2, cardId };
-      addLog(g, teamKey, `Uncontested Layup: ${player?.name} auto 2pts`);
+      if (plus) {
+        myT.assists++;
+        creditLine(g, teamKey, player?.id, 'ast');
+        if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards++;
+      }
+      addLog(g, teamKey, `Uncontested Layup${plus ? '+' : ''}: ${player?.name} auto 2pts${plus ? ' and +1 AST' : ''}`);
       break;
     }
 
@@ -1039,7 +1083,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // endSection wipes, as Double Team's does.
       if (g.tempEff?.[teamKey]?.putbackUsed) return fail('Putback Dunk is once per section');
       if (reboundTrackLead(g, teamKey) <= 0) return fail('Team must lead in rebounds');
-      if ((player?.power || 0) < 14) return fail('Need Power 14+');
+      if ((player?.power || 0) < (plus ? 12 : 14)) return fail(`Need Power ${plus ? 12 : 14}+`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey].putbackUsed = true;
       scorePts(g, teamKey, player?.id, 2);
@@ -1070,19 +1114,20 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!burstTargets(g, teamKey).includes(idx)) return fail(`${player?.name} has had a Burst of Momentum this section`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey].burstIds = [...(g.tempEff[teamKey].burstIds || []), player?.id];
-      myT.assists++;
-      gainRebounds(myT, 1);
-      creditLine(g, teamKey, player?.id, 'ast');
-      creditLine(g, teamKey, player?.id, 'reb');
-      if (g.analytics?.[teamKey]) { g.analytics[teamKey].assistsFromCards++; g.analytics[teamKey].reboundsGenerated++; }
+      const bmN = plus ? 2 : 1;
+      myT.assists += bmN;
+      gainRebounds(myT, bmN);
+      creditLine(g, teamKey, player?.id, 'ast', bmN);
+      creditLine(g, teamKey, player?.id, 'reb', bmN);
+      if (g.analytics?.[teamKey]) { g.analytics[teamKey].assistsFromCards += bmN; g.analytics[teamKey].reboundsGenerated += bmN; }
       pss().hot = (pss().hot || 0) + 1;
-      addLog(g, teamKey, `Burst of Momentum: ${player?.name} +1 AST +1 REB 🔥`);
+      addLog(g, teamKey, `Burst of Momentum${plus ? '+' : ''}: ${player?.name} +${bmN} AST +${bmN} REB 🔥`);
       break;
     }
 
     case 'flare_screen': {
       const rr = (g.rollResults[teamKey] || [])[idx];
-      if (rr?.die !== 20) return fail('Player must have rolled a natural 20');
+      if (!(rr?.die >= (plus ? 19 : 20))) return fail(`Player must have rolled a natural ${plus ? '19 or 20' : '20'}`);
       const r = _shotCheck(player, '3pt', 0, ps);
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
       if (creditCheckDefended(g, teamKey, idx, '3pt', r, matchupContest(g, teamKey, idx, '3pt'))) r.blk = true;
@@ -1100,14 +1145,15 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'cross_court_dime': {
-      if (myT.assists < 3) return fail(`Need 3 assists (have ${myT.assists})`);
+      const ccdCost = plus ? 2 : 3;
+      if (myT.assists < ccdCost) return fail(`Need ${ccdCost} assists (have ${myT.assists})`);
       const shut = shutOut(g, teamKey, idx, player);
       if (shut) return fail(shut);
       if (g.rollResults[teamKey]?.[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
-      myT.assists -= 3;
+      myT.assists -= ccdCost;
       announceCheck(g, {
         teamKey, playerIdx: idx, type: 'paint', bonus: _assistShotBonus,
-        cardLabel: 'Cross-Court Dime (−3 AST): Paint', replaceRoll: idx, replacedBy: 'cross_court_dime',
+        cardLabel: `Cross-Court Dime${plus ? '+' : ''} (−${ccdCost} AST): Paint`, replaceRoll: idx, replacedBy: 'cross_court_dime',
         then: [{ type: '3pt', cardLabel: 'Cross-Court Dime: 3PT' }],
       });
       break;
@@ -1119,8 +1165,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         const p = myT.starters[i];
         if (!p || p.salary >= 400) return;
         if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-        g.tempEff[teamKey]['r' + i] = (g.tempEff[teamKey]['r' + i] || 0) + 2;
-        addLog(g, teamKey, `Energy Injection: ${p.name} +2 roll bonus`);
+        g.tempEff[teamKey]['r' + i] = (g.tempEff[teamKey]['r' + i] || 0) + (plus ? 4 : 2);
+        addLog(g, teamKey, `Energy Injection${plus ? '+' : ''}: ${p.name} +${plus ? 4 : 2} roll bonus`);
         found++;
       });
       if (!found) return fail('No players with salary <$400 in selected slots');
@@ -1133,7 +1179,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // The snapshot. endSection compares the player's points then against
       // now: rolls, assist-spends and announced shot checks all land in
       // ps.pts, so all of them count. The threshold is CROWD_FAVORITE_PTS.
-      g.tempEff[teamKey]['crowd_' + idx] = { at: pss()?.pts || 0 };
+      g.tempEff[teamKey]['crowd_' + idx] = { at: pss()?.pts || 0, markers: plus ? 2 : 1 };
       addLog(g, teamKey, `Crowd Favorite: if ${player?.name} scores ${CROWD_FAVORITE_PTS}+ pts this section (rolls or shot checks) → hot marker`);
       break;
     }
@@ -1182,12 +1228,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // (endSection), which is the one place the human picker, the coach's
       // aiDraftPick and the simulator all draw their five from.
       const ftOpp = teamKey === 'A' ? 'B' : 'A';
-      const ftList = foulTroubleTargets(g, teamKey);
-      if (!ftList.length) return fail('Nobody is beating their defender by 4 or more');
+      const ftMin = plus ? 3 : 4;
+      const ftList = foulTroubleTargets(g, teamKey, ftMin);
+      if (!ftList.length) return fail(`Nobody is beating their defender by ${ftMin} or more`);
       const chosen = opts.defIdx != null
         ? ftList.find(t => t.defIdx === Number(opts.defIdx))
         : null;
-      if (opts.defIdx != null && !chosen) return fail('That defender is not being beaten by 4 or more');
+      if (opts.defIdx != null && !chosen) return fail(`That defender is not being beaten by ${ftMin} or more`);
       // No pick named: the man losing worst is the one who fouls.
       const t = chosen || ftList.slice().sort((a, b) => b.adv - a.adv)[0];
       if (!g.foulTrouble) g.foulTrouble = { A: [], B: [] };
@@ -1226,8 +1273,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         return pst && (pst.cold || 0) > 0;
       });
       if (!hasOppCold) return fail('Opponent needs a player with a cold marker');
-      const got = cardDraw(g, teamKey, 2);
-      addLog(g, teamKey, `Turnover: drew ${got} strategy card${got === 1 ? '' : 's'}${got < 2 ? ' — the deck ran out' : ''}`);
+      const wantT = plus ? 3 : 2;
+      const got = cardDraw(g, teamKey, wantT);
+      addLog(g, teamKey, `Turnover${plus ? '+' : ''}: drew ${got} strategy card${got === 1 ? '' : 's'}${got < wantT ? ' — the deck ran out' : ''}`);
       break;
     }
 
@@ -1240,8 +1288,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       for (const key of Object.keys(oppEff)) {
         if (/^p[0-9]+$/.test(key) && oppEff[key] > 0) {
           const orig = oppEff[key];
-          oppEff[key] = Math.floor(orig / 2);
-          addLog(g, teamKey, `Offensive Foul: Power boost on slot ${key.slice(1)} halved (${orig} → ${oppEff[key]})`);
+          oppEff[key] = plus ? 0 : Math.floor(orig / 2);
+          addLog(g, teamKey, `Offensive Foul${plus ? '+' : ''}: Power boost on slot ${key.slice(1)} ${plus ? 'cancelled' : 'halved'} (${orig} → ${oppEff[key]})`);
           halved = true;
         }
       }
@@ -1261,8 +1309,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       for (const key of Object.keys(oppEffSpd)) {
         if (/^s[0-9]+$/.test(key) && oppEffSpd[key] > 0) {
           const orig = oppEffSpd[key];
-          oppEffSpd[key] = Math.floor(orig / 2);
-          addLog(g, teamKey, `Beat 'Em to the Spot: Speed boost on slot ${key.slice(1)} halved (${orig} → ${oppEffSpd[key]})`);
+          oppEffSpd[key] = plus ? 0 : Math.floor(orig / 2);
+          addLog(g, teamKey, `Beat 'Em to the Spot${plus ? '+' : ''}: Speed boost on slot ${key.slice(1)} ${plus ? 'cancelled' : 'halved'} (${orig} → ${oppEffSpd[key]})`);
           cut = true;
         }
       }
@@ -1292,7 +1340,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       scorePts(g, auto.teamKey, auto.playerId, -auto.pts);
       if (g.analytics?.[auto.teamKey]) g.analytics[auto.teamKey].shotCheckPts -= auto.pts;
       g.lastAutoScore = null;
-      addLog(g, teamKey, `Verticality: ${vDef.name} goes straight up — ${vScorer?.name ?? 'that score'} loses ${auto.pts} points`);
+      if (plus) { gainRebounds(myT, 1); creditLine(g, teamKey, vDef.id, 'reb'); }
+      addLog(g, teamKey, `Verticality${plus ? '+' : ''}: ${vDef.name} goes straight up — ${vScorer?.name ?? 'that score'} loses ${auto.pts} points${plus ? ', +1 REB' : ''}`);
       break;
     }
 
@@ -1306,13 +1355,18 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const fat = getFatigue(g, oppKey3, targetIdx);
       if (fat >= 0) return fail(targetP.name + ' is not fatigued');
       if (!g.tempEff[oppKey3]) g.tempEff[oppKey3] = {};
-      g.tempEff[oppKey3]['s' + targetIdx] = (g.tempEff[oppKey3]['s' + targetIdx] || 0) - 2;
-      g.tempEff[oppKey3]['p' + targetIdx] = (g.tempEff[oppKey3]['p' + targetIdx] || 0) - 2;
+      const dgBy = plus ? 3 : 2;
+      g.tempEff[oppKey3]['s' + targetIdx] = (g.tempEff[oppKey3]['s' + targetIdx] || 0) - dgBy;
+      g.tempEff[oppKey3]['p' + targetIdx] = (g.tempEff[oppKey3]['p' + targetIdx] || 0) - dgBy;
       // ...and a mark on the player, so later sections apply it again until
       // he sits one (engine.js applyLingering; benchRest clears it).
       const doggedStats = (oppT.stats ?? []).find(s => s.id === targetP.id);
-      if (doggedStats) doggedStats.dogged = (doggedStats.dogged || 0) + 1;
-      addLog(g, teamKey, `Dogged: ${targetP.name} (FAT ${fat}) suffers −2 Spd/−2 Pwr until benched`);
+      if (doggedStats) {
+        doggedStats.dogged = (doggedStats.dogged || 0) + 1;
+        // A "+" play's extra point rides beside the count (applyLingering).
+        if (plus) doggedStats.doggedPlus = (doggedStats.doggedPlus || 0) + 1;
+      }
+      addLog(g, teamKey, `Dogged${plus ? '+' : ''}: ${targetP.name} (FAT ${fat}) suffers −${dgBy} Spd/−${dgBy} Pwr until benched`);
       break;
     }
 
@@ -1416,7 +1470,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         ccPs.cold = (ccPs.cold || 0) + 1;
       }
 
-      g.challengesUsed[teamKey]++;
+      // "+": as in the NBA, a challenge that overturns the make is not used up.
+      if (!(plus && oldResult.hit && !newR.hit)) g.challengesUsed[teamKey]++;
+      else addLog(g, teamKey, "Coach's Challenge+: the call is overturned — the challenge is kept");
       // This check is spent: it leaves the section's list, and the "last
       // check" record with it when it was that one. The re-roll's result is
       // not recorded, so nobody challenges the same check twice.
@@ -1434,11 +1490,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if ((player?.power || 0) < 10) return fail(player?.name + ' needs Power 10+');
       if (adv.rollBonus > 0) return fail(player?.name + ' already has a matchup advantage');
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 2;
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + (plus ? 4 : 2);
       gainRebounds(myT, 1);
       creditLine(g, teamKey, player?.id, 'reb');
       if (g.analytics?.[teamKey]) g.analytics[teamKey].reboundsGenerated++;
-      addLog(g, teamKey, `Delayed Slip: ${player?.name} +2 scoring roll + 1 REB`);
+      addLog(g, teamKey, `Delayed Slip${plus ? '+' : ''}: ${player?.name} +${plus ? 4 : 2} scoring roll + 1 REB`);
       break;
     }
 
@@ -1458,8 +1514,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'mismatch_hunter': {
       if (Math.max(adv.speedAdv, adv.powerAdv) < 4) return fail(`${player?.name} needs a Speed or Power advantage of +4`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 2;
-      addLog(g, teamKey, `Mismatch Hunter: ${player?.name} (advantage +${Math.max(adv.speedAdv, adv.powerAdv)}) +2 roll this period`);
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + (plus ? 4 : 2);
+      addLog(g, teamKey, `Mismatch Hunter${plus ? '+' : ''}: ${player?.name} (advantage +${Math.max(adv.speedAdv, adv.powerAdv)}) +${plus ? 4 : 2} roll this period`);
       break;
     }
     case 'strength_in_numbers': {
@@ -1485,8 +1541,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!g.tempDefEff) g.tempDefEff = {};
       if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
       const cur = g.tempDefEff[teamKey][idx] || { speedBoost: 0, powerBoost: 0 };
-      g.tempDefEff[teamKey][idx] = { ...cur, speedBoost: cur.speedBoost + 3, powerBoost: cur.powerBoost + 3 };
-      addLog(g, teamKey, `Energizer: ${player?.name} +3/+3 on defense this period`);
+      const enB = plus ? 5 : 3;
+      g.tempDefEff[teamKey][idx] = { ...cur, speedBoost: cur.speedBoost + enB, powerBoost: cur.powerBoost + enB };
+      addLog(g, teamKey, `Energizer${plus ? '+' : ''}: ${player?.name} +${enB}/+${enB} on defense this period`);
       break;
     }
     case 'defensive_identity': {
@@ -1497,9 +1554,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       myT.starters.forEach((p, i) => {
         if (!p) return;
         const cur = g.tempDefEff[teamKey][i] || { speedBoost: 0, powerBoost: 0 };
-        g.tempDefEff[teamKey][i] = { ...cur, speedBoost: cur.speedBoost + 2, powerBoost: cur.powerBoost + 2 };
+        g.tempDefEff[teamKey][i] = { ...cur, speedBoost: cur.speedBoost + (plus ? 4 : 2), powerBoost: cur.powerBoost + (plus ? 4 : 2) };
       });
-      addLog(g, teamKey, `Defensive Identity: ${withDb} defenders with a bonus — all five +2/+2 on defense this period`);
+      addLog(g, teamKey, `Defensive Identity${plus ? '+' : ''}: ${withDb} defenders with a bonus — all five +${plus ? '4/+4' : '2/+2'} on defense this period`);
       break;
     }
     case 'defensive_anchor': {
@@ -1518,7 +1575,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const oppKeyA = teamKey === 'A' ? 'B' : 'A';
       const guarded = (g.offMatchups[oppKeyA] || []).indexOf(idx);
       const who = guarded >= 0 ? oppT.starters[guarded]?.name : 'their assignment';
-      addLog(g, teamKey, `Defensive Anchor: ${player?.name} anchors on ${who} — Def +${db} counts double (+${db * 2}) this section`);
+      const daDrew = plus ? cardDraw(g, teamKey, 1) : 0;
+      addLog(g, teamKey, `Defensive Anchor${plus ? '+' : ''}: ${player?.name} anchors on ${who} — Def +${db} counts double (+${db * 2}) this section${plus ? (daDrew ? ', and a card drawn' : ' (the deck is empty)') : ''}`);
       break;
     }
     case 'swarming_defense': {
@@ -1528,12 +1586,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const target = oppT.starters[tIdx];
       if (!target) return fail('No opposing player to swarm');
       const d = roll20();
-      if (d >= 11) {
+      const sdMin = plus ? 6 : 11;
+      if (d >= sdMin) {
         if (!g.tempEff[oppKeyS]) g.tempEff[oppKeyS] = {};
         g.tempEff[oppKeyS]['dis' + tIdx] = 1;
-        addLog(g, teamKey, `Swarming Defense: 🎲${d} — ${target.name} rolls twice and keeps the lower this period`);
+        addLog(g, teamKey, `Swarming Defense${plus ? '+' : ''}: 🎲${d} — ${target.name} rolls twice and keeps the lower this period`);
       } else {
-        addLog(g, teamKey, `Swarming Defense: 🎲${d} — ${target.name} shakes it off (needed 11+)`);
+        addLog(g, teamKey, `Swarming Defense${plus ? '+' : ''}: 🎲${d} — ${target.name} shakes it off (needed ${sdMin}+)`);
       }
       break;
     }
@@ -1544,8 +1603,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const existing = (g.rollResults[teamKey] || [])[idx];
       if (existing && !existing.isReplaced) return fail(`${player?.name} has already rolled this segment.`);
       announceCheck(g, {
-        teamKey, playerIdx: idx, type: '3pt', bonus: 1 + _assistShotBonus,
-        cardLabel: 'Five-Out Offense #1', replaceRoll: idx, replacedBy: 'five_out',
+        teamKey, playerIdx: idx, type: '3pt', bonus: (plus ? 3 : 1) + _assistShotBonus,
+        cardLabel: `Five-Out Offense${plus ? '+' : ''} #1`, replaceRoll: idx, replacedBy: 'five_out',
         then: [{ cardLabel: 'Five-Out Offense #2' }],
       });
       break;
@@ -1553,15 +1612,15 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'hammer_set': {
       if ((player?.threePtBoost || 0) > 0) return fail(`${player?.name} has a 3PT Bonus — Hammer Set is for the non-shooter`);
       if (adv.speedAdv <= 0) return fail(`${player?.name} needs a Speed advantage`);
-      addLog(g, teamKey, `Hammer Set: ${player?.name} announces a 3PT check (hit = +2 AST).`);
-      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 0 + _assistShotBonus, cardLabel: 'Hammer Set', onHitAst: 2 });
+      addLog(g, teamKey, `Hammer Set${plus ? '+' : ''}: ${player?.name} announces a 3PT check${plus ? ' at +3' : ''} (hit = +2 AST).`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: (plus ? 3 : 0) + _assistShotBonus, cardLabel: `Hammer Set${plus ? '+' : ''}`, onHitAst: 2 });
       break;
     }
     case 'iso_heavy': {
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 3;
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + (plus ? 5 : 3);
       myT.starters.forEach((p, i) => { if (p && i !== idx) g.tempEff[teamKey]['r' + i] = (g.tempEff[teamKey]['r' + i] || 0) - 2; });
-      addLog(g, teamKey, `Iso-Heavy Offense: ${player?.name} takes over (+3 roll); teammates −2 this period`);
+      addLog(g, teamKey, `Iso-Heavy Offense${plus ? '+' : ''}: ${player?.name} takes over (+${plus ? 5 : 3} roll); teammates −2 this period`);
       break;
     }
     case 'three_point_barrage': {
@@ -1578,23 +1637,23 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         queue.push({ playerIdx: opts.extraShooterIdx, cardLabel: `Three-Point Barrage (extra, −1 AST): ${ex.name}` });
       }
       const [first, ...more] = queue;
-      announceCheck(g, { teamKey, type: '3pt', bonus: 0, ...first, then: more });
+      announceCheck(g, { teamKey, type: '3pt', bonus: plus ? 2 : 0, ...first, then: more });
       break;
     }
     case 'crash_and_kick': {
       if (myT.rebounds < 3) return fail(`Need 3 rebounds (have ${myT.rebounds})`);
       if (myT.assists < 1) return fail(`Need 1 assist (have ${myT.assists})`);
       myT.rebounds -= 3; myT.assists -= 1;
-      addLog(g, teamKey, `Crash and Kick: −3 REB −1 AST → ${player?.name} announces a 3PT check at +2.`);
-      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 2 + _assistShotBonus, cardLabel: 'Crash and Kick' });
+      addLog(g, teamKey, `Crash and Kick${plus ? '+' : ''}: −3 REB −1 AST → ${player?.name} announces a 3PT check at +${plus ? 4 : 2}.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: (plus ? 4 : 2) + _assistShotBonus, cardLabel: `Crash and Kick${plus ? '+' : ''}` });
       break;
     }
     case 'pick_and_pop': {
       if (!((player?.threePtBoost || 0) > 0)) return fail(`${player?.name} needs a 3PT Bonus`);
       if (myT.assists < 2) return fail(`Need 2 assists (have ${myT.assists})`);
       myT.assists -= 2;
-      addLog(g, teamKey, `Pick-and-Pop: −2 AST → ${player?.name} announces a 3PT check at +1 (hit = +2 AST back).`);
-      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 1 + _assistShotBonus, cardLabel: 'Pick-and-Pop', onHitAst: 2 });
+      addLog(g, teamKey, `Pick-and-Pop${plus ? '+' : ''}: −2 AST → ${player?.name} announces a 3PT check at +${plus ? 3 : 1} (hit = +2 AST back).`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: (plus ? 3 : 1) + _assistShotBonus, cardLabel: `Pick-and-Pop${plus ? '+' : ''}`, onHitAst: 2 });
       break;
     }
     case 'extra_pass': {
@@ -1603,8 +1662,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       myT.assists -= 2;
       // "Shot check bonuses from other strategy cards are negated": the
       // assist-boost option is not offered and the bonus is exactly 0.
-      addLog(g, teamKey, `Extra Pass: −2 AST → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check (no card bonuses).`);
-      announceCheck(g, { teamKey, playerIdx: idx, type: kind, bonus: 0, cardLabel: 'Extra Pass', noCardBonus: true });
+      addLog(g, teamKey, `Extra Pass${plus ? '+' : ''}: −2 AST → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check (no card bonuses).`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: kind, bonus: 0, cardLabel: `Extra Pass${plus ? '+' : ''}`, noCardBonus: true });
       break;
     }
     // ── WAVE TWO, THE STANDING PAIR ─────────────────────────────────────
@@ -1683,18 +1742,20 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     // ── WAVE TWO ────────────────────────────────────────────────────────
     case 'outside_pick': {
-      const others = myT.hand.filter(id => baseId(id) !== 'outside_pick');
-      if (others.length === 0) return fail('No card to discard');
-      const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
-      removeFromHand(myT, discard);
-      addLog(g, teamKey, `Outside Pick: discards ${discard.replace(/_/g, ' ')}`);
+      if (!plus) {
+        const others = myT.hand.filter(id => baseId(id) !== 'outside_pick');
+        if (others.length === 0) return fail('No card to discard');
+        const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
+        removeFromHand(myT, discard);
+        addLog(g, teamKey, `Outside Pick: discards ${discard.replace(/_/g, ' ')}`);
+      }
       // The +5 is the screen. The docx's timing warning ("must be played
       // before a defender plays a contesting strategy") costs nothing to
       // honour: an announced check opens the defence's window AFTER the card,
       // so the order it asks for is the only order there is.
       announceCheck(g, {
         teamKey, playerIdx: idx, type: '3pt', bonus: 5 + _assistShotBonus,
-        cardLabel: `Outside Pick: ${player?.name} 3PT at +5`, onHitAst: 1,
+        cardLabel: `Outside Pick${plus ? '+' : ''}: ${player?.name} 3PT at +5`, onHitAst: 1,
       });
       break;
     }
@@ -1704,8 +1765,15 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         return fail(`${player?.name} needs Speed 8+ and Power 8+`);
       }
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['paintAst' + idx] = 1;
-      addLog(g, teamKey, `Short-Roll Playmaker: ${player?.name} adds an assist on every PAINT CHECK they hit this period (not on scoring rolls)`);
+      if (plus) {
+        // The short roll makes plays for everyone: an assist on any teammate's
+        // paint make, credited to the playmaker (their own make is theirs).
+        g.tempEff[teamKey].paintAstBy = idx;
+        addLog(g, teamKey, `Short-Roll Playmaker+: ${player?.name} adds an assist whenever any of your players hits a PAINT CHECK this period`);
+      } else {
+        g.tempEff[teamKey]['paintAst' + idx] = 1;
+        addLog(g, teamKey, `Short-Roll Playmaker: ${player?.name} adds an assist on every PAINT CHECK they hit this period (not on scoring rolls)`);
+      }
       break;
     }
 
@@ -1725,8 +1793,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // spells a mismatch everywhere else (helpTargets, Mismatch Hunter) — not
       // against the defender who just left.
       const gap = (player?.speed || 0) - (now?.speed || 0);
-      if (gap < 5) {
-        addLog(g, teamKey, `Pick-and-Roll Maestro: ${now?.name} is only ${gap} slower — no check`);
+      if (gap < (plus ? 3 : 5)) {
+        addLog(g, teamKey, `Pick-and-Roll Maestro${plus ? '+' : ''}: ${now?.name} is only ${gap} slower — no check`);
         break;
       }
       announceCheck(g, {
@@ -1745,8 +1813,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const mateP = myT.starters[mate];
       if (!mateP) return fail('Choose the teammate taking the three');
       announceCheck(g, {
-        teamKey, playerIdx: mate, type: '3pt', bonus: _assistShotBonus,
-        cardLabel: `Inside-Out: kicked out to ${mateP.name}`,
+        teamKey, playerIdx: mate, type: '3pt', bonus: (plus ? 2 : 0) + _assistShotBonus,
+        cardLabel: `Inside-Out${plus ? '+' : ''}: kicked out to ${mateP.name}`,
       });
       // ONE KICK-OUT PER SCORE. Without this a second copy plays off the same
       // bucket, which is not what "if a player scores in the Paint" says.
@@ -1757,10 +1825,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'lob_city': {
       const has15 = myT.starters.some(p => p && ((p.speed || 0) >= 15 || (p.power || 0) >= 15));
       if (!has15) return fail('Need a player with Speed or Power 15+');
-      const others = myT.hand.filter(id => baseId(id) !== 'lob_city');
-      if (others.length === 0) return fail('No card to discard');
-      const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
-      removeFromHand(myT, discard);
+      let discard = null;
+      if (!plus) {
+        const others = myT.hand.filter(id => baseId(id) !== 'lob_city');
+        if (others.length === 0) return fail('No card to discard');
+        discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
+        removeFromHand(myT, discard);
+      }
       // EACH PLAYER GETS WHAT HE EARNED (the user, 2026-10-01: "points and
       // assists from the card should be assigned to the players that earn
       // them"). The dunks were always credited through scorePts; the assists
@@ -1791,7 +1862,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         dunkers.length ? `${dunkers.join(' and ')} ${dunkers.length > 1 ? 'score 2 each' : 'scores 2'} (Power 15+)` : null,
         passers.length ? `${passers.join(' and ')} +1 AST${passers.length > 1 ? ' each' : ''} (Speed 15+)` : null,
       ].filter(Boolean).join('; ');
-      addLog(g, teamKey, `Lob City: discards ${discard.replace(/_/g, ' ')} — ${earned} — +${pts} pts, +${ast} AST`);
+      addLog(g, teamKey, `Lob City${plus ? '+' : ''}: ${discard ? `discards ${discard.replace(/_/g, ' ')} — ` : ''}${earned} — +${pts} pts, +${ast} AST`);
       break; // the wrapper below removes the card and runs the 5-assist draw
     }
     case 'stretch_five': {
@@ -1805,7 +1876,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       announceCheck(g, {
         teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus,
         cardLabel: `Stretch Five: ${player?.name} 3PT`,
-        then: [{ playerIdx: mate, type: 'paint', bonus: 2, cardLabel: `Stretch Five: ${mateP.name} paint at +2` }],
+        then: [{ playerIdx: mate, type: 'paint', bonus: plus ? 4 : 2, cardLabel: `Stretch Five${plus ? '+' : ''}: ${mateP.name} paint at +${plus ? 4 : 2}` }],
       });
       break;
     }
@@ -1820,15 +1891,16 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!adv || adv.powerAdv <= 0) return fail(`${player.name} has no Power advantage over their defender`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['reb2' + idx] = 1;
-      addLog(g, teamKey, `Post Domination: ${player.name}'s rebounds are doubled this period`);
+      const pdDrew = plus ? cardDraw(g, teamKey, 1) : 0;
+      addLog(g, teamKey, `Post Domination${plus ? '+' : ''}: ${player.name}'s rebounds are doubled this period${plus ? (pdDrew ? ', and a card drawn' : ' (the deck is empty)') : ''}`);
       break;
     }
     case 'unsung_hero': {
       if ((player?.salary || 0) > 400) return fail(`${player?.name} must be $400 or less`);
       if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['adv' + idx] = 1;
-      addLog(g, teamKey, `Unsung Hero: ${player?.name} rolls two dice and keeps the higher this period`);
+      g.tempEff[teamKey]['adv' + idx] = plus ? 2 : 1;
+      addLog(g, teamKey, `Unsung Hero${plus ? '+' : ''}: ${player?.name} rolls ${plus ? 'three dice and keeps the highest' : 'two dice and keeps the higher'} this period`);
       break;
     }
     case 'transition_outlet': {
@@ -1848,9 +1920,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (idx === dt.targetIdx) return fail(`${player?.name} is the one being trapped — pick an open teammate`);
       if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 4;
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + (plus ? 6 : 4);
       g.lastDoubleTeam = null;
-      addLog(g, teamKey, `Find the Open Teammate: ${oppT.starters[dt.targetIdx]?.name} is trapped — ${player?.name} +4 roll`);
+      addLog(g, teamKey, `Find the Open Teammate${plus ? '+' : ''}: ${oppT.starters[dt.targetIdx]?.name} is trapped — ${player?.name} +${plus ? 6 : 4} roll`);
       break;
     }
     case 'putback_specialist': {
@@ -1877,8 +1949,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       }
       myT.rebounds -= 2;
       miss.claimed = true;
-      addLog(g, teamKey, `Kick-Out Three: −2 REB → the board goes back out to ${player?.name} for a 3PT check.`);
-      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus, cardLabel: 'Kick-Out Three' });
+      addLog(g, teamKey, `Kick-Out Three${plus ? '+' : ''}: −2 REB → the board goes back out to ${player?.name} for a 3PT check${plus ? ' at +3' : ''}.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: (plus ? 3 : 0) + _assistShotBonus, cardLabel: `Kick-Out Three${plus ? '+' : ''}` });
       break;
     }
     case 'rebound_and_push': {
@@ -1890,22 +1962,23 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const guard = myT.starters[gi];
       myT.rebounds -= 2;
       miss.claimed = true;
-      addLog(g, teamKey, `Rebound and Push: ${guard.name} boards the miss and pushes — −2 REB, a Paint check at +1.`);
-      announceCheck(g, { teamKey, playerIdx: gi, type: 'paint', bonus: 1 + _assistShotBonus, cardLabel: 'Rebound and Push' });
+      addLog(g, teamKey, `Rebound and Push${plus ? '+' : ''}: ${guard.name} boards the miss and pushes — −2 REB, a Paint check at +${plus ? 3 : 1}.`);
+      announceCheck(g, { teamKey, playerIdx: gi, type: 'paint', bonus: (plus ? 3 : 1) + _assistShotBonus, cardLabel: `Rebound and Push${plus ? '+' : ''}` });
       break;
     }
     case 'grab_and_go': {
       if (myT.rebounds < 3) return fail(`Need 3 rebounds (have ${myT.rebounds})`);
       myT.rebounds -= 3;
-      myT.assists += 2;
+      const ggAst = plus ? 3 : 2;
+      myT.assists += ggAst;
       // The card names nobody, so the assists go to the man who has been
       // grabbing them: the player on the floor with the most rebounds this
       // game, the earlier lineup slot on a tie (the user, 2026-10-01).
       const boards = id => getPS(g, teamKey, id)?.reb || 0;
       const grabber = myT.starters.filter(Boolean).reduce((best, p) => (best == null || boards(p.id) > boards(best.id) ? p : best), null);
-      creditLine(g, teamKey, grabber?.id, 'ast', 2);
-      if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += 2;
-      addLog(g, teamKey, `Grab and Go: −3 REB → +2 AST${grabber ? ` (${grabber.name} pushes it)` : ''}`);
+      creditLine(g, teamKey, grabber?.id, 'ast', ggAst);
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += ggAst;
+      addLog(g, teamKey, `Grab and Go${plus ? '+' : ''}: −3 REB → +${ggAst} AST${grabber ? ` (${grabber.name} pushes it)` : ''}`);
       break;
     }
     case 'own_the_glass': {
@@ -1914,11 +1987,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (myT.rebounds < 5) return fail(`Need 5 rebounds (have ${myT.rebounds})`);
       if (!player) return fail('Choose a player');
       myT.rebounds -= 5;
-      addLog(g, teamKey, `Own the Glass: −5 REB → ${player.name} owns the offensive glass: two Paint checks at +1.`);
+      addLog(g, teamKey, `Own the Glass${plus ? '+' : ''}: −5 REB → ${player.name} owns the offensive glass: two Paint checks at +${plus ? 3 : 1}.`);
       announceCheck(g, {
-        teamKey, playerIdx: idx, type: 'paint', bonus: 1 + _assistShotBonus,
-        cardLabel: 'Own the Glass #1',
-        then: [{ cardLabel: 'Own the Glass #2' }],
+        teamKey, playerIdx: idx, type: 'paint', bonus: (plus ? 3 : 1) + _assistShotBonus,
+        cardLabel: `Own the Glass${plus ? '+' : ''} #1`,
+        then: [{ cardLabel: `Own the Glass${plus ? '+' : ''} #2` }],
       });
       break;
     }
@@ -1957,12 +2030,17 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
           ? `Smothering Defense+: ${guard.name} smothers ${shooterName} — no card bonus, and −1`
           : `Smothering Defense: ${guard.name} smothers ${shooterName} — the check's card bonus −3 (min 0)`);
       } else if (cardId === 'denial') {
-        const others = myT.hand.filter(id => baseId(id) !== 'denial');
-        if (others.length === 0) return fail('No card to discard');
-        const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
-        removeFromHand(myT, discard);
-        psc.denial = true;
-        addLog(g, teamKey, `Denial: discards ${discard.replace(/_/g, ' ')} — ${shooterName}'s team loses 2 AST, or the check is at −3`);
+        if (plus) {
+          psc.denial = true;
+          addLog(g, teamKey, `Denial+: ${shooterName}'s team loses 2 AST, or the check is at −3`);
+        } else {
+          const others = myT.hand.filter(id => baseId(id) !== 'denial');
+          if (others.length === 0) return fail('No card to discard');
+          const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
+          removeFromHand(myT, discard);
+          psc.denial = true;
+          addLog(g, teamKey, `Denial: discards ${discard.replace(/_/g, ' ')} — ${shooterName}'s team loses 2 AST, or the check is at −3`);
+        }
       } else {
         if ((shooter?.salary || 0) <= 800) return fail('Hustle Play answers a shooter paid above $800');
         const cheap = myT.starters
@@ -1972,9 +2050,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         const pick = (opts.playerIdx !== undefined && cheap.some(c => c.i === opts.playerIdx))
           ? cheap.find(c => c.i === opts.playerIdx)
           : cheap.reduce((b, c) => ((c.p.defBoost || 0) > (b.p.defBoost || 0) ? c : b), cheap[0]);
-        psc.contest = (psc.contest || 0) - (pick.p.defBoost || 0);
-        psc.contestBy = `Hustle Play (${pick.p.name})`;
-        addLog(g, teamKey, `Hustle Play: ${pick.p.name} ($${pick.p.salary}) contests ${shooterName} — check −${pick.p.defBoost}`);
+        const hpCut = (pick.p.defBoost || 0) + (plus ? 2 : 0);
+        psc.contest = (psc.contest || 0) - hpCut;
+        psc.contestBy = `Hustle Play${plus ? '+' : ''} (${pick.p.name})`;
+        addLog(g, teamKey, `Hustle Play${plus ? '+' : ''}: ${pick.p.name} ($${pick.p.salary}) contests ${shooterName} — check −${hpCut}`);
       }
       psc.reacted = teamKey;
       break;
@@ -2057,7 +2136,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'blow_by': {
       // Rimshaker's Speed twin. Leaves lastAutoScore behind like every
       // automatic scorer, so Verticality can answer it.
-      if ((player?.speed || 0) < 13) return fail('Need Speed 13+');
+      if ((player?.speed || 0) < (plus ? 12 : 13)) return fail(`Need Speed ${plus ? 12 : 13}+`);
       if (!(ps.hot > 0)) return fail(player?.name + ' needs a hot marker');
       scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
@@ -2076,7 +2155,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!advG || advG.speedAdv <= 0) return fail(`${player.name} has no Speed advantage over their defender`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['ast2' + idx] = 1;
-      addLog(g, teamKey, `Point God: ${player.name}'s assists are doubled this period`);
+      const pgDrew = plus ? cardDraw(g, teamKey, 1) : 0;
+      addLog(g, teamKey, `Point God${plus ? '+' : ''}: ${player.name}'s assists are doubled this period${plus ? (pgDrew ? ', and a card drawn' : ' (the deck is empty)') : ''}`);
       break;
     }
     case 'passing_lane': {
@@ -2121,16 +2201,17 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const chosen = targets.find(t => t.origIdx === tIdxC);
       if (tIdxC === undefined || !chosen) return fail('Choose an opposing $400-or-less player still to roll');
       if (!g.tempEff[oppKeyC]) g.tempEff[oppKeyC] = {};
-      g.tempEff[oppKeyC]['dis' + tIdxC] = 1;
-      addLog(g, teamKey, `Clamp the Reserve: ${chosen.p.name} rolls two dice and keeps the lower this period`);
+      g.tempEff[oppKeyC]['dis' + tIdxC] = plus ? 2 : 1;
+      addLog(g, teamKey, `Clamp the Reserve${plus ? '+' : ''}: ${chosen.p.name} rolls ${plus ? 'three dice and keeps the lowest' : 'two dice and keeps the lower'} this period`);
       break;
     }
     case 'feeling_it': {
       // Turnover's twin: one of YOUR hot markers pays out two cards.
       const hasHotF = myT.starters.some(p => { const pst = getPS(g, teamKey, p?.id); return pst && (pst.hot || 0) > 0; });
       if (!hasHotF) return fail('One of your players needs a hot marker');
-      const gotF = cardDraw(g, teamKey, 2);
-      addLog(g, teamKey, `Feeling It: drew ${gotF} strategy card${gotF === 1 ? '' : 's'}${gotF < 2 ? ' — the deck ran out' : ''}`);
+      const wantF = plus ? 3 : 2;
+      const gotF = cardDraw(g, teamKey, wantF);
+      addLog(g, teamKey, `Feeling It${plus ? '+' : ''}: drew ${gotF} strategy card${gotF === 1 ? '' : 's'}${gotF < wantF ? ' — the deck ran out' : ''}`);
       break;
     }
 
@@ -2141,6 +2222,14 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
   // Remove card from hand (cards that return early have already removed)
   removeFromHand(myT, handId);
+  // RUN IT BACK (a "+" rider, 2026-10-20; Slay the Spire's "shuffle it into
+  // your draw pile"): the play goes back into the deck at a random place, so
+  // it can come again this game. A game never reshuffles otherwise.
+  if (plus && PLUS[cardId]?.runItBack) {
+    const at = Math.floor(Math.random() * (myT.deck.length + 1));
+    myT.deck = [...myT.deck.slice(0, at), handId, ...myT.deck.slice(at)];
+    addLog(g, teamKey, `${s.name}+ runs it back: shuffled into your deck.`);
+  }
   // A STANDING CARD DOES NOT LEAVE THE TABLE. "Stays in play until at least
   // one of these players goes to the bench" is, in a game made of hands, a
   // card that comes back rather than one that is spent. pruneStanding takes
@@ -2233,7 +2322,7 @@ export function applyShotCheck(g, psc) {
     // thing. Cleared at section end with the rest of the per-section state.
     if (psc.type === 'paint') {
       const paintAst = creditPaintScore(g, psc.teamKey, psc.playerIdx, player);
-      if (paintAst) astPaid.push({ playerId: player?.id ?? null, n: paintAst });
+      if (paintAst) astPaid.push({ playerId: g.lastPaintAstBy ?? player?.id ?? null, n: paintAst });
     }
     if (hitAst) {
       myT.assists += hitAst;

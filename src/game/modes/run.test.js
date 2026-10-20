@@ -253,9 +253,11 @@ describe('the Rest Day', () => {
     expect(both.deck.catch_and_shoot ?? 0).toBe(0);
     expect(both.deck['catch_and_shoot+']).toBe(2);
     expect(() => restDay({ ...both, status: 'rest', restAt: r.restAt }, { choice: 'practice', cardId: 'catch_and_shoot+' })).toThrow();
-    const withRare = { ...r, deck: { ...r.deck, green_light: 1 } };
-    expect(KIT_CARD_IDS.has('green_light')).toBe(false);
-    expect(() => restDay(withRare, { choice: 'practice', cardId: 'green_light' })).toThrow(/no upgrade yet/);
+    // Every card a run can offer has a "+" since 2026-10-20; a legendary has none.
+    const withLegend = { ...r, deck: { ...r.deck, twin_towers: 1 } };
+    expect(KIT_CARD_IDS.has('twin_towers')).toBe(false);
+    expect(() => restDay(withLegend, { choice: 'practice', cardId: 'twin_towers' })).toThrow(/no upgrade yet/);
+    expect(restDay({ ...r, deck: { ...r.deck, green_light: 1 } }, { choice: 'practice', cardId: 'green_light' }).deck['green_light+']).toBe(1);
   });
 
   it('can be taken from the map with the free Rest Day, once', () => {

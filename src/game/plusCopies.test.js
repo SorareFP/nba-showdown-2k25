@@ -63,15 +63,16 @@ describe('the "+" helpers', () => {
     expect(getStratImagePath('close_out+')).toBe('/nba-showdown-2k25/cards/strats-plus/close_out.png');
     expect(getStratThumbPath('close_out+')).toBe('/nba-showdown-2k25/cards/thumbs/strats-plus/close_out.webp');
     expect(getStratImagePath('close_out')).toBe('/nba-showdown-2k25/cards/strats/close_out.png');
-    expect(getStratImagePath('green_light+')).toBe(getStratImagePath('green_light'));
+    expect(getStratImagePath('twin_towers+')).toBe(getStratImagePath('twin_towers'));
   });
 
-  // The thirty approved "+" (2026-10-19): every kit card (the four the kits
-  // gained that day were approved the same day), and Help Defender, which left
-  // the Defense kit and keeps its "+".
-  it('has "+" text for the thirty approved cards, each one different from its card', () => {
-    const want = new Set([...KIT_CARD_IDS, 'help_defender']);
-    expect(want.size).toBe(30);
+  // The thirty approved "+" (2026-10-19): every kit card and Help Defender;
+  // and the other seventy-nine (2026-10-20, docs/plans/2026-10-20-the-climb-
+  // plus-every-card.md): every card a run can offer. No legendary, no promo.
+  it('has "+" text for every card a run can offer, each one different from its card', () => {
+    const want = new Set(STRATS.filter(s => !s.promo && s.rarity !== 'legendary').map(s => s.id));
+    expect(want.size).toBe(109);
+    for (const id of [...KIT_CARD_IDS, 'help_defender']) expect(want.has(id), id).toBe(true);
     expect(new Set(Object.keys(PLUS))).toEqual(want);
     for (const id of want) {
       expect(PLUS[id].desc, id).toBeTruthy();
@@ -145,16 +146,13 @@ describe('the guard: a deck of "+" copies plays exactly like its plain twin', ()
   // band passed. The deck is the fitted fifties' cards OUTSIDE the kits,
   // which have no "+" text in piece 1, so this stays true once Task 6 writes
   // the kit cards' effects (piece 2 will need cards without one, or none).
+  // Since every card a run offers has a "+" (2026-10-20), the cards left
+  // without one are the legendaries; the guard plays them.
   it('over seeded quarter games, every game comes out the same', () => {
     const a = CARDS.slice(0, 8);
     const b = CARDS.slice(8, 16);
-    const deck = {};
-    for (const arch of ARCHETYPE_DECKS) {
-      for (const [id, n] of Object.entries(arch.deck)) {
-        if (!KIT_CARD_IDS.has(id) && !PLUS[id]) deck[id] = Math.max(deck[id] ?? 0, n);
-      }
-    }
-    expect(Object.keys(deck).length).toBeGreaterThan(20);
+    const deck = Object.fromEntries(STRATS.filter(s => s.rarity === 'legendary' && !PLUS[s.id]).map(s => [s.id, 3]));
+    expect(Object.keys(deck).length).toBeGreaterThanOrEqual(4);
     for (let seed = 1; seed <= 30; seed += 1) {
       const play = deckA => simulateGame(a, b, { deckA, deckB: kitDeck('paint'), rng: climbRng(seed, 'guard'), keepGame: true, gameOpts: { startQuarter: 4 } });
       const plain = play(deck);

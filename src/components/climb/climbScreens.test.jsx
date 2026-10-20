@@ -117,7 +117,7 @@ describe('the reward screen', () => {
 describe('the Practice screen', () => {
   const restRun = () => ({
     ...camped(), status: 'rest', restAt: '2-0',
-    deck: { ...camped().deck, catch_and_shoot: 1, 'catch_and_shoot+': 1, green_light: 1 },
+    deck: { ...camped().deck, catch_and_shoot: 1, 'catch_and_shoot+': 1, twin_towers: 1 },
   });
 
   it('lays out every card in the deck once, plain by default and practiced on the toggle', () => {
@@ -125,10 +125,10 @@ describe('the Practice screen', () => {
     const plain = practiceTiles(r, false);
     expect(plain.map(t => t.id).sort()).toEqual([...new Set(Object.keys(r.deck).map(baseId))].sort());
     expect(plain.find(t => t.id === 'catch_and_shoot')).toMatchObject({ count: 2, plusCount: 1, canPractice: true, upgradeable: true, faceId: 'catch_and_shoot' });
-    expect(plain.find(t => t.id === 'green_light')).toMatchObject({ canPractice: false, upgradeable: false, faceId: 'green_light' });
+    expect(plain.find(t => t.id === 'twin_towers')).toMatchObject({ canPractice: false, upgradeable: false, faceId: 'twin_towers' });
     const up = practiceTiles(r, true);
     expect(up.find(t => t.id === 'catch_and_shoot').faceId).toBe('catch_and_shoot+');
-    expect(up.find(t => t.id === 'green_light').faceId).toBe('green_light');
+    expect(up.find(t => t.id === 'twin_towers').faceId).toBe('twin_towers');
     expect(practiceTiles({ ...r, deck: { 'catch_and_shoot+': 2 } }, false)[0]).toMatchObject({ count: 2, plusCount: 2, canPractice: false });
   });
 
@@ -140,7 +140,7 @@ describe('the Practice screen', () => {
     expect(out.match(/data-practice-tile=/g)).toHaveLength(practiceTiles(r, false).length);
     expect(out).toContain('/cards/thumbs/strats/catch_and_shoot.webp');
     expect(out).toMatch(/data-practice="catch_and_shoot"/);
-    expect(out).not.toMatch(/data-practice="green_light"/);
+    expect(out).not.toMatch(/data-practice="twin_towers"/);
     expect(out).toContain('no upgrade yet');
     expect(out).toContain('>Rest<');
     expect(out).not.toMatch(/smith/i);

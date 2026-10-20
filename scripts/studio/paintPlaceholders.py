@@ -364,18 +364,20 @@ def caption(d, s):
 
 # ── scenes ─────────────────────────────────────────────────────────────────
 def s_hack_a(d, s):
-    # HACK-A-____: the foul comes before the play does. He is wrapped up before
-    # he can go to work, the whistle goes, and all he gets is four from the line.
+    # HACK-A-____: the foul comes before the play does. The shooter is wrapped
+    # up before they can go to work, the whistle goes, and all that is left is
+    # two trips to the line, each one harder (two free throws at -3).
     court(d)
     player(d, W / 2 + 40, H * 0.94, BLUE, h=320, pose='stand', number=34)
     player(d, W / 2 - 150, H * 0.94, RED, h=250, pose='hug', number=5)
     ball(d, (W / 2 + 150, H * 0.62))
     whistle(d, 120, 150)
     text(d, (250, 96), 'TWEET!', size=58, fill=RED, anchor='la')
-    # the only offence left: four trips up at the rim
-    for c in ((960, 610), (900, 505), (810, 425), (712, 380)):
+    # the only offence left: two trips up at the rim, and neither one easy
+    for c in ((900, 505), (790, 420)):
         ball(d, c, r=24)
-    text(d, (1010, 500), 'x4', size=64, fill=BLACK, anchor='lm')
+    text(d, (960, 470), 'x2', size=64, fill=BLACK, anchor='lm')
+    text(d, (960, 560), '-3', size=64, fill=RED, anchor='lm')
 
 
 def s_foul_trouble(d, s):
@@ -808,6 +810,232 @@ def s_blitz(d, s):
     text(d, (W / 2, 130), 'GIVE IT UP', size=80, fill=RED, shadow=WHITE, anchor='mm')
 
 
+# -- the Climb's props (2026-10-20) ------------------------------------------
+def flame(d, c, r=60):
+    """A cartoon flame: red outside, orange, yellow core."""
+    x, y = c
+    for k, col in ((1.0, RED), (0.7, ORANGE), (0.42, YELLOW)):
+        rr = r * k
+        pts = [(x - rr, y), (x - rr * 0.8, y - rr * 0.9), (x - rr * 0.35, y - rr * 0.6), (x - rr * 0.2, y - rr * 1.7),
+               (x + rr * 0.2, y - rr * 0.8), (x + rr * 0.55, y - rr * 1.35), (x + rr * 0.8, y - rr * 0.5), (x + rr, y),
+               (x + rr * 0.6, y + rr * 0.45), (x - rr * 0.6, y + rr * 0.45)]
+        poly(d, pts, fill=col, width=4)
+
+
+def flask(d, x, y, fill=GREEN):
+    """A lab flask sitting on (x, y), bubbling."""
+    poly(d, [(x - 30, y - 200), (x + 30, y - 200), (x + 30, y - 130), (x + 110, y), (x - 110, y), (x - 30, y - 130)], fill=WHITE, width=6)
+    poly(d, [(x - 64, y - 75), (x + 64, y - 75), (x + 102, y - 8), (x - 102, y - 8)], fill=fill, width=4)
+    for bx, by, br in ((-20, -230, 14), (18, -262, 18), (-6, -305, 22)):
+        circle(d, (x + bx, y + by), br, fill=fill, width=4)
+
+
+def barbell(d, x, y, w=330):
+    """A barbell held level at (x, y), two plates a side."""
+    line(d, (x - w / 2, y), (x + w / 2, y), fill=GREY, width=12)
+    for s2 in (-1, 1):
+        for k, hh in ((0, 120), (26, 90)):
+            px = x + s2 * (w / 2 - 30 - k)
+            poly(d, [(px - 12, y - hh / 2), (px + 12, y - hh / 2), (px + 12, y + hh / 2), (px - 12, y + hh / 2)], fill=BLACK if k == 0 else GREY, width=4)
+
+
+def stopwatch(d, c, r=70):
+    circle(d, c, r, fill=WHITE, width=6)
+    poly(d, [(c[0] - 14, c[1] - r - 30), (c[0] + 14, c[1] - r - 30), (c[0] + 14, c[1] - r), (c[0] - 14, c[1] - r)], fill=GREY, width=4)
+    line(d, c, (c[0], c[1] - r * 0.7), width=6)
+    line(d, c, (c[0] + r * 0.5, c[1] + r * 0.2), fill=RED, width=5)
+
+
+def drop(d, c, r=18, fill=BLUE):
+    """A water drop (or a bead of sweat)."""
+    x, y = c
+    poly(d, [(x, y - r * 2), (x + r, y), (x + r * 0.7, y + r * 0.7), (x, y + r), (x - r * 0.7, y + r * 0.7), (x - r, y)], fill=fill, width=3)
+
+
+def door(d, x, y, w=210, h=330):
+    """A shut door standing on (x, y), with a CLOSED sign."""
+    poly(d, [(x - w / 2, y - h), (x + w / 2, y - h), (x + w / 2, y), (x - w / 2, y)], fill=BROWN, width=7)
+    for k in (0.12, 0.55):
+        poly(d, [(x - w / 2 + 25, y - h + h * k), (x + w / 2 - 25, y - h + h * k), (x + w / 2 - 25, y - h + h * (k + 0.33)), (x - w / 2 + 25, y - h + h * (k + 0.33))], width=4)
+    circle(d, (x + w / 2 - 30, y - h / 2), 12, fill=GOLD, width=4)
+    poly(d, [(x - 80, y - h - 70), (x + 80, y - h - 70), (x + 80, y - h - 10), (x - 80, y - h - 10)], fill=WHITE, width=5)
+    text(d, (x, y - h - 40), 'CLOSED', size=36, fill=RED, shadow=None, anchor='mm')
+
+
+def thermometer(d, x, y, h=240):
+    poly(d, [(x - 22, y - h), (x + 22, y - h), (x + 22, y - 40), (x - 22, y - 40)], fill=WHITE, width=5)
+    poly(d, [(x - 10, y - h * 0.9), (x + 10, y - h * 0.9), (x + 10, y - 40), (x - 10, y - 40)], fill=RED, width=3)
+    circle(d, (x, y - 20), 40, fill=RED, width=5)
+
+
+def calendar(d, x, y, label='NEXT'):
+    poly(d, [(x - 95, y - 110), (x + 95, y - 110), (x + 95, y + 100), (x - 95, y + 100)], fill=WHITE, width=6)
+    poly(d, [(x - 95, y - 110), (x + 95, y - 110), (x + 95, y - 55), (x - 95, y - 55)], fill=RED, width=6)
+    text(d, (x, y - 82), label, size=34, fill=WHITE, shadow=None, anchor='mm')
+    text(d, (x, y + 25), 'G2', size=70, fill=BLACK, shadow=None, anchor='mm')
+
+
+def tub(d, x, y, w=420):
+    """An ice tub standing on (x, y): a steel tub, ice cubes on top."""
+    poly(d, [(x - w / 2, y - 190), (x + w / 2, y - 190), (x + w / 2 - 30, y), (x - w / 2 + 30, y)], fill=GREY, width=7)
+    poly(d, [(x - w / 2 + 10, y - 200), (x + w / 2 - 10, y - 200), (x + w / 2 - 10, y - 170), (x - w / 2 + 10, y - 170)], fill=(170, 220, 255), width=4)
+    for i in range(6):
+        cx = x - w / 2 + 50 + i * (w - 100) / 5
+        cy = y - 205 - (i % 2) * 14
+        poly(d, [(cx - 22, cy - 22), (cx + 22, cy - 22), (cx + 22, cy + 22), (cx - 22, cy + 22)], fill=WHITE, outline=BLUE, width=4)
+
+
+def speed_lines(d, x, y, n=3, length=110, fill=BLACK):
+    """Motion lines trailing to the left of (x, y)."""
+    for i in range(n):
+        yy = y + (i - (n - 1) / 2) * 34
+        line(d, (x - 30, yy), (x - 30 - length, yy), fill=fill, width=6)
+
+
+# -- the Climb's scenes (2026-10-20; the user: "Draft art for all cards without it") --
+def s_chemistry(d, s):
+    # CHEMISTRY: every screen builds on the last one -- two teammates who have
+    # it, and a flask that bubbles +1, +2, +3.
+    court(d)
+    screen_wall(d, W / 2 - 300, H * 0.94)
+    player(d, W / 2 - 160, H * 0.94, BLUE, pose='hug', number=4)
+    player(d, W / 2 + 30, H * 0.94, BLUE, pose='wave', number=11)
+    flask(d, W - 300, 470)
+    for i, (tx, ty) in enumerate(((W - 420, 250), (W - 300, 190), (W - 170, 130))):
+        text(d, (tx, ty), '+%d' % (i + 1), size=46 + i * 10, fill=GREEN, anchor='mm')
+
+
+def s_let_it_fly(d, s):
+    # LET IT FLY: a shot from way back, the ball sprouting wings on the way.
+    court(d)
+    player(d, 170, H * 0.95, BLUE, pose='shoot', number=30)
+    for i in range(6):
+        t = (i + 1) / 8
+        x = 240 + (W / 2 - 240) * t
+        y = H * 0.95 - 360 - math.sin(t * math.pi) * 230 + t * 60
+        circle(d, (x, y), 6, fill=BLACK, width=2)
+    bx, by = W / 2 - 60, 250
+    ball(d, (bx, by), r=36)
+    for s2 in (-1, 1):
+        poly(d, [(bx + 30 * s2, by - 10), (bx + 110 * s2, by - 70), (bx + 95 * s2, by - 20), (bx + 120 * s2, by - 10), (bx + 40 * s2, by + 18)], fill=WHITE, width=4)
+    text(d, (W - 330, 230), '+1', size=90, fill=GREEN, anchor='mm')
+
+
+def s_pace_and_space(d, s):
+    # PACE AND SPACE: everybody spread to the arc and moving.
+    court(d)
+    spots = ((150, 0.80), (340, 0.66), (W / 2, 0.60), (W - 340, 0.66), (W - 150, 0.80))
+    for i, (x, fy) in enumerate(spots):
+        player(d, x, H * fy + 120, BLUE, h=200, pose='run', number=i + 1)
+        speed_lines(d, x - 60, H * fy - 40, n=2, length=60)
+    ball(d, (W / 2 + 80, H * 0.60 - 40), r=24)
+    text(d, (W / 2, 120), '+1 SPEED', size=64, fill=GREEN, anchor='mm')
+
+
+def s_bruise_brothers(d, s):
+    # BRUISE BROTHERS: two bigs in the paint, flexing; the paint is theirs.
+    court(d)
+    player(d, W / 2 - 150, H * 0.95, BLUE, h=290, pose='flex', number=50)
+    player(d, W / 2 + 150, H * 0.95, BLUE, h=300, pose='flex', number=33)
+    for (x, y) in ((W / 2 - 330, 300), (W / 2 + 330, 290)):
+        burst(d, (x, y), 46, fill=YELLOW)
+        text(d, (x, y), 'POW', size=26, shadow=None, anchor='mm')
+    text(d, (W / 2, 110), '+1 PAINT', size=60, fill=GREEN, anchor='mm')
+
+
+def s_weight_room(d, s):
+    # WEIGHT ROOM: one player, one barbell, three more Power.
+    d.rectangle([0, 0, W, H], fill=(220, 220, 230))
+    d.rectangle([0, H * 0.78, W, H], fill=GREY)
+    for i in range(4):
+        line(d, (0, 120 + i * 140), (W, 120 + i * 140), fill=(190, 190, 205), width=4, amt=1)
+    x, y = W / 2 - 80, H * 0.97
+    player(d, x, y, BLUE, h=300, pose='arms_up', number=13)
+    barbell(d, x, y - 300 + 30 - 120 + 5)
+    for (dx, dy) in ((-70, -275), (72, -290)):
+        drop(d, (x + dx, y + dy), r=12)
+    text(d, (W - 260, 260), '+3', size=110, fill=RED, anchor='mm')
+    text(d, (W - 260, 360), 'POWER', size=50, fill=BLACK, anchor='mm')
+
+
+def s_conditioning(d, s):
+    # CONDITIONING: run all day; the battery never moves off full.
+    court(d)
+    player(d, W / 2 - 220, H * 0.95, BLUE, pose='run', number=8)
+    speed_lines(d, W / 2 - 320, H * 0.95 - 160, n=3)
+    drop(d, (W / 2 - 150, H * 0.95 - 270), r=12)
+    battery(d, W / 2 + 190, 230)
+    stopwatch(d, (W - 230, 500), 70)
+    text(d, (W / 2 + 190, 340), 'FULL', size=46, fill=GREEN, anchor='mm')
+
+
+def s_shut_the_door(d, s):
+    # SHUT THE DOOR: the paint has a door now, and it is shut.
+    court(d)
+    door(d, W / 2, H * 0.86)
+    player(d, W / 2 - 300, H * 0.95, RED, pose='dive', number=6)
+    ball(d, (W / 2 - 150, H * 0.95 - 230), r=26)
+    burst(d, (W / 2 - 115, H * 0.95 - 150), 40, fill=YELLOW)
+    player(d, W / 2 + 250, H * 0.95, BLUE, pose='wide', number=12)
+    text(d, (W / 2 + 340, 230), '-1', size=90, fill=RED, anchor='mm')
+
+
+def s_stay_hot(d, s):
+    # STAY HOT: the fire comes along to the next game.
+    court(d)
+    x = W / 2 - 220
+    player(d, x, H * 0.95, BLUE, pose='arms_up', number=35)
+    flame(d, (x, H * 0.95 - 220 - 10), 52)
+    thermometer(d, 140, 500)
+    arrow(d, (x + 150, 330), (W - 360, 330), fill=ORANGE, width=10)
+    calendar(d, W - 230, 340)
+    flame(d, (W - 230, 520), 40)
+
+
+def s_ice_bath(d, s):
+    # ICE BATH: after the game, into the tub; the legs come back fresh.
+    court(d, floor=(225, 235, 245), sky=(210, 235, 255))
+    x, y = W / 2 - 60, H * 0.95
+    circle(d, (x, y - 300), 34, fill=PINK, width=5)
+    d.ellipse([x - 12, y - 308, x - 6, y - 302], fill=BLACK)
+    d.ellipse([x + 6, y - 308, x + 12, y - 302], fill=BLACK)
+    line(d, (x - 12, y - 284), (x + 12, y - 284), width=3)
+    tub(d, x, y)
+    for (sx, sy) in ((170, 170), (330, 260), (W - 380, 210)):
+        snowflake(d, (sx, sy), 40)
+    text(d, (x + 220, y - 360), 'BRRR', size=58, fill=BLUE, anchor='mm')
+    battery(d, W - 210, 520)
+
+
+def s_splash(d, s):
+    # SPLASH: threes keep falling and the net throws water; the more that go
+    # in, the bigger the splash.
+    court(d)
+    player(d, 190, H * 0.95, BLUE, pose='shoot', number=30)
+    for (bx, by) in ((W / 2 - 40, 200), (W / 2 + 40, 160), (W / 2, 120)):
+        ball(d, (bx, by), r=24)
+    for k in range(9):
+        a = math.radians(200 + k * 17)
+        drop(d, (W / 2 + 160 * math.cos(a), H * 0.44 + 60 - 120 * math.sin(a)), r=16)
+    text(d, (W - 260, 250), 'SPLASH!', size=70, fill=BLUE, anchor='mm')
+    for i, label in enumerate(('+1', '+2', '+3')):
+        text(d, (W - 320 + i * 90, 360), label, size=40 + i * 6, fill=GREEN, anchor='mm')
+
+
+def s_on_fire(d, s):
+    # ON FIRE: three in a row and the ball (and the shooter) catch fire.
+    court(d, sky=(255, 220, 190))
+    x = W / 2 - 180
+    player(d, x, H * 0.95, BLUE, h=260, pose='shoot', number=3)
+    flame(d, (x, H * 0.95 - 260 - 6), 50)
+    bx, by = x + 110, H * 0.95 - 420
+    flame(d, (bx - 30, by + 30), 34)
+    ball(d, (bx, by), r=30)
+    for i in range(3):
+        text(d, (W - 380 + i * 95, 200), 'O', size=64, fill=GREEN, anchor='mm')
+    text(d, (W - 285, 300), 'ON FIRE!', size=60, fill=RED, anchor='mm')
+
+
 SCENES = {
     'blitz': s_blitz,
     'kick_out_three': s_kick_out_three, 'grab_and_go': s_grab_and_go,
@@ -825,6 +1053,11 @@ SCENES = {
     'drop_coverage': s_drop_coverage, 'smothering_defense': s_smothering, 'denial': s_denial,
     'hustle_play': s_hustle, 'glass_cleaner': s_glass_cleaner, 'box_out': s_box_out,
     'hack_a': s_hack_a, 'foul_trouble': s_foul_trouble,
+    # The Climb's own cards (2026-10-20).
+    'chemistry': s_chemistry, 'let_it_fly': s_let_it_fly, 'pace_and_space': s_pace_and_space,
+    'bruise_brothers': s_bruise_brothers, 'weight_room': s_weight_room, 'conditioning': s_conditioning,
+    'shut_the_door': s_shut_the_door, 'stay_hot': s_stay_hot, 'ice_bath': s_ice_bath,
+    'splash': s_splash, 'on_fire': s_on_fire,
 }
 
 

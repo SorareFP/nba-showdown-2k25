@@ -82,6 +82,17 @@ jobs:
       - name: Regenerate the Live Series
         run: node scripts/cardgen/generateLive.js --mode ${{ github.event.inputs.mode || 'season' }}
 
+      # THE BASE SET'S PHOTOS (2026-10-20). The Live faces borrow them
+      # (src/cards/sets.js setPaths) and card-art/sets/*/photos is gitignored,
+      # so this checkout has none: the live-photos branch carries them, pushed
+      # by `npm run live:photos` whenever a photo changes. Unpacked with git
+      # archive, so nothing lands in the index the commit step below uses.
+      - name: Unpack the base set's photos
+        run: |
+          git fetch --depth 1 origin live-photos
+          mkdir -p card-art/sets/2026-27/photos
+          git archive FETCH_HEAD | tar -x -C card-art/sets/2026-27/photos
+          echo "$(ls card-art/sets/2026-27/photos | wc -l) photos unpacked"
       - name: Start the Studio
         run: |
           npx vite --port 5173 --strictPort > studio.log 2>&1 &

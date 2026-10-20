@@ -553,7 +553,14 @@
    fatigue penalty they carry, hot and cold markers — so the information is
    symmetric rather than merely visible. */
 .oppRows  { flex:1; min-height:0; display:flex; flex-direction:column; overflow-y:auto; padding:2px; gap:1px; }
-.oppRow   { display:flex; align-items:center; gap:5px; padding:3px 5px; border-radius:5px; font-size:10px; color:var(--text-muted); }
+.oppRow   { display:flex; align-items:center; gap:5px; padding:3px 5px; border-radius:5px; font-size:10px; color:var(--text-muted); cursor:zoom-in; }
+.oppRow:hover { background:rgba(255,255,255,0.09); }
+/* The roster row's card (OppStatusPanel, 2026-10-20): beside the list, on <body>. */
+.rowCardPop { position:fixed; z-index:1100; pointer-events:none; border-radius:10px; overflow:hidden;
+  box-shadow:0 12px 36px rgba(0,0,0,0.55); animation:rowCardIn var(--dur-quick, 120ms) var(--ease-out, ease-out); }
+.rowCardPop img { display:block; width:100%; height:auto; }
+@keyframes rowCardIn { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce) { .rowCardPop { animation:none; } }
 .oppOn    { background:rgba(255,255,255,0.05); color:var(--text); font-weight:600; }
 .oppDot   { width:6px; height:6px; border-radius:50%; border:1px solid; flex:none; }
 .oppName  { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }

@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-bar', date: '2026-10-20', title: 'The Climb: your map, deck and team, any time',
+    body: "Every Climb screen now has Map, Deck and Team buttons at the top, and so does the board during a run's game: the map with the stop you are on, every card in your deck (a practiced copy shows its + face) and your players with their fatigue, perks and who is In System. The start screen also has the team builder's search, filters and sorting for picking your five.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'putback-rebound-and-their', date: '2026-10-20', title: 'Putback Specialist grabs the board',
     body: "A make on Putback Specialist's paint check now puts the rebound on the scorer's line, the way a putback is an offensive board. Every Climb-only card has art now, and every card, prompt and rules page says they and their for a player (Bruise Brothers is Bruise Crew).",
     to: 'climb', cta: 'The Climb',

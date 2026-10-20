@@ -20,7 +20,7 @@ import {
   restDay, takeFreeRest, retire, rosterCards, recordServerWin, abandon,
 } from '../../game/modes/run.js';
 import { stopById } from '../../game/modes/climbMap.js';
-import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver } from './ClimbScreens.jsx';
+import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud } from './ClimbScreens.jsx';
 import styles from './Climb.module.css';
 
 /**
@@ -157,6 +157,10 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   if (run === undefined) return <div className={styles.screen}><p className={styles.muted}>Loading your climb…</p></div>;
   if (!run) return <ClimbStart owned={owned} saved={saved} onStart={start} onSaveFive={saveFive} busy={busy} />;
 
+  // THE CLIMB BAR on every screen of a run (ClimbHud, 2026-10-20).
+  return <><ClimbHud run={run} />{screenFor(run)}</>;
+
+  function screenFor(run) {
   switch (run.status) {
     case 'camp':
       return <TrainingCamp run={run} busy={busy} onChoose={choice => act(() => commit(chooseCamp(run, choice)))} />;
@@ -214,5 +218,6 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
       );
     default:
       return <RunOver run={run} busy={busy} onBank={() => bank(run)} onNew={() => setRun(null)} onAbandon={giveUp} />;
+  }
   }
 }

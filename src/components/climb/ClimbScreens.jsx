@@ -2,7 +2,7 @@
 // container (ClimbTab.jsx) owns the run, the store and the server calls; each
 // screen here is the run plus the buttons for its next steps.
 // docs/plans/2026-10-18-the-climb-design.md, docs/plans/2026-10-18-the-climb.md Task 9.
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ZoomImg } from '../CardLightbox.jsx';
 import { getPlayerThumbUrl, getPlayerImageUrl, getStratThumbPath, getStratImagePath, fallbackTo } from '../../game/cardImages.js';
 import { AI_LEVELS, payNote } from '../../game/aiLevels.js';
@@ -178,6 +178,122 @@ function DeckLine({ run }) {
 function PotLine({ run }) {
   const pot = potPreview(run);
   return <span>{pot.coins.toLocaleString('en-US')} coins{pot.booster ? ' and a Booster' : ''}</span>;
+}
+
+// ── The Climb bar ─────────────────────────────────────────────────────────────
+
+const STAT_LINE = { power: 'Power', shotLine: 'Shot Line', threePtBoost: '3PT Bonus', speed: 'Speed', paintBoost: 'Paint Bonus' };
+const signed = n => (n > 0 ? `+${n}` : `${n}`);
+
+/** Every card in the run's deck as its own face: a practiced copy shows its "+" face. */
+export function deckFaces(run) {
+  return Object.entries(run.deck ?? {})
+    .filter(([, n]) => n > 0)
+    .map(([id, n]) => ({ id, n, name: getStrat(baseId(id))?.name ?? id, plus: isPlus(id) }))
+    .sort((a, b) => a.name.localeCompare(b.name) || Number(a.plus) - Number(b.plus));
+}
+
+function DeckView({ run }) {
+  const faces = deckFaces(run);
+  return (
+    <div className={styles.screen}>
+      <h2 className={styles.title}>Your deck <span className={styles.muted}>· {faces.reduce((t, f) => t + f.n, 0)} cards</span></h2>
+      {run.playbook ? <DeckLine run={run} /> : <p className={styles.muted}>Your deck is chosen at Training Camp.</p>}
+      <div className={styles.grid}>
+        {faces.map(f => {
+          const s = getStrat(baseId(f.id));
+          return (
+            <div key={f.id} data-deck-card={f.id} className={`${styles.tile} ${styles.stratTile}`} data-rarity={s?.rarity}>
+              <ZoomImg strat={f.id} className={styles.face} src={getStratThumbPath(f.id)} onError={fallbackTo(getStratImagePath(f.id))} alt={s?.name} loading="lazy" />
+              <div className={styles.tileName}>{s?.name}{f.plus ? '+' : ''}</div>
+              <div className={styles.tileMeta}>{[f.n > 1 ? `×${f.n}` : null, s?.climbOnly ? 'Climb only' : s?.rarity].filter(Boolean).join(' · ')}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function TeamView({ run }) {
+  const { cards } = rosterCards(run);
+  const boosts = boostsOf(run);
+  return (
+    <div className={styles.screen}>
+      <h2 className={styles.title}>Your team <span className={styles.muted}>· {cards.length} players · {dollars(capSal(cards))} of {dollars(run.cap ?? CLIMB.startCap)}</span></h2>
+      {CLIMB.system && run.playbook && <p className={styles.deckLine}>{systemLine(run.playbook)}</p>}
+      <PerkList run={run} />
+      <div className={styles.grid}>
+        {cards.map(c => {
+          const k = cardKey(c);
+          const b = boosts[c.id] ?? {};
+          const min = run.fatigue?.[c.id] ?? 0;
+          const pen = fatigueForMinutes(min);
+          const lines = [
+            min ? `${min} min${pen < 0 ? ` (${pen})` : ''}` : 'fresh',
+            ...Object.entries(b).filter(([, n]) => n).map(([stat, n]) => `${STAT_LINE[stat] ?? stat} ${signed(n)}`),
+          ];
+          return (
+            <PlayerTile key={k} cardKey={k} card={c} inSystem={CLIMB.system && fitsSystem(run.playbook, boostedCard(c, b))}
+              extra={<> · <span className={pen < 0 ? styles.tired : undefined}>{lines.join(' · ')}</span></>} />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const HUD_VIEWS = [
+  { id: 'map', label: '🗺 Map' },
+  { id: 'deck', label: '🃏 Deck' },
+  { id: 'team', label: '👥 Team' },
+];
+
+/**
+ * THE CLIMB BAR (the user, 2026-10-20: "You need to be able to look at your
+ * current map, deck, and player cards at all times in The Climb, no matter
+ * the screen"). Slay the Spire's top bar: Map, Deck and Team on every Climb
+ * screen and on the Play board during a run's game, each opening over the
+ * screen it was asked from and closing back to it (✕ or Escape). It shows,
+ * never acts: the map is the read-only one.
+ */
+export function ClimbHud({ run }) {
+  const [view, setView] = useState(null);
+  useEffect(() => {
+    if (!view) return undefined;
+    const onKey = e => { if (e.key === 'Escape') setView(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [view]);
+  if (!run?.map) return null;
+  const deckCount = Object.values(run.deck ?? {}).reduce((t, n) => t + (n > 0 ? n : 0), 0);
+  const teamCount = rosterCards(run).cards.length;
+  const count = { map: null, deck: run.playbook ? deckCount : null, team: teamCount };
+  const close = () => setView(null);
+  return (
+    <>
+      <nav className={styles.hud} aria-label="Your run" data-climb-hud="true">
+        {HUD_VIEWS.map(v => (
+          <button key={v.id} type="button" data-hud={v.id} className={view === v.id ? styles.on : ''} aria-pressed={view === v.id} onClick={() => setView(view === v.id ? null : v.id)}>
+            {v.label}{count[v.id] != null ? ` · ${count[v.id]}` : ''}
+          </button>
+        ))}
+      </nav>
+      {view && (
+        <div className={styles.hudOverlay} role="dialog" aria-modal="true" aria-label={HUD_VIEWS.find(v => v.id === view)?.label} data-hud-view={view}>
+          <div className={styles.hudTop}>
+            {HUD_VIEWS.map(v => (
+              <button key={v.id} type="button" className={view === v.id ? styles.on : ''} aria-pressed={view === v.id} onClick={() => setView(v.id)}>{v.label}</button>
+            ))}
+            <button type="button" className={styles.hudClose} data-hud-close="true" onClick={close} aria-label="Close">✕ Close</button>
+          </div>
+          {view === 'map' && <ClimbMap run={run} onBack={close} backLabel="✕ Close the map" />}
+          {view === 'deck' && <DeckView run={run} />}
+          {view === 'team' && <TeamView run={run} />}
+        </div>
+      )}
+    </>
+  );
 }
 
 // ── Start ────────────────────────────────────────────────────────────────────
@@ -396,9 +512,11 @@ function reachableFrom(map, fromId) {
  * return to the map and see what's coming up on the path"): nothing tappable,
  * you marked at the Rest Day, the stops after it outlined, and one way back.
  */
-export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onAbandon = null, busy = false, onBack = null }) {
+// `backLabel`: the read-only map is also the Climb bar's (ClimbHud, 2026-10-20),
+// from any screen; during a run game the stop being played is "here".
+export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onAbandon = null, busy = false, onBack = null, backLabel = '← Back to the Rest Day' }) {
   const peek = Boolean(onBack);
-  const here = peek && run.status === 'rest' ? run.restAt : run.at;
+  const here = peek && run.status === 'rest' ? run.restAt : peek && run.status === 'game' ? (run.game?.stopId ?? run.at) : run.at;
   const open = new Set(peek ? [] : openStops(run).map(s => s.id));
   const ahead = peek ? new Set(nextStops(run.map, here).map(s => s.id)) : open;
   const reachable = useMemo(() => reachableFrom(run.map, here), [run.map, here]);
@@ -416,10 +534,10 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
   const floor = here ? stopById(run.map, here)?.floor ?? 0 : 0;
   return (
     <div className={styles.screen}>
-    <h2 className={styles.title}>The Climb <span className={styles.muted}>· {rung} · {peek ? `Rest Day on floor ${floor}` : floor ? `floor ${floor} cleared` : 'floor 1 ahead'}</span></h2>
+    <h2 className={styles.title}>The Climb <span className={styles.muted}>· {rung} · {peek && run.status === 'rest' ? `Rest Day on floor ${floor}` : peek && run.status === 'game' ? `playing floor ${floor}` : floor ? `floor ${floor} cleared` : 'floor 1 ahead'}</span></h2>
     {peek && (
       <div className={styles.actions}>
-        <button type="button" className={styles.primary} onClick={onBack}>← Back to the Rest Day</button>
+        <button type="button" className={styles.primary} data-map-back="true" onClick={onBack}>{backLabel}</button>
         <span className={styles.muted}>The outlined stops come next.</span>
       </div>
     )}

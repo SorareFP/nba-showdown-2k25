@@ -311,6 +311,24 @@ export function chooseStop(run, stopId) {
 }
 
 /** What the Play tab deals for the run's game. */
+/**
+ * THE RUN AS THE BOARD SEES IT (the user, 2026-10-20: "You need to be able to
+ * look at your current map, deck, and player cards at all times in The Climb,
+ * no matter the screen"). A game's preset carries the run without its map —
+ * Firestore refuses the map's array of arrays, and the seed rebuilds it — so
+ * the Climb bar shows on the Play board too, and survives a reload inside the
+ * game's own save.
+ */
+export function runView(run) {
+  const { map, ...rest } = run;
+  return JSON.parse(JSON.stringify(rest));
+}
+
+/** A run back from runView, its map rebuilt from the seed. */
+export function runFromView(view) {
+  return view ? { ...view, map: generateMap(view.seed, view.mapVersion ?? MAP_VERSION) } : null;
+}
+
 export function presetFor(run) {
   const g = run.game;
   if (run.status !== 'game' || !g) fail('No game to play');
@@ -329,6 +347,7 @@ export function presetFor(run) {
       ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
     },
     climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung },
+    climbView: runView(run),
   };
 }
 

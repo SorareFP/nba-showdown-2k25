@@ -7,9 +7,9 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 vi.mock('../../firebase/CardStatsProvider.jsx', () => ({ useCardStats: () => ({ stats: {} }) }));
 
-import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, practiceTiles } from './ClimbScreens.jsx';
+import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, practiceTiles, ClimbHud, deckFaces } from './ClimbScreens.jsx';
 import { baseId } from '../../game/strats.js';
-import { newRun, chooseCamp, chooseStop, recordResult, bossTeam } from '../../game/modes/run.js';
+import { newRun, chooseCamp, chooseStop, recordResult, bossTeam, presetFor, runFromView } from '../../game/modes/run.js';
 import { CARDS } from '../../game/cards.js';
 import { cardKey } from '../../game/cardSets.js';
 import { getStrat } from '../../game/strats.js';
@@ -279,5 +279,42 @@ describe('In System on the Climb screens', () => {
     const map = html(<ClimbMap run={signed} onGo={noop} onRetire={noop} onFreeRest={noop} />);
     expect(map).toContain('In System: Speed 12+');
     expect((map.match(/data-in-system="true"/g) ?? []).length).toBe(rosterCardsOf(signed).filter(c => c.speed >= 12).length);
+  });
+});
+
+// THE CLIMB BAR (the user, 2026-10-20: "You need to be able to look at your
+// current map, deck, and player cards at all times in The Climb, no matter the screen").
+describe('the Climb bar', () => {
+  it('offers the map, the deck and the team, with their counts', () => {
+    const r = camped();
+    const out = html(<ClimbHud run={r} />);
+    expect(out).toContain('data-climb-hud="true"');
+    for (const v of ['map', 'deck', 'team']) expect(out).toContain(`data-hud="${v}"`);
+    const deck = Object.values(r.deck).reduce((t, n) => t + n, 0);
+    expect(out).toContain(`Deck · ${deck}`);
+    expect(out).toContain('Team · 5');
+    expect(out).not.toContain('data-hud-view');   // closed until asked
+    expect(html(<ClimbHud run={null} />)).toBe('');
+  });
+
+  it('lays out a practiced copy as its own "+" face', () => {
+    const r = { ...camped(), deck: { catch_and_shoot: 1, 'catch_and_shoot+': 1, green_light: 2 } };
+    expect(deckFaces(r).map(f => [f.id, f.n])).toEqual([['catch_and_shoot', 1], ['catch_and_shoot+', 1], ['green_light', 2]]);
+  });
+
+  it('rides into a run game with the run, its map rebuilt from the seed', () => {
+    const r = chooseStop(camped(), '1-0');
+    const p = presetFor(r);
+    expect(p.climbView.map).toBeUndefined();
+    expect(p.climbView.deck).toEqual(r.deck);
+    const back = runFromView(JSON.parse(JSON.stringify(p.climbView)));
+    expect(back.map).toEqual(r.map);
+    expect(back.game.stopId).toBe('1-0');
+    expect(runFromView(null)).toBeNull();
+    // On the board, the read-only map marks the stop being played.
+    const out = html(<ClimbMap run={back} onBack={noop} backLabel="Close the map" />);
+    expect(out).toContain('playing floor 1');
+    expect(out).toContain('Close the map');
+    expect(out).toMatch(/data-stop="1-0"[^>]*data-here="true"/);
   });
 });

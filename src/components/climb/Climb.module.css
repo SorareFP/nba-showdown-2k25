@@ -203,6 +203,25 @@
 .toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--text); cursor: pointer; }
 .toggle input { accent-color: var(--orange); width: 16px; height: 16px; }
 .dim { opacity: 0.45; }
+/* THE CLIMB BAR (ClimbHud, 2026-10-20): Map, Deck and Team on every Climb screen
+   and on the board; each opens over the whole screen, under the dialogs (200+)
+   and the card lightbox (1300). */
+.hud { display: flex; gap: 6px; flex-wrap: wrap; }
+.hud button, .hudTop button {
+  background: var(--card-bg); color: var(--text); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 6px 12px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600;
+  transition: background var(--dur-quick) var(--ease-out), border-color var(--dur-quick) var(--ease-out);
+}
+.hud button:hover, .hudTop button:hover { background: var(--card-hover); }
+.hudOverlay {
+  position: fixed; inset: 0; z-index: 150; overflow: auto; background: var(--navy);
+  padding: clamp(12px, 1.5vw, 28px) 16px 32px; display: flex; flex-direction: column; gap: 12px;
+  animation: hudIn var(--dur-quick) var(--ease-out);
+}
+.hudTop { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; position: sticky; top: 0; z-index: 2; padding-bottom: 6px; background: var(--navy); }
+.hudTop .hudClose { margin-left: auto; }
+@keyframes hudIn { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hudOverlay { animation: none; } }
 /* Scouting the boss (2026-10-19), in the map's side panel. */
 .scout { border-top: 1px solid var(--border); padding-top: 6px; }
 .scout summary { cursor: pointer; list-style: none; }

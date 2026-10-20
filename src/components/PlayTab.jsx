@@ -7,7 +7,7 @@ import { execCard, resolvePendingShotCheck, resolveChoice } from '../game/execCa
 import { baseId } from '../game/strats.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
 import { resultFromPlayed } from '../game/modes/season.js';
-import { resultFromGame } from '../game/modes/run.js';
+import { resultFromGame, runFromView } from '../game/modes/run.js';
 import { AI_LEVELS, iqOf, capOf, samplesOf, loadAiLevel, saveAiLevel, payNote } from '../game/aiLevels.js';
 import { boxScoreFor } from '../game/boxScore.js';
 // A REDUCER CANNOT HOLD A HOOK, and must not have side effects at all — so a
@@ -30,6 +30,7 @@ import GameOver from './game/GameOver.jsx';
 import GameLog from './game/GameLog.jsx';
 import AnalyticsPanel from './game/AnalyticsPanel.jsx';
 import Scoreboard from './game/Scoreboard.jsx';
+import { ClimbHud } from './climb/ClimbScreens.jsx';
 import styles from './PlayTab.module.css';
 
 function gameReducer(state, action) {
@@ -118,6 +119,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   const [game, dispatch] = useReducer(gameReducer, saved?.game ?? null);
   const [restoredPreset, setRestoredPreset] = useState(saved?.preset ?? null);
   const livePreset = preset ?? restoredPreset;
+  // A Climb game's run, for the Climb bar on the board (runView in its preset).
+  const climbView = livePreset?.climbView ?? null;
+  const climbRun = useMemo(() => runFromView(climbView), [climbView]);
   const wide = useIsWide();
   // 1600-2200px: the zig-zag court, and the log moves under it, open.
   const roomy = useIsRoomy();
@@ -821,8 +825,11 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   return (
     <div className={styles.layout}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           {livePreset ? livePreset.label : ''}
+          {/* THE CLIMB BAR on the board (2026-10-20): the run as it stood when
+              this game was dealt, carried in the preset (runView). */}
+          {climbRun && <ClimbHud run={climbRun} />}
         </div>
         <button className={styles.btnSec} onClick={abandon} style={{ fontSize: 12, padding: '4px 12px' }}>
           {livePreset ? (livePreset.climb ? '↩ Back to The Climb (saved)' : livePreset.returnTab === 'dynasty' ? '↩ Back to the dynasty (saved)' : '↩ Back to the season (saved)') : '✕ Abandon game'}

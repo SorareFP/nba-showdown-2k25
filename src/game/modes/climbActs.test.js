@@ -6,7 +6,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   CLIMB, ACT_DIALS, newRun, chooseCamp, openStops, chooseStop, gameSetup, recordResult, continueClimb,
-  potPreview, bossTeam, stopCap, actOfRun, rareChanceOf, runFromView, runView,
+  potPreview, bossTeam, stopCap, actOfRun, rareChanceOf, runFromView, runView, maxCapAt,
 } from './run.js';
 import { generateMap, stopById, potOfRun, actOf, bossIdOf, runClaimPreview, ACTS, ACT_POT, BOSS_PACKS, packWords } from './climbMap.js';
 import { CARDS } from '../cards.js';
@@ -114,8 +114,9 @@ describe('harder as you go up', () => {
     const two = { ...continueClimb(wonAct(1)), status: 'map', offers: null };
     const three = { ...continueClimb(wonAct(2)), status: 'map', offers: null };
     const mult = capOf('prince');
-    expect(stopCap(two, stopById(two.map, 'a2:1-0'))).toBe(Math.round(ACT_DIALS[2].floorCaps[0] * mult));
-    expect(stopCap(three, three.map.boss)).toBe(Math.round(ACT_DIALS[3].bossCap * mult));
+    const to50 = n => Math.round(n / 50) * 50;
+    expect(stopCap(two, stopById(two.map, 'a2:1-0'))).toBe(Math.round(to50(ACT_DIALS[2].gameShare[0] * maxCapAt(2, 1)) * mult));
+    expect(stopCap(three, three.map.boss)).toBe(Math.round(to50(ACT_DIALS[3].bossShare * maxCapAt(3, 8)) * mult));
     expect(stopCap(one, one.map.boss)).toBe(Math.round(CLIMB.bossCap * mult));
     // A floor-1 Game in each act is a bigger team than the last.
     const cap1 = stopCap(one, stopById(one.map, '1-0'));
@@ -137,5 +138,24 @@ describe('harder as you go up', () => {
     const r = camped();
     const bosses = [1, 2, 3].map(act => bossTeam({ ...r, act }).abbr);
     expect(new Set(bosses).size).toBe(3);
+  });
+});
+
+// THE USER'S CONDITION (2026-10-21): "As long as this scaling is in line with
+// the user's ability to scale (not necessarily what they choose, but what they
+// CAN choose)". The ceiling a run can field rises as the run does, and each
+// act's opponents are shares of it — Games below it, a boss at most a little
+// above, every act a bigger share than the last.
+describe('opponents set against what you can field', () => {
+  it('tracks the ceiling, and climbs a share each act', () => {
+    expect(maxCapAt(1, 1)).toBe(CLIMB.startCap);
+    expect(maxCapAt(2, 1)).toBe(CLIMB.startCap + 8 * CLIMB.capPerFloor);
+    for (const act of [2, 3]) {
+      for (const share of ACT_DIALS[act].gameShare) expect(share).toBeLessThan(1);
+      expect(ACT_DIALS[act].bossShare).toBeLessThanOrEqual(1.15);
+    }
+    expect(Math.min(...ACT_DIALS[3].gameShare)).toBeGreaterThan(Math.max(...ACT_DIALS[2].gameShare));
+    expect(ACT_DIALS[3].bossShare).toBeGreaterThan(ACT_DIALS[2].bossShare);
+    expect(ACT_DIALS[2].bossShare).toBeGreaterThan(CLIMB.bossCap / maxCapAt(1, 8));
   });
 });

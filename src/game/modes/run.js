@@ -61,10 +61,18 @@ export const FLOOR_CAPS = [1200, 1250, 1350, 2000, 2100, 2350, 2700];
  * Act I's own dials (FLOOR_CAPS, CLIMB.bossCap, ...) are unchanged, and the
  * sim's overrides still reach them. Set by runClimbSim's three-act runs.
  */
+//
+// SET AGAINST WHAT YOU CAN FIELD (the user, 2026-10-21: "As long as this
+// scaling is in line with the user's ability to scale (not necessarily what
+// they choose, but what they CAN choose)"). An act's opponents are SHARES of
+// maxCapAt — the starting cap and a floor's raise for every stop before this
+// one, boons aside — so a change to the cap's growth moves them with it.
+// Act I's Games run about half of it and its boss 90%; Act II's Games about
+// two-thirds and its boss a little over; Act III's seven-eighths and 112%.
 export const ACT_DIALS = {
   2: {
-    floorCaps: [3900, 4200, 4500, 4900, 5300, 5700, 6100], rivalryExtra: 400,
-    oppSize: [6, 7, 7, 8, 8, 8], bossCap: 9600, bossSize: 9,
+    gameShare: [0.67, 0.67, 0.67, 0.69, 0.70, 0.71, 0.71], rivalryExtra: 400,
+    oppSize: [6, 7, 7, 8, 8, 8], bossShare: 1.07, bossSize: 9,
     coachExtra: [4, 5, 6, 7, 8, 9], coachSingles: false, coachRares: true,
     bossExtra: 6, bossRares: true, rare: [0.45, 0.65],
   },
@@ -72,8 +80,8 @@ export const ACT_DIALS = {
     // ACT III IS PLAYED AGAINST LEGENDS (2026-10-21): a franchise's current
     // cards top out near $7,000 at nine deep, under a run's payroll by then,
     // so its Games are classic teams too (classicGames), as its boss is.
-    floorCaps: [8000, 8400, 8800, 9300, 9800, 10300, 10800], rivalryExtra: 500, classicGames: true,
-    oppSize: [8, 8, 9, 9, 9, 10], bossCap: 14000, bossSize: 11,
+    gameShare: [0.85, 0.85, 0.85, 0.87, 0.88, 0.88, 0.88], rivalryExtra: 500, classicGames: true,
+    oppSize: [8, 8, 9, 9, 9, 10], bossShare: 1.12, bossSize: 11,
     coachExtra: [8, 9, 10, 11, 12, 12], coachSingles: false, coachRares: true,
     bossExtra: 9, bossRares: true, rare: [0.65, 0.85],
   },
@@ -284,8 +292,19 @@ export function openStops(run) {
 /** The act a run is in (a run drawn before acts is in Act I). */
 export const actOfRun = run => run?.act ?? 1;
 
+/**
+ * The most a run can field at a floor of an act (the boss is floor 8): the
+ * starting cap and CLIMB.capPerFloor for every stop before it — seven floors
+ * and the move to the next act make eight an act. Boons aside: a +$400 boon
+ * is the player's edge, not the opponents'.
+ */
+export function maxCapAt(act, floor) {
+  return CLIMB.startCap + CLIMB.capPerFloor * (8 * (act - 1) + (floor - 1));
+}
+const to50 = n => Math.round(n / 50) * 50;
+
 // One reader per dial, by act: Act I's are CLIMB's own (the sim tunes them).
-const bossCapOf = act => (act > 1 ? ACT_DIALS[act].bossCap : CLIMB.bossCap);
+const bossCapOf = act => (act > 1 ? to50(ACT_DIALS[act].bossShare * maxCapAt(act, FLOORS + 1)) : CLIMB.bossCap);
 const bossSizeOf = act => (act > 1 ? ACT_DIALS[act].bossSize : CLIMB.bossSize);
 const oppSizeOf = (act, floor) => (act > 1 ? ACT_DIALS[act].oppSize : CLIMB.oppSize)[floor - 1] ?? bossSizeOf(act);
 const coachDeckOf = (act, floor) => (act > 1
@@ -307,7 +326,7 @@ export function stopCap(run, stop) {
   const act = actOfRun(run);
   const mult = capOf(run.rung);
   if (stop.kind === 'boss') return Math.round(bossCapOf(act) * mult);
-  const base = act > 1 ? ACT_DIALS[act].floorCaps[stop.floor - 1] : CLIMB.floorCap(stop.floor);
+  const base = act > 1 ? to50(ACT_DIALS[act].gameShare[stop.floor - 1] * maxCapAt(act, stop.floor)) : CLIMB.floorCap(stop.floor);
   const rivalry = stop.kind === 'rivalry' ? (act > 1 ? ACT_DIALS[act].rivalryExtra : CLIMB.rivalryExtra) : 0;
   return Math.round((base + rivalry) * mult);
 }

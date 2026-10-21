@@ -59,13 +59,13 @@ if (overrides.floor1 != null || overrides.floor7 != null) {
   CLIMB.floorCap = f => Math.round(f1 + (f - 1) * (f7 - f1) / 6);
 }
 if (overrides.caps) CLIMB.floorCap = f => overrides.caps[f - 1];
-// a2scale=1.3 / a3scale=1.5: every Game cap and the boss cap of Act II / III
-// times this, for this process (2026-10-21, re-tuning after sign-and-release).
+// a2scale=1.1 / a3scale=0.9: Act II's / III's opponents' shares of what you
+// can field (gameShare, bossShare) times this, for this process (2026-10-21).
 for (const act of [2, 3]) {
   const k = overrides[`a${act}scale`];
   if (k != null) {
-    ACT_DIALS[act].floorCaps = ACT_DIALS[act].floorCaps.map(c => Math.round(c * k / 50) * 50);
-    ACT_DIALS[act].bossCap = Math.round(ACT_DIALS[act].bossCap * k / 50) * 50;
+    ACT_DIALS[act].gameShare = ACT_DIALS[act].gameShare.map(x => x * k);
+    ACT_DIALS[act].bossShare *= k;
   }
 }
 if (overrides.rivalry != null) CLIMB.rivalryExtra = overrides.rivalry;

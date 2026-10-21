@@ -30,6 +30,19 @@ drafter, 250 runs:
 
 The Act III boss has too few games to read (7, all won); watch it.
 
+**Set against what you can field** (the user: "As long as this scaling is in
+line with the user's ability to scale (not necessarily what they choose, but
+what they CAN choose), I'm good with it"). The most a run can field rises
+$450 a stop from $2,200 (maxCapAt), and the simulated drafter reaches 93-100%
+of it, so it is reachable. Acts II and III are written as shares of it
+(gameShare, bossShare), so a change to the cap's growth moves them too:
+
+| | The most you can field | Games | Boss |
+|---|---|---|---|
+| Act I | $2,200 to $5,350 | 44-56% | 90% |
+| Act II | $5,800 to $8,950 | 67-71% | 107% |
+| Act III | $9,400 to $12,550 | 85-88% | 112% |
+
 The user, after beating the
 Act I boss and finding only "Bank the pot" and "Give up this run": "the point
 of the game is to have 3 acts like Slay the Spire. The options should be 'take

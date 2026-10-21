@@ -47,7 +47,7 @@ import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game
 import { burnValueFor, burnProblem, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox, payFactorOf, AI_PAY } from './shared/src/game/coinRewards.js';
-import { generateMap, reachableGame, stopById, potOf, runClaimPreview, MAP_VERSION } from './shared/src/game/modes/climbMap.js';
+import { generateMap, reachableGame, stopById, potOfRun, runClaimPreview, actOf, ACTS, MAP_VERSION } from './shared/src/game/modes/climbMap.js';
 import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from './shared/src/game/modes/prizes.js';
 import { getDatabase } from 'firebase-admin/database';
 import { readFileSync } from 'node:fs';
@@ -1014,6 +1014,10 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
 //     stop, a loss (a tie too) ends the run and the pot with it;
 //   - the pot banks once, and never while a game is open (it waits for the
 //     claim; a game that never reports never lets it bank).
+//   - THREE ACTS (2026-10-20): a boss win leaves the run 'won'; banking ends
+//   it, climbContinue moves the ledger to the next act (Acts I and II only).
+//   The pot is one pot across the acts (potOfRun): a loss in any act loses
+//   all of it, and each beaten boss's packs are paid when it banks.
 // ═══════════════════════════════════════════════════════════════════════════
 
 /** A run id as a document id, or null. */
@@ -1030,7 +1034,7 @@ export const climbStart = onCall({ region: 'us-central1' }, async request => {
   const seed = Math.floor(Math.random() * 2 ** 31);
   const ref = db.collection(`users/${uid}/runLedger`).doc();
   await db.runTransaction(async tx => {
-    tx.set(ref, { seed, rung, mapVersion: MAP_VERSION, status: 'active', open: null, cleared: [], createdAt: FieldValue.serverTimestamp() });
+    tx.set(ref, { seed, rung, mapVersion: MAP_VERSION, act: 1, status: 'active', open: null, cleared: [], createdAt: FieldValue.serverTimestamp() });
   });
   return { runId: ref.id, seed, mapVersion: MAP_VERSION };
 });
@@ -1057,7 +1061,11 @@ export const climbGame = onCall({ region: 'us-central1' }, async request => {
       return { ok: false, status: 'lost' };
     }
     const cleared = run.cleared ?? [];
-    if (!reachableGame(generateMap(run.seed, run.mapVersion ?? 1), cleared.length ? cleared[cleared.length - 1] : null, stopId)) {
+    // The act's own map, from its first floor until a stop of this act is won.
+    const act = run.act ?? 1;
+    const last = cleared.length ? cleared[cleared.length - 1] : null;
+    const from = last && actOf(last) === act ? last : null;
+    if (!reachableGame(generateMap(run.seed, run.mapVersion ?? 1, act), from, stopId)) {
       throw new HttpsError('failed-precondition', 'That stop is not open');
     }
     tx.update(ref, { open: stopId, openedAt: FieldValue.serverTimestamp() });
@@ -1103,7 +1111,7 @@ async function climbClaim(uid, runId, claim, claimKey) {
       if (c.exists && (c.data()?.count ?? 0) > 0) owned.push(row);
     }
 
-    const map = generateMap(run.seed, run.mapVersion ?? 1);
+    const map = generateMap(run.seed, run.mapVersion ?? 1, actOf(run.open));
     const stop = stopById(map, run.open);
     const cleared = claim.won ? [...(run.cleared ?? []), run.open] : (run.cleared ?? []);
     const status = !claim.won ? 'lost' : stop?.kind === 'boss' ? 'won' : 'active';
@@ -1130,9 +1138,33 @@ async function climbClaim(uid, runId, claim, claimKey) {
         lastPlayed: FieldValue.serverTimestamp(),
       }, { merge: true });
     }
-    return { coins, breakdown, run: { status, pot: potOf(map, cleared, run.rung) } };
+    return { coins, breakdown, run: { status, pot: potOfRun({ ...run, cleared }) } };
   });
 }
+
+/**
+ * KEEP CLIMBING (2026-10-20): after an Act I or Act II boss, the ledger moves
+ * to the next act and the pot rides on. Answers `ok` for a run already in the
+ * act asked for, so a browser that lost the reply can catch up.
+ */
+export const climbContinue = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const runId = safeRunId(request.data?.runId);
+  const toAct = Number(request.data?.toAct);
+  if (!runId || !Number.isInteger(toAct)) throw new HttpsError('invalid-argument', 'Which run, which act?');
+  const ref = runLedgerRef(uid, runId);
+  return db.runTransaction(async tx => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such run');
+    const run = snap.data();
+    const act = run.act ?? 1;
+    if (run.status === 'active' && act === toAct) return { ok: true, act };
+    if (run.status !== 'won') throw new HttpsError('failed-precondition', 'Beat the boss first');
+    if (toAct !== act + 1 || toAct > ACTS) throw new HttpsError('failed-precondition', 'There is no act to climb to');
+    tx.update(ref, { status: 'active', act: toAct, open: null });
+    return { ok: true, act: toAct };
+  });
+});
 
 export const climbBank = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
@@ -1152,17 +1184,18 @@ export const climbBank = onCall({ region: 'us-central1' }, async request => {
     // is still on its way is not lost to the bank that overtook it.
     if (run.status === 'active' && run.open) throw new HttpsError('failed-precondition', 'A game is still open: finish it first');
     if (run.status !== 'active' && run.status !== 'won') throw new HttpsError('failed-precondition', 'Nothing to bank');
-    const pot = potOf(generateMap(run.seed, run.mapVersion ?? 1), run.cleared ?? [], run.rung);
+    const pot = potOfRun(run);
     if (pot.coins > 0) tx.update(userRef, { currency: FieldValue.increment(pot.coins) });
-    if (pot.booster) {
-      // The boss's Booster: a box of one, opened like any box (openBoxPack).
+    // Each beaten boss's pack (a Booster, a Rare Deluxe, a Mega Deluxe): a box
+    // of one, opened like any box (openBoxPack).
+    for (const packType of pot.packs ?? []) {
       tx.set(db.collection(`users/${uid}/boxes`).doc(), {
-        packType: 'booster', bonus: null, left: 1, bonusLeft: 0, boughtAs: 'climb', options: {},
+        packType, bonus: null, left: 1, bonusLeft: 0, boughtAs: 'climb', options: {},
         boughtAt: FieldValue.serverTimestamp(),
       });
     }
     tx.update(ref, { status: 'banked', bankedAt: FieldValue.serverTimestamp(), paid: pot });
-    return { coins: pot.coins, booster: pot.booster };
+    return { coins: pot.coins, booster: pot.booster, packs: pot.packs ?? [] };
   });
 });
 

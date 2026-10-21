@@ -73,8 +73,8 @@ vi.mock('./shared/src/game/suggestions.js', () => import('../src/game/suggestion
 vi.mock('./shared/src/game/friends.js', () => import('../src/game/friends.js'));
 vi.mock('./shared/src/game/modes/climbMap.js', () => import('../src/game/modes/climbMap.js'));
 
-const { climbStart, climbGame, climbBank, claimGameReward } = await import('./index.js');
-const { generateMap, potOf, stopById, reachableGame, runClaimPreview } = await import('../src/game/modes/climbMap.js');
+const { climbStart, climbGame, climbBank, climbContinue, claimGameReward } = await import('./index.js');
+const { generateMap, potOf, potOfRun, stopById, reachableGame, runClaimPreview } = await import('../src/game/modes/climbMap.js');
 
 const UID = 'u1';
 const call = (fn, data) => fn({ auth: { uid: UID }, data });
@@ -270,5 +270,71 @@ describe('a stop the ledger already cleared', () => {
     const { runId, mapVersion } = await call(climbStart, { rung: 'prince' });
     expect(mapVersion).toBe(1);
     expect(ledger(runId).mapVersion).toBe(1);
+  });
+});
+
+// THREE ACTS (2026-10-20, docs/plans/2026-10-20-the-climb-three-acts.md): a
+// boss win waits on the player's choice — bank, or keep climbing into the
+// next act with the pot riding on. One pot: a loss in any act loses all of it.
+describe('three acts', () => {
+  const wonAct1 = async () => {
+    const { runId } = await started();
+    docs.set(`users/${UID}/runLedger/${runId}`, { ...ledger(runId), cleared: ['1-0', 'boss'], status: 'won' });
+    return runId;
+  };
+
+  it('keeps climbing only from a beaten boss, one act at a time, and answers a repeat', async () => {
+    const { runId } = await started();
+    await expect(call(climbContinue, { runId, toAct: 2 })).rejects.toThrow(/Beat the boss/);
+    const won = await wonAct1();
+    await expect(call(climbContinue, { runId: won, toAct: 3 })).rejects.toThrow(/no act/);
+    expect(await call(climbContinue, { runId: won, toAct: 2 })).toEqual({ ok: true, act: 2 });
+    expect(ledger(won)).toMatchObject({ status: 'active', act: 2, open: null });
+    expect(await call(climbContinue, { runId: won, toAct: 2 })).toEqual({ ok: true, act: 2 });
+    // Past Act III there is nowhere to go.
+    docs.set(`users/${UID}/runLedger/${won}`, { ...ledger(won), act: 3, status: 'won' });
+    await expect(call(climbContinue, { runId: won, toAct: 4 })).rejects.toThrow(/no act/);
+    // A banked run has no next act.
+    docs.set(`users/${UID}/runLedger/${won}`, { ...ledger(won), act: 1, status: 'banked' });
+    await expect(call(climbContinue, { runId: won, toAct: 2 })).rejects.toThrow(/Beat the boss/);
+  });
+
+  it('opens the next act from its own first floor, never an earlier act\'s stop', async () => {
+    const runId = await wonAct1();
+    await call(climbContinue, { runId, toAct: 2 });
+    await expect(call(climbGame, { runId, stopId: '1-1' })).rejects.toThrow(/not open/);
+    await expect(call(climbGame, { runId, stopId: 'a2:3-0' })).rejects.toThrow(/not open/);
+    expect(await call(climbGame, { runId, stopId: 'a2:1-0' })).toMatchObject({ ok: true });
+    await claim(runId, 'a2:1-0', true);
+    expect(ledger(runId)).toMatchObject({ status: 'active', act: 2 });
+    expect(ledger(runId).cleared).toEqual(['1-0', 'boss', 'a2:1-0']);
+  });
+
+  it('loses the whole pot on a loss in a later act', async () => {
+    const runId = await wonAct1();
+    await call(climbContinue, { runId, toAct: 2 });
+    await call(climbGame, { runId, stopId: 'a2:1-0' });
+    await claim(runId, 'a2:1-0', false);
+    expect(ledger(runId).status).toBe('lost');
+    await expect(call(climbBank, { runId })).rejects.toThrow(/lost/);
+    expect([...docs.keys()].some(k => k.startsWith(`users/${UID}/boxes/`))).toBe(false);
+  });
+
+  it('banks every act\'s stops at its act\'s rate, and every beaten boss\'s pack', async () => {
+    const runId = await wonAct1();
+    const cleared = ['1-0', 'boss', 'a2:1-0', 'a2:boss', 'a3:1-0', 'a3:boss'];
+    docs.set(`users/${UID}/runLedger/${runId}`, { ...ledger(runId), act: 3, cleared, status: 'won' });
+    const pot = potOfRun({ ...ledger(runId) });
+    expect(pot.packs).toEqual(['booster', 'rare_deluxe', 'mega_deluxe']);
+    // Act II's floor-1 Game pays half again Act I's, Act III's double.
+    const one = potOfRun({ ...ledger(runId), cleared: ['1-0'] }).coins;
+    expect(potOfRun({ ...ledger(runId), cleared: ['a2:1-0'] }).coins).toBe(Math.round(one * 1.5));
+    expect(potOfRun({ ...ledger(runId), cleared: ['a3:1-0'] }).coins).toBe(one * 2);
+    const before = coins();
+    const res = await call(climbBank, { runId });
+    expect(res).toMatchObject({ coins: pot.coins, booster: true, packs: ['booster', 'rare_deluxe', 'mega_deluxe'] });
+    expect(coins()).toBe(before + pot.coins);
+    const boxes = [...docs.entries()].filter(([k]) => k.startsWith(`users/${UID}/boxes/`)).map(([, v]) => v.packType).sort();
+    expect(boxes).toEqual(['booster', 'mega_deluxe', 'rare_deluxe']);
   });
 });

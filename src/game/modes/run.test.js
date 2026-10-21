@@ -115,7 +115,7 @@ describe('the map and the games', () => {
     // At home: the coach places first and you answer.
     expect(p.humanIsHome).toBe(true);
     expect(p.returnTab).toBe('climb');
-    expect(p.climb).toEqual({ runId: 'r1', stopId: '1-0', kind: 'game', floor: 1, rung: 'prince' });
+    expect(p.climb).toEqual({ runId: 'r1', stopId: '1-0', kind: 'game', floor: 1, rung: 'prince', act: 1 });
     expect(p.deckA).toEqual(r.deck);
   });
 
@@ -283,7 +283,8 @@ describe('the end of a run', () => {
     const atBoss = { ...r, at: seven.id, cleared: ['1-0'] };
     const won = win(atBoss, 'boss');
     expect(won.status).toBe('won');
-    expect(potPreview(won)).toEqual(potOf(r.map, ['1-0', 'boss'], 'prince'));
+    // Act I's pot reads as it always did, and names the boss's pack (2026-10-20).
+    expect(potPreview(won)).toEqual({ ...potOf(r.map, ['1-0', 'boss'], 'prince'), packs: ['booster'] });
     expect(potPreview(won).booster).toBe(true);
     const boss = gameSetup(atBoss, 'boss');
     expect(boss.rosterB).toHaveLength(CLIMB.bossSize);

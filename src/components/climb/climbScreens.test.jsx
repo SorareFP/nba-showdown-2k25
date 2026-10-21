@@ -182,6 +182,22 @@ describe('the end of a run', () => {
     expect(failed).toContain('Give up this run');
     expect(failed).toContain('did not go through');
   });
+
+  // THREE ACTS (2026-10-20): "'take what you've earned and quit,' or 'keep
+  // going and adding to the pot.'"
+  it('ends Acts I and II on both choices, and Act III on the bank', () => {
+    const w = { ...camped(), status: 'won', cleared: ['1-0', 'boss'] };
+    const one = html(<RunOver run={w} onBank={noop} onNew={noop} onContinue={noop} />);
+    expect(one).toContain('Act I complete!');
+    expect(one).toMatch(/data-continue="true"[^>]*>Keep climbing to Act II</);
+    expect(one).toContain('Take the pot and stop');
+    expect(one).toContain('One loss from here loses the whole pot');
+    expect(one).toContain('a Rare Deluxe');
+    const last = html(<RunOver run={{ ...w, act: 3, cleared: [...w.cleared, 'a2:boss', 'a3:boss'] }} onBank={noop} onNew={noop} onContinue={noop} />);
+    expect(last).toContain('You climbed all three acts!');
+    expect(last).not.toContain('Keep climbing');
+    expect(last).toContain('a Mega Deluxe');
+  });
 });
 
 // A LOOK FROM THE REST DAY (the user, 2026-10-19): the map read-only, you at

@@ -26,7 +26,7 @@ import ClimbTab from './climb/ClimbTab.jsx';
 import TeamEditor from './TeamEditor.jsx';
 import PlayHub from './PlayHub.jsx';
 import { packRun, unpackRun, isActiveRun } from '../firebase/climb.js';
-import { potOf } from '../game/modes/climbMap.js';
+import { potOfRun } from '../game/modes/climbMap.js';
 import { resultFromGame } from '../game/modes/run.js';
 import { simulateGame } from '../game/modes/simulate.js';
 import { CARDS } from '../game/cards.js';
@@ -190,9 +190,10 @@ const climbDemoStore = {
 const climbDemoServer = {
   async start() { return { runId: `demo${Date.now()}`, seed: Math.floor(Math.random() * 2 ** 31) }; },
   async openGame() { return { ok: true, status: 'active' }; },
+  async continueTo(_uid, _runId, toAct) { return { ok: true, act: toAct }; },
   async bank() {
     const run = unpackRun(JSON.parse(globalThis.localStorage?.getItem(CLIMB_DEMO_KEY) ?? 'null'));
-    return run ? potOf(run.map, run.cleared, run.rung) : { coins: 0, booster: false };
+    return run ? potOfRun(run) : { coins: 0, booster: false, packs: [] };
   },
 };
 

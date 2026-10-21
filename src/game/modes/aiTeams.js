@@ -216,7 +216,10 @@ export function buildClassicRoster(abbr, { cap = CAP, size = ROSTER_SIZE, rng = 
   let sal = 0;
   for (const c of ranked) {
     if (core.length >= k) break;
-    const others = classic.filter(x => x !== c && !core.includes(x));
+    // ONE CARD A PLAYER (2026-10-20): a franchise with two seasons of one star
+    // (two LeBrons on Cleveland's Act II boss) fields him once.
+    if (core.some(x => x.id === c.id)) continue;
+    const others = classic.filter(x => x !== c && x.id !== c.id && !core.some(y => y.id === x.id));
     if (sal + salaryOf(c) + cheapest(others, k - core.length - 1) + cheapest(fill, size - k) > cap) continue;
     core.push(c);
     sal += salaryOf(c);

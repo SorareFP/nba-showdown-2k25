@@ -62,3 +62,21 @@ describe('the classic boss', () => {
     expect(a.map(cardKey)).toEqual(b.map(cardKey));
   });
 });
+
+// ONE CARD A PLAYER ON A CLASSIC TEAM (2026-10-20): Cleveland's Act II boss
+// fielded two LeBron James seasons. Every franchise, at every act's boss size
+// and cap, fields each player once.
+describe('a classic team at every act boss', () => {
+  it('fields each player once', () => {
+    for (const [cap, size] of [[4800, 8], [6400, 9], [8000, 10]]) {
+      for (const abbr of classicFranchises({ cap, size })) {
+        for (let seed = 1; seed <= 3; seed += 1) {
+          const r = buildClassicRoster(abbr, { cap, size, rng: climbRng(seed, 'boss', abbr) });
+          expect(distinctPlayers(r), `${abbr} at $${cap}, ${size} deep, seed ${seed}: ${r.map(c => c.name).join(', ')}`).toBe(true);
+          expect(r, `${abbr} ${size}`).toHaveLength(size);
+          expect(sal(r)).toBeLessThanOrEqual(cap);
+        }
+      }
+    }
+  });
+});

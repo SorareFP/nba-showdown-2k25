@@ -11,7 +11,7 @@
 //                       │                          └→ lost | won
 //                       ├─chooseStop(Rest Day)→ rest ─restDay→ map
 //                       └─retire→ retired
-import { generateMap, stopById, nextStops, potOf, climbRng, MAP_VERSION } from './climbMap.js';
+import { generateMap, stopById, nextStops, potOfRun, climbRng, MAP_VERSION, ACTS, FLOORS, bossIdOf } from './climbMap.js';
 import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, coachDeck } from './climbKits.js';
 import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard } from './climbPerks.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
@@ -54,6 +54,27 @@ import { TEAMS } from '../../cards/teams.js';
  * ~15%: 8% win the act (6%).
  */
 export const FLOOR_CAPS = [1200, 1250, 1350, 2000, 2100, 2350, 2700];
+/**
+ * ACTS II AND III (2026-10-20, docs/plans/2026-10-20-the-climb-three-acts.md):
+ * harder by act — Game caps picking up where the last act's boss stood,
+ * bigger rosters, coaches with their doubles and rares, a bigger classic boss.
+ * Act I's own dials (FLOOR_CAPS, CLIMB.bossCap, ...) are unchanged, and the
+ * sim's overrides still reach them. Set by runClimbSim's three-act runs.
+ */
+export const ACT_DIALS = {
+  2: {
+    floorCaps: [3200, 3400, 3600, 3900, 4100, 4400, 4700], rivalryExtra: 350,
+    oppSize: [6, 7, 7, 8, 8, 8], bossCap: 6400, bossSize: 9,
+    coachExtra: [4, 5, 6, 7, 8, 9], coachSingles: false, coachRares: true,
+    bossExtra: 6, bossRares: true, rare: [0.45, 0.65],
+  },
+  3: {
+    floorCaps: [4800, 5000, 5300, 5600, 5900, 6200, 6600], rivalryExtra: 450,
+    oppSize: [8, 8, 8, 9, 9, 9], bossCap: 8000, bossSize: 10,
+    coachExtra: [8, 9, 10, 11, 12, 12], coachSingles: false, coachRares: true,
+    bossExtra: 9, bossRares: true, rare: [0.65, 0.85],
+  },
+};
 /** The last floor whose coach plays only its kit. */
 export const KIT_ONLY_FLOORS = 3;
 export const CLIMB = {
@@ -201,6 +222,7 @@ export function newRun({ id, seed, rung, rosterKeys, now = Date.now(), mapVersio
   const rng = climbRng(seed, 'camp');
   return {
     id, seed, rung, createdAt: now, mapVersion,
+    act: 1,
     status: 'camp',
     map: generateMap(seed, mapVersion),
     cap: CLIMB.startCap,
@@ -256,10 +278,47 @@ export function openStops(run) {
 
 // ── Opponents ────────────────────────────────────────────────────────────────
 
-/** The boss's franchise: one that can field a classic team at the boss's cap. */
-function bossFranchise(run) {
-  const list = classicFranchises({ cap: Math.round(CLIMB.bossCap * capOf(run.rung)), size: CLIMB.bossSize });
-  return pickFrom(climbRng(run.seed, 'boss'), list);
+/** The act a run is in (a run drawn before acts is in Act I). */
+export const actOfRun = run => run?.act ?? 1;
+
+// One reader per dial, by act: Act I's are CLIMB's own (the sim tunes them).
+const bossCapOf = act => (act > 1 ? ACT_DIALS[act].bossCap : CLIMB.bossCap);
+const bossSizeOf = act => (act > 1 ? ACT_DIALS[act].bossSize : CLIMB.bossSize);
+const oppSizeOf = (act, floor) => (act > 1 ? ACT_DIALS[act].oppSize : CLIMB.oppSize)[floor - 1] ?? bossSizeOf(act);
+const coachDeckOf = (act, floor) => (act > 1
+  ? { extra: ACT_DIALS[act].coachExtra[floor - 1] ?? 0, singles: ACT_DIALS[act].coachSingles, rares: ACT_DIALS[act].coachRares }
+  : { extra: CLIMB.coachDeckExtra(floor), singles: CLIMB.coachSingles });
+const bossDeckOf = act => (act > 1
+  ? { extra: ACT_DIALS[act].bossExtra, singles: false, rares: ACT_DIALS[act].bossRares }
+  : { extra: CLIMB.bossDeckExtra, singles: CLIMB.coachSingles, rares: CLIMB.bossDeckRares });
+/** The rare chance of a reward slot on a floor of an act. */
+export function rareChanceOf(floor, act = 1) {
+  if (act <= 1) return CLIMB.rareChance(floor);
+  const [lo, hi] = ACT_DIALS[act].rare;
+  return lo + (hi - lo) * (Math.min(FLOORS, Math.max(1, floor)) - 1) / (FLOORS - 1);
+}
+
+/** The coach's cap at a stop (the rung's multiple on), or null for a Rest Day — the game and the map read it. */
+export function stopCap(run, stop) {
+  if (!stop || stop.kind === 'rest') return null;
+  const act = actOfRun(run);
+  const mult = capOf(run.rung);
+  if (stop.kind === 'boss') return Math.round(bossCapOf(act) * mult);
+  const base = act > 1 ? ACT_DIALS[act].floorCaps[stop.floor - 1] : CLIMB.floorCap(stop.floor);
+  const rivalry = stop.kind === 'rivalry' ? (act > 1 ? ACT_DIALS[act].rivalryExtra : CLIMB.rivalryExtra) : 0;
+  return Math.round((base + rivalry) * mult);
+}
+
+/**
+ * The boss's franchise: one that can field a classic team at the boss's cap.
+ * Act I's is drawn as it always was; a later act's never repeats an earlier one.
+ */
+function bossFranchise(run, act = actOfRun(run)) {
+  const list = classicFranchises({ cap: Math.round(bossCapOf(act) * capOf(run.rung)), size: bossSizeOf(act) });
+  if (act <= 1) return pickFrom(climbRng(run.seed, 'boss'), list);
+  const earlier = Array.from({ length: act - 1 }, (_, i) => bossFranchise(run, i + 1));
+  const fresh = list.filter(abbr => !earlier.includes(abbr));
+  return pickFrom(climbRng(run.seed, 'boss', act), fresh.length ? fresh : list);
 }
 
 /** Who waits at the top of the map, known from the start as in StS: the boss's franchise and its logo. */
@@ -276,7 +335,7 @@ export function bossTeam(run) {
  * roster and deck it will deal — with its players by salary and its playbook.
  */
 export function bossScout(run) {
-  const setup = gameSetup(run, 'boss');
+  const setup = gameSetup(run, bossIdOf(actOfRun(run)));
   const players = setup.rosterB.map(k => getCardByKey(k)).filter(Boolean).sort((a, b) => (b.salary ?? 0) - (a.salary ?? 0));
   const near = nearestArchetype(players);
   const playbook = PLAYBOOK_OF_ARCHETYPE[near?.id] ?? null;
@@ -296,33 +355,30 @@ export function gameSetup(run, stopId) {
   const stop = stopById(run.map, stopId);
   if (!stop || stop.kind === 'rest') fail('No game there');
   const boss = stop.kind === 'boss';
-  const mult = capOf(run.rung);
+  const act = actOfRun(run);
   const rng = climbRng(run.seed, 'roster', stopId);
+  const cap = stopCap(run, stop);
   let abbr;
-  let cap;
   let roster;
   if (boss) {
-    abbr = bossFranchise(run);
-    cap = Math.round(CLIMB.bossCap * mult);
-    roster = buildClassicRoster(abbr, { cap, size: CLIMB.bossSize, rng });
+    abbr = bossFranchise(run, act);
+    roster = buildClassicRoster(abbr, { cap, size: bossSizeOf(act), rng });
   } else {
     const order = franchiseOrder(run);
     abbr = order[run.cleared.length % order.length];
-    cap = Math.round((CLIMB.floorCap(stop.floor) + (stop.kind === 'rivalry' ? CLIMB.rivalryExtra : 0)) * mult);
-    roster = buildAiRoster(abbr, { size: CLIMB.oppSize[stop.floor - 1] ?? CLIMB.bossSize, cap, rng });
+    roster = buildAiRoster(abbr, { size: oppSizeOf(act, stop.floor), cap, rng });
   }
   const team = TEAMS[abbr] ?? {};
   return {
     key: `climb:${run.id}:${stopId}`,
     stopId, kind: stop.kind, floor: stop.floor,
     rosterB: roster.map(cardKey),
-    deckB: coachDeck(roster, boss
-      ? { extra: CLIMB.bossDeckExtra, singles: CLIMB.coachSingles, rares: CLIMB.bossDeckRares }
-      : { extra: CLIMB.coachDeckExtra(stop.floor), singles: CLIMB.coachSingles }, climbRng(run.seed, 'deck', stopId)),
+    deckB: coachDeck(roster, boss ? bossDeckOf(act) : coachDeckOf(act, stop.floor), climbRng(run.seed, 'deck', stopId)),
     home: CLIMB.homeKinds.includes(stop.kind),
     aiLevel: run.rung,
     cap,
     opponent: { abbr, name: team.name ?? abbr, city: team.city ?? '', classic: boss },
+    act,
   };
 }
 
@@ -351,7 +407,7 @@ export function runView(run) {
 
 /** A run back from runView, its map rebuilt from the seed. */
 export function runFromView(view) {
-  return view ? { ...view, map: generateMap(view.seed, view.mapVersion ?? MAP_VERSION) } : null;
+  return view ? { ...view, map: generateMap(view.seed, view.mapVersion ?? MAP_VERSION, view.act ?? 1) } : null;
 }
 
 export function presetFor(run) {
@@ -376,7 +432,7 @@ export function presetFor(run) {
       ...(run.signature ? { signatureBonus: { A: Math.min(SIGNATURE_MAX, 2 + run.signature) } } : {}),
       ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
     },
-    climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung },
+    climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung, act: actOfRun(run) },
     climbView: runView(run),
   };
 }
@@ -399,7 +455,7 @@ export function stratOffer(run, stop, rng, rngClimb = null) {
       const own = OFFERABLE.filter(s => s.climbOnly && (leanOf(s.id) == null || leanOf(s.id) === run.playbook) && !chosen.includes(s.id) && !atLimit(run.deck, s.id));
       if (own.length && rngClimb() < CLIMB.climbOnlyChance) { chosen.push(pickFrom(rngClimb, own).id); return; }
     }
-    const rare = (stop.kind === 'rivalry' && slot === 2) || rng() < CLIMB.rareChance(stop.floor);
+    const rare = (stop.kind === 'rivalry' && slot === 2) || rng() < rareChanceOf(stop.floor, actOfRun(run));
     const pool = OFFERABLE.filter(s => !s.climbOnly && (!lean || leanOf(s.id) === lean) && !chosen.includes(s.id) && !atLimit(run.deck, s.id));
     const want = pool.filter(s => (s.rarity === 'rare') === rare);
     const from = want.length ? want : pool;
@@ -640,6 +696,37 @@ export function takeFreePractice(run, cardId) {
   return { ...applyRest(run, { choice: 'practice', cardId }), freePractice: run.freePractice - 1 };
 }
 
+/**
+ * KEEP CLIMBING (2026-10-20; the user: "'take what you've earned and quit,'
+ * or 'keep going and adding to the pot'"). After an act's boss, the next act:
+ * its map, the trackers fresh (Slay the Spire's act break), the cap up a
+ * floor, and the boss's reward — three strategy cards with a rare among them,
+ * a player and a perk, each sure. The pot rides on: a loss loses all of it.
+ * The server's ledger moves first (climbContinue), so the server knows the act.
+ */
+export function continueClimb(run) {
+  if (run.status !== 'won' || run.banked) fail('Beat the boss first');
+  const act = actOfRun(run);
+  if (act >= ACTS) fail('The climb is complete: bank the pot');
+  const bossId = bossIdOf(act);
+  const nextAct = act + 1;
+  const next = {
+    ...run, act: nextAct, map: generateMap(run.seed, run.mapVersion ?? MAP_VERSION, nextAct),
+    at: null, restAt: null, game: null, fatigue: {}, cap: run.cap + CLIMB.capPerFloor,
+  };
+  const rng = climbRng(run.seed, 'offers', bossId);
+  const players = playerOffer(next, rng);
+  const perks = perkOffer(next, climbRng(run.seed, 'perks', bossId), rosterCards(next).cards.map(c => c.id));
+  // Offered as a Rivalry's are (its third card always rare), at the act's last floor.
+  const strats = stratOffer(next, { kind: 'rivalry', floor: FLOORS }, rng, climbRng(run.seed, 'climb-only', bossId));
+  return settle({
+    ...next,
+    status: 'reward',
+    extraPicks: Math.max(0, (run.extraPicks ?? 0) - 1),
+    offers: { stopId: bossId, strats, picks: 1 + ((run.extraPicks ?? 0) > 0 ? 1 : 0), players, perks },
+  });
+}
+
 /** Bank the pot and end the run — between stops only. */
 export function retire(run) {
   if (run.status !== 'map') fail('Retire between stops');
@@ -661,7 +748,7 @@ export function deckLine(run) {
 
 /** The pot as it stands. The server prices the real one. */
 export function potPreview(run) {
-  return potOf(run.map, run.cleared, run.rung);
+  return potOfRun(run);
 }
 
 /** A finished run game as recordResult takes it: you are Team A (presetFor); a tie is not a win. */

@@ -69,11 +69,11 @@ describe('a climb in a line', () => {
     expect(climbStatus(null)).toBeNull();
     expect(climbStatus(start())).toBe('Training Camp next');
     const r = camped();
-    expect(climbStatus(r)).toBe('Floor 1 ahead');
+    expect(climbStatus(r)).toBe('Act I: floor 1 ahead');
     const stop = openStops(r)[0].id;
-    expect(climbStatus(chooseStop(r, stop))).toBe('A floor 1 game under way');
+    expect(climbStatus(chooseStop(r, stop))).toBe('Act I, a floor 1 game under way');
     const won = recordResult(chooseStop(r, stop), { stopId: stop, won: true, margin: 5 });
     expect(climbStatus(won)).toMatch(/^A reward to choose · pot \d+/);
-    expect(climbStatus({ ...won, status: 'map' })).toMatch(/^Floor 1 cleared · pot \d+/);
+    expect(climbStatus({ ...won, status: 'map' })).toMatch(/^Act I: floor 1 cleared · pot \d+/);
   });
 });

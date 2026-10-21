@@ -1,6 +1,20 @@
 # The Climb: three acts (piece 4, first half)
 
-**DRAFT 2026-10-20, for the user's approval.** The user, after beating the
+**APPROVED AND BUILT 2026-10-20.** The user: "Yes, this is what I want. We
+just need to make the payoff for winning worth it. I'm thinking maybe a Super
+or Mega Deluxe pack, depending on how hard it is (currently very)." One pot,
+as drafted. The final boss pays a **Mega Deluxe**: measured with the careful
+drafter over 300 three-act runs, the whole climb is cleared by 2.3% of runs
+at Prince and 0.7% at Deity.
+
+| Rung | Act I cleared | Act II cleared | Act III cleared | Median pot at the end |
+|---|---|---|---|---|
+| Prince | 30.7% (boss 42%) | 6.7% (boss 44%) | 2.3% (boss 50% of 14) | 1,675 coins |
+| Deity | 15.3% (boss 28%) | 1.7% (boss 28%) | 0.7% (boss 50% of 4) | 2,614 coins |
+
+The dials are run.js ACT_DIALS and climbMap.js ACT_POT / BOSS_PACKS.
+
+The user, after beating the
 Act I boss and finding only "Bank the pot" and "Give up this run": "the point
 of the game is to have 3 acts like Slay the Spire. The options should be 'take
 what you've earned and quit,' or 'keep going and adding to the pot.' The game
@@ -23,8 +37,7 @@ Beating the Act III boss completes the climb and banks the pot.
 **The gamble (my reading of "keep going and adding to the pot"):** the pot is
 one pot. A loss in Act II or III loses all of it, the Act I winnings included,
 exactly as a loss in Act I does today. That is what makes "stop or continue" a
-real decision. *(Awaiting the user's answer; the alternative is that each boss
-locks in part of the pot.)*
+real decision. *(The user: "Yes, this is what I want.")*
 
 ## Between acts (Slay the Spire's act break)
 
@@ -53,15 +66,16 @@ locks in part of the pot.)*
 - **The pot per win grows by act:** about ×1.5 in Act II and ×2 in Act III,
   the rung's pay on top. The sim sets the exact factors.
 - **Rarer cards:** the rare chance keeps climbing past Act I's 45%.
-- **The bosses' packs (proposed):** Act I a Booster (as now), Act II two
-  Boosters, Act III a Chase pack (its guaranteed legendary player).
+- **The bosses' packs:** Act I a Booster (as now), Act II a Rare Deluxe,
+  Act III a Mega Deluxe (the user's pick, by how hard the climb measured).
 
 ## Under the hood
 
 - The run gains an `act` (1 to 3). The map, the ledger and the bank read it.
   The server prices every act's stops and pays the bosses' packs, so the
-  shared climbMap.js, the functions and Pages all deploy. A MAP_VERSION bump
-  keeps runs already in progress on their own map.
+  shared climbMap.js, the functions and Pages all deploy. No MAP_VERSION bump
+  was needed: Act I draws exactly as before (its ids unprefixed, its stream
+  unchanged), and Acts II and III draw from streams of their own.
 - A run that has beaten the Act I boss but not banked yet (a won run today)
   is offered "Keep climbing" too.
 - How to Play, the Rulebook and a NEWS item move the same day.

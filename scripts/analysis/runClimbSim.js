@@ -14,6 +14,8 @@
 //   singles / bossextra / bossrares / home   the coach's deck and home court (2026-10-20)
 //   start              your starting cap (the five you bring)
 //   human              your side's iq (0..1; default 1, the coach's own play)
+//   acts               how many acts to climb (default 3, 2026-10-20): the
+//                      drafter always keeps climbing after a boss
 //
 // The coach plays both sides (simulateGame). "You" are a simple drafter: a
 // random five under $2,200, the playbook that fits, a random boon, a random
@@ -23,9 +25,9 @@
 // human should draft better, so the numbers here are a floor for you.
 import {
   CLIMB, CLIMB_FIVE, newRun, chooseCamp, openStops, chooseStop, presetFor, recordResult, resultFromGame,
-  pickStrat, pickPlayer, pickPerk, skipOffers, restDay, rosterCards, potPreview,
+  pickStrat, pickPlayer, pickPerk, skipOffers, restDay, rosterCards, potPreview, continueClimb, actOfRun,
 } from '../../src/game/modes/run.js';
-import { climbRng, KIND_WEIGHTS, stopById } from '../../src/game/modes/climbMap.js';
+import { climbRng, KIND_WEIGHTS, stopById, ACTS } from '../../src/game/modes/climbMap.js';
 import { leanOf } from '../../src/game/modes/climbKits.js';
 import { PERKS, practicable, perkProblem, boostsOf, boostedCard } from '../../src/game/modes/climbPerks.js';
 import { cardFit } from '../../src/game/cardFit.js';
@@ -221,6 +223,9 @@ function startingFive(rng) {
 }
 
 const tally = () => ({ played: 0, won: 0 });
+// THREE ACTS (2026-10-20): each act's games, its boss and how many cleared it.
+const ACTS_TO_CLIMB = Math.min(ACTS, overrides.acts ?? ACTS);
+const actTally = Array.from({ length: ACTS + 1 }, () => ({ games: tally(), boss: tally(), cleared: 0, died: 0, pot: [] }));
 const byKind = { game: tally(), rivalry: tally(), boss: tally() };
 const byFloor = Array.from({ length: 8 }, tally);
 let reachedBoss = 0;
@@ -242,7 +247,7 @@ for (let i = 0; i < RUNS; i += 1) {
   if (boon === 'cut_two') cuts = ['switch_the_screen', 'burned_switch'];
   run = chooseCamp(run, { playbook: run.camp.fits, boon, cuts });
 
-  for (let guard = 0; guard < 60; guard += 1) {
+  for (let guard = 0; guard < 240; guard += 1) {
     if (run.status === 'map') {
       run = chooseStop(run, chooseRoute(run, rng).id);
     } else if (run.status === 'rest') {
@@ -250,17 +255,25 @@ for (let i = 0; i < RUNS; i += 1) {
     } else if (run.status === 'game') {
       const stop = stopById(run.map, run.game.stopId);
       const p = presetFor(run);
-      if (stop.kind === 'boss') { reachedBoss += 1; bossSalaries.push(capSal(p.rosterA)); }
+      const act = actOfRun(run);
+      if (stop.kind === 'boss' && act === 1) { reachedBoss += 1; bossSalaries.push(capSal(p.rosterA)); }
       const starters = [...p.rosterA].sort((a, b) => b.salary - a.salary).slice(0, 5);
       if (starters.some(c => fatigueForMinutes(run.fatigue[c.id] ?? 0) <= -6)) tiredOpens += 1;
       games += 1;
-      ourSalary[stop.floor - 1].push(capSal(p.rosterA));
+      if (act === 1) ourSalary[stop.floor - 1].push(capSal(p.rosterA));
       const sim = simulateGame(p.rosterA, p.rosterB, { deckA: p.deckA, deckB: p.deckB, rng: climbRng(seed, 'game', stop.id), keepGame: true, gameOpts: p.gameOpts, brains: { ...(humanBrain ? { A: humanBrain } : {}), B: coachBrain } });
       const result = resultFromGame(sim.game, stop.id);
-      const t = byKind[stop.kind];
-      t.played += 1; byFloor[stop.floor - 1].played += 1;
-      if (stop.kind === 'boss') bossGames.push({ salary: capSal(p.rosterA), won: result.won });
-      if (result.won) { t.won += 1; byFloor[stop.floor - 1].won += 1; } else deaths[stop.floor] += 1;
+      const at = actTally[act];
+      const at2 = stop.kind === 'boss' ? at.boss : at.games;
+      at2.played += 1;
+      if (result.won) at2.won += 1; else at.died += 1;
+      if (stop.kind === 'boss' && result.won) { at.cleared += 1; at.pot.push(potPreview({ ...run, cleared: [...run.cleared, stop.id] }).coins); }
+      if (act === 1) {
+        const t = byKind[stop.kind];
+        t.played += 1; byFloor[stop.floor - 1].played += 1;
+        if (stop.kind === 'boss') bossGames.push({ salary: capSal(p.rosterA), won: result.won });
+        if (result.won) { t.won += 1; byFloor[stop.floor - 1].won += 1; } else deaths[stop.floor] += 1;
+      }
       run = recordResult(run, result);
     } else if (run.status === 'reward' && DRAFTER !== 'plain') {
       run = takeRewards(run, rng);
@@ -283,12 +296,15 @@ for (let i = 0; i < RUNS; i += 1) {
         run = target ? pickPerk(run, id, target) : skipOffers(run, 'perks');
       }
       if (run.status === 'reward') run = skipOffers(run);
+    } else if (run.status === 'won' && actOfRun(run) < ACTS_TO_CLIMB) {
+      run = continueClimb(run);
     } else {
       break;
     }
   }
-  if (run.status === 'won') { wonAct += 1; pots.push(potPreview(run).coins); }
+  if (run.status === 'won') pots.push(potPreview(run).coins);
 }
+wonAct = actTally[1].cleared;
 
 const pct = (n, d) => (d ? `${(100 * n / d).toFixed(1)}%` : '—');
 const median = xs => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.floor(s.length / 2)] : 0; };
@@ -307,3 +323,8 @@ console.log(`  your roster salary at each floor (median): ${ourSalary.map((xs, f
   console.log(`  the boss: won ${pct(hi.filter(g => g.won).length, hi.length)} by teams above the median salary, ${pct(lo.filter(g => g.won).length, lo.length)} at or below`);
 }
 console.log(`  median pot of a won act ${median(pots)} coins; games a starter opened at -6 or worse ${pct(tiredOpens, games)}`);
+console.log(`  THREE ACTS (every drafter keeps climbing): of ${RUNS} runs`);
+for (let a = 1; a <= ACTS_TO_CLIMB; a += 1) {
+  const t = actTally[a];
+  console.log(`    ${['', 'Act I', 'Act II', 'Act III'][a].padEnd(7)} games won ${pct(t.games.won, t.games.played)} of ${t.games.played}; boss won ${pct(t.boss.won, t.boss.played)} of ${t.boss.played}; cleared by ${pct(t.cleared, RUNS)} of runs; median pot then ${median(t.pot)} coins`);
+}

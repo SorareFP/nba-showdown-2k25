@@ -23,7 +23,7 @@ export function packRun(run) {
 export function unpackRun(stored) {
   if (!stored) return null;
   const { active, ...run } = stored;
-  return { ...run, map: generateMap(run.seed, run.mapVersion ?? 1) };
+  return { ...run, map: generateMap(run.seed, run.mapVersion ?? 1, run.act ?? 1) };
 }
 
 export async function saveRun(uid, run) {

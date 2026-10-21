@@ -13,13 +13,13 @@ import { useDialogs } from '../../ui/dialogs.jsx';
 import { saveRun, loadActiveRun } from '../../firebase/climb.js';
 import { loadTeams, saveTeam } from '../../firebase/savedTeams.js';
 import { getCardByKey } from '../../game/cardSets.js';
-import { climbStart, climbGame, climbBank } from '../../firebase/serverWrites.js';
+import { climbStart, climbGame, climbBank, climbContinue } from '../../firebase/serverWrites.js';
 import { ownedPlayers, capSal } from '../../game/teamRules.js';
 import {
   newRun, chooseCamp, chooseStop, presetFor, recordResult, pickStrat, pickPlayer, pickPerk, skipOffers,
-  restDay, takeFreeRest, takeFreePractice, retire, rosterCards, recordServerWin, abandon,
+  restDay, takeFreeRest, takeFreePractice, retire, rosterCards, recordServerWin, abandon, continueClimb, actOfRun,
 } from '../../game/modes/run.js';
-import { stopById } from '../../game/modes/climbMap.js';
+import { stopById, packWords, ACT_NAMES } from '../../game/modes/climbMap.js';
 import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud } from './ClimbScreens.jsx';
 import styles from './Climb.module.css';
 
@@ -35,7 +35,7 @@ export async function oneAtATime(gate, fn) {
 }
 
 export const FIREBASE_STORE = { loadActive: loadActiveRun, save: saveRun };
-export const FIREBASE_SERVER = { start: climbStart, openGame: climbGame, bank: climbBank };
+export const FIREBASE_SERVER = { start: climbStart, openGame: climbGame, bank: climbBank, continueTo: climbContinue };
 /** Saved teams: the Climb fives among them fill the start screen (2026-10-19). */
 export const FIREBASE_TEAMS = { load: loadTeams, save: saveTeam };
 
@@ -135,9 +135,25 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   const bank = r => act(async () => {
     let res;
     try { res = await server.bank(uid, r.id); } catch (e) { setBankFailedFor(r.id); throw e; }
-    await commit({ ...r, banked: { coins: res?.coins ?? 0, booster: Boolean(res?.booster) } });
-    toast(`Banked ${(res?.coins ?? 0).toLocaleString('en-US')} coins${res?.booster ? ' and a Booster' : ''}.`);
+    const packs = Array.isArray(res?.packs) ? res.packs : res?.booster ? ['booster'] : [];
+    await commit({ ...r, banked: { coins: res?.coins ?? 0, booster: Boolean(res?.booster), packs } });
+    toast(`Banked ${(res?.coins ?? 0).toLocaleString('en-US')} coins${packs.length ? ` and ${packWords(packs)}` : ''}.`);
   });
+
+  // KEEP CLIMBING (2026-10-20): the server's ledger first, then the run.
+  const keepClimbing = async () => {
+    const to = actOfRun(run) + 1;
+    const yes = await ask({
+      title: `Keep climbing to ${ACT_NAMES[to]}?`,
+      body: 'The pot rides on and keeps growing, but one loss from here loses all of it.',
+      confirmLabel: `On to ${ACT_NAMES[to]}`, cancelLabel: 'Not yet',
+    });
+    if (!yes) return;
+    await act(async () => {
+      await server.continueTo(uid, run.id, to);
+      await commit(continueClimb(run));
+    });
+  };
 
   const retireRun = async () => {
     const yes = await ask({
@@ -237,7 +253,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         />
       );
     default:
-      return <RunOver run={run} busy={busy} onBank={() => bank(run)} onNew={() => setRun(null)} onAbandon={bankFailedFor === run.id ? giveUp : null} />;
+      return <RunOver run={run} busy={busy} onBank={() => bank(run)} onContinue={keepClimbing} onNew={() => setRun(null)} onAbandon={bankFailedFor === run.id ? giveUp : null} />;
   }
   }
 }

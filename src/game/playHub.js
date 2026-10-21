@@ -6,7 +6,7 @@
 // there (`to` and `opts` are App's homeGo arguments).
 import { describeSave } from './gameSave.js';
 import { potPreview } from './modes/run.js';
-import { stopById } from './modes/climbMap.js';
+import { stopById, ACTS, ACT_NAMES } from './modes/climbMap.js';
 import { summarizeDynasty, DPHASE } from './modes/dynasty.js';
 import { STATUS as LEAGUE_STATUS } from './modes/league.js';
 
@@ -19,17 +19,18 @@ export function climbStatus(run) {
   const coins = potPreview(run).coins;
   const pot = coins ? ` · pot ${coins.toLocaleString('en-US')}` : '';
   const floor = run.at ? stopById(run.map, run.at)?.floor ?? 0 : 0;
+  const actLabel = ACT_NAMES[run.act ?? 1];
   switch (run.status) {
     case 'camp': return 'Training Camp next';
     case 'game': {
       const stop = stopById(run.map, run.game?.stopId);
-      return `${stop?.kind === 'boss' ? 'The boss game' : `A floor ${stop?.floor ?? floor + 1} game`} under way${pot}`;
+      return `${stop?.kind === 'boss' ? `${actLabel}'s boss game` : `${actLabel}, a floor ${stop?.floor ?? floor + 1} game`} under way${pot}`;
     }
     case 'reward': return `A reward to choose${pot}`;
     case 'rest': return `Rest Day${pot}`;
-    case 'won': return `Boss beaten: bank the pot${pot}`;
+    case 'won': return (run.act ?? 1) < ACTS ? `${actLabel} beaten: take the pot or keep climbing${pot}` : `All three acts climbed: bank the pot${pot}`;
     case 'retired': return `Retired: bank the pot${pot}`;
-    default: return `${floor ? `Floor ${floor} cleared` : 'Floor 1 ahead'}${pot}`;
+    default: return `${actLabel}: ${floor ? `floor ${floor} cleared` : 'floor 1 ahead'}${pot}`;
   }
 }
 

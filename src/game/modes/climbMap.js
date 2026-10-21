@@ -1,4 +1,4 @@
-// THE CLIMB'S MAP AND POT — one act, built from a seed.
+// THE CLIMB'S MAP AND POT — three acts, each built from the seed.
 //
 // The browser draws the map to play it and the server draws the SAME map to
 // price it (functions/index.js climbBank): the seed is the server's, so the
@@ -23,6 +23,38 @@ export const LANES = 3;
 export const KIND_WEIGHTS = { game: 0.6, rivalry: 0.15, rest: 0.25 };
 /** What each stop adds to the pot, before the rung's pay factor. */
 export const POT = { gameBase: 30, gamePerFloor: 5, rivalry: 70, boss: 120 };
+
+/**
+ * THREE ACTS (2026-10-20, docs/plans/2026-10-20-the-climb-three-acts.md; the
+ * user: "the point of the game is to have 3 acts like Slay the Spire ...
+ * 'take what you've earned and quit,' or 'keep going and adding to the pot.'
+ * The game gets harder and the rewards get bigger as you go up"). One pot:
+ * a loss in any act loses all of it. Act I's ids are the old ones ('1-0',
+ * 'boss'), so a run drawn before acts keeps its map; Acts II and III prefix
+ * theirs ('a2:1-0', 'a3:boss') and draw from their own stream.
+ */
+export const ACTS = 3;
+/** Each act's stops add this much more to the pot (the rung's pay on top). */
+export const ACT_POT = { 1: 1, 2: 1.5, 3: 2 };
+/** The packs a boss adds to the pot, by act. */
+export const BOSS_PACKS = { 1: ['booster'], 2: ['rare_deluxe'], 3: ['mega_deluxe'] };
+const PACK_WORDS = { booster: 'a Booster', rare_deluxe: 'a Rare Deluxe', super_deluxe: 'a Super Deluxe', mega_deluxe: 'a Mega Deluxe' };
+/** "a Booster and a Rare Deluxe" — the pot's packs as the screens say them. */
+export function packWords(packs) {
+  const w = (packs ?? []).map(p => PACK_WORDS[p] ?? p);
+  return w.length <= 1 ? (w[0] ?? '') : `${w.slice(0, -1).join(', ')} and ${w[w.length - 1]}`;
+}
+/** The act a stop id belongs to. */
+export function actOf(id) {
+  const m = /^a([0-9]):/.exec(String(id ?? ''));
+  return m ? Number(m[1]) : 1;
+}
+/** An act's id prefix: none for Act I. */
+export const actPrefix = act => (act > 1 ? `a${act}:` : '');
+/** The boss's id in an act. */
+export const bossIdOf = act => `${actPrefix(act)}boss`;
+/** Roman numerals for the screens. */
+export const ACT_NAMES = { 1: 'Act I', 2: 'Act II', 3: 'Act III' };
 /**
  * THE GENERATOR'S VERSION, stamped on every run and ledger (final review,
  * 2026-10-18): the server rebuilds a run's map from its seed, so a change to
@@ -199,20 +231,34 @@ function fallbackMap() {
   return { floors, boss: { id: 'boss', floor: FLOORS + 1, lane: 1, kind: 'boss', next: [] }, [FALLBACK_SEED_USE]: true };
 }
 
-/** The act for a seed — the same map every time, here and on the server — at a generator version. */
-export function generateMap(seed, version = MAP_VERSION) {
+/**
+ * An act's map for a seed — the same map every time, here and on the server —
+ * at a generator version. Act I draws exactly as it always has.
+ */
+export function generateMap(seed, version = MAP_VERSION, act = 1) {
   if (version !== 1) throw new Error(`No act map version ${version}`);
-  const rng = climbRng(seed, 'map');
+  const rng = act > 1 ? climbRng(seed, 'map', 'act', act) : climbRng(seed, 'map');
   for (let i = 0; i < MAX_TRIES; i += 1) {
     const m = draw(rng);
-    if (m && repair(m, rng) && keepsTheRules(m)) return m;
+    if (m && repair(m, rng) && keepsTheRules(m)) return inAct(m, act);
   }
-  return fallbackMap();
+  return inAct(fallbackMap(), act);
+}
+
+/** A drawn map as an act's: its ids prefixed past Act I, and the act stamped. */
+function inAct(map, act) {
+  if (act <= 1) return map;
+  const p = actPrefix(act);
+  const stop = s => ({ ...s, id: p + s.id, next: s.next.map(n => p + n) });
+  return { ...map, act, floors: map.floors.map(row => row.map(stop)), boss: stop(map.boss) };
 }
 
 export function stopById(map, id) {
-  if (id === 'boss') return map?.boss ?? null;
-  const [f, lane] = String(id).split('-').map(Number);
+  // A stop of another act is not on this map.
+  if (actOf(id) !== (map?.act ?? 1)) return null;
+  const raw = String(id).replace(/^a[0-9]:/, '');
+  if (raw === 'boss') return map?.boss ?? null;
+  const [f, lane] = raw.split('-').map(Number);
   return map?.floors?.[f - 1]?.[lane] ?? null;
 }
 
@@ -260,13 +306,35 @@ export function potOf(map, clearedIds, rung) {
   return { coins: Math.round(sum * payFactorOf(rung)), booster: ids.includes('boss') && Boolean(map?.boss) };
 }
 
+/**
+ * THE WHOLE POT, every act's (2026-10-20): each act's stops priced on that
+ * act's map at its ACT_POT, the rung's pay on top, and every beaten boss's
+ * packs. `booster` stays for the screens and saves that read it.
+ */
+export function potOfRun({ seed, mapVersion = MAP_VERSION, cleared = [], rung }) {
+  const ids = [...new Set(cleared ?? [])];
+  const maps = {};
+  const mapOf = act => (maps[act] ??= generateMap(seed, mapVersion, act));
+  let sum = 0;
+  const packs = [];
+  for (const id of ids) {
+    const act = actOf(id);
+    if (act < 1 || act > ACTS) continue;
+    const stop = stopById(mapOf(act), id);
+    sum += stopPot(stop) * (ACT_POT[act] ?? 1);
+    if (stop?.kind === 'boss') packs.push(...(BOSS_PACKS[act] ?? []));
+  }
+  return { coins: Math.round(sum * payFactorOf(rung)), booster: packs.includes('booster'), packs };
+}
+
 /** The results screen's line for a run game: it pays nothing now, it adds to the pot. */
 // Since 2026-10-19 a run game also PAYS, a quarter of a game (climbGamePay);
 // `margin` is the game's (the claim's, sanitized there). The pot line follows.
 export function runClaimPreview(stop, rung, won, margin = null) {
   const pay = climbGamePay({ won, margin, aiLevel: rung });
   if (!won) return { coins: pay.coins, breakdown: [...pay.breakdown, { label: 'The run is over and the pot is lost', coins: 0 }] };
-  const n = Math.round(stopPot(stop) * payFactorOf(rung));
-  const label = stop?.kind === 'boss' ? `Into the pot: +${n} and a Booster` : `Into the pot: +${n}`;
+  const act = actOf(stop?.id);
+  const n = Math.round(stopPot(stop) * (ACT_POT[act] ?? 1) * payFactorOf(rung));
+  const label = stop?.kind === 'boss' ? `Into the pot: +${n} and ${packWords(BOSS_PACKS[act])}` : `Into the pot: +${n}`;
   return { coins: pay.coins, breakdown: [...pay.breakdown, { label, coins: 0 }] };
 }

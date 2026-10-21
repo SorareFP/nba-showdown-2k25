@@ -12,6 +12,7 @@ import {
 import { CARD_MAP } from '../game/cards.js';
 import { STRAT_MAP } from '../game/strats.js';
 import { PACK_TYPES } from '../game/packEngine.js';
+import { boxShelfLine, boxReveal, tagPack } from '../game/boxShelf.js';
 import DeckEditor from './DeckEditor.jsx';
 import TeamEditor from './TeamEditor.jsx';
 import { CLIMB_FIVE } from '../game/modes/run.js';
@@ -234,12 +235,8 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
   const startBox = async box => {
     const first = await openBoxPack(user.uid, box.id, supply);
     noteBurned(first.burned);
-    setOpeningPack({
-      cards: first.cards.map(c => ({ ...c, packIndex: 0 })),
-      packType: 'booster_box',
-      options: {},
-      box: { id: box.id, left: first.left, bonusLeft: first.bonusLeft },
-    });
+    // A box of one (a Climb boss's pack) opens as that pack (boxShelf.js).
+    setOpeningPack(boxReveal(box, first));
   };
 
   /** The reveal has reached the end of a pack and wants the next one. */
@@ -253,7 +250,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         const nextIndex = Math.max(...p.cards.map(c => c.packIndex ?? 0)) + 1;
         return {
           ...p,
-          cards: [...p.cards, ...next.cards.map(c => ({ ...c, packIndex: nextIndex }))],
+          cards: [...p.cards, ...tagPack(next.cards, nextIndex, next.packType)],
           box: { ...p.box, left: next.left, bonusLeft: next.bonusLeft },
         };
       });
@@ -345,7 +342,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     return () => { live = false; };
   }, [user?.uid, openingPack]);
   const handleResumeBox = async id => {
-    try { await startBox({ id }); } catch (e) { setToast(e.message); }
+    try { await startBox(boxes.find(b => b.id === id) ?? { id }); } catch (e) { setToast(e.message); }
   };
 
   const handleList = async (cardId, price) => {
@@ -767,15 +764,19 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
 
       {view === 'shop' && (
         <>
-          {boxes.map(b => (
-            <div key={b.id} style={{ margin: '0 0 16px', padding: '12px 16px', border: '1px solid var(--orange)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-              <div>
-                <strong>{(b.left ?? 0) + (b.bonusLeft ?? 0)} packs still to open</strong>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>A booster box on the shelf. Each pack is rolled when you open it — nothing is decided yet.</div>
+          {boxes.map(b => {
+            // Named by what is in it (boxShelf.js): a Climb boss's Mega Deluxe is not a booster box.
+            const shelf = boxShelfLine(b);
+            return (
+              <div key={b.id} data-box={b.packType} style={{ margin: '0 0 16px', padding: '12px 16px', border: '1px solid var(--orange)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+                <div>
+                  <strong>{shelf.title}</strong>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{shelf.line}</div>
+                </div>
+                <button className={styles.loadBtn} onClick={() => handleResumeBox(b.id)}>Open {(b.left ?? 0) + (b.bonusLeft ?? 0) === 1 ? 'it' : 'one'}</button>
               </div>
-              <button className={styles.loadBtn} onClick={() => handleResumeBox(b.id)}>Open one</button>
-            </div>
-          ))}
+            );
+          })}
           {pendingReveals.length > 0 && (
             <div style={{ margin: '0 0 16px', padding: '12px 16px', border: '1px solid var(--orange)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
               <div>

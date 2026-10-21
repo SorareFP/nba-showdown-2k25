@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import {
   CLIMB, BOONS, recoveryFor, newRun, chooseCamp, openStops, chooseStop, gameSetup, presetFor,
   recordResult, stratOffer, pickStrat, pickPlayer, skipOffers, restDay, takeFreeRest, retire,
-  rosterCards, deckLine, potPreview, bossTeam,
+  rosterCards, deckLine, potPreview, bossTeam, needsRelease, releaseOptions,
 } from './run.js';
 import { stopById, potOf, climbRng } from './climbMap.js';
 import { kitDeck, KIT_CARD_IDS, leanOf } from './climbKits.js';
@@ -185,7 +185,7 @@ describe('rewards', () => {
     expect(skipped.status).toBe('map');
   });
 
-  it('offer players when the drop comes (a chance, CLIMB.drops), all under the cap, none when nothing fits', () => {
+  it('offer players when the drop comes (a chance, CLIMB.drops), all under the cap', () => {
     let r = win(camped(), '1-0');
     expect(r.offers.players).toEqual([]);   // drops off
     r = { ...skipOffers(r), dropOdds: { player: 1, perk: -1 } };
@@ -207,10 +207,43 @@ describe('rewards', () => {
     const riv = camped().map.floors.flat().find(s => s.kind === 'rivalry');
     const atRiv = { ...camped(), dropOdds: { player: 1, perk: -1 }, status: 'map', at: stopById(camped().map, riv.id).floor > 1 ? camped().map.floors[riv.floor - 2].find(s => s.next.includes(riv.id)).id : null };
     expect(win(atRiv, riv.id).offers.players.length).toBeGreaterThan(0);
-    const full = { ...atRiv, roster: [...KEYS, ...[...CARDS].sort((a, b) => a.salary - b.salary).slice(0, 5).map(cardKey)] };
-    expect(win(full, riv.id).offers.players).toEqual([]);
+  });
+
+  // SIGN AND RELEASE (2026-10-21; the user: "Rivalry games should always give
+  // card rewards"). A full roster — 23 of 28 Act II Rivalry wins in the sim —
+  // or a cap with no room used to empty the offer. Now it comes priced against
+  // the room a release makes, and signing names the player who goes.
+  it('still offer a player at a full roster or a short cap, signed by releasing one of yours', () => {
+    const riv = camped().map.floors.flat().find(s => s.kind === 'rivalry');
+    const atRiv = { ...camped(), dropOdds: { player: -1, perk: -1 }, status: 'map', at: riv.floor > 1 ? camped().map.floors[riv.floor - 2].find(s => s.next.includes(riv.id)).id : null };
+    const bench = [...CARDS].sort((a, b) => a.salary - b.salary).slice(0, 5).map(cardKey);
+    const full = { ...atRiv, roster: [...KEYS, ...bench], perks: [{ id: 'gym_rat', target: getCardByKey(bench[0]).id }], fatigue: { [getCardByKey(bench[0]).id]: 8 } };
+    const won = win(full, riv.id);
+    expect(won.offers.players.length).toBe(3);
+    const k = won.offers.players[0];
+    expect(needsRelease(won, k)).toBe(true);
+    expect(() => pickPlayer(won, k)).toThrow(/Release a player/);
+    const options = releaseOptions(won, k);
+    expect(options.length).toBeGreaterThan(0);
+    expect(options.every(o => won.roster.includes(o))).toBe(true);
+    const go = options.includes(bench[0]) ? bench[0] : options[0];
+    const signed = pickPlayer(won, k, go);
+    expect(signed.roster).toHaveLength(CLIMB.maxRoster);
+    expect(signed.roster).toContain(k);
+    expect(signed.roster).not.toContain(go);
+    expect(capSal(rosterCards(signed).cards)).toBeLessThanOrEqual(signed.cap);
+    if (go === bench[0]) {
+      expect(signed.perks).toEqual([]);
+      expect(signed.fatigue[getCardByKey(bench[0]).id]).toBeUndefined();
+    }
+    // A release that does not make room is refused.
+    const notEnough = won.roster.find(x => !options.includes(x));
+    if (notEnough) expect(() => pickPlayer(won, k, notEnough)).toThrow(/does not make room/);
+    // No room under the cap: the same.
     const broke = { ...atRiv, cap: capSal(FIVE) - CLIMB.capPerFloor };
-    expect(win(broke, riv.id).offers.players).toEqual([]);
+    const bw = win(broke, riv.id);
+    expect(bw.offers.players.length).toBeGreaterThan(0);
+    expect(bw.offers.players.every(x => needsRelease(bw, x))).toBe(true);
   });
 
   it('give two picks after each of the three games the boon covers', () => {

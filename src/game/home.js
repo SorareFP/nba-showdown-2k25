@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-sign-and-release', date: '2026-10-21', title: 'The Climb: every Rivalry pays a player, even at a full roster',
+    body: "A Rivalry win always offers a player again, Act II and III included. A full roster of ten (or a cap with no room) used to empty the offer; now the three players come anyway, and you sign one by releasing a player of yours, who leaves the run with their perks. Game drops work the same way. And a timeout now holds the other team: nobody on the other side rolls until play resumes.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'climb-three-acts', date: '2026-10-20', title: 'The Climb: three acts — take the pot or keep climbing',
     body: "The Climb is three acts now, like Slay the Spire. Beat an act's boss and choose: take the pot and stop, or keep climbing with the pot riding on. Each act is harder — bigger teams, deeper decks with rares, a bigger classic boss — and pays more: Act II's wins add half again as much to the pot and its boss adds a Rare Deluxe; Act III's add double, and beating its boss adds a Mega Deluxe. Your players start each act rested, and the boss you beat pays a card, a player and a perk. One loss in any act loses the whole pot. A run that has beaten Act I's boss and not banked can keep climbing too.",
     to: 'climb', cta: 'The Climb',

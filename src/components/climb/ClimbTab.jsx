@@ -236,7 +236,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         <RewardPicker
           run={run} busy={busy}
           onPickStrat={id => act(() => commit(pickStrat(run, id)))}
-          onPickPlayer={key => act(() => commit(pickPlayer(run, key)))}
+          onPickPlayer={(key, release = null) => act(() => commit(pickPlayer(run, key, release)))}
           onPickPerk={(id, target) => act(() => commit(pickPerk(run, id, target)))}
           onSkip={part => act(() => commit(skipOffers(run, part ?? null)))}
         />

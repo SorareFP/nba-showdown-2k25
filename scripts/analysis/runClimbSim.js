@@ -25,7 +25,7 @@
 // human should draft better, so the numbers here are a floor for you.
 import {
   CLIMB, CLIMB_FIVE, newRun, chooseCamp, openStops, chooseStop, presetFor, recordResult, resultFromGame,
-  pickStrat, pickPlayer, pickPerk, skipOffers, restDay, rosterCards, potPreview, continueClimb, actOfRun,
+  pickStrat, pickPlayer, pickPerk, skipOffers, restDay, rosterCards, potPreview, continueClimb, actOfRun, needsRelease, releaseOptions,
 } from '../../src/game/modes/run.js';
 import { climbRng, KIND_WEIGHTS, stopById, ACTS } from '../../src/game/modes/climbMap.js';
 import { leanOf } from '../../src/game/modes/climbKits.js';
@@ -140,6 +140,15 @@ const RANK = { legendary: 4, rare: 3, uncommon: 2, common: 1 };
 const worth = id => (RANK[STRAT_MAP[id]?.rarity] ?? 1) + (STRAT_MAP[id]?.climbOnly ? 0.5 : 0);
 const starsFirst = run => [...rosterCards(run).cards].sort((a, b) => b.salary - a.salary).map(c => c.id);
 
+// SIGN AND RELEASE (2026-10-21): at a full roster (or a short cap) the drafter
+// lets its cheapest player go for a pricier one, and otherwise passes.
+function sign(run, key) {
+  if (!needsRelease(run, key)) return pickPlayer(run, key);
+  const salary = k => rosterCards({ roster: [k] }).cards[0]?.salary ?? 0;
+  const out = releaseOptions(run, key).find(k => salary(k) < salary(key));
+  return out ? pickPlayer(run, key, out) : skipOffers(run, 'players');
+}
+
 function chooseRoute(run, rng) {
   const stops = openStops(run);
   if (DRAFTER !== 'careful') return pick(rng, stops);
@@ -172,7 +181,7 @@ function takeRewards(run, rng) {
   const ids = () => rosterCards(run).cards.map(c => c.id);
   if (DRAFTER === 'careless') {
     while (run.status === 'reward' && run.offers?.picks > 0 && run.offers.strats.length) run = pickStrat(run, pick(rng, run.offers.strats));
-    if (run.status === 'reward' && run.offers?.players?.length) run = pickPlayer(run, pick(rng, run.offers.players));
+    if (run.status === 'reward' && run.offers?.players?.length) run = sign(run, pick(rng, run.offers.players));
     if (run.status === 'reward' && run.offers?.perks?.length) {
       const id = pick(rng, run.offers.perks);
       const options = PERKS[id].target === 'card' ? practicable(run.deck) : ids().filter(cid => !perkProblem(run, id, cid, ids()));
@@ -191,7 +200,7 @@ function takeRewards(run, rng) {
       const card = k => rosterCards({ roster: [k] }).cards[0];
       const sys = k => (CLIMB.system && fitsSystem(run.playbook, card(k)) ? 1 : 0);
       const best = [...run.offers.players].sort((a, b) => sys(b) - sys(a) || (card(b)?.salary ?? 0) - (card(a)?.salary ?? 0))[0];
-      run = pickPlayer(run, best);
+      run = sign(run, best);
     }
     if (run.status === 'reward' && run.offers?.perks?.length) {
       const order = ['extra_reps', 'gym_rat', 'signature_move', 'film_study'];
@@ -226,6 +235,8 @@ const tally = () => ({ played: 0, won: 0 });
 // THREE ACTS (2026-10-20): each act's games, its boss and how many cleared it.
 const ACTS_TO_CLIMB = Math.min(ACTS, overrides.acts ?? ACTS);
 const actTally = Array.from({ length: ACTS + 1 }, () => ({ games: tally(), boss: tally(), cleared: 0, died: 0, pot: [] }));
+const rivalryOffers = {};
+const rivalryRoom = [];
 const byKind = { game: tally(), rivalry: tally(), boss: tally() };
 const byFloor = Array.from({ length: 8 }, tally);
 let reachedBoss = 0;
@@ -275,6 +286,15 @@ for (let i = 0; i < RUNS; i += 1) {
         if (result.won) { t.won += 1; byFloor[stop.floor - 1].won += 1; } else deaths[stop.floor] += 1;
       }
       run = recordResult(run, result);
+      // A Rivalry's player offer, by act: offered, or why not (2026-10-21).
+      if (result.won && stop.kind === 'rivalry') {
+        const why = run.offers?.players?.length ? 'offered'
+          : rosterCards(run).cards.length >= CLIMB.maxRoster ? 'full roster'
+            : 'no cap room';
+        const k = `${act}:${why}`;
+        rivalryOffers[k] = (rivalryOffers[k] ?? 0) + 1;
+        if (why === 'no cap room') rivalryRoom.push(run.cap - capSal(rosterCards(run).cards));
+      }
     } else if (run.status === 'reward' && DRAFTER !== 'plain') {
       run = takeRewards(run, rng);
     } else if (run.status === 'reward') {
@@ -285,7 +305,7 @@ for (let i = 0; i < RUNS; i += 1) {
       else if (o.strats.length) run = skipOffers(run, 'strats');
       if (run.status === 'reward' && run.offers?.players?.length) {
         const best = [...run.offers.players].sort((a, b) => (rosterCards({ roster: [b] }).cards[0]?.salary ?? 0) - (rosterCards({ roster: [a] }).cards[0]?.salary ?? 0))[0];
-        run = pickPlayer(run, best);
+        run = sign(run, best);
       }
       // A Rivalry's perk: the first offered, on the priciest player (or Film Study's first card).
       if (run.status === 'reward' && run.offers?.perks?.length) {
@@ -323,6 +343,7 @@ console.log(`  your roster salary at each floor (median): ${ourSalary.map((xs, f
   console.log(`  the boss: won ${pct(hi.filter(g => g.won).length, hi.length)} by teams above the median salary, ${pct(lo.filter(g => g.won).length, lo.length)} at or below`);
 }
 console.log(`  median pot of a won act ${median(pots)} coins; games a starter opened at -6 or worse ${pct(tiredOpens, games)}`);
+console.log(`  a Rivalry's player offer: ${JSON.stringify(rivalryOffers)}${rivalryRoom.length ? `; room left when none fit: median $${median(rivalryRoom)}` : ''}`);
 console.log(`  THREE ACTS (every drafter keeps climbing): of ${RUNS} runs`);
 for (let a = 1; a <= ACTS_TO_CLIMB; a += 1) {
   const t = actTally[a];

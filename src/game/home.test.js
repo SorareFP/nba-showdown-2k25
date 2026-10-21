@@ -149,15 +149,16 @@ describe('The Climb in the news', () => {
   });
 
   it('leads the news with its build-arounds, its 2026-10-19 changes, then the Play hub', () => {
-    expect(NEWS[0]).toMatchObject({ id: 'climb-three-acts', to: 'climb' });
-    expect(NEWS[1]).toMatchObject({ id: 'climb-wave-two', to: 'climb' });
-    expect(NEWS[2]).toMatchObject({ id: 'climb-plus-every-card', to: 'climb' });
-    expect(NEWS[3]).toMatchObject({ id: 'climb-home-court', to: 'climb' });
-    expect(NEWS[4]).toMatchObject({ id: 'climb-bar', to: 'climb' });
-    expect(NEWS[5]).toMatchObject({ id: 'putback-rebound-and-their', to: 'climb' });
-    expect(NEWS[6]).toMatchObject({ id: 'climb-build-arounds', to: 'climb' });
-    expect(NEWS[7]).toMatchObject({ id: 'climb-perks-chemistry', to: 'climb' });
-    expect(NEWS[8]).toMatchObject({ id: 'climb-pays-as-you-go', to: 'climb' });
-    expect(NEWS[9]).toMatchObject({ id: 'play-hub', to: 'modes' });
+    expect(NEWS[0]).toMatchObject({ id: 'climb-sign-and-release', to: 'climb' });
+    expect(NEWS[1]).toMatchObject({ id: 'climb-three-acts', to: 'climb' });
+    expect(NEWS[2]).toMatchObject({ id: 'climb-wave-two', to: 'climb' });
+    expect(NEWS[3]).toMatchObject({ id: 'climb-plus-every-card', to: 'climb' });
+    expect(NEWS[4]).toMatchObject({ id: 'climb-home-court', to: 'climb' });
+    expect(NEWS[5]).toMatchObject({ id: 'climb-bar', to: 'climb' });
+    expect(NEWS[6]).toMatchObject({ id: 'putback-rebound-and-their', to: 'climb' });
+    expect(NEWS[7]).toMatchObject({ id: 'climb-build-arounds', to: 'climb' });
+    expect(NEWS[8]).toMatchObject({ id: 'climb-perks-chemistry', to: 'climb' });
+    expect(NEWS[9]).toMatchObject({ id: 'climb-pays-as-you-go', to: 'climb' });
+    expect(NEWS[10]).toMatchObject({ id: 'play-hub', to: 'modes' });
   });
 });

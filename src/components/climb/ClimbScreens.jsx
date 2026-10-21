@@ -11,7 +11,7 @@ import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster, DEFAULT_FILTERS, filterPool, sortPool } from '../../game/teamRules.js';
 import PoolFilters from '../PoolFilters.jsx';
-import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun } from '../../game/modes/run.js';
+import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops, ACTS, ACT_NAMES, ACT_POT, BOSS_PACKS, packWords } from '../../game/modes/climbMap.js';
@@ -632,6 +632,9 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
  */
 export function RewardPicker({ run, onPickStrat, onPickPlayer, onPickPerk = () => {}, onSkip, busy = false }) {
   const o = run.offers ?? { strats: [], players: [], picks: 0 };
+  // SIGN AND RELEASE (2026-10-21): the player whose release is being chosen.
+  const [signing, setSigning] = useState(null);
+  const full = rosterCards(run).cards.length >= CLIMB.maxRoster;
   const perks = o.perks ?? [];
   // Your team as a game would deal it (perks on): what each card is checked against.
   const team = (() => { const b = boostsOf(run); return rosterCards(run).cards.map(c => boostedCard(c, b[c.id])); })();
@@ -654,14 +657,32 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onPickPerk = () =
       )}
       {o.players.length > 0 && (
         <>
-          <h3 className={styles.h3}>A player <span className={styles.muted}>{dollars(room)} of room · for this run only</span></h3>
+          <h3 className={styles.h3}>A player <span className={styles.muted}>{full ? `your roster is full (${CLIMB.maxRoster}): sign one by releasing one of yours` : `${dollars(room)} of room`} · for this run only</span></h3>
           <div className={styles.offers} data-player-offer="true">
             {o.players.map(k => {
               const card = rosterCards({ roster: [k] }).cards[0];
+              const swap = needsRelease(run, k);
               // What signing them leaves (2026-10-19): the three come at three prices.
-              return <PlayerTile key={k} cardKey={k} card={card} big inSystem={CLIMB.system && fitsSystem(run.playbook, card)} extra={<> · leaves {dollars(room - (card?.salary ?? 0))}</>} onClick={busy ? null : () => onPickPlayer(k)}>Sign</PlayerTile>;
+              return (
+                <PlayerTile key={k} cardKey={k} card={card} big selected={signing === k} inSystem={CLIMB.system && fitsSystem(run.playbook, card)}
+                  extra={swap ? <> · <span className={styles.sentence}>release a player to sign</span></> : <> · leaves {dollars(room - (card?.salary ?? 0))}</>}
+                  onClick={busy ? null : () => (swap ? setSigning(signing === k ? null : k) : onPickPlayer(k))}>
+                  {swap ? 'Sign and release…' : 'Sign'}
+                </PlayerTile>
+              );
             })}
           </div>
+          {signing && o.players.includes(signing) && (
+            <div className={styles.actions} data-release-for={signing}>
+              <span className={styles.muted}>Release one of yours to sign {rosterCards({ roster: [signing] }).cards[0]?.name}:</span>
+              {releaseOptions(run, signing).map(rk => {
+                const c = getCardByKey(rk);
+                return <button key={rk} type="button" data-release={rk} disabled={busy} onClick={() => { onPickPlayer(signing, rk); setSigning(null); }}>{c?.name} · {dollars(c?.salary ?? 0)}</button>;
+              })}
+              {releaseOptions(run, signing).length === 0 && <span className={styles.over}>No one of yours makes room for them under the cap.</span>}
+              <button type="button" onClick={() => setSigning(null)} disabled={busy}>Cancel</button>
+            </div>
+          )}
           <div className={styles.actions}><button type="button" onClick={() => onSkip('players')} disabled={busy}>Skip the players</button></div>
         </>
       )}

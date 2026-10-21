@@ -32,6 +32,8 @@
 .face { width: 100%; aspect-ratio: 5 / 7; object-fit: cover; border-radius: var(--radius-sm); background: var(--navy-light); }
 .tileName { font-weight: 700; font-size: 13px; line-height: 1.2; }
 .tileMeta { font-size: 12px; color: var(--text-muted); text-transform: capitalize; }
+/* A sentence inside a tile's meta line keeps its own case (the release note). */
+.sentence { text-transform: none; }
 .tileBtn { margin-top: auto; }
 .stratTile[data-rarity='rare'] { border-color: var(--gold); }
 .stratTile[data-rarity='uncommon'] { border-color: var(--blue); }

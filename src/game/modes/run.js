@@ -474,12 +474,20 @@ export function stratOffer(run, stop, rng, rngClimb = null) {
  */
 function playerOffer(run, rng) {
   const { cards } = rosterCards(run);
-  if (cards.length >= CLIMB.maxRoster) return [];
   const room = run.cap - capSal(cards);
-  if (!(room > 0)) return [];
   const on = new Set(cards.map(c => c.id));
-  const fits = PLAYER_POOL
-    .filter(c => (c.salary ?? 0) <= room && !on.has(c.id))
+  const open = PLAYER_POOL.filter(c => !on.has(c.id));
+  // A FULL ROSTER STILL GETS AN OFFER (2026-10-21; the user, of an Act II
+  // Rivalry with no player: "Rivalry games should always give card rewards").
+  // At ten players — 23 of 28 Act II Rivalry wins in the sim — or with no one
+  // under the room, the offer is priced against the room a release would make
+  // (your priciest player's salary on top), and signing one releases a player
+  // of yours (pickPlayer).
+  const swap = cards.length >= CLIMB.maxRoster || !open.some(c => (c.salary ?? 0) <= room);
+  const budget = swap ? room + Math.max(0, ...cards.map(c => c.salary ?? 0)) : room;
+  if (!(budget > 0)) return [];
+  const fits = open
+    .filter(c => (c.salary ?? 0) <= budget)
     .sort((a, b) => (b.salary ?? 0) - (a.salary ?? 0) || cardKey(a).localeCompare(cardKey(b)));
   const taken = new Set();
   const bestOf = list => {
@@ -495,7 +503,7 @@ function playerOffer(run, rng) {
   };
   const out = [];
   for (const [lo, hi] of CLIMB.offerBands) {
-    let pool = bestOf(fits.filter(c => { const f = (c.salary ?? 0) / room; return f > lo && f <= hi; }));
+    let pool = bestOf(fits.filter(c => { const f = (c.salary ?? 0) / budget; return f > lo && f <= hi; }));
     if (!pool.length) pool = bestOf(fits);
     if (!pool.length) break;
     const c = pool[Math.floor(rng() * pool.length)];
@@ -639,9 +647,46 @@ export function pickStrat(run, id) {
   });
 }
 
-export function pickPlayer(run, key) {
+/** Does signing this player need a release: a full roster, or over the cap? */
+export function needsRelease(run, key) {
+  const { cards } = rosterCards(run);
+  const card = getCardByKey(key);
+  return cards.length >= CLIMB.maxRoster || capSal([...cards, card].filter(Boolean)) > run.cap;
+}
+
+/** The players of yours (roster keys) whose release makes room to sign `key`, cheapest first. */
+export function releaseOptions(run, key) {
+  const card = getCardByKey(key);
+  if (!card) return [];
+  const keys = run.roster ?? [];
+  return keys
+    .filter(k => {
+      const rest = keys.filter(x => x !== k).map(x => getCardByKey(x)).filter(Boolean);
+      return rest.length + 1 <= CLIMB.maxRoster && capSal([...rest, card]) <= run.cap;
+    })
+    .sort((a, b) => (getCardByKey(a)?.salary ?? 0) - (getCardByKey(b)?.salary ?? 0));
+}
+
+/**
+ * Sign an offered player. When the roster is full or the cap is short
+ * (needsRelease), `release` names the player of yours who makes room: they
+ * leave the run, with their perks and their fatigue (2026-10-21).
+ */
+export function pickPlayer(run, key, release = null) {
   if (run.status !== 'reward' || !run.offers?.players.includes(key)) fail('That player is not on offer');
-  return settle({ ...run, roster: [...run.roster, key], offers: { ...run.offers, players: [] } });
+  let roster = [...(run.roster ?? [])];
+  let perks = run.perks ?? [];
+  let fatigue = run.fatigue ?? {};
+  if (release != null) {
+    if (!releaseOptions(run, key).includes(release)) fail('Releasing that player does not make room');
+    const gone = getCardByKey(release);
+    roster = roster.filter(k => k !== release);
+    perks = perks.filter(p => p.target !== gone?.id);
+    fatigue = Object.fromEntries(Object.entries(fatigue).filter(([id]) => id !== gone?.id));
+  } else if (needsRelease(run, key)) {
+    fail(`Release a player of yours to sign ${getCardByKey(key)?.name ?? 'them'}`);
+  }
+  return settle({ ...run, roster: [...roster, key], perks, fatigue, offers: { ...run.offers, players: [] } });
 }
 
 /** Skip the strats, the players, or (no part) everything still on offer. */

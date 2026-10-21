@@ -108,6 +108,18 @@ describe('the reward screen', () => {
     expect(r.offers.players).toEqual([]);
     expect(out).not.toContain('data-player-offer');
   });
+
+  // SIGN AND RELEASE (2026-10-21): a full roster still sees its offer, and
+  // each player says a release signs them.
+  it('offers a full roster its players, signed by releasing one of yours', () => {
+    const r = won();
+    const bench = [...CARDS].sort((a, b) => a.salary - b.salary).slice(0, 5).map(cardKey);
+    const pricey = [...CARDS].sort((a, b) => b.salary - a.salary).slice(10, 13).map(cardKey);
+    const full = { ...r, roster: [...r.roster, ...bench], offers: { ...r.offers, players: pricey } };
+    const out = html(<RewardPicker run={full} onPickStrat={noop} onPickPlayer={noop} onSkip={noop} />);
+    expect(out).toContain('your roster is full (10)');
+    expect(out.match(/Sign and release…/g)).toHaveLength(3);
+  });
 });
 
 // THE PRACTICE SCREEN (the user, 2026-10-19): "the practice option should

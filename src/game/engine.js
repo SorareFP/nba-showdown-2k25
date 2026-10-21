@@ -1022,6 +1022,17 @@ export function searchCrunchCard(g, teamKey, cardId) {
   return { game: ng, ok: true };
 }
 
+/**
+ * A TIMEOUT HOLDS THE OTHER TEAM (the user, 2026-10-21: "When I call timeout,
+ * the other team shouldn't be able to roll. Same on both sides."). While one
+ * side's timeout is on, the other side throws no die: doRoll refuses it, the
+ * roll gate closes it, the coach waits, and the board's buttons say why. The
+ * side that called it keeps its turn; play resumes with endTimeout.
+ */
+export function heldByTimeout(g, teamKey) {
+  return Boolean(g?.timeoutActive) && g.timeoutActive !== teamKey;
+}
+
 export function endTimeout(g) {
   if (!g.timeoutActive) return g;
   const ng = deepClone(g);
@@ -1372,6 +1383,8 @@ export function spendAssist(g, teamKey, type, playerIdx) {
   // simulator's coach spent it anyway: two points after the game ended,
   // in the final score (caught by granularStats.test.js, 2026-09-10).
   if (g.done) return { game: g, ok: false, msg: 'The game is over' };
+  // A spend check is a die too: none while the other team's timeout is on.
+  if (heldByTimeout(g, teamKey)) return { game: g, ok: false, msg: 'The other team is in a timeout: wait for play to resume' };
   const ng = deepClone(g);
   const myT = getTeam(ng, teamKey);
   const player = myT.starters[playerIdx];
@@ -1454,6 +1467,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
 export function spendReboundBonus(g, teamKey, type, playerIdx) {
   // Nothing scores after the final whistle — see spendAssist.
   if (g.done) return { game: g, ok: false, msg: 'The game is over' };
+  if (heldByTimeout(g, teamKey)) return { game: g, ok: false, msg: 'The other team is in a timeout: wait for play to resume' };
   const ng = deepClone(g);
   const myT = getTeam(ng, teamKey);
   const player = myT.starters[playerIdx];
@@ -1806,8 +1820,9 @@ export function rollGate(g) {
   const a = pendingRolls(g, 'A');
   const b = pendingRolls(g, 'B');
   return {
-    A: b === 0 || a >= b,   // the human leads: equal counts means it is A's turn
-    B: a === 0 || b > a,    // the coach follows: it rolls only once it is behind
+    // The other side's timeout holds a side's dice (heldByTimeout).
+    A: !heldByTimeout(g, 'A') && (b === 0 || a >= b),   // the human leads: equal counts means it is A's turn
+    B: !heldByTimeout(g, 'B') && (a === 0 || b > a),    // the coach follows: it rolls only once it is behind
   };
 }
 
@@ -1819,6 +1834,11 @@ export function rollGate(g) {
  * where anyone may roll.
  */
 export function rollTurnLine(g, gate) {
+  if (g?.timeoutActive) {
+    const held = g.timeoutActive === 'A' ? 'B' : 'A';
+    if (!gate) return `Team ${g.timeoutActive} timeout: Team ${held} waits to roll`;
+    return g.timeoutActive === 'A' ? 'Your timeout: the coach waits to roll' : "The coach's timeout: you wait to roll";
+  }
   if (!gate) return 'All players may roll';
   if (pendingRolls(g, 'A') === 0 && pendingRolls(g, 'B') === 0) return 'All rolls in';
   return gate.A ? 'Your roll' : "Coach's roll";
@@ -1844,6 +1864,8 @@ export function rollTurnLine(g, gate) {
  */
 export function coachCardWindow(g, teamKey = 'B') {
   if (!g || g.phase !== 'scoring') return false;
+  // The other side's timeout: the coach waits it out.
+  if (heldByTimeout(g, teamKey)) return false;
   if (pendingRolls(g, teamKey) === 0) return true;
   return Boolean(rollGate(g)[teamKey]);
 }
@@ -1853,6 +1875,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   const oppT = getOpp(g, teamKey);
   const player = myT.starters[idx];
   if (!player) return g;
+  // The other team's timeout holds this side's dice (heldByTimeout).
+  if (heldByTimeout(g, teamKey)) return g;
   // A slot rolls once, unless a card owes it a second roll.
   const already = (g.rollResults?.[teamKey] || [])[idx];
   const secondRoll = already != null && extraRollPending(g, teamKey, idx);

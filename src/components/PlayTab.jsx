@@ -1,6 +1,6 @@
 import { useReducer, useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import { answerWindow } from '../game/canPlay.js';
-import { newGame, doRoll, rollingOpen as diceOut, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, rollGate, coachCardWindow, searchCrunchCard } from '../game/engine.js';
+import { newGame, doRoll, rollingOpen as diceOut, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, rollGate, coachCardWindow, searchCrunchCard, heldByTimeout } from '../game/engine.js';
 import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiChoice } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck, resolveChoice } from '../game/execCard.js';
@@ -515,6 +515,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
           return;
         }
         if (rollingOpen) {
+          // YOUR TIMEOUT HOLDS THE COACH (2026-10-21, heldByTimeout): no die,
+          // no card, no spend until you end it.
+          if (heldByTimeout(game, 'B')) return;
           const needsRoll = pendingRolls(game, 'B') > 0;
           // A-B-A-B, NOT B-B-B-B-B. This effect re-fires on every game change,
           // so once rolling opened the coach rolled all five of its players

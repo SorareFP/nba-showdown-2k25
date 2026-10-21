@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, placementRolls, matchupContest } from '../../game/engine.js';
+import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, placementRolls, matchupContest, heldByTimeout } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
 import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, contactTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer, screenLockSlots, HACK_A } from '../../game/canPlay.js';
 import { checkNeedFor } from '../../game/checkTerms.js';
@@ -1640,7 +1640,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
             );
           })}
           {game.crunch?.active && <span className={styles.phaseSub} style={{color:'#F87171',fontWeight:700}}>🚨 CRUNCH TIME · margin {game.crunch.margin} · clutch, timeouts & crunch cards live</span>}
-          {game.timeoutActive && <span className={styles.phaseSub} style={{color:'#FBBF24'}}>⏸ Team {game.timeoutActive} timeout — defense re-set, search the deck for a crunch card, timeout cards playable</span>}
+          {game.timeoutActive && <span className={styles.phaseSub} style={{color:'#FBBF24'}}>⏸ Team {game.timeoutActive} timeout — defense re-set, search the deck for a crunch card, timeout cards playable; Team {game.timeoutActive === 'A' ? 'B' : 'A'} rolls once play resumes</span>}
         </div>
         <div className={styles.phaseCtrls}>
           {(segA>0||segB>0) && <span className={styles.segScore}><span style={{color:'var(--orange)'}}>A {segA}</span>–<span style={{color:'var(--blue)'}}>{segB} B</span></span>}
@@ -1766,7 +1766,8 @@ function SideSlot({ idx, teamKey, game, setGame, onRoll, onSpendAssist, onSpendR
   // no AST/REB spend — and never read "Their roll", which in the tutorial sat
   // on the coach's slots during YOUR die. With no coach nothing changes.
   const inert = (pvpMode && myTeamKey !== teamKey) || readOnlySide === teamKey;
-  const locked = readOnlySide === teamKey ? false : rollGate ? !rollGate[teamKey] : false;
+  // PvP has no roll gate, so the other side's timeout locks the slot here too.
+  const locked = readOnlySide === teamKey ? false : (rollGate ? !rollGate[teamKey] : false) || heldByTimeout(game, teamKey);
   return (
     <PlayerSlot player={player} ps={getPS(game,teamKey,player.id)||{}} adv={def?matchupAdv(game,teamKey,idx):null}
       fat={getFatigue(game,teamKey,idx)} result={(game.rollResults[teamKey]||[])[idx]} blocked={game.blockedRolls?.[teamKey]?.[idx]}
@@ -2207,8 +2208,8 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               {/* NO DIE BEFORE THE STRATEGY TURN IS OVER (the user,
                   2026-09-25): the button waits for both passes. */}
               <button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled || rollLocked || !diceOut(game)}
-                title={!diceOut(game) ? 'Rolling opens once both sides pass the strategy turn' : rollLocked ? 'Their roll — play a reaction now, or wait for the die' : undefined}>
-                {!diceOut(game) ? '🎲 After the passes' : rollLocked ? '🎲 Their roll' : extraRoll ? '🎲 2nd roll −2' : '🎲 Roll'}
+                title={!diceOut(game) ? 'Rolling opens once both sides pass the strategy turn' : heldByTimeout(game, teamKey) ? 'The other team is in a timeout: you roll once play resumes' : rollLocked ? 'Their roll — play a reaction now, or wait for the die' : undefined}>
+                {!diceOut(game) ? '🎲 After the passes' : heldByTimeout(game, teamKey) ? '⏸ Timeout' : rollLocked ? '🎲 Their roll' : extraRoll ? '🎲 2nd roll −2' : '🎲 Roll'}
               </button>
               {onClutch && !pvpDisabled && !rollLocked && diceOut(game) && game.crunch?.active && clutchAvailable(game, teamKey) > 0 && fat > -6 &&
                 <button className={styles.rollBtn} data-tutorial={`clutch-${teamKey}`} style={{background:'#B45309'}} title={`Clutch Possession: roll ${2 + (game.clutchDice?.[player.id] || 0)} dice, keep the best`} onClick={onClutch}>⭐ Clutch ({2 + (game.clutchDice?.[player.id] || 0)})</button>}

@@ -294,7 +294,9 @@ export async function fetchActualSeasonRates(
       if (!res.ok) throw new Error(`dunksandthrees fetch failed: ${res.status}`);
       const parsed = parseActualPayload(await res.json());
       if (parsed.season !== season) {
-        throw new Error(`dunksandthrees served season ${parsed.season}, not ${season}.`);
+        // The season the page DID serve, for a caller that can live with the
+        // previous one (generateLive's opening week: no games of this one yet).
+        throw Object.assign(new Error(`dunksandthrees served season ${parsed.season}, not ${season}.`), { servedSeason: parsed.season });
       }
       if (parsed.seasonType !== seasonType) {
         throw new Error(

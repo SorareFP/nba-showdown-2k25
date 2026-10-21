@@ -189,6 +189,26 @@ const countGames = log => (log ? (log.reg?.length ?? 0) + (log.post?.length ?? 0
  * `maxFetches` a night. A log that cannot be fetched is not fatal — that
  * player's chart stays on the expected rates tonight — but it is counted.
  */
+/**
+ * THE OPENING WEEK (2026-10-21). dunksandthrees turns its EPM page to the new
+ * season before its ACTUAL page: on 2026-10-20 and 10-21 the EPM page served
+ * 2027 while the actual page still showed 2025-26's finished season, so the
+ * nightly job stopped on "served season 2026, not 2027" two mornings running.
+ * Last season's table means no game of this one is on it yet: the run goes on
+ * with no real games (every game filled from the expected rates, the season
+ * mode's own design). Any other season still stops the run — last season's
+ * games must never be read as this season's.
+ */
+export async function actualOrNone(load, season, log = console.log) {
+  try {
+    return await load();
+  } catch (e) {
+    if (e?.servedSeason !== season - 1) throw e;
+    log(`  dunksandthrees still shows ${season - 1}'s actual table: no ${season} games on it yet, so every game is filled from the expected rates`);
+    return [];
+  }
+}
+
 export async function fetchLiveInputs({
   season = LIVE_SEASON,
   offline = false,
@@ -205,7 +225,7 @@ export async function fetchLiveInputs({
   if (!expected) throw new Error(`generateLive: no cached dunksandthrees expected rates for ${season} — run without --offline.`);
   const regular = offline
     ? readCache(`dunksandthrees-actual-${season}`)
-    : await dt.fetchActualSeasonRates(season, { force });
+    : await actualOrNone(() => dt.fetchActualSeasonRates(season, { force }), season, log);
   if (!regular) throw new Error(`generateLive: no cached dunksandthrees actual rates for ${season} — run without --offline.`);
   let playoffs = [];
   if (offline) {

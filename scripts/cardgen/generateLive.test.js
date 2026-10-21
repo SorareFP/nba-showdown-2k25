@@ -17,6 +17,7 @@ import {
   liveActualRow,
   liveCard,
   main,
+  actualOrNone,
 } from './generateLive.js';
 import { liveRowsFromLog, WINDOW_GAMES } from './realGames.js';
 import { LIVE_SET, CURRENT_SET, setBadge, setTreatment } from '../../src/cards/sets.js';
@@ -204,5 +205,23 @@ describe('the committed file', () => {
   it('names its modes and refuses any other', async () => {
     expect(MODES).toEqual(['mirror', 'season']);
     await expect(main({ mode: 'nope', log: () => {} })).rejects.toThrow(/no such mode/);
+  });
+});
+
+// THE OPENING WEEK (2026-10-21): the nightly job stopped two mornings running
+// on "dunksandthrees served season 2026, not 2027" — the EPM page had turned
+// to 2026-27, the actual page had not. Last season's table is "no games yet";
+// anything else still stops the run.
+describe('the actual table in the opening week', () => {
+  const served = n => Object.assign(new Error(`dunksandthrees served season ${n}, not 2027.`), { servedSeason: n });
+  it('reads the previous season table as no real games yet, and says so', async () => {
+    const lines = [];
+    expect(await actualOrNone(async () => { throw served(2026); }, 2027, l => lines.push(l))).toEqual([]);
+    expect(lines.join(' ')).toMatch(/still shows 2026's actual table/);
+  });
+  it('passes a served table through, and stops on any other season or failure', async () => {
+    expect(await actualOrNone(async () => [{ id: 1 }], 2027)).toEqual([{ id: 1 }]);
+    await expect(actualOrNone(async () => { throw served(2025); }, 2027)).rejects.toThrow(/2025/);
+    await expect(actualOrNone(async () => { throw new Error('dunksandthrees fetch failed: 503'); }, 2027)).rejects.toThrow(/503/);
   });
 });

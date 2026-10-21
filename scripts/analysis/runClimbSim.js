@@ -25,7 +25,7 @@
 // human should draft better, so the numbers here are a floor for you.
 import {
   CLIMB, CLIMB_FIVE, newRun, chooseCamp, openStops, chooseStop, presetFor, recordResult, resultFromGame,
-  pickStrat, pickPlayer, pickPerk, skipOffers, restDay, rosterCards, potPreview, continueClimb, actOfRun, needsRelease, releaseOptions,
+  pickStrat, pickPlayer, pickPerk, skipOffers, restDay, rosterCards, potPreview, continueClimb, actOfRun, needsRelease, releaseOptions, ACT_DIALS,
 } from '../../src/game/modes/run.js';
 import { climbRng, KIND_WEIGHTS, stopById, ACTS } from '../../src/game/modes/climbMap.js';
 import { leanOf } from '../../src/game/modes/climbKits.js';
@@ -59,6 +59,15 @@ if (overrides.floor1 != null || overrides.floor7 != null) {
   CLIMB.floorCap = f => Math.round(f1 + (f - 1) * (f7 - f1) / 6);
 }
 if (overrides.caps) CLIMB.floorCap = f => overrides.caps[f - 1];
+// a2scale=1.3 / a3scale=1.5: every Game cap and the boss cap of Act II / III
+// times this, for this process (2026-10-21, re-tuning after sign-and-release).
+for (const act of [2, 3]) {
+  const k = overrides[`a${act}scale`];
+  if (k != null) {
+    ACT_DIALS[act].floorCaps = ACT_DIALS[act].floorCaps.map(c => Math.round(c * k / 50) * 50);
+    ACT_DIALS[act].bossCap = Math.round(ACT_DIALS[act].bossCap * k / 50) * 50;
+  }
+}
 if (overrides.rivalry != null) CLIMB.rivalryExtra = overrides.rivalry;
 if (overrides.boss != null) CLIMB.bossCap = overrides.boss;
 if (overrides.rest != null || overrides.rivalryW != null) {
@@ -234,7 +243,7 @@ function startingFive(rng) {
 const tally = () => ({ played: 0, won: 0 });
 // THREE ACTS (2026-10-20): each act's games, its boss and how many cleared it.
 const ACTS_TO_CLIMB = Math.min(ACTS, overrides.acts ?? ACTS);
-const actTally = Array.from({ length: ACTS + 1 }, () => ({ games: tally(), boss: tally(), cleared: 0, died: 0, pot: [] }));
+const actTally = Array.from({ length: ACTS + 1 }, () => ({ games: tally(), boss: tally(), cleared: 0, died: 0, pot: [], atBoss: [], atStart: [] }));
 const rivalryOffers = {};
 const rivalryRoom = [];
 const byKind = { game: tally(), rivalry: tally(), boss: tally() };
@@ -275,6 +284,8 @@ for (let i = 0; i < RUNS; i += 1) {
       const sim = simulateGame(p.rosterA, p.rosterB, { deckA: p.deckA, deckB: p.deckB, rng: climbRng(seed, 'game', stop.id), keepGame: true, gameOpts: p.gameOpts, brains: { ...(humanBrain ? { A: humanBrain } : {}), B: coachBrain } });
       const result = resultFromGame(sim.game, stop.id);
       const at = actTally[act];
+      if (stop.kind === 'boss') at.atBoss.push(capSal(p.rosterA));
+      if (stop.floor === 1) at.atStart.push(capSal(p.rosterA));
       const at2 = stop.kind === 'boss' ? at.boss : at.games;
       at2.played += 1;
       if (result.won) at2.won += 1; else at.died += 1;
@@ -347,5 +358,5 @@ console.log(`  a Rivalry's player offer: ${JSON.stringify(rivalryOffers)}${rival
 console.log(`  THREE ACTS (every drafter keeps climbing): of ${RUNS} runs`);
 for (let a = 1; a <= ACTS_TO_CLIMB; a += 1) {
   const t = actTally[a];
-  console.log(`    ${['', 'Act I', 'Act II', 'Act III'][a].padEnd(7)} games won ${pct(t.games.won, t.games.played)} of ${t.games.played}; boss won ${pct(t.boss.won, t.boss.played)} of ${t.boss.played}; cleared by ${pct(t.cleared, RUNS)} of runs; median pot then ${median(t.pot)} coins`);
+  console.log(`    ${['', 'Act I', 'Act II', 'Act III'][a].padEnd(7)} games won ${pct(t.games.won, t.games.played)} of ${t.games.played}; boss won ${pct(t.boss.won, t.boss.played)} of ${t.boss.played}; cleared by ${pct(t.cleared, RUNS)} of runs; median pot then ${median(t.pot)} coins; your payroll at floor 1 $${median(t.atStart)}, at the boss $${median(t.atBoss)}`);
 }

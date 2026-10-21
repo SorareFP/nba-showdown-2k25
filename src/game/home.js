@@ -30,7 +30,7 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 export const NEWS = [
   {
     id: 'climb-sign-and-release', date: '2026-10-21', title: 'The Climb: every Rivalry pays a player, even at a full roster',
-    body: "A Rivalry win always offers a player again, Act II and III included. A full roster of ten (or a cap with no room) used to empty the offer; now the three players come anyway, and you sign one by releasing a player of yours, who leaves the run with their perks. Game drops work the same way. And a timeout now holds the other team: nobody on the other side rolls until play resumes.",
+    body: "A Rivalry win always offers a player again, Act II and III included. A full roster of ten (or a cap with no room) used to empty the offer; now the three players come anyway, and you sign one by releasing a player of yours, who leaves the run with their perks. Game drops work the same way. With rosters that keep improving, Acts II and III were re-tuned to stay hard: Act II's teams and boss are bigger, and Act III is played against classic teams. And a timeout now holds the other team: nobody on the other side rolls until play resumes.",
     to: 'climb', cta: 'The Climb',
   },
   {

@@ -63,14 +63,17 @@ export const FLOOR_CAPS = [1200, 1250, 1350, 2000, 2100, 2350, 2700];
  */
 export const ACT_DIALS = {
   2: {
-    floorCaps: [3200, 3400, 3600, 3900, 4100, 4400, 4700], rivalryExtra: 350,
-    oppSize: [6, 7, 7, 8, 8, 8], bossCap: 6400, bossSize: 9,
+    floorCaps: [3900, 4200, 4500, 4900, 5300, 5700, 6100], rivalryExtra: 400,
+    oppSize: [6, 7, 7, 8, 8, 8], bossCap: 9600, bossSize: 9,
     coachExtra: [4, 5, 6, 7, 8, 9], coachSingles: false, coachRares: true,
     bossExtra: 6, bossRares: true, rare: [0.45, 0.65],
   },
   3: {
-    floorCaps: [4800, 5000, 5300, 5600, 5900, 6200, 6600], rivalryExtra: 450,
-    oppSize: [8, 8, 8, 9, 9, 9], bossCap: 8000, bossSize: 10,
+    // ACT III IS PLAYED AGAINST LEGENDS (2026-10-21): a franchise's current
+    // cards top out near $7,000 at nine deep, under a run's payroll by then,
+    // so its Games are classic teams too (classicGames), as its boss is.
+    floorCaps: [8000, 8400, 8800, 9300, 9800, 10300, 10800], rivalryExtra: 500, classicGames: true,
+    oppSize: [8, 8, 9, 9, 9, 10], bossCap: 14000, bossSize: 11,
     coachExtra: [8, 9, 10, 11, 12, 12], coachSingles: false, coachRares: true,
     bossExtra: 9, bossRares: true, rare: [0.65, 0.85],
   },
@@ -360,13 +363,17 @@ export function gameSetup(run, stopId) {
   const cap = stopCap(run, stop);
   let abbr;
   let roster;
+  let classic = boss;
   if (boss) {
     abbr = bossFranchise(run, act);
     roster = buildClassicRoster(abbr, { cap, size: bossSizeOf(act), rng });
   } else {
     const order = franchiseOrder(run);
     abbr = order[run.cleared.length % order.length];
-    roster = buildAiRoster(abbr, { size: oppSizeOf(act, stop.floor), cap, rng });
+    const size = oppSizeOf(act, stop.floor);
+    // A classic team where the act asks for one and the franchise can field it.
+    classic = Boolean(act > 1 && ACT_DIALS[act].classicGames && classicFranchises({ cap, size }).includes(abbr));
+    roster = classic ? buildClassicRoster(abbr, { cap, size, rng }) : buildAiRoster(abbr, { size, cap, rng });
   }
   const team = TEAMS[abbr] ?? {};
   return {
@@ -377,7 +384,7 @@ export function gameSetup(run, stopId) {
     home: CLIMB.homeKinds.includes(stop.kind),
     aiLevel: run.rung,
     cap,
-    opponent: { abbr, name: team.name ?? abbr, city: team.city ?? '', classic: boss },
+    opponent: { abbr, name: team.name ?? abbr, city: team.city ?? '', classic },
     act,
   };
 }

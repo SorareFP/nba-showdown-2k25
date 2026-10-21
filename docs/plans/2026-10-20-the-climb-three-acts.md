@@ -14,6 +14,22 @@ at Prince and 0.7% at Deity.
 
 The dials are run.js ACT_DIALS and climbMap.js ACT_POT / BOSS_PACKS.
 
+**RE-TUNED 2026-10-21** after sign-and-release (a full roster now signs by
+releasing, so payroll keeps climbing with the cap: median $8,400 at the Act II
+boss, $11,600 at Act III's, where the opponents had been $6,400 and $8,000; the
+full climb had risen to 21.3% at Prince and 6.3% at Deity). A franchise's
+current cards top out near $7,000 at nine deep, so **Act III's Games are classic
+teams too** (classicGames). Act II: Games $3,900-5,700, Rivalry +$400, boss
+$9,600 x9. Act III: Games $8,000-10,300, Rivalry +$500, boss $14,000 x11. Careful
+drafter, 250 runs:
+
+| Rung | Act I cleared | Act II cleared | Act III cleared |
+|---|---|---|---|
+| Prince | 28.8% (boss 46%) | 4.8% (boss 39%) | 2.4% (games 85%, boss 6 of 6) |
+| Deity | 11.6% (boss 23%) | 2.0% (boss 45% of 11) | 0.4% (games 75%) |
+
+The Act III boss has too few games to read (7, all won); watch it.
+
 The user, after beating the
 Act I boss and finding only "Bank the pot" and "Give up this run": "the point
 of the game is to have 3 acts like Slay the Spire. The options should be 'take

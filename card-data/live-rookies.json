@@ -471,18 +471,6 @@
       }
     },
     {
-      "id": "Otega_Oweh",
-      "name": "Otega Oweh",
-      "team": "OKC",
-      "pos": "G",
-      "personId": 1642923,
-      "draft": {
-        "year": 2026,
-        "round": 2,
-        "pick": 41
-      }
-    },
-    {
       "id": "Ja_Kobi_Gillespie",
       "name": "Ja'Kobi Gillespie",
       "team": "SAS",
@@ -801,6 +789,15 @@
       "pos": "G",
       "personId": 1643621,
       "draft": null
+    }
+  ],
+  "leftOut": [
+    {
+      "id": "Otega_Oweh",
+      "name": "Otega Oweh",
+      "team": "OKC",
+      "personId": 1642923,
+      "why": "out for the season (Achilles); the user, 2026-10-22: \"You can remove Otega Oweh, as he will miss the season with an achilles injury\". Keep him out of any rebuild of this list from the rosters."
     }
   ]
 }

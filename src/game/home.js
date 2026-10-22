@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-perks-wave-two', date: '2026-10-22', title: 'The Climb: twenty new perks',
+    body: "Perks are the Climb's relics, and there are twenty-four now. Build a player with Track Work (+1 Speed), Lockdown Drills (+1 Defensive Bonus) or Post Moves (+2 Paint Bonus); Signature Move is +2 on threes now, so it is a real choice against Extra Reps, and an offer never shows two shooting perks. Team perks last the run: Scouting Report, Fast Start, Closers, Rim Deterrent and Ball Movement Culture work in every game; Training Staff, Shootaround, Advance Scout and Scouting Network work between games; Sponsorship grows the pot and Travel Day lets you jump lanes. And each boss now offers a perk of its own, big and usually with a cost: Second Chance, Win-Now Trade, Max Contract, Heavy Minutes, Short Rotation and Front Office Shake-Up.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'rosters-after-camp-cuts', date: '2026-10-22', title: 'Rosters after the camp cuts',
     body: "Walter Clayton Jr. is a Maverick now. And four more 2026-27 cards belong to players no NBA team kept after training camp: Bruce Brown, Micah Peavy, Dwight Powell and Drew Eubanks. They are Free Agents now, on the plain FA card: no collection asks for them and no pack deals them, and a copy you own still plays, burns and sells. When one signs, they join their new team and the packs again.",
     to: 'goals', cta: 'Collections',

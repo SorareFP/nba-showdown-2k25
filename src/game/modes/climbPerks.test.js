@@ -1,7 +1,7 @@
 // THE CLIMB'S PERKS (relics), 2026-10-19: the user's "relics dropped by
 // rivalries and bosses", the first four from "Build a player".
 import { describe, it, expect } from 'vitest';
-import { PERKS, PERK_IDS, PERK_CAP, boostsOf, boostedCard, perkProblem, perkOffer, practicable } from './climbPerks.js';
+import { PERKS, PERK_IDS, PERK_CAP, LEDGER_PERKS, LEDGER_PERK_KINDS, boostsOf, boostedCard, perkProblem, perkOffer, practicable } from './climbPerks.js';
 import { newRun, chooseCamp, chooseStop, recordResult, pickPerk, skipOffers, presetFor, rosterCards, openStops } from './run.js';
 import { climbRng, stopById } from './climbMap.js';
 import { CARDS } from '../cards.js';
@@ -30,10 +30,22 @@ function afterRivalry() {
 const ids = run => rosterCards(run).cards.map(c => c.id);
 
 describe('the perks', () => {
-  it('are the four of "Build a player", each with its text', () => {
-    expect(PERK_IDS).toEqual(['gym_rat', 'extra_reps', 'signature_move', 'film_study']);
-    for (const id of PERK_IDS) expect(PERKS[id].text, id).toBeTruthy();
+  it('are the drafted perks, each with its text and its target', () => {
+    // The first four of "Build a player" (2026-10-19), then the 2026-10-22 draft.
+    expect(PERK_IDS.slice(0, 4)).toEqual(['gym_rat', 'extra_reps', 'signature_move', 'film_study']);
+    expect(PERK_IDS).toHaveLength(24);
+    for (const id of PERK_IDS) {
+      expect(PERKS[id].text, id).toBeTruthy();
+      expect(['player', 'card', 'team'], id).toContain(PERKS[id].target);
+    }
     expect(PERKS.extra_reps.step).toBe(-1);   // a lower Shot Line is the better one
+    // Signature Move is +2 now: Extra Reps made the +1 redundant (the user, 2026-10-22).
+    expect(PERKS.signature_move.step).toBe(2);
+    expect(PERK_IDS.filter(id => PERKS[id].boss)).toEqual(['second_chance', 'win_now_trade', 'max_contract', 'heavy_minutes', 'short_rotation', 'front_office']);
+    expect(PERK_IDS.filter(id => PERKS[id].shooting)).toEqual(['extra_reps', 'signature_move', 'post_moves']);
+    // The server's copy of which perks it keeps agrees with the perks' own flags.
+    expect([...LEDGER_PERKS].sort()).toEqual(Object.keys(LEDGER_PERK_KINDS).sort());
+    for (const id of LEDGER_PERKS) expect(LEDGER_PERK_KINDS[id] === 'boss', id).toBe(Boolean(PERKS[id].boss));
   });
 
   it('add up per player, on copies, never on the card', () => {
@@ -47,7 +59,7 @@ describe('the perks', () => {
 
   it('stop at three on any one number, and Film Study needs a card with a "+"', () => {
     const run = { deck: { catch_and_shoot: 2, 'close_out+': 1, twin_towers: 1 }, perks: Array.from({ length: PERK_CAP }, () => ({ id: 'gym_rat', target: 'p1' })) };
-    expect(perkProblem(run, 'gym_rat', 'p1', ['p1', 'p2'])).toMatch(/Already/);
+    expect(perkProblem(run, 'gym_rat', 'p1', ['p1', 'p2'])).toMatch(/past 3/);
     expect(perkProblem(run, 'extra_reps', 'p1', ['p1', 'p2'])).toBeNull();
     expect(perkProblem(run, 'gym_rat', 'nobody', ['p1'])).toMatch(/your players/);
     expect(practicable(run.deck)).toEqual(['catch_and_shoot']);
@@ -75,11 +87,13 @@ describe('a Rivalry drops a perk', () => {
   });
 
   it('takes a player perk onto the player the game is dealt with, and keeps it', () => {
-    const r = afterRivalry();
-    const perk = r.offers.perks.find(id => PERKS[id].target === 'player');
+    // A player perk on offer, whatever the seed drew (twenty-four perks now).
+    const drawn = afterRivalry();
+    const perk = 'gym_rat';
+    const r = { ...drawn, offers: { ...drawn.offers, perks: [perk, ...drawn.offers.perks.filter(id => id !== perk)].slice(0, 3) } };
     const who = ids(r)[0];
     const took = pickPerk(r, perk, who);
-    expect(took.perks).toEqual([{ id: perk, target: who }]);
+    expect(took.perks).toEqual([{ id: perk, target: who, at: r.cleared.length }]);
     expect(took.offers?.perks ?? []).toEqual([]);
     expect(() => pickPerk(took, perk, who)).toThrow();
     // The next game deals him with the boost; the card in the pool is untouched.
@@ -88,8 +102,7 @@ describe('a Rivalry drops a perk', () => {
       const p = presetFor(chooseStop({ ...took, status: 'map', offers: null }, next.id));
       const him = p.rosterA.find(c => c.id === who);
       const plain = rosterCards(took).cards.find(c => c.id === who);
-      const { stat, step } = PERKS[perk];
-      expect(him[stat]).toBe((plain[stat] ?? 0) + step);
+      for (const [stat, step] of Object.entries(boostsOf(took)[who])) expect(him[stat]).toBe((plain[stat] ?? 0) + step);
     }
   });
 

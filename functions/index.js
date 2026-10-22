@@ -47,7 +47,7 @@ import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game
 import { burnValueFor, burnProblem, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox, payFactorOf, AI_PAY } from './shared/src/game/coinRewards.js';
-import { generateMap, reachableGame, stopById, potOfRun, runClaimPreview, actOf, ACTS, MAP_VERSION } from './shared/src/game/modes/climbMap.js';
+import { generateMap, travelCost, stopById, potOfRun, runClaimPreview, actOf, ACTS, MAP_VERSION, LEDGER_PERK_KINDS, TRAVEL_DAYS } from './shared/src/game/modes/climbMap.js';
 import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from './shared/src/game/modes/prizes.js';
 import { getDatabase } from 'firebase-admin/database';
 import { readFileSync } from 'node:fs';
@@ -1018,6 +1018,10 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
 //   it, climbContinue moves the ledger to the next act (Acts I and II only).
 //   The pot is one pot across the acts (potOfRun): a loss in any act loses
 //   all of it, and each beaten boss's packs are paid when it banks.
+//   - PERKS THE LEDGER KEEPS (2026-10-22, climbPerk): Sponsorship and Max
+//   Contract price the pot from the stop they were taken at; Travel Day lets
+//   a game be opened off the links (its uses counted here); Second Chance
+//   turns one loss into a replay of the same stop, claimed under ':2'.
 // ═══════════════════════════════════════════════════════════════════════════
 
 /** A run id as a document id, or null. */
@@ -1065,10 +1069,13 @@ export const climbGame = onCall({ region: 'us-central1' }, async request => {
     const act = run.act ?? 1;
     const last = cleared.length ? cleared[cleared.length - 1] : null;
     const from = last && actOf(last) === act ? last : null;
-    if (!reachableGame(generateMap(run.seed, run.mapVersion ?? 1, act), from, stopId)) {
+    // A Second Chance replay opens its own stop again at no cost; any other
+    // stop off the links spends Travel Days (the fewest the way needs).
+    const cost = run.replay === stopId ? 0 : travelCost(generateMap(run.seed, run.mapVersion ?? 1, act), from, stopId);
+    if (!(cost <= (run.travel ?? 0))) {
       throw new HttpsError('failed-precondition', 'That stop is not open');
     }
-    tx.update(ref, { open: stopId, openedAt: FieldValue.serverTimestamp() });
+    tx.update(ref, { open: stopId, openedAt: FieldValue.serverTimestamp(), ...(cost > 0 ? { travel: (run.travel ?? 0) - cost } : {}) });
     return { ok: true, status: 'active' };
   });
 });
@@ -1097,7 +1104,9 @@ async function climbClaim(uid, runId, claim, claimKey) {
         return { already: true, coins: r.coins ?? 0, breakdown: Array.isArray(r.breakdown) ? r.breakdown : [], run: { status: run?.status ?? 'none' } };
       }
     }
-    if (!run || run.status !== 'active' || !run.open || claimKey !== `fixture:climb:${runId}:${run.open}`) {
+    // A Second Chance replay is claimed under its own key (run.js recordResult).
+    const openKey = `fixture:climb:${runId}:${run?.open}${run?.replay && run.replay === run.open ? ':2' : ''}`;
+    if (!run || run.status !== 'active' || !run.open || claimKey !== openKey) {
       return { coins: 0, breakdown: [], run: { status: run?.status ?? 'none' } };
     }
     const now = Date.now();
@@ -1114,9 +1123,14 @@ async function climbClaim(uid, runId, claim, claimKey) {
     const map = generateMap(run.seed, run.mapVersion ?? 1, actOf(run.open));
     const stop = stopById(map, run.open);
     const cleared = claim.won ? [...(run.cleared ?? []), run.open] : (run.cleared ?? []);
-    const status = !claim.won ? 'lost' : stop?.kind === 'boss' ? 'won' : 'active';
-    tx.update(ref, claim.won ? { cleared, open: null, status } : { status, lostAt: run.open, open: null });
-    const { coins, breakdown } = runClaimPreview(stop, run.rung, claim.won, claim.margin);
+    // SECOND CHANCE: the first loss after it was taken is a replay, once.
+    const replay = !claim.won && (run.perks ?? []).some(x => x?.id === 'second_chance') && !run.secondChanceUsed;
+    const status = !claim.won && !replay ? 'lost' : stop?.kind === 'boss' && claim.won ? 'won' : 'active';
+    tx.update(ref, claim.won ? { cleared, open: null, status }
+      : replay ? { open: null, secondChanceUsed: true, replay: run.open }
+        : { status, lostAt: run.open, open: null });
+    const potAdd = claim.won ? potOfRun({ ...run, cleared }).coins - potOfRun(run).coins : null;
+    const { coins, breakdown } = runClaimPreview(stop, run.rung, claim.won, claim.margin, { potAdd, replay });
     tx.update(userRef, { gameWindow: { at: now, n: recent + 1 }, ...(coins > 0 ? { currency: FieldValue.increment(coins) } : {}) });
     if (receiptRef) {
       tx.set(receiptRef, {
@@ -1141,6 +1155,45 @@ async function climbClaim(uid, runId, claim, claimKey) {
     return { coins, breakdown, run: { status, pot: potOfRun({ ...run, cleared }) } };
   });
 }
+
+/**
+ * A PERK THE LEDGER KEEPS (2026-10-22, climbMap.js LEDGER_PERK_KINDS): the
+ * browser records it here before it takes it. A win's (Sponsorship, Travel
+ * Day) between stops of a live run; a boss's (Second Chance, Max Contract) at
+ * the start of an act after Act I, one a boss beaten. Once a run each, and a
+ * repeat answers `ok` so a browser that lost the reply can catch up. `at` is
+ * how many stops were cleared: the pot's perks count from there.
+ */
+export const climbPerk = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const runId = safeRunId(request.data?.runId);
+  const perk = typeof request.data?.perk === 'string' ? request.data.perk : null;
+  if (!runId || !perk || !Object.hasOwn(LEDGER_PERK_KINDS, perk)) throw new HttpsError('invalid-argument', 'Which run, which perk?');
+  const ref = runLedgerRef(uid, runId);
+  return db.runTransaction(async tx => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such run');
+    const run = snap.data();
+    const perks = run.perks ?? [];
+    if (perks.some(x => x?.id === perk)) return { ok: true };
+    if (run.status !== 'active' || run.open) throw new HttpsError('failed-precondition', 'Take a perk between games');
+    const cleared = run.cleared ?? [];
+    const act = run.act ?? 1;
+    if (LEDGER_PERK_KINDS[perk] === 'boss') {
+      const bossPerks = perks.filter(x => LEDGER_PERK_KINDS[x?.id] === 'boss').length;
+      if (act < 2 || cleared.some(id => actOf(id) === act) || bossPerks >= act - 1) {
+        throw new HttpsError('failed-precondition', "A boss's perk comes with the boss's reward");
+      }
+    } else if (!cleared.length) {
+      throw new HttpsError('failed-precondition', 'Win a game first');
+    }
+    tx.update(ref, {
+      perks: [...perks, { id: perk, at: cleared.length }],
+      ...(perk === 'travel_day' ? { travel: (run.travel ?? 0) + TRAVEL_DAYS } : {}),
+    });
+    return { ok: true };
+  });
+});
 
 /**
  * KEEP CLIMBING (2026-10-20): after an Act I or Act II boss, the ledger moves

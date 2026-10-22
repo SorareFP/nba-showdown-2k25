@@ -149,18 +149,19 @@ describe('The Climb in the news', () => {
   });
 
   it('leads the news with its build-arounds, its 2026-10-19 changes, then the Play hub', () => {
-    // The camp-cuts roster item (2026-10-22) sits on top; the Climb's run follows it.
-    expect(NEWS[0]).toMatchObject({ id: 'rosters-after-camp-cuts', to: 'goals' });
-    expect(NEWS[1]).toMatchObject({ id: 'climb-sign-and-release', to: 'climb' });
-    expect(NEWS[2]).toMatchObject({ id: 'climb-three-acts', to: 'climb' });
-    expect(NEWS[3]).toMatchObject({ id: 'climb-wave-two', to: 'climb' });
-    expect(NEWS[4]).toMatchObject({ id: 'climb-plus-every-card', to: 'climb' });
-    expect(NEWS[5]).toMatchObject({ id: 'climb-home-court', to: 'climb' });
-    expect(NEWS[6]).toMatchObject({ id: 'climb-bar', to: 'climb' });
-    expect(NEWS[7]).toMatchObject({ id: 'putback-rebound-and-their', to: 'climb' });
-    expect(NEWS[8]).toMatchObject({ id: 'climb-build-arounds', to: 'climb' });
-    expect(NEWS[9]).toMatchObject({ id: 'climb-perks-chemistry', to: 'climb' });
-    expect(NEWS[10]).toMatchObject({ id: 'climb-pays-as-you-go', to: 'climb' });
-    expect(NEWS[11]).toMatchObject({ id: 'play-hub', to: 'modes' });
+    // The perks' second wave and the camp-cuts roster item (2026-10-22) sit on top.
+    expect(NEWS[0]).toMatchObject({ id: 'climb-perks-wave-two', to: 'climb' });
+    expect(NEWS[1]).toMatchObject({ id: 'rosters-after-camp-cuts', to: 'goals' });
+    expect(NEWS[2]).toMatchObject({ id: 'climb-sign-and-release', to: 'climb' });
+    expect(NEWS[3]).toMatchObject({ id: 'climb-three-acts', to: 'climb' });
+    expect(NEWS[4]).toMatchObject({ id: 'climb-wave-two', to: 'climb' });
+    expect(NEWS[5]).toMatchObject({ id: 'climb-plus-every-card', to: 'climb' });
+    expect(NEWS[6]).toMatchObject({ id: 'climb-home-court', to: 'climb' });
+    expect(NEWS[7]).toMatchObject({ id: 'climb-bar', to: 'climb' });
+    expect(NEWS[8]).toMatchObject({ id: 'putback-rebound-and-their', to: 'climb' });
+    expect(NEWS[9]).toMatchObject({ id: 'climb-build-arounds', to: 'climb' });
+    expect(NEWS[10]).toMatchObject({ id: 'climb-perks-chemistry', to: 'climb' });
+    expect(NEWS[11]).toMatchObject({ id: 'climb-pays-as-you-go', to: 'climb' });
+    expect(NEWS[12]).toMatchObject({ id: 'play-hub', to: 'modes' });
   });
 });

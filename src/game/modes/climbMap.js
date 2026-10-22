@@ -56,6 +56,23 @@ export const bossIdOf = act => `${actPrefix(act)}boss`;
 /** Roman numerals for the screens. */
 export const ACT_NAMES = { 1: 'Act I', 2: 'Act II', 3: 'Act III' };
 /**
+ * THE PERKS THE SERVER KEEPS (2026-10-22; climbPerks.js marks them `ledger`):
+ * the ones the pot or the ledger's own rules read, recorded by climbPerk as
+ * { id, at } — `at` is how many stops were cleared when it was taken, so the
+ * pot knows which wins came after. 'win': taken from a win's reward; 'boss':
+ * from a boss's, at the start of the next act.
+ */
+export const LEDGER_PERK_KINDS = { sponsorship: 'win', travel_day: 'win', second_chance: 'boss', max_contract: 'boss' };
+/** Sponsorship: every win after it adds this much more to the pot. */
+export const SPONSOR_SHARE = 0.2;
+/** Travel Day: how many times a run may go to an unlinked stop on the next floor. */
+export const TRAVEL_DAYS = 3;
+/** When a ledger perk was taken (stops cleared by then), or null. */
+const perkAt = (perks, id) => {
+  const p = (perks ?? []).find(x => x?.id === id);
+  return p ? (Number.isInteger(p.at) ? p.at : 0) : null;
+};
+/**
  * THE GENERATOR'S VERSION, stamped on every run and ledger (final review,
  * 2026-10-18): the server rebuilds a run's map from its seed, so a change to
  * how maps are drawn would reshape every run in flight. A change bumps this
@@ -275,18 +292,43 @@ export function nextStops(map, fromId) {
  * server never hears about a Rest Day, so this is its legality test.
  */
 export function reachableGame(map, fromId, toId) {
+  return travelCost(map, fromId, toId) === 0;
+}
+
+/** Every stop on the floor above `fromId`'s (Travel Day's reach), or [] at the top. */
+export function nextFloorStops(map, fromId) {
+  const s = fromId == null ? null : stopById(map, fromId);
+  if (!s) return [];
+  if (s.floor >= FLOORS) return map.boss ? [map.boss] : [];
+  return [...(map.floors[s.floor] ?? [])];
+}
+
+/**
+ * THE TRAVEL DAYS A WAY TO `toId` NEEDS (2026-10-22, the Travel Day perk:
+ * "go to any stop on the next floor, linked or not"): the fewest jumps to an
+ * unlinked stop on the next floor, along a way through Rest Days only;
+ * Infinity when there is none or `toId` is a Rest Day. 0 is reachableGame.
+ */
+export function travelCost(map, fromId, toId) {
   const target = stopById(map, toId);
-  if (!target || target.kind === 'rest') return false;
-  const queue = nextStops(map, fromId);
-  const seen = new Set();
+  if (!target || target.kind === 'rest') return Infinity;
+  const best = new Map();
+  // Linked steps cost nothing; a jump to the next floor costs one.
+  const steps = id => [
+    ...nextStops(map, id).map(s => [s, 0]),
+    ...nextFloorStops(map, id).map(s => [s, 1]),
+  ];
+  const queue = nextStops(map, fromId).map(s => [s, 0]);
+  if (fromId != null) queue.push(...nextFloorStops(map, fromId).map(s => [s, 1]));
   while (queue.length) {
-    const s = queue.shift();
-    if (seen.has(s.id)) continue;
-    seen.add(s.id);
-    if (s.id === toId) return true;
-    if (s.kind === 'rest') queue.push(...nextStops(map, s.id));
+    queue.sort((a, b) => a[1] - b[1]);
+    const [s, cost] = queue.shift();
+    if ((best.get(s.id) ?? Infinity) <= cost) continue;
+    best.set(s.id, cost);
+    if (s.id === toId) return cost;
+    if (s.kind === 'rest') for (const [n, c] of steps(s.id)) queue.push([n, cost + c]);
   }
-  return false;
+  return Infinity;
 }
 
 /** What one cleared stop adds to the pot, before the rung. */
@@ -311,30 +353,41 @@ export function potOf(map, clearedIds, rung) {
  * act's map at its ACT_POT, the rung's pay on top, and every beaten boss's
  * packs. `booster` stays for the screens and saves that read it.
  */
-export function potOfRun({ seed, mapVersion = MAP_VERSION, cleared = [], rung }) {
+// THE POT'S PERKS (2026-10-22): Sponsorship adds SPONSOR_SHARE to every win
+// after it; Max Contract's Games add nothing after it. `perks` is the
+// ledger's (or the run's) list of { id, at }.
+export function potOfRun({ seed, mapVersion = MAP_VERSION, cleared = [], rung, perks = [] }) {
   const ids = [...new Set(cleared ?? [])];
   const maps = {};
   const mapOf = act => (maps[act] ??= generateMap(seed, mapVersion, act));
+  const sponsorAt = perkAt(perks, 'sponsorship');
+  const maxAt = perkAt(perks, 'max_contract');
   let sum = 0;
   const packs = [];
-  for (const id of ids) {
+  ids.forEach((id, i) => {
     const act = actOf(id);
-    if (act < 1 || act > ACTS) continue;
+    if (act < 1 || act > ACTS) return;
     const stop = stopById(mapOf(act), id);
-    sum += stopPot(stop) * (ACT_POT[act] ?? 1);
+    let add = stopPot(stop) * (ACT_POT[act] ?? 1);
+    if (stop?.kind === 'game' && maxAt != null && i >= maxAt) add = 0;
+    if (sponsorAt != null && i >= sponsorAt) add *= 1 + SPONSOR_SHARE;
+    sum += add;
     if (stop?.kind === 'boss') packs.push(...(BOSS_PACKS[act] ?? []));
-  }
+  });
   return { coins: Math.round(sum * payFactorOf(rung)), booster: packs.includes('booster'), packs };
 }
 
 /** The results screen's line for a run game: it pays nothing now, it adds to the pot. */
 // Since 2026-10-19 a run game also PAYS, a quarter of a game (climbGamePay);
 // `margin` is the game's (the claim's, sanitized there). The pot line follows.
-export function runClaimPreview(stop, rung, won, margin = null) {
+// `potAdd`: what the win adds with the run's perks on (potOfRun after less
+// before); `replay`: a loss Second Chance replays (2026-10-22).
+export function runClaimPreview(stop, rung, won, margin = null, { potAdd = null, replay = false } = {}) {
   const pay = climbGamePay({ won, margin, aiLevel: rung });
+  if (!won && replay) return { coins: pay.coins, breakdown: [...pay.breakdown, { label: 'Second Chance: this game is replayed, and the pot stays', coins: 0 }] };
   if (!won) return { coins: pay.coins, breakdown: [...pay.breakdown, { label: 'The run is over and the pot is lost', coins: 0 }] };
   const act = actOf(stop?.id);
-  const n = Math.round(stopPot(stop) * (ACT_POT[act] ?? 1) * payFactorOf(rung));
+  const n = Number.isFinite(potAdd) ? potAdd : Math.round(stopPot(stop) * (ACT_POT[act] ?? 1) * payFactorOf(rung));
   const label = stop?.kind === 'boss' ? `Into the pot: +${n} and ${packWords(BOSS_PACKS[act])}` : `Into the pot: +${n}`;
   return { coins: pay.coins, breakdown: [...pay.breakdown, { label, coins: 0 }] };
 }

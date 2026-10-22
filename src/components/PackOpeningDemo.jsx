@@ -191,6 +191,7 @@ const climbDemoServer = {
   async start() { return { runId: `demo${Date.now()}`, seed: Math.floor(Math.random() * 2 ** 31) }; },
   async openGame() { return { ok: true, status: 'active' }; },
   async continueTo(_uid, _runId, toAct) { return { ok: true, act: toAct }; },
+  async perk() { return { ok: true }; },
   async bank() {
     const run = unpackRun(JSON.parse(globalThis.localStorage?.getItem(CLIMB_DEMO_KEY) ?? 'null'));
     return run ? potOfRun(run) : { coins: 0, booster: false, packs: [] };

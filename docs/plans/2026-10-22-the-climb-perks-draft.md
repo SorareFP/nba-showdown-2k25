@@ -1,6 +1,10 @@
 # The Climb: new perks, from Slay the Spire's relics
 
-**DRAFT 2026-10-22, for the user's approval.** The user: "As far as perks go,
+**BUILT 2026-10-22, every perk below (not only the ★ ones).** The user, on
+this draft: "All these perks are awesome by the way!" How each was built,
+and the calls the draft left open, are under "As built" at the end.
+
+The user: "As far as perks go,
 extra reps makes signature move kind of redundant when they appear at the same
 time. Can you look at the Slay the Spire relics and come up with some new
 perks?"
@@ -80,3 +84,35 @@ team), the readers it needs (presetFor / newGame for game-long effects, the
 run for between-game ones), an icon, and a test. Boss perks get their own
 pool for continueClimb's reward. How to Play, the Rulebook and a NEWS item
 move the same day.
+
+## As built (2026-10-22)
+
+Where each lives: climbPerks.js (the list, `target` player / card / team,
+`game`, `ledger`, `boss`, `shooting`), run.js (between games), engine.js and
+execCard.js (in a game, through `g.perks` = gameOpts.perks), climbMap.js and
+functions/index.js `climbPerk` (the four the server keeps). Tests:
+climbPerks.test.js, climbPerksRun.test.js, climbPerksEngine.test.js,
+functions/climb.test.js, climbScreens.test.jsx.
+
+Calls the draft left open, made while building:
+
+- **Signature Move's +2 reaches the copies already taken**, since a perk is
+  stored by id and read through its definition.
+- **A team perk is taken once a run** and never offered again.
+- **Shootaround's practice and Front Office's cuts and practices wait on the
+  map** as buttons, the way Two-a-Days' practice already did.
+- **Short Rotation's extra card counts the opening hand too** ("each
+  section" includes the first), so it opens at eight, nine with Scouting
+  Report. Its two-card cap counts every card played from hand, reactions
+  included.
+- **Second Chance replays the same game**: same opponent, the run as it stood
+  before it, under a claim key of its own (`…:2`, the first key's receipt is
+  spent). A tie after the last overtime is a loss, so it is replayed too.
+- **Travel Day is spent on any unlinked stop**, a Rest Day included. The
+  server counts the fewest jumps a way needs (travelCost), so it never
+  refuses a move the browser allowed.
+- **Max Contract needs room on both numbers** (each moved at most 1 before).
+  Releasing that player keeps the pot rule: the ledger cannot un-take it.
+- **Sponsorship's 20% is on coins**, a boss's included, not on its pack.
+- Ledger perks go to the server first (ClimbTab `takePerk`); a repeat answers
+  `ok`, so a reply lost in transit can be retried.

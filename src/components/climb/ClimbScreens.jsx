@@ -11,12 +11,12 @@ import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster, DEFAULT_FILTERS, filterPool, sortPool } from '../../game/teamRules.js';
 import PoolFilters from '../PoolFilters.jsx';
-import { CLIMB, openStops, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions } from '../../game/modes/run.js';
+import { CLIMB, openStops, isTravel, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops, ACTS, ACT_NAMES, ACT_POT, BOSS_PACKS, packWords } from '../../game/modes/climbMap.js';
 import { PLAYBOOKS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
-import { PERKS, boostsOf, boostedCard, perkProblem, practicable } from '../../game/modes/climbPerks.js';
+import { PERKS, boostsOf, boostedCard, perkProblem, practicable, hasPerk } from '../../game/modes/climbPerks.js';
 import { cardFit } from '../../game/cardFit.js';
 import { fitsSystem, systemLine } from '../../game/systemFit.js';
 import styles from './Climb.module.css';
@@ -88,33 +88,38 @@ function StratTile({ id, children = null, onClick = null, disabled = false, note
   );
 }
 
-// The number a perk moves, as the player stands now (his boosts included).
-const PERK_STAT_NAME = { power: 'Power', shotLine: 'Shot Line', threePtBoost: '3PT Bonus' };
-const perkNow = (card, stat, boost) => `${PERK_STAT_NAME[stat]} ${(card?.[stat] ?? 0) + (boost?.[stat] ?? 0)}`;
+// The numbers a perk moves, as the player stands now (their boosts included).
+const PERK_STAT_NAME = { power: 'Power', speed: 'Speed', shotLine: 'Shot Line', threePtBoost: '3PT Bonus', paintBoost: 'Paint Bonus', defBoost: 'Defensive Bonus' };
+const perkStats = def => Object.keys(def.boost ?? { [def.stat]: def.step });
+const perkNow = (card, def, boost) => perkStats(def).map(stat => `${PERK_STAT_NAME[stat] ?? stat} ${(card?.[stat] ?? 0) + (boost?.[stat] ?? 0)}`).join(' · ');
 
 /**
  * A PERK ON OFFER (2026-10-19): what it does, who or what takes it, and Take.
  * A player perk lists the players it can still move (PERK_CAP), with the
- * number as it stands; Film Study lists the cards with a "+".
+ * numbers as they stand; Film Study lists the cards with a "+"; a team perk
+ * (2026-10-22) takes no one.
  */
 function PerkTile({ run, id, onPick, busy }) {
   const def = PERKS[id];
   const { cards } = rosterCards(run);
   const boosts = boostsOf(run);
   const ids = cards.map(c => c.id);
-  const options = def.target === 'card'
+  const team = def.target === 'team';
+  const options = team ? [] : def.target === 'card'
     ? practicable(run.deck).map(cid => ({ value: cid, label: getStrat(cid)?.name ?? cid }))
-    : cards.filter(c => !perkProblem(run, id, c.id, ids)).map(c => ({ value: c.id, label: `${c.name} · ${perkNow(c, def.stat, boosts[c.id])}` }));
+    : cards.filter(c => !perkProblem(run, id, c.id, ids)).map(c => ({ value: c.id, label: `${c.name} · ${perkNow(c, def, boosts[c.id])}` }));
   const [target, setTarget] = useState(options[0]?.value ?? '');
   return (
-    <div className={`${styles.tile} ${styles.offer} ${styles.perk}`} data-perk={id}>
+    <div className={`${styles.tile} ${styles.offer} ${styles.perk}`} data-perk={id} data-boss-perk={def.boss ? 'true' : undefined}>
       <div className={styles.perkIcon} aria-hidden="true">{def.icon}</div>
       <div className={styles.tileName}>{def.name}</div>
       <p className={styles.stratText}>{def.text}</p>
-      <select className={styles.perkSelect} value={target} onChange={e => setTarget(e.target.value)} aria-label={def.target === 'card' ? 'Which card' : 'Which player'}>
-        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
-      <button type="button" className={styles.tileBtn} disabled={busy || !target} onClick={() => onPick(id, target)}>Take</button>
+      {!team && (
+        <select className={styles.perkSelect} value={target} onChange={e => setTarget(e.target.value)} aria-label={def.target === 'card' ? 'Which card' : 'Which player'}>
+          {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+      )}
+      <button type="button" className={styles.tileBtn} disabled={busy || (!team && !target)} onClick={() => onPick(id, team ? null : target)}>Take</button>
     </div>
   );
 }
@@ -157,8 +162,12 @@ function PerkList({ run }) {
       <ul className={styles.roster} data-perks="true">
         {perks.map((p, i) => {
           const def = PERKS[p.id];
-          const who = def?.target === 'card' ? getStrat(p.target)?.name : cards.find(c => c.id === p.target)?.name;
-          return <li key={`${p.id}-${i}`}><span>{def?.icon} {def?.name ?? p.id}</span><span className={styles.muted}>{who ?? ''}</span></li>;
+          const who = def?.target === 'card' ? getStrat(p.target)?.name
+            : def?.target === 'player' ? cards.find(c => c.id === p.target)?.name
+              // What a team perk still has to give (2026-10-22).
+              : p.id === 'travel_day' ? `${run.travel ?? 0} left`
+                : p.id === 'second_chance' ? (run.secondChanceUsed ? 'used' : 'ready') : '';
+          return <li key={`${p.id}-${i}`} title={def?.text}><span>{def?.icon} {def?.name ?? p.id}</span><span className={styles.muted}>{who ?? ''}</span></li>;
         })}
       </ul>
     </>
@@ -182,7 +191,7 @@ function PotLine({ run }) {
 
 // ── The Climb bar ─────────────────────────────────────────────────────────────
 
-const STAT_LINE = { power: 'Power', shotLine: 'Shot Line', threePtBoost: '3PT Bonus', speed: 'Speed', paintBoost: 'Paint Bonus' };
+const STAT_LINE = { power: 'Power', shotLine: 'Shot Line', threePtBoost: '3PT Bonus', speed: 'Speed', paintBoost: 'Paint Bonus', defBoost: 'Defensive Bonus' };
 const signed = n => (n > 0 ? `+${n}` : `${n}`);
 
 /** Every card in the run's deck as its own face: a practiced copy shows its "+" face. */
@@ -514,7 +523,7 @@ function reachableFrom(map, fromId) {
  */
 // `backLabel`: the read-only map is also the Climb bar's (ClimbHud, 2026-10-20),
 // from any screen; during a run game the stop being played is "here".
-export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onFreePractice = () => {}, onFreeSign = () => {}, onAbandon = null, busy = false, onBack = null, backLabel = '← Back to the Rest Day' }) {
+export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onFreePractice = () => {}, onFreeCut = () => {}, onFreeSign = () => {}, onAbandon = null, busy = false, onBack = null, backLabel = '← Back to the Rest Day' }) {
   const peek = Boolean(onBack);
   const here = peek && run.status === 'rest' ? run.restAt : peek && run.status === 'game' ? (run.game?.stopId ?? run.at) : run.at;
   const open = new Set(peek ? [] : openStops(run).map(s => s.id));
@@ -554,6 +563,8 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
         </svg>
         {stops.map(s => {
           const isOpen = open.has(s.id);
+          // Off the links: Travel Day takes you there (2026-10-22).
+          const travel = isOpen && isTravel(run, s.id);
           const done = run.cleared.includes(s.id) || run.at === s.id;
           const isHere = s.id === here;
           const isAhead = peek && ahead.has(s.id);
@@ -567,6 +578,7 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
               type="button"
               data-stop={s.id}
               data-open={isOpen ? 'true' : 'false'}
+              data-travel={travel ? 'true' : undefined}
               data-ahead={isAhead ? 'true' : undefined}
               data-here={isHere ? 'true' : undefined}
               data-far={far ? 'true' : undefined}
@@ -574,13 +586,13 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
               style={{ left: `${xPct(s.lane)}%`, top: `${yPct(s.floor)}%` }}
               disabled={!isOpen || busy}
               onClick={() => onGo(s.id)}
-              title={`${isBoss ? `Boss: the classic ${boss.city} ${boss.name}` : KIND[s.kind].name}${cap ? ` · coach's cap ${dollars(cap)}` : ''}${s.kind === 'rest' ? '' : CLIMB.homeKinds.includes(s.kind) ? ' · at home' : ' · on the road'}`}
+              title={`${isBoss ? `Boss: the classic ${boss.city} ${boss.name}` : KIND[s.kind].name}${cap ? ` · coach's cap ${dollars(cap)}` : ''}${s.kind === 'rest' ? '' : CLIMB.homeKinds.includes(s.kind) ? ' · at home' : ' · on the road'}${travel ? ' · ✈️ a Travel Day' : ''}`}
             >
               {logo && !done
                 ? <img className={styles.bossLogo} src={logo} alt="" />
                 : <span className={styles.stopIcon}>{done ? '✓' : KIND[s.kind].icon}</span>}
               <span className={styles.stopText}>
-                <span className={styles.stopName}>{isBoss ? `Boss · ${boss.name}` : KIND[s.kind].name}</span>
+                <span className={styles.stopName}>{travel ? '✈️ ' : ''}{isBoss ? `Boss · ${boss.name}` : KIND[s.kind].name}</span>
                 {cap && <span className={styles.stopCap}>{dollars(cap)}</span>}
               </span>
             </button>
@@ -612,7 +624,8 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
         {!peek && (
           <div className={styles.sideActions}>
             {run.freeRest > 0 && <button type="button" onClick={onFreeRest} disabled={busy}>Take the free Rest Day</button>}
-            {run.freePractice > 0 && <button type="button" data-free-practice="true" onClick={onFreePractice} disabled={busy}>Two-a-Days: practise a card{run.freePractice > 1 ? ` (${run.freePractice})` : ''}</button>}
+            {run.freePractice > 0 && <button type="button" data-free-practice="true" onClick={onFreePractice} disabled={busy}>Practise a card{run.freePractice > 1 ? ` (${run.freePractice})` : ''}</button>}
+            {run.freeCut > 0 && <button type="button" data-free-cut="true" onClick={onFreeCut} disabled={busy}>Front Office: cut a card{run.freeCut > 1 ? ` (${run.freeCut})` : ''}</button>}
             {run.freeSign > 0 && <button type="button" className={styles.primary} data-free-sign="true" onClick={onFreeSign} disabled={busy}>Sign the player you were owed</button>}
             <button type="button" className={styles.danger} onClick={onRetire} disabled={busy}>Retire and bank the pot</button>
             {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}
@@ -733,30 +746,38 @@ export function practiceTiles(run, showPlus) {
 // `onViewMap`: a look at the map (the user, 2026-10-19). From a Rest Day stop
 // it opens the map read-only and comes back here; the free Rest Day was taken
 // from the map, so for it this is simply the way back (nothing is spent yet).
-// `practiceOnly`: Two-a-Days' practice (2026-10-20) — the Practice buttons alone.
-export function RestDay({ run, onRest, onPractice, onCut = null, busy = false, free = false, onViewMap = null, practiceOnly = false }) {
+// `practiceOnly`: a practice taken from the map (Two-a-Days, Shootaround, Front
+// Office) — the Practice buttons alone. `cutOnly`: Front Office Shake-Up's cuts
+// (2026-10-22) — the Cut buttons alone.
+export function RestDay({ run, onRest, onPractice, onCut = null, busy = false, free = false, onViewMap = null, practiceOnly = false, cutOnly = false }) {
   const [showPlus, setShowPlus] = useState(false);
   const { cards } = rosterCards(run);
   const tired = cards.filter(c => (run.fatigue?.[c.id] ?? 0) > 0);
   const tiles = practiceTiles(run, showPlus);
   const deckCount = Object.values(run.deck ?? {}).reduce((t, n) => t + n, 0);
+  // Win-Now Trade (a boss's perk, 2026-10-22): a Rest Day cannot rest.
+  const noRest = hasPerk(run, 'win_now_trade');
+  const lede = cutOnly ? 'The new staff cleans house: cut one card from your deck for good.'
+    : practiceOnly ? 'An extra session: practise one copy of a card into its "+".'
+      : noRest ? 'Win-Now Trade: no rest now. Practise one copy of a card into its "+", or cut one card from your deck for good.'
+        : 'One of three: rest the whole team, practise one copy of a card into its "+", or cut one card from your deck for good.';
   return (
     <div className={styles.screen}>
-      <h2 className={styles.title}>{practiceOnly ? 'Two-a-Days' : free ? 'A day off' : 'Rest Day'}</h2>
-      <p className={styles.lede}>{practiceOnly ? 'The extra session: practise one copy of a card into its "+".' : 'One of three: rest the whole team, practise one copy of a card into its "+", or cut one card from your deck for good.'}</p>
+      <h2 className={styles.title}>{cutOnly ? 'Front Office Shake-Up' : practiceOnly ? 'Practice' : free ? 'A day off' : 'Rest Day'}</h2>
+      <p className={styles.lede}>{lede}</p>
       {onViewMap && (
         <div className={styles.actions}>
           <button type="button" data-view-map="true" onClick={onViewMap} disabled={busy}>{free ? '← Back to the map' : '🗺 See the map and what comes next'}</button>
         </div>
       )}
-      {!practiceOnly && <section className={styles.restCard}>
+      {!practiceOnly && !cutOnly && !noRest && <section className={styles.restCard}>
         <h3 className={styles.h3}>Rest</h3>
-        <p className={styles.muted}>{tired.length ? `${tired.map(c => `${c.name} (${run.fatigue[c.id]} min)`).join(', ')} come back fresh.` : 'Everyone is fresh already.'}</p>
+        <p className={styles.muted}>{tired.length ? `${tired.map(c => `${c.name} (${run.fatigue[c.id]} min)`).join(', ')} come back fresh.` : 'Everyone is fresh already.'}{hasPerk(run, 'shootaround') ? ' Shootaround: a practice comes with it.' : ''}</p>
         <div className={styles.actions}><button type="button" className={styles.primary} onClick={onRest} disabled={busy}>Rest</button></div>
       </section>}
       <section className={styles.restCard}>
         <div className={styles.practiceHead}>
-          <h3 className={styles.h3}>{practiceOnly ? 'Practice' : 'Practice or cut'} <span className={styles.muted}>{practiceOnly ? 'upgrade one copy' : `upgrade one copy, or take one out for good (a deck keeps at least ${MIN_DECK})`}</span></h3>
+          <h3 className={styles.h3}>{cutOnly ? 'Cut' : practiceOnly ? 'Practice' : 'Practice or cut'} <span className={styles.muted}>{cutOnly ? `take one out for good (a deck keeps at least ${MIN_DECK})` : practiceOnly ? 'upgrade one copy' : `upgrade one copy, or take one out for good (a deck keeps at least ${MIN_DECK})`}</span></h3>
           <label className={styles.toggle}>
             <input type="checkbox" checked={showPlus} onChange={e => setShowPlus(e.target.checked)} />
             Show practiced versions
@@ -772,7 +793,7 @@ export function RestDay({ run, onRest, onPractice, onCut = null, busy = false, f
                 <div className={styles.tileMeta}>
                   {[t.count > 1 ? `×${t.count}` : null, t.plusCount ? `${t.plusCount} practiced` : null, t.upgradeable ? null : 'no upgrade yet'].filter(Boolean).join(' · ') || ' '}
                 </div>
-                {t.canPractice && (
+                {t.canPractice && !cutOnly && (
                   <button type="button" data-practice={t.id} className={styles.tileBtn} onClick={() => onPractice(t.id)} disabled={busy}>Practice</button>
                 )}
                 {onCut && (

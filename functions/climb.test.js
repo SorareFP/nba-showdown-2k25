@@ -73,7 +73,7 @@ vi.mock('./shared/src/game/suggestions.js', () => import('../src/game/suggestion
 vi.mock('./shared/src/game/friends.js', () => import('../src/game/friends.js'));
 vi.mock('./shared/src/game/modes/climbMap.js', () => import('../src/game/modes/climbMap.js'));
 
-const { climbStart, climbGame, climbBank, climbContinue, claimGameReward } = await import('./index.js');
+const { climbStart, climbGame, climbBank, climbContinue, climbPerk, claimGameReward } = await import('./index.js');
 const { generateMap, potOf, potOfRun, stopById, reachableGame, runClaimPreview } = await import('../src/game/modes/climbMap.js');
 
 const UID = 'u1';
@@ -336,5 +336,69 @@ describe('three acts', () => {
     expect(coins()).toBe(before + pot.coins);
     const boxes = [...docs.entries()].filter(([k]) => k.startsWith(`users/${UID}/boxes/`)).map(([, v]) => v.packType).sort();
     expect(boxes).toEqual(['booster', 'mega_deluxe', 'rare_deluxe']);
+  });
+});
+
+// THE PERKS THE LEDGER KEEPS (2026-10-22, climbPerk): Sponsorship and Max
+// Contract price the pot, Travel Day opens a stop off the links, Second
+// Chance turns a loss into a replay.
+describe('the ledger\'s perks', () => {
+  it('refuses a perk before a win, a boss\'s in Act I, and one the ledger does not keep', async () => {
+    const { runId } = await started();
+    await expect(call(climbPerk, { runId, perk: 'sponsorship' })).rejects.toThrow(/Win a game first/);
+    await expect(call(climbPerk, { runId, perk: 'gym_rat' })).rejects.toThrow(/Which run/);
+    await expect(call(climbPerk, { runId, perk: 'second_chance' })).rejects.toThrow(/boss/);
+  });
+
+  it('Sponsorship: every win after it adds a fifth more, and the bank pays what the pot says', async () => {
+    const { runId, map } = await started();
+    const [a, b] = twoGames(map);
+    await winAt(runId, a);
+    expect(await call(climbPerk, { runId, perk: 'sponsorship' })).toEqual({ ok: true });
+    expect(await call(climbPerk, { runId, perk: 'sponsorship' })).toEqual({ ok: true });   // a repeat catches up
+    expect(ledger(runId).perks).toEqual([{ id: 'sponsorship', at: 1 }]);
+    await winAt(runId, b);
+    const l = ledger(runId);
+    const plain = potOfRun({ ...l, perks: [] }).coins;
+    const pot = potOfRun(l).coins;
+    expect(pot).toBeGreaterThan(plain);
+    const before = coins();
+    await call(climbBank, { runId });
+    expect(coins() - before).toBe(pot);
+  });
+
+  it('Travel Day: a stop off the links opens and spends one; without it, it is refused', async () => {
+    // A map with a floor-1 Game and a floor-2 fight it does not link to (seeds vary).
+    let runId, map, from;
+    for (let i = 0; i < 50 && !from; i += 1) {
+      ({ runId, map } = await started());
+      from = map.floors[0].find(s => map.floors[1].some(t => !s.next.includes(t.id) && t.kind !== 'rest'));
+    }
+    const off = map.floors[1].find(t => !from.next.includes(t.id) && t.kind !== 'rest');
+    await winAt(runId, from.id);
+    await expect(call(climbGame, { runId, stopId: off.id })).rejects.toThrow(/not open/);
+    await call(climbPerk, { runId, perk: 'travel_day' });
+    expect(ledger(runId).travel).toBe(3);
+    expect(await call(climbGame, { runId, stopId: off.id })).toMatchObject({ ok: true });
+    expect(ledger(runId).travel).toBe(2);
+  });
+
+  it('Second Chance: the first loss is replayed under its own key, the second ends the run', async () => {
+    const { runId, map } = await started();
+    const [a, b] = twoGames(map);
+    await winAt(runId, a);
+    // A boss's perk, so the ledger is put in Act II's opening as a boss's reward finds it.
+    docs.set(`users/${UID}/runLedger/${runId}`, { ...ledger(runId), act: 2 });
+    await call(climbPerk, { runId, perk: 'second_chance' });
+    docs.set(`users/${UID}/runLedger/${runId}`, { ...ledger(runId), act: 1 });
+    expect(await call(climbGame, { runId, stopId: b })).toMatchObject({ ok: true });
+    const lost = await claim(runId, b, false);
+    expect(lost.run.status).toBe('active');
+    expect(lost.breakdown.at(-1).label).toMatch(/Second Chance/);
+    expect(ledger(runId)).toMatchObject({ status: 'active', open: null, replay: b, secondChanceUsed: true });
+    // The replay: the same stop opens again, and only its own key claims it.
+    expect(await call(climbGame, { runId, stopId: b })).toMatchObject({ ok: true });
+    expect((await claim(runId, b, false)).run.status).toBe('active');   // the first key is spent: nothing moves
+    expect((await claim(runId, b, false, { gameId: `${keyOf(runId, b)}:2` })).run.status).toBe('lost');
   });
 });

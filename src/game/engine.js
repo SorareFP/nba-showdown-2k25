@@ -97,15 +97,15 @@ export function bottomedLines(teamKey, teamName, bottomed) {
 }
 
 // ── New Game ───────────────────────────────────────────────────────────────
-function makeTeam(roster, name, deckConfig) {
+function makeTeam(roster, name, deckConfig, handSize = 7) {
   const shuffled = buildDeck(deckConfig);
   // INNATE (a "+" rider, the Climb 2026-10-20; Slay the Spire's Innate): the
   // copy starts the game in your hand, so it goes on top before the deal.
   const innate = shuffled.filter(id => isPlus(id) && PLUS[baseId(id)]?.innate);
   const builtDeck = innate.length ? [...shuffled.filter(id => !innate.includes(id)), ...innate] : shuffled;
   // A fresh game is never in Crunch Time: a crunch-only card in the opening
-  // seven goes under.
-  const { hand, deck } = drawCards([], builtDeck, 7, { crunchActive: false });
+  // seven goes under. A Climb perk can deal more (openingHand).
+  const { hand, deck } = drawCards([], builtDeck, handSize, { crunchActive: false, overCap: handSize > 7 });
   return {
     name,
     roster,
@@ -175,12 +175,47 @@ export function periodLabel(g, { short = false } = {}) {
 /* global __ENGINE_STAMP__ */
 export const ENGINE_STAMP = typeof __ENGINE_STAMP__ !== 'undefined' ? __ENGINE_STAMP__ : 'unstamped';
 
+/**
+ * THE CLIMB'S GAME-LONG PERKS (2026-10-22, climbPerks.js `game`): a run's
+ * relics the engine reads, `g.perks` = { A: ['closers', ...] }. Has `teamKey`
+ * taken this one?
+ */
+export const hasGamePerk = (g, teamKey, id) => Boolean(g?.perks?.[teamKey]?.includes(id));
+
+/** The opening hand: seven, one more for Scouting Report and one more for Short Rotation. */
+export function openingHand(perks) {
+  return 7 + (perks?.includes('scouting_report') ? 1 : 0) + (perks?.includes('short_rotation') ? 1 : 0);
+}
+
+/**
+ * The perks' part of every scoring roll: Fast Start +1 in the game's first
+ * section, Closers +1 in Crunch Time, Heavy Minutes +1 always. doRoll adds it
+ * and scoringRollModifier shows it.
+ */
+export function perkRollBonus(g, teamKey) {
+  if (!g?.perks?.[teamKey]?.length) return 0;
+  return (hasGamePerk(g, teamKey, 'fast_start') && isOpeningSection(g) ? 1 : 0)
+    + (hasGamePerk(g, teamKey, 'closers') && g.crunch?.active ? 1 : 0)
+    + (hasGamePerk(g, teamKey, 'heavy_minutes') ? 1 : 0);
+}
+
+/** Short Rotation's limit: strategy cards a section. */
+export const SHORT_ROTATION_PLAYS = 2;
+/** Ball Movement Culture: every this-many cards played draws one. */
+export const BALL_MOVEMENT_EVERY = 5;
+
+/** Why Short Rotation refuses `teamKey` another card this section, or null. */
+export function playCapProblem(g, teamKey) {
+  if (!hasGamePerk(g, teamKey, 'short_rotation')) return null;
+  return (g.played?.[teamKey] ?? 0) >= SHORT_ROTATION_PLAYS ? `Short Rotation: ${SHORT_ROTATION_PLAYS} strategy cards a section` : null;
+}
+
 export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
   // THE CLIMB'S QUARTER (2026-10-18): a run game is the fourth quarter alone,
   // and each player walks on with what the run has left on his tracker.
   const startQuarter = opts.startQuarter ?? 1;
-  const teamA = makeTeam(rosterA, 'Team A', deckConfigA);
-  const teamB = makeTeam(rosterB, 'Team B', deckConfigB);
+  const teamA = makeTeam(rosterA, 'Team A', deckConfigA, openingHand(opts.perks?.A));
+  const teamB = makeTeam(rosterB, 'Team B', deckConfigB, openingHand(opts.perks?.B));
   for (const [key, team] of [['A', teamA], ['B', teamB]]) {
     const carried = opts.fatigue?.[key];
     if (carried) for (const ps of team.stats) if (carried[ps.id] > 0) ps.minutes = carried[ps.id];
@@ -199,6 +234,10 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     signatureBonus: opts.signatureBonus ?? null,
     // A run's carried Climb flags (Conditioning+ covers the next game).
     ...(opts.buffs ? { buffs: opts.buffs } : {}),
+    // A run's game-long perks (hasGamePerk), and the cards each side has
+    // played: this section (`played`, Short Rotation) and this game
+    // (`playedGame`, Ball Movement Culture).
+    ...(opts.perks ? { perks: opts.perks, played: {}, playedGame: {} } : {}),
     // Set by endSection when the final section begins within the margin —
     // { active, margin, used: {A,B}, extra: {A,B}, timeoutUsed: {A,B} }.
     crunch: null,
@@ -731,12 +770,21 @@ export function glassBonus(g, teamKey, type) {
   return reboundTrackLead(g, teamKey) >= REBOUND_RULES.leadGate ? REBOUND_RULES.leadBonus : 0;
 }
 
-/** A check whose terms carried the glass bonus has had it for this section. */
+/**
+ * A check whose terms carried the glass bonus has had it for this section;
+ * one that carried Rim Deterrent's −3 has had that for the game.
+ */
 export function spendGlass(g, teamKey, parts) {
   if (Array.isArray(parts) && parts.some(p => p?.label === GLASS_LABEL && p.n)) {
     g.glassUsed = { ...(g.glassUsed ?? {}), [teamKey]: true };
   }
+  if (Array.isArray(parts) && parts.some(p => p?.label === RIM_DETERRENT_LABEL && p.n)) {
+    g.rimDeterred = { ...(g.rimDeterred ?? {}), [teamKey === 'A' ? 'B' : 'A']: true };
+  }
 }
+
+/** How a check's itemised terms name Rim Deterrent's −3 (a Climb perk, 2026-10-22). */
+export const RIM_DETERRENT_LABEL = 'Rim Deterrent';
 
 // ── Shot Check ─────────────────────────────────────────────────────────────
 // No speed/power advantage — only player's own boost + hot/cold + card bonus
@@ -879,7 +927,8 @@ export function scoringRollModifier(g, teamKey, idx) {
   const markers = ((ps.hot || 0) - (ps.cold || 0)) * 2;
   // Chemistry's set-up rides on this team's next roll, whoever makes it.
   const chem = g.chem?.[teamKey]?.pending || 0;
-  return { matchup, card, fatigue, markers, chem, total: matchup + card + fatigue + markers + chem };
+  const perk = perkRollBonus(g, teamKey);
+  return { matchup, card, fatigue, markers, chem, perk, total: matchup + card + fatigue + markers + chem + perk };
 }
 
 /**
@@ -1120,6 +1169,9 @@ export function climbCheckParts(g, teamKey, type, idx = null) {
   if (type === '3pt' && mine.let_it_fly) parts.push({ label: 'Let It Fly', n: buffNumber(mine.let_it_fly, 1) });
   if (type === 'paint' && mine.bruise_brothers) parts.push({ label: 'Bruise Crew', n: buffNumber(mine.bruise_brothers, 1) });
   if (type === 'paint' && theirs.shut_the_door) parts.push({ label: 'Shut the Door', n: -buffNumber(theirs.shut_the_door, 1) });
+  // Rim Deterrent (a perk, 2026-10-22): the first paint check against them each game, −3.
+  const oppKeyR = teamKey === 'A' ? 'B' : 'A';
+  if (type === 'paint' && hasGamePerk(g, oppKeyR, 'rim_deterrent') && !g.rimDeterred?.[oppKeyR]) parts.push({ label: RIM_DETERRENT_LABEL, n: -3 });
   // Splash: +1 for every two threes the team has made this game (every one
   // for Splash+), up to +3.
   if (type === '3pt' && mine.splash) {
@@ -1928,6 +1980,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
     bonus += chemPts;
     ng.chem[teamKey].pending = 0;
   }
+  // The run's perks (Fast Start, Closers, Heavy Minutes).
+  bonus += perkRollBonus(ng, teamKey);
 
   const fat = getFatigue(ng, teamKey, idx);
   const ps = getPS(ng, teamKey, nPlayer.id) || {};
@@ -2095,6 +2149,8 @@ export function endSection(g) {
         if (ps.secondWindPenalty) { ps.minutes += typeof ps.secondWindPenalty === 'number' ? ps.secondWindPenalty : 4; delete ps.secondWindPenalty; }
         // A Grind card's price (the Climb, 2026-10-20): the minutes it promised.
         if (ps.extraMinutes) { ps.minutes += ps.extraMinutes; delete ps.extraMinutes; }
+        // Heavy Minutes (a boss's perk, 2026-10-22): a minute more a section.
+        if (hasGamePerk(ng, k, 'heavy_minutes')) ps.minutes += 1;
       }
     });
   });
@@ -2146,6 +2202,7 @@ export function endSection(g) {
     }
   }
   ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {}; ng.openMan = {};
+  if (ng.played) ng.played = {};
   ng.lastDoubleTeam = null; ng.lastRoll = null; ng.lastCheckMiss = null; ng.lastPaintScore = null;
   ng.lastAutoScore = null;
   ng.matchupsSet = {};
@@ -2216,15 +2273,17 @@ export function endSection(g) {
     if (drawn.bottomed.length) ng.log = [...ng.log, ...bottomedLines(k, t.name, drawn.bottomed)];
   });
   // FILM SESSION (the Climb, 2026-10-20): one card more as each section opens,
-  // past the seven.
+  // past the seven. SHORT ROTATION (a boss's perk, 2026-10-22) does the same.
   ['A', 'B'].forEach(k => {
-    if (!ng.buffs?.[k]?.film_session) return;
-    const t = getTeam(ng, k);
-    const fs = drawCards(t.hand, t.deck, 1, { overCap: true, crunchActive: Boolean(ng.crunch?.active) });
-    t.hand = fs.hand;
-    t.deck = fs.deck;
-    if (fs.bottomed.length) ng.log = [...ng.log, ...bottomedLines(k, t.name, fs.bottomed)];
-    if (fs.drawn.length) ng.log = [...ng.log, { team: k, msg: `Film Session: ${t.name} draws a card.` }];
+    for (const [on, name] of [[ng.buffs?.[k]?.film_session, 'Film Session'], [hasGamePerk(ng, k, 'short_rotation'), 'Short Rotation']]) {
+      if (!on) continue;
+      const t = getTeam(ng, k);
+      const fs = drawCards(t.hand, t.deck, 1, { overCap: true, crunchActive: Boolean(ng.crunch?.active) });
+      t.hand = fs.hand;
+      t.deck = fs.deck;
+      if (fs.bottomed.length) ng.log = [...ng.log, ...bottomedLines(k, t.name, fs.bottomed)];
+      if (fs.drawn.length) ng.log = [...ng.log, { team: k, msg: `${name}: ${t.name} draws a card.` }];
+    }
   });
 
   // Save current starters before clearing for bench recovery check

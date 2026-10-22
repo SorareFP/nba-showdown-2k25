@@ -29,7 +29,7 @@ import {
 } from '../../src/game/modes/run.js';
 import { climbRng, KIND_WEIGHTS, stopById, ACTS } from '../../src/game/modes/climbMap.js';
 import { leanOf } from '../../src/game/modes/climbKits.js';
-import { PERKS, practicable, perkProblem, boostsOf, boostedCard } from '../../src/game/modes/climbPerks.js';
+import { PERKS, practicable, perkProblem, boostsOf, boostedCard, hasPerk } from '../../src/game/modes/climbPerks.js';
 import { cardFit } from '../../src/game/cardFit.js';
 import { fitsSystem } from '../../src/game/systemFit.js';
 import { STRAT_MAP } from '../../src/game/strats.js';
@@ -193,7 +193,8 @@ function takeRewards(run, rng) {
     if (run.status === 'reward' && run.offers?.players?.length) run = sign(run, pick(rng, run.offers.players));
     if (run.status === 'reward' && run.offers?.perks?.length) {
       const id = pick(rng, run.offers.perks);
-      const options = PERKS[id].target === 'card' ? practicable(run.deck) : ids().filter(cid => !perkProblem(run, id, cid, ids()));
+      // A team perk (2026-10-22) takes no target.
+      const options = PERKS[id].target === 'team' ? [null] : PERKS[id].target === 'card' ? practicable(run.deck) : ids().filter(cid => !perkProblem(run, id, cid, ids()));
       run = options.length ? pickPerk(run, id, pick(rng, options)) : skipOffers(run, 'perks');
     }
     return run.status === 'reward' ? skipOffers(run) : run;
@@ -213,11 +214,13 @@ function takeRewards(run, rng) {
     }
     if (run.status === 'reward' && run.offers?.perks?.length) {
       const order = ['extra_reps', 'gym_rat', 'signature_move', 'film_study'];
-      const id = [...run.offers.perks].sort((a, b) => order.indexOf(a) - order.indexOf(b))[0];
-      const target = PERKS[id].target === 'card'
+      const rank = id => (order.includes(id) ? order.indexOf(id) : order.length);
+      const id = [...run.offers.perks].sort((a, b) => rank(a) - rank(b))[0];
+      const team = PERKS[id].target === 'team';
+      const target = team ? null : PERKS[id].target === 'card'
         ? practicable(run.deck).filter(x => fits(run, x) && onPlan(run, x)).sort((a, b) => worth(b) - worth(a))[0] ?? practicable(run.deck)[0]
         : starsFirst(run).find(cid => !perkProblem(run, id, cid, ids()));
-      run = target ? pickPerk(run, id, target) : skipOffers(run, 'perks');
+      run = team || target ? pickPerk(run, id, target) : skipOffers(run, 'perks');
     }
     return run.status === 'reward' ? skipOffers(run) : run;
   }
@@ -271,7 +274,12 @@ for (let i = 0; i < RUNS; i += 1) {
     if (run.status === 'map') {
       run = chooseStop(run, chooseRoute(run, rng).id);
     } else if (run.status === 'rest') {
-      run = restDay(run, restChoice(run, rng));
+      // Win-Now Trade (2026-10-22) closes Rest: practise instead, or cut.
+      const choice = restChoice(run, rng);
+      const prac = practicable(run.deck);
+      run = restDay(run, choice.choice === 'rest' && hasPerk(run, 'win_now_trade')
+        ? (prac.length ? { choice: 'practice', cardId: prac[0] } : { choice: 'cut', cardId: Object.keys(run.deck).find(id => run.deck[id] > 0) })
+        : choice);
     } else if (run.status === 'game') {
       const stop = stopById(run.map, run.game.stopId);
       const p = presetFor(run);
@@ -281,7 +289,8 @@ for (let i = 0; i < RUNS; i += 1) {
       if (starters.some(c => fatigueForMinutes(run.fatigue[c.id] ?? 0) <= -6)) tiredOpens += 1;
       games += 1;
       if (act === 1) ourSalary[stop.floor - 1].push(capSal(p.rosterA));
-      const sim = simulateGame(p.rosterA, p.rosterB, { deckA: p.deckA, deckB: p.deckB, rng: climbRng(seed, 'game', stop.id), keepGame: true, gameOpts: p.gameOpts, brains: { ...(humanBrain ? { A: humanBrain } : {}), B: coachBrain } });
+      // A Second Chance replay (2026-10-22) is a new game, so a new stream.
+      const sim = simulateGame(p.rosterA, p.rosterB, { deckA: p.deckA, deckB: p.deckB, rng: climbRng(seed, 'game', stop.id, ...(run.game.replay ? ['replay'] : [])), keepGame: true, gameOpts: p.gameOpts, brains: { ...(humanBrain ? { A: humanBrain } : {}), B: coachBrain } });
       const result = resultFromGame(sim.game, stop.id);
       const at = actTally[act];
       if (stop.kind === 'boss') at.atBoss.push(capSal(p.rosterA));
@@ -321,10 +330,11 @@ for (let i = 0; i < RUNS; i += 1) {
       // A Rivalry's perk: the first offered, on the priciest player (or Film Study's first card).
       if (run.status === 'reward' && run.offers?.perks?.length) {
         const id = run.offers.perks[0];
-        const target = PERKS[id].target === 'card'
+        const team = PERKS[id].target === 'team';
+        const target = team ? null : PERKS[id].target === 'card'
           ? practicable(run.deck)[0]
           : [...rosterCards(run).cards].sort((a, b) => b.salary - a.salary).map(c => c.id).find(cid => !perkProblem(run, id, cid, rosterCards(run).cards.map(c => c.id)));
-        run = target ? pickPerk(run, id, target) : skipOffers(run, 'perks');
+        run = team || target ? pickPerk(run, id, target) : skipOffers(run, 'perks');
       }
       if (run.status === 'reward') run = skipOffers(run);
     } else if (run.status === 'won' && actOfRun(run) < ACTS_TO_CLIMB) {

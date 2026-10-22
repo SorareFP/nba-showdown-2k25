@@ -115,7 +115,8 @@ describe('the map and the games', () => {
     // At home: the coach places first and you answer.
     expect(p.humanIsHome).toBe(true);
     expect(p.returnTab).toBe('climb');
-    expect(p.climb).toEqual({ runId: 'r1', stopId: '1-0', kind: 'game', floor: 1, rung: 'prince', act: 1 });
+    // potAdd: what the win adds to the pot (floor 1's Game, 30 at Prince); secondChance: no perk, no replay.
+    expect(p.climb).toEqual({ runId: 'r1', stopId: '1-0', kind: 'game', floor: 1, rung: 'prince', act: 1, potAdd: 30, secondChance: false });
     expect(p.deckA).toEqual(r.deck);
   });
 

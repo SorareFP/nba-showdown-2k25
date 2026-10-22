@@ -2,7 +2,7 @@
 // Returns { canPlay: bool, reason: string }
 
 import { CRUNCH_CARDS, TIMEOUT_RIDERS, baseId, isPlus, CLIMB_GAME_CARDS, getStrat, PLUS } from './strats.js';
-import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, isOpeningSection, reboundTrackLead, challengeTarget, rerollOdds, answerEventKey } from './engine.js';
+import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, isOpeningSection, reboundTrackLead, challengeTarget, rerollOdds, answerEventKey, playCapProblem } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
 const no = (r) => ({ canPlay: false, reason: r });
@@ -472,7 +472,10 @@ export function canPlayCard(g, teamKey, handCardId) {
   const verdict = cardVerdict(g, teamKey, cardId, plus);
   if (!verdict.canPlay) return verdict;
   const lead = reboundLeadProblem(g, teamKey, cardId, plus);
-  return lead ? no(lead) : verdict;
+  if (lead) return no(lead);
+  // Short Rotation (a Climb perk, 2026-10-22): two strategy cards a section.
+  const capped = playCapProblem(g, teamKey);
+  return capped ? no(capped) : verdict;
 }
 
 // `plus`: the card is a "+" copy (The Climb, approved 2026-10-19).

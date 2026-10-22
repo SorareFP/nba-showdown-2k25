@@ -165,7 +165,8 @@ describe('the Practice screen', () => {
     expect(html(<ClimbMap run={r} onGo={noop} onRetire={noop} onFreeRest={noop} />)).toMatch(/data-free-practice="true"/);
     expect(html(<ClimbMap run={{ ...r, freePractice: 0 }} onGo={noop} onRetire={noop} onFreeRest={noop} />)).not.toMatch(/data-free-practice/);
     const out = html(<RestDay run={r} practiceOnly free onRest={noop} onPractice={noop} />);
-    expect(out).toContain('Two-a-Days');
+    // Two-a-Days, Shootaround and Front Office all leave this practice (2026-10-22).
+    expect(out).toContain('An extra session');
     expect(out).not.toContain('>Rest<');
     expect(out).not.toMatch(/data-cut=/);
     expect(out).toMatch(/data-practice="catch_and_shoot"/);
@@ -370,5 +371,46 @@ describe('the Climb bar', () => {
     expect(out).toContain('playing floor 1');
     expect(out).toContain('Close the map');
     expect(out).toMatch(/data-stop="1-0"[^>]*data-here="true"/);
+  });
+});
+
+// THE SECOND WAVE OF PERKS ON SCREEN (2026-10-22).
+describe('the new perks on screen', () => {
+  const rest = (extra = {}) => ({ ...camped(), status: 'rest', restAt: '2-0', ...extra });
+
+  it('offers a team perk with no one to choose, and a boss\'s marked as one', () => {
+    const r = { ...camped(), status: 'reward', offers: { stopId: 'x', strats: [], picks: 0, players: [], perks: ['closers', 'second_chance', 'track_work'] } };
+    const out = html(<RewardPicker run={r} onPickStrat={noop} onPickPlayer={noop} onPickPerk={noop} onSkip={noop} />);
+    const tile = id => out.slice(out.indexOf(`data-perk="${id}"`), out.indexOf('</button>', out.indexOf(`data-perk="${id}"`)));
+    expect(tile('closers')).not.toContain('<select');
+    expect(tile('track_work')).toContain('<select');
+    expect(tile('track_work')).toMatch(/Speed \d+/);
+    expect(out).toMatch(/data-perk="second_chance" data-boss-perk="true"/);
+  });
+
+  it('Win-Now Trade takes Rest off the Rest Day; Shootaround says what resting brings', () => {
+    const noRest = html(<RestDay run={rest({ perks: [{ id: 'win_now_trade', target: null, at: 0 }] })} onRest={noop} onPractice={noop} onCut={noop} />);
+    expect(noRest).toContain('Win-Now Trade');
+    expect(noRest).not.toContain('>Rest<');
+    const shoot = html(<RestDay run={rest({ perks: [{ id: 'shootaround', target: null, at: 0 }] })} onRest={noop} onPractice={noop} onCut={noop} />);
+    expect(shoot).toContain('Shootaround: a practice comes with it.');
+  });
+
+  it('Front Office Shake-Up: a cut button on the map, a cut-only screen', () => {
+    const r = { ...camped(), status: 'map', freeCut: 2 };
+    expect(html(<ClimbMap run={r} onGo={noop} onRetire={noop} onFreeRest={noop} />)).toMatch(/data-free-cut="true"[^>]*>Front Office: cut a card \(2\)/);
+    const out = html(<RestDay run={r} cutOnly free onRest={noop} onPractice={noop} onCut={noop} />);
+    expect(out).toContain('Front Office Shake-Up');
+    expect(out).toMatch(/data-cut=/);
+    expect(out).not.toMatch(/data-practice="/);
+  });
+
+  it('Travel Day marks the stops off the links and counts what is left', () => {
+    const base = camped();
+    const from = base.map.floors[0].find(s => s.next.length < 3);
+    const r = { ...base, status: 'map', at: from.id, cleared: [from.id], travel: 2, perks: [{ id: 'travel_day', target: null, at: 1 }] };
+    const out = html(<ClimbMap run={r} onGo={noop} onRetire={noop} onFreeRest={noop} />);
+    expect(out).toMatch(/data-travel="true"/);
+    expect(out).toContain('2 left');
   });
 });

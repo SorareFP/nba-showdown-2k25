@@ -4,6 +4,7 @@
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass, noteCheckMiss, climbCheckBonus } from './engine.js';
+import { hasGamePerk, playCapProblem, BALL_MOVEMENT_EVERY } from './engine.js';
 import { checkTerms } from './checkTerms.js';
 import { preRollTargets, starSlot, contactTargets, burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots, HACK_A } from './canPlay.js';
 import { lookupChart } from './cards.js';
@@ -232,13 +233,33 @@ function cardDraw(g, teamKey, n) {
  * driver, PvP) comes through here, so none of them can forget it.
  */
 export function execCard(game, teamKey, cardId, opts = {}) {
+  // Short Rotation (a Climb perk): two strategy cards a section.
+  const capped = playCapProblem(game, teamKey);
+  if (capped) return { game, ok: false, msg: capped };
   // A "+" copy (The Climb) resolves as its card, with `plus` for the effects
   // that read it and `handId` so the copy played is the copy spent.
   const res = resolveCard(game, teamKey, baseId(cardId), { ...opts, plus: isPlus(cardId), handId: cardId });
   if (!res.ok) return res;
   if (SCREEN_CARDS.includes(baseId(cardId))) bumpChemistry(res.game, teamKey);
   climbPowers(res.game, teamKey, baseId(cardId));
+  countPlay(res.game, teamKey);
   return { ...res, game: handOverPriority(game, res.game, teamKey) };
+}
+
+/**
+ * A CARD PLAYED, COUNTED for a run's perks (2026-10-22): this section's for
+ * Short Rotation, this game's for Ball Movement Culture, whose every fifth
+ * draws a card. Only a game dealt with perks counts.
+ */
+function countPlay(g, teamKey) {
+  if (!g.perks) return;
+  g.played = { ...(g.played ?? {}), [teamKey]: (g.played?.[teamKey] ?? 0) + 1 };
+  const n = (g.playedGame?.[teamKey] ?? 0) + 1;
+  g.playedGame = { ...(g.playedGame ?? {}), [teamKey]: n };
+  if (hasGamePerk(g, teamKey, 'ball_movement_culture') && n % BALL_MOVEMENT_EVERY === 0) {
+    const got = cardDraw(g, teamKey, 1);
+    addLog(g, teamKey, got ? `Ball Movement Culture: card ${n} played draws one` : `Ball Movement Culture: card ${n} played, but the deck is empty`);
+  }
 }
 
 /**

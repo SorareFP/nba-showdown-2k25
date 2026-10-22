@@ -13,13 +13,14 @@ import { useDialogs } from '../../ui/dialogs.jsx';
 import { saveRun, loadActiveRun } from '../../firebase/climb.js';
 import { loadTeams, saveTeam } from '../../firebase/savedTeams.js';
 import { getCardByKey } from '../../game/cardSets.js';
-import { climbStart, climbGame, climbBank, climbContinue } from '../../firebase/serverWrites.js';
+import { climbStart, climbGame, climbBank, climbContinue, climbPerk } from '../../firebase/serverWrites.js';
 import { ownedPlayers, capSal } from '../../game/teamRules.js';
 import {
   newRun, chooseCamp, chooseStop, presetFor, recordResult, pickStrat, pickPlayer, pickPerk, skipOffers,
-  restDay, takeFreeRest, takeFreePractice, retire, rosterCards, recordServerWin, abandon, continueClimb, actOfRun,
+  restDay, takeFreeRest, takeFreePractice, takeFreeCut, retire, rosterCards, recordServerWin, abandon, continueClimb, actOfRun,
   owedPlayer, openOwedSign,
 } from '../../game/modes/run.js';
+import { PERKS } from '../../game/modes/climbPerks.js';
 import { stopById, packWords, ACT_NAMES } from '../../game/modes/climbMap.js';
 import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud } from './ClimbScreens.jsx';
 import styles from './Climb.module.css';
@@ -36,7 +37,7 @@ export async function oneAtATime(gate, fn) {
 }
 
 export const FIREBASE_STORE = { loadActive: loadActiveRun, save: saveRun };
-export const FIREBASE_SERVER = { start: climbStart, openGame: climbGame, bank: climbBank, continueTo: climbContinue };
+export const FIREBASE_SERVER = { start: climbStart, openGame: climbGame, bank: climbBank, continueTo: climbContinue, perk: climbPerk };
 /** Saved teams: the Climb fives among them fill the start screen (2026-10-19). */
 export const FIREBASE_TEAMS = { load: loadTeams, save: saveTeam };
 
@@ -50,6 +51,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   const gate = useRef(false);
   const [freeRest, setFreeRest] = useState(false);
   const [freePractice, setFreePractice] = useState(false);
+  const [freeCut, setFreeCut] = useState(false);
   // GIVE UP ONLY WHEN BANKING FAILS (2026-10-20, the user: "Why on earth would
   // someone quit and give up the pot?"). Giving up is the way out of a run the
   // server will not bank; while banking works, banking (or retiring) is always
@@ -162,6 +164,13 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
     });
   };
 
+  // A PERK THE LEDGER KEEPS (2026-10-22): the server records it first, as
+  // it moves first for a new act, so the pot and the map agree with it.
+  const takePerk = (id, target) => act(async () => {
+    if (PERKS[id]?.ledger) await server.perk(uid, run.id, id);
+    await commit(pickPerk(run, id, target));
+  });
+
   const retireRun = async () => {
     const yes = await ask({
       title: 'Retire and bank the pot?',
@@ -206,6 +215,18 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
           />
         );
       }
+      // FRONT OFFICE SHAKE-UP's cuts (2026-10-22): taken from the map, cut only.
+      if (freeCut && run.freeCut > 0) {
+        return (
+          <RestDay
+            run={run} free cutOnly busy={busy}
+            onViewMap={() => setFreeCut(false)}
+            onRest={() => {}}
+            onPractice={() => {}}
+            onCut={cardId => act(async () => { const next = takeFreeCut(run, cardId); await commit(next); if (!(next.freeCut > 0)) setFreeCut(false); })}
+          />
+        );
+      }
       if (freeRest) {
         return (
           <RestDay
@@ -220,14 +241,15 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
       return (
         <>
           {rosterCards(run).blocked && <p className={styles.note}>Fewer than five of your players are still in the game&apos;s pool. Retire to bank the pot.</p>}
-          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} onFreePractice={() => setFreePractice(true)} onFreeSign={() => act(() => commit(openOwedSign(run)))} onAbandon={bankFailedFor === run.id ? giveUp : null} />
+          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} onFreePractice={() => setFreePractice(true)} onFreeCut={() => setFreeCut(true)} onFreeSign={() => act(() => commit(openOwedSign(run)))} onAbandon={bankFailedFor === run.id ? giveUp : null} />
         </>
       );
     case 'game': {
       const o = run.game?.opponent;
       return (
         <div className={styles.screen}>
-          <h2 className={styles.title}>{run.game?.kind === 'boss' ? 'The boss' : run.game?.kind === 'rivalry' ? 'A Rivalry' : 'A Game'}{o ? `: ${o.classic ? 'Classic ' : ''}${o.city} ${o.name}` : ''}</h2>
+          <h2 className={styles.title}>{run.game?.replay ? 'Second Chance: ' : ''}{run.game?.kind === 'boss' ? 'The boss' : run.game?.kind === 'rivalry' ? 'A Rivalry' : 'A Game'}{o ? `: ${o.classic ? 'Classic ' : ''}${o.city} ${o.name}` : ''}</h2>
+          {run.game?.replay && <p className={styles.lede} data-replay="true">Second Chance: the loss is wiped and this game is played again. The pot is still yours; lose this one and the run is over.</p>}
           <p className={styles.lede}>
             One quarter from Q4, {run.game?.home ? 'at home: the coach places first and you answer' : 'on the road: you place first and the coach answers'}. Your game is waiting on the Play tab.
           </p>
@@ -244,7 +266,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
           run={run} busy={busy}
           onPickStrat={id => act(() => commit(pickStrat(run, id)))}
           onPickPlayer={(key, release = null) => act(() => commit(pickPlayer(run, key, release)))}
-          onPickPerk={(id, target) => act(() => commit(pickPerk(run, id, target)))}
+          onPickPerk={takePerk}
           onSkip={part => act(() => commit(skipOffers(run, part ?? null)))}
         />
       );

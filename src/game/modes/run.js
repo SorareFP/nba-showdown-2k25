@@ -11,9 +11,9 @@
 //                       │                          └→ lost | won
 //                       ├─chooseStop(Rest Day)→ rest ─restDay→ map
 //                       └─retire→ retired
-import { generateMap, stopById, nextStops, potOfRun, climbRng, MAP_VERSION, ACTS, FLOORS, bossIdOf } from './climbMap.js';
+import { generateMap, stopById, nextStops, nextFloorStops, potOfRun, climbRng, MAP_VERSION, ACTS, FLOORS, bossIdOf } from './climbMap.js';
 import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, coachDeck } from './climbKits.js';
-import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard } from './climbPerks.js';
+import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard, hasPerk, GAME_PERKS, TRAVEL_DAYS, WIN_NOW_CAP } from './climbPerks.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
 import { STRATS, STRAT_MAP, PLUS, baseId, isPlus, plusId, buffNumber } from '../strats.js';
 import { ALL_CARDS, DORMANT_KEYS, cardKey, getCardByKey } from '../cardSets.js';
@@ -282,10 +282,21 @@ export function chooseCamp(run, { playbook, boon, cuts = [] }) {
   return { ...run, status: 'map', playbook, boon, deck, cap, extraPicks, freeRest };
 }
 
-/** Where the run can go next. */
+/**
+ * Where the run can go next: the stops linked to where it stands, and while
+ * Travel Day has uses left (2026-10-22) every other stop on the next floor.
+ */
 export function openStops(run) {
   if (run.status !== 'map') return [];
-  return nextStops(run.map, run.at);
+  const linked = nextStops(run.map, run.at);
+  if (!(run.travel > 0)) return linked;
+  const ids = new Set(linked.map(s => s.id));
+  return [...linked, ...nextFloorStops(run.map, run.at).filter(s => !ids.has(s.id))];
+}
+
+/** Is going to `stopId` a Travel Day: open, but not linked to where the run stands? */
+export function isTravel(run, stopId) {
+  return !nextStops(run.map, run.at).some(s => s.id === stopId) && openStops(run).some(s => s.id === stopId);
 }
 
 // ── Opponents ────────────────────────────────────────────────────────────────
@@ -414,8 +425,10 @@ export function chooseStop(run, stopId) {
   if (rosterCards(run).blocked) fail('Fewer than five of your players are left; retire to bank the pot');
   if (!openStops(run).some(s => s.id === stopId)) fail('That stop is not open');
   const stop = stopById(run.map, stopId);
-  if (stop.kind === 'rest') return { ...run, status: 'rest', restAt: stopId };
-  return { ...run, status: 'game', game: gameSetup(run, stopId) };
+  // A stop that is not linked spends a Travel Day (the server counts its own).
+  const moved = isTravel(run, stopId) ? { ...run, travel: run.travel - 1 } : run;
+  if (stop.kind === 'rest') return { ...moved, status: 'rest', restAt: stopId };
+  return { ...moved, status: 'game', game: gameSetup(run, stopId) };
 }
 
 /** What the Play tab deals for the run's game. */
@@ -437,9 +450,17 @@ export function runFromView(view) {
   return view ? { ...view, map: generateMap(view.seed, view.mapVersion ?? MAP_VERSION, view.act ?? 1) } : null;
 }
 
+/** The run's game-long perks, for the engine (climbPerks.js `game`). */
+export const gamePerksOf = run => GAME_PERKS.filter(id => hasPerk(run, id));
+/** Will a loss now be replayed (Second Chance, once a run)? */
+export const canReplay = run => hasPerk(run, 'second_chance') && !run.secondChanceUsed;
+
 export function presetFor(run) {
   const g = run.game;
   if (run.status !== 'game' || !g) fail('No game to play');
+  const perks = gamePerksOf(run);
+  // What a win here adds to the pot, the run's perks on (the results screen's preview).
+  const potAdd = potOfRun({ ...run, cleared: [...run.cleared, g.stopId] }).coins - potOfRun(run).coins;
   return {
     key: g.key,
     // A perk's boosts ride on copies of the cards (climbPerks.js, 2026-10-19).
@@ -458,8 +479,9 @@ export function presetFor(run) {
       ...(run.conditioned ? { buffs: { A: { conditioning_carry: true } } } : {}),
       ...(run.signature ? { signatureBonus: { A: Math.min(SIGNATURE_MAX, 2 + run.signature) } } : {}),
       ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
+      ...(perks.length ? { perks: { A: perks } } : {}),
     },
-    climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung, act: actOfRun(run) },
+    climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung, act: actOfRun(run), potAdd, secondChance: canReplay(run) },
     climbView: runView(run),
   };
 }
@@ -471,9 +493,12 @@ export function presetFor(run) {
  * Each is rare with the floor's chance; a Rivalry's third always is. Never a
  * card the deck holds at its limit, never one twice.
  */
+// ADVANCE SCOUT (a perk, 2026-10-22): a fourth card, from anywhere, drawn
+// after the three so their draw is the same as without it.
 export function stratOffer(run, stop, rng, rngClimb = null) {
   const chosen = [];
-  [run.playbook, run.playbook, null].forEach((lean, slot) => {
+  const lanes = [run.playbook, run.playbook, null, ...(hasPerk(run, 'advance_scout') ? [null] : [])];
+  lanes.forEach((lean, slot) => {
     // THE CLIMB'S OWN CARDS (2026-10-19, strats.js `climbOnly`): the slot from
     // anywhere offers one CLIMB.climbOnlyChance of the time while one is left
     // to take. Its own seeded stream, so the other offers do not shift.
@@ -550,11 +575,18 @@ export const SIGNATURE_MAX = 6;
 
 export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, carryHot = null, iceBath = null, conditioned = false, leaves = [], twoADays = 0, signatureStep = 0 }) {
   if (run.status !== 'game' || run.game?.stopId !== stopId) return run;
-  if (!won) return { ...run, status: 'lost', lostAt: stopId, game: null };
+  if (!won) {
+    // SECOND CHANCE (a boss's perk, 2026-10-22): the game is played again,
+    // once a run, under a key of its own (the server took the first one's
+    // claim); the run stands as it did before it, the pot with it.
+    if (canReplay(run)) return { ...run, secondChanceUsed: true, game: { ...run.game, key: `${run.game.key}:2`, replay: true } };
+    return { ...run, status: 'lost', lostAt: stopId, game: null };
+  }
   const stop = stopById(run.map, stopId);
   const cleared = [...run.cleared, stopId];
   if (stop.kind === 'boss') return { ...run, status: 'won', at: stopId, cleared, game: null };
-  const rec = recoveryFor(margin);
+  // Training Staff (a perk, 2026-10-22): two minutes more off every tracker.
+  const rec = recoveryFor(margin) + (hasPerk(run, 'training_staff') ? 2 : 0);
   const fatigue = {};
   for (const c of rosterCards(run).cards) {
     const left = Math.max(0, (endMinutes[c.id] ?? 0) - rec);
@@ -635,7 +667,8 @@ export function rollDrops(run, stop, stopId, playerPool, perkPool) {
   const hit = what => roll() < Math.min(1, Math.max(0, base[what] + odds[what]));
   // The player die is still thrown on a sure stop, so the perk's die after it is the same.
   const playerDie = hit('player');
-  const sure = CLIMB.surePlayer.includes(stop.kind);
+  // Scouting Network (a perk, 2026-10-22): every Game's player is sure too.
+  const sure = CLIMB.surePlayer.includes(stop.kind) || (stop.kind === 'game' && hasPerk(run, 'scouting_network'));
   const gotPlayer = (sure || playerDie) && playerPool.length > 0;
   const gotPerk = hit('perk') && perkPool.length > 0;
   const nudge = (what, got) => Math.min(0.6, Math.max(-0.4, odds[what] + (got ? -1 : 1) * CLIMB.dropStep[what]));
@@ -654,14 +687,25 @@ const settle = run => (run.offers && (run.offers.picks > 0 && run.offers.strats.
 
 /**
  * Take a perk (climbPerks.js). `target` is a player's id for a player perk,
- * a card id in the deck for Film Study, which upgrades one copy at once.
+ * a card id in the deck for Film Study, which upgrades one copy at once, and
+ * nothing for a team perk. `at` is how many stops were cleared when it was
+ * taken: the pot's perks pay or cost from there (potOfRun). A perk the
+ * server keeps too (`ledger`) is recorded there first (ClimbTab, climbPerk).
  */
-export function pickPerk(run, id, target) {
+export function pickPerk(run, id, target = null) {
   if (run.status !== 'reward' || !run.offers?.perks?.includes(id)) fail('That perk is not on offer');
+  const def = PERKS[id];
   const problem = perkProblem(run, id, target, rosterCards(run).cards.map(c => c.id));
   if (problem) fail(problem);
-  const deck = PERKS[id].target === 'card' ? addCard(takeCard(run.deck, target), plusId(target)) : run.deck;
-  return settle({ ...run, deck, perks: [...(run.perks ?? []), { id, target }], offers: { ...run.offers, perks: [] } });
+  const deck = def.target === 'card' ? addCard(takeCard(run.deck, target), plusId(target)) : run.deck;
+  // What a team perk does the moment it is taken.
+  const now = {
+    ...(id === 'win_now_trade' ? { cap: run.cap + WIN_NOW_CAP } : {}),
+    ...(id === 'front_office' ? { freePractice: (run.freePractice ?? 0) + 2, freeCut: (run.freeCut ?? 0) + 2 } : {}),
+    ...(id === 'travel_day' ? { travel: (run.travel ?? 0) + TRAVEL_DAYS } : {}),
+  };
+  const taken = { id, target: def.target === 'team' ? null : target, at: (run.cleared ?? []).length };
+  return settle({ ...run, ...now, deck, perks: [...(run.perks ?? []), taken], offers: { ...run.offers, perks: [] } });
 }
 
 export function pickStrat(run, id) {
@@ -741,7 +785,11 @@ export function pickPlayer(run, key, release = null) {
     if (!releaseOptions(run, key).includes(release)) fail('Releasing that player does not make room');
     const gone = getCardByKey(release);
     roster = roster.filter(k => k !== release);
-    perks = perks.filter(p => p.target !== gone?.id);
+    // Their perks go with them; one the pot reads (Max Contract) stays on the
+    // run without a player, as it stays on the server's ledger.
+    perks = perks
+      .filter(p => p.target !== gone?.id || PERKS[p.id]?.ledger)
+      .map(p => (p.target === gone?.id ? { ...p, target: null } : p));
     fatigue = Object.fromEntries(Object.entries(fatigue).filter(([id]) => id !== gone?.id));
   } else if (needsRelease(run, key)) {
     fail(`Release a player of yours to sign ${getCardByKey(key)?.name ?? 'them'}`);
@@ -770,7 +818,11 @@ export const MIN_DECK = 7;
 const deckSize = deck => Object.values(deck ?? {}).reduce((t, n) => t + n, 0);
 
 function applyRest(run, { choice, cardId }) {
-  if (choice === 'rest') return { ...run, fatigue: {} };
+  if (choice === 'rest') {
+    // Win-Now Trade (a boss's perk, 2026-10-22): no more rest; Shootaround: a practice with it.
+    if (hasPerk(run, 'win_now_trade')) fail('Win-Now Trade: a Rest Day cannot rest now. Practise or cut.');
+    return { ...run, fatigue: {}, ...(hasPerk(run, 'shootaround') ? { freePractice: (run.freePractice ?? 0) + 1 } : {}) };
+  }
   if (choice === 'cut') {
     if (deckSize(run.deck) <= MIN_DECK) fail(`A deck keeps at least ${MIN_DECK} cards`);
     return { ...run, deck: takeCard(run.deck, cardId) };
@@ -795,10 +847,16 @@ export function takeFreeRest(run, choice) {
   return { ...applyRest(run, choice), freeRest: run.freeRest - 1 };
 }
 
-/** Two-a-Days' practice, taken from the map: one copy to its "+" (2026-10-20). */
+/** A practice taken from the map (Two-a-Days, Shootaround, Front Office): one copy to its "+" (2026-10-20). */
 export function takeFreePractice(run, cardId) {
-  if (run.status !== 'map' || !(run.freePractice > 0)) fail('No Two-a-Days practice to take');
+  if (run.status !== 'map' || !(run.freePractice > 0)) fail('No practice to take');
   return { ...applyRest(run, { choice: 'practice', cardId }), freePractice: run.freePractice - 1 };
+}
+
+/** Front Office Shake-Up's cut, taken from the map: one copy out for good (2026-10-22). */
+export function takeFreeCut(run, cardId) {
+  if (run.status !== 'map' || !(run.freeCut > 0)) fail('No cut to take');
+  return { ...applyRest(run, { choice: 'cut', cardId }), freeCut: run.freeCut - 1 };
 }
 
 /**
@@ -821,7 +879,8 @@ export function continueClimb(run) {
   };
   const rng = climbRng(run.seed, 'offers', bossId);
   const players = playerOffer(next, rng);
-  const perks = perkOffer(next, climbRng(run.seed, 'perks', bossId), rosterCards(next).cards.map(c => c.id));
+  // The boss's own pool (climbPerks.js `boss`, 2026-10-22).
+  const perks = perkOffer(next, climbRng(run.seed, 'perks', bossId), rosterCards(next).cards.map(c => c.id), 'boss');
   // Offered as a Rivalry's are (its third card always rare), at the act's last floor.
   const strats = stratOffer(next, { kind: 'rivalry', floor: FLOORS }, rng, climbRng(run.seed, 'climb-only', bossId));
   return settle({

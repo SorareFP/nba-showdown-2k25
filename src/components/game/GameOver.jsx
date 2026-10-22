@@ -94,7 +94,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
         aiLevel, rungDraw, claimId, fixtureFrom,
       });
       const today = todayKey();
-      const preview = climb ? runClaimPreview(climb, climb.rung, youWon, margin) : settleGameReward(
+      const preview = climb ? runClaimPreview(climb, climb.rung, youWon, margin, { potAdd: climb.potAdd, replay: !youWon && Boolean(climb.secondChance) }) : settleGameReward(
         claim,
         { date: userData.dailyMilestoneDate, coins: userData.dailyMilestoneCoins, firstWin: userData.dailyFirstWin },
         today

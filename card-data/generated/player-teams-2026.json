@@ -1409,7 +1409,7 @@
   },
   {
     "name": "Bruce Brown",
-    "team": "NYK",
+    "team": "FA",
     "pos": "SG",
     "games": 82,
     "mpg": 24.4,
@@ -1953,7 +1953,7 @@
   },
   {
     "name": "Walter Clayton",
-    "team": "MEM",
+    "team": "DAL",
     "pos": "PG",
     "games": 69,
     "mpg": 20.4,
@@ -2537,7 +2537,7 @@
   },
   {
     "name": "Micah Peavy",
-    "team": "MEM",
+    "team": "FA",
     "pos": "SG",
     "games": 61,
     "mpg": 15,
@@ -2593,7 +2593,7 @@
   },
   {
     "name": "Dwight Powell",
-    "team": "DAL",
+    "team": "FA",
     "pos": "C",
     "games": 63,
     "mpg": 14.3,
@@ -2665,7 +2665,7 @@
   },
   {
     "name": "Drew Eubanks",
-    "team": "NYK",
+    "team": "FA",
     "pos": "C",
     "games": 42,
     "mpg": 13.1,

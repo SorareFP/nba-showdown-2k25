@@ -169,6 +169,12 @@ export default function Studio() {
   // special sets are keyed by their own ids. Everything that touches the server
   // takes this, never the key.
   const activeSet = source.set;
+  // BORROWED ART (2026-10-22; the user: "Practiced cards do not need to have
+  // new art ... They can retain the same photo. I just need the card
+  // studio/photo hunt to show strats without art"). A source with `artSet`
+  // (the practiced "+" faces) shows that set's photos and crops, and owes no
+  // photo of its own: the strategy card's photo is its photo.
+  const artSet = source.artSet ?? activeSet;
   const activeSetName = getSet(activeSet)?.name ?? activeSet;
   const activeTreatment = setTreatment(activeSet);
   // The reference set is preview-only. Not a style choice: both lists derive
@@ -191,6 +197,8 @@ export default function Studio() {
   const completeKeys = useMemo(() => {
     const done = [];
     for (const src of Object.values(SOURCES)) {
+      // A borrowed-art source owes nothing, so it is complete.
+      if (src.artSet) { if (src.players.length) done.push(src.key); continue; }
       const have = new Set(allPhotos[src.set] ?? []);
       if (!have.size || !src.players.length) continue;
       const ph = new Set(allPlaceholders[src.set] ?? []);
@@ -218,8 +226,10 @@ export default function Studio() {
   // THE SHARED RULE for this set's rows (photoNeeds.js): what the Photo Hunt lists.
   const stateOf = useMemo(() => {
     const ph = new Set(placeholders);
+    // Borrowed art owes nothing: the plain card's photo is the photo.
+    if (source.artSet) return () => 'photo';
     return id => photoState(activeSet, id, { photoIds, placeholders: ph, dormantKeys: DORMANT_KEYS, wantedKeys: PHOTO_WANTED_KEYS });
-  }, [activeSet, photoIds, placeholders]);
+  }, [activeSet, photoIds, placeholders, source.artSet]);
   const visible = useMemo(
     () => filterPlayers(players, { query, missingOnly, photoIds, stateOf }),
     [players, query, missingOnly, photoIds, stateOf]
@@ -258,7 +268,7 @@ export default function Studio() {
     cropsDirty.current = false;
     teamsDirty.current = false;
     let live = true;
-    fetchStudioState(activeSet)
+    fetchStudioState(artSet)
       .then(state => {
         if (!live) return;
         setPhotos(state.photos ?? []);
@@ -283,7 +293,7 @@ export default function Studio() {
     return () => {
       live = false;
     };
-  }, [activeSet]);
+  }, [activeSet, artSet]);
 
   // ── Photo lists, re-read when the window comes back ───────────────────────
   //
@@ -292,8 +302,9 @@ export default function Studio() {
   // lists are taken, never crops or team colours — the same rule as the
   // upload refresh in handleDropFile — and a response for a set you have since
   // left is dropped.
-  const activeSetRef = useRef(activeSet);
-  activeSetRef.current = activeSet;
+  // The set whose photos are on screen (a borrowed-art source's art set).
+  const activeSetRef = useRef(artSet);
+  activeSetRef.current = artSet;
   useEffect(() => {
     const onFocus = () => {
       fetchStudioState(activeSetRef.current)
@@ -1001,7 +1012,7 @@ export default function Studio() {
             crop={crops[selectedId]}
             hasPhoto={selectedId ? photoIds.has(selectedId) : false}
             photoExt={selectedId ? photoExts[selectedId] : undefined}
-            set={source.set}
+            set={artSet}
             template={source.template}
             teamOverrides={teamOverrides}
             scale={scale}

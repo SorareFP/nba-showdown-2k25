@@ -59,6 +59,7 @@ import {
 import { playerIdFromName } from '../cards/playerId.js';
 import { hasMigratedOut } from '../game/cardSets.js';
 import { needsPhoto } from './photoNeeds.js';
+import { ROOKIE_BADGE } from '../cards/badges.js';
 
 /**
  * The team-resolved pool, when `node scripts/cardgen/generateTeams.js` has been
@@ -417,6 +418,9 @@ const byName = (a, b) => a.name.localeCompare(b.name);
  */
 export const LIVE_ROOKIES = (liveRookiesFile?.rookies ?? []).map(r => ({
   id: r.id, name: r.name, team: r.team, pos: r.pos, personId: r.personId ?? null, draft: r.draft ?? null,
+  // A Live card that is a rookie card: the blue with a dash of rookie green, and
+  // the dated ROOKIE pill under LIVE (the user, 2026-10-22).
+  badges: [ROOKIE_BADGE],
   // Searched as this season's rookie (photoSearch.js huntTarget).
   seasonLabel: '2026-27', liveRookie: true,
 }));
@@ -571,14 +575,15 @@ export const SOURCES = {
       '.github/workflows/live-series.yml). Until then a MIRROR of the base set. Photos and crops are the ' +
       'base set\'s: curate them there. Re-export with `node scripts/studio/export.js --set live`.',
   }),
-  // ITS ROOKIES, PHOTOS FIRST (LIVE_ROOKIES above). The scope is the 2026-27
-  // folder because that is where every Live card reads its photo (setPaths),
-  // and it is a folder the studio may write: a photo dropped here is waiting
-  // when the Live job cards the player. No numbers yet, so the preview prints
-  // empty rows, and nothing reaches the game.
+  // ITS ROOKIES, PHOTOS FIRST (LIVE_ROOKIES above), shown as the Live cards
+  // they will be: the blue, a dash of rookie green, LIVE and 26-27 ROOKIE. A
+  // Live card's photo lives in the 2026-27 folder (setPaths), which the studio
+  // may write, so a photo dropped here is waiting when the Live job cards the
+  // player. No numbers yet, so the preview prints empty rows, and nothing
+  // reaches the game.
   'live-rookies': {
     key: 'live-rookies',
-    set: CURRENT_SET,
+    set: LIVE_SET,
     label: `Live Series rookies · ${LIVE_ROOKIES.length} players`,
     sub: 'on 2026-27 rosters · photos now, numbers once the season gives them',
     editable: true,

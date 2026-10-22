@@ -26,6 +26,7 @@ import {
   IMAGE_EXTENSIONS,
   SET_IDS,
   isEditableSet,
+  artSetOf,
   setPaths,
 } from '../../src/cards/sets.js';
 
@@ -135,7 +136,10 @@ function studioPaths(root, set = CURRENT_SET) {
  */
 export const STRATS_SCOPE = 'strats';
 export const STUDIO_SCOPES = [...SET_IDS, STRATS_SCOPE];
-const scopeIsEditable = id => id === STRATS_SCOPE || isEditableSet(id);
+// A set whose art IS another set's (the Live Series reads the base set's
+// photos and crops, setPaths) is written as that set is: the same files, so the
+// read-only rule has nothing to protect there (the Live rookies, 2026-10-22).
+const scopeIsEditable = id => id === STRATS_SCOPE || isEditableSet(artSetOf(id));
 
 export function requestedSet(url, sets = STUDIO_SCOPES) {
   const asked = new URL(url ?? '/', 'http://studio.local').searchParams.get('set');

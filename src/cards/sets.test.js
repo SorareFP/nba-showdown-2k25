@@ -388,3 +388,14 @@ describe('every set owns a separate directory', () => {
       .toBe(photoUrlPath('LeBron_James', CURRENT_SET, DEFAULT_PHOTO_EXT));
   });
 });
+
+// THE LIVE SERIES' ROOKIES (2026-10-22; the user: "the same blue flair as the
+// live cards, but maybe a dash of the rookie green").
+describe('a Live rookie card', () => {
+  it('wears the Live blue with the rookie green; every other Live card the blue alone', () => {
+    expect(cardTreatment(LIVE_SET, 500)).toBe('blue-accent');
+    expect(cardTreatment(LIVE_SET, 500, ['rookie'])).toBe('live-rookie');
+    // Only a set that declares a rookie look changes: the base set's rookies keep theirs.
+    expect(cardTreatment('2026-27', 500, ['rookie'])).toBeNull();
+  });
+});

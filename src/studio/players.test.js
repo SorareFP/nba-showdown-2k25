@@ -49,7 +49,7 @@ import {
   WNBA_ROOKIE_SET,
   WNBA_TEAM_REWARDS_SET,
   WNBA_SUPER_SEASON_SET,
-  getSet, SET_REWARDS_SET, WNBA_SET_REWARDS_SET } from '../cards/sets.js';
+  getSet, SET_REWARDS_SET, WNBA_SET_REWARDS_SET, setPaths, artSetOf } from '../cards/sets.js';
 
 const P = (id, name, team, pos) => ({ id, name, team, pos });
 
@@ -861,11 +861,11 @@ describe('the selector\'s reference group', () => {
     // when the group is open, the row reads exactly as the model does.
     // SET_IDS covers the card sets; the strategy deck is a source without a
     // set (see the SOURCES test above), and it declares last.
-    // The Live rookies (2026-10-22) are a second source on the 2026-27 folder,
-    // listed after the Live Series they are photographed for.
+    // The Live rookies (2026-10-22) are a second Live source, listed after the
+    // Live Series they are photographed for.
     const open = visibleSources({ showSecondary: true }).map(s => s.set);
     const ids = [...SET_IDS];
-    ids.splice(ids.indexOf(LIVE_SET) + 1, 0, CURRENT_SET);
+    ids.splice(ids.indexOf(LIVE_SET) + 1, 0, LIVE_SET);
     expect(open).toEqual([...ids, 'strats', 'strats-plus']);
   });
 
@@ -1069,10 +1069,14 @@ describe('the Live Series rookies (2026-10-22)', () => {
   // The user: "can we add the rookies that are on rosters to the live set? We
   // don't have to have stats for them yet, but I just want to be able to add
   // pics now". Photos first, into the folder every Live card reads.
-  it('lists them on an editable source over the 2026-27 folder, each id once and none a pool card', () => {
+  it('lists them on an editable Live source, its photos the 2026-27 folder\'s, each id once and none a pool card', () => {
     const src = SOURCES['live-rookies'];
     expect(src.editable).toBe(true);
-    expect(src.set).toBe(CURRENT_SET);
+    expect(src.set).toBe(LIVE_SET);
+    expect(setPaths(LIVE_SET).photos).toBe(setPaths(CURRENT_SET).photos);
+    expect(artSetOf(LIVE_SET)).toBe(CURRENT_SET);
+    // Shown as the Live rookie cards they will be (the user, 2026-10-22).
+    for (const r of LIVE_ROOKIES) expect(r.badges).toEqual(['rookie']);
     expect(src.players.length).toBe(LIVE_ROOKIES.length);
     expect(LIVE_ROOKIES.length).toBeGreaterThan(0);
     const ids = LIVE_ROOKIES.map(r => r.id);

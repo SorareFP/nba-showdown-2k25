@@ -2487,3 +2487,20 @@ describe('a Record Breakers card', () => {
     expect(html).toContain('38,388');
   });
 });
+
+// THE LIVE SERIES' ROOKIES (2026-10-22; the user: "Make sure the Live Series
+// rookies have the same blue flair as the live cards, but maybe a dash of the
+// rookie green. Also, the 26-27 rookie badge.").
+describe('a Live rookie card', () => {
+  it('prints LIVE, a dated 26-27 ROOKIE pill under it, and the live-rookie trim', () => {
+    const card = { id: 'AJ_Dybantsa', name: 'AJ Dybantsa', team: 'WAS', pos: 'F', badges: ['rookie'], seasonLabel: '2026-27' };
+    const html = render({ card, set: LIVE_SET });
+    expect(html).toContain('data-treatment="live-rookie"');
+    expect(html).toMatch(/>LIVE</);
+    expect(html).toContain('26-27 ROOKIE');
+    // A Live card that is not a rookie card is unchanged.
+    const plain = render({ card: { ...card, badges: [] }, set: LIVE_SET });
+    expect(plain).toContain('data-treatment="blue-accent"');
+    expect(plain).not.toContain('ROOKIE');
+  });
+});

@@ -489,6 +489,26 @@ function blueAccent(theme) {
 }
 
 /**
+ * LIVE ROOKIE — the Live Series' rookies (2026-10-22; the user: "the same blue
+ * flair as the live cards, but maybe a dash of the rookie green"). The blue
+ * accent whole — keyline, ornaments and the LIVE pill stay electric blue — and
+ * the band takes the rookie green: its second stripe and the bar under it. The
+ * ROOKIE pill under LIVE is the team's accent, as on every rookie card.
+ */
+function liveRookieAccent(theme) {
+  const blue = blueAccent(theme);
+  return {
+    ...blue,
+    stripeSecondary: readableOn(GREEN, theme.bandTop, MIN_DECOR_CONTRAST),
+    treatment: {
+      ...blue.treatment,
+      id: 'live-rookie',
+      bandEdge: readableOn(GREEN, theme.field, MIN_DECOR_CONTRAST),
+    },
+  };
+}
+
+/**
  * PLATINUM — Record Breakers. The team's field, band and chart untouched, like
  * the trims; what marks the set is a platinum frame, a metal sweep twice the
  * keyline's width, and the platinum pill (badges.js). The record itself is the
@@ -518,6 +538,7 @@ export const TREATMENTS = {
   'gold-foil': goldFoil,
   'green-accent': greenAccent,
   'blue-accent': blueAccent,
+  'live-rookie': liveRookieAccent,
   'bronze-accent': bronzeAccent,
   throwback: throwbackLook,
   platinum: platinumLook,

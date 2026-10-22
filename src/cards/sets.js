@@ -228,6 +228,9 @@ export const SETS = [
     showsSeason: false,
     badge: LIVE_BADGE,
     treatment: 'blue-accent',
+    // A Live card that is a ROOKIE card (the 2026-27 rookies, 2026-10-22) keeps
+    // the blue and takes a dash of the rookie green (treatments.js live-rookie).
+    rookieTreatment: 'live-rookie',
   },
   {
     id: '2025-26',
@@ -596,6 +599,9 @@ export function cardTreatment(set, salary, cardBadges = [], wears = null) {
   const badge = setBadge(set);
   if (badge !== null && tierBadge(badge, salary) !== badge) return null;
   const declared = setTreatment(set);
+  // A set may dress its rookie cards differently (the Live Series' rookies).
+  const rookieLook = getSet(set)?.rookieTreatment ?? null;
+  if (declared !== null && rookieLook && Array.isArray(cardBadges) && cardBadges.includes(ROOKIE_BADGE)) return rookieLook;
   if (declared !== null) return declared;
   // A base-set card wearing the GILDED Super Season pill gets the gold foil
   // too (user decision 2026-09-02, the Brandon Miller case): a player whose
@@ -740,6 +746,13 @@ export const ART_ROOT = 'card-art';
 export const teamOverridesPath = (league = DEFAULT_LEAGUE) => `${ART_ROOT}/team-overrides/${league}.json`;
 
 /**
+ * The set whose photos and crops a set's cards use: the Live Series reads the
+ * base set's (setPaths), every other set its own. The studio server lets a set
+ * be written to when this one may be (the Live rookies' photos, 2026-10-22).
+ */
+export const artSetOf = set => (set === LIVE_SET ? CURRENT_SET : set);
+
+/**
  * Every path a set owns, project-root-relative and POSIX-separated.
  *
  * Returned as plain strings rather than resolved absolutes so the same helper
@@ -750,7 +763,7 @@ export function setPaths(set = CURRENT_SET) {
   const root = `${ART_ROOT}/sets/${set}`;
   // A live card is its base card's player in the same season: the photo, the
   // crop and the team colours are the base set's, not a second copy of them.
-  const art = set === LIVE_SET ? `${ART_ROOT}/sets/${CURRENT_SET}` : root;
+  const art = `${ART_ROOT}/sets/${artSetOf(set)}`;
   return {
     set,
     root,

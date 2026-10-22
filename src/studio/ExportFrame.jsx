@@ -31,8 +31,10 @@ export default function ExportFrame() {
   const source = SOURCES[set] ?? Object.values(SOURCES).find(s => s.set === set) ?? null;
   const card = source?.players.find(c => c.id === id) ?? null;
   // A source drawn on another set's art (the practiced faces on the strategy
-  // cards', 2026-10-19) reads that set's photos and crops.
-  const artSet = source?.artSet ?? set;
+  // cards', 2026-10-19) reads that set's photos and crops. A source asked for
+  // by its KEY (the Live rookies, `?set=live-rookies`) renders as its set.
+  const cardSet = source?.set ?? set;
+  const artSet = source?.artSet ?? cardSet;
 
   useEffect(() => {
     if (!card) return;
@@ -89,7 +91,7 @@ export default function ExportFrame() {
       ) : (
         <CardTemplate
           card={card}
-          set={set}
+          set={cardSet}
           crop={state.crop}
           hasPhoto={state.hasPhoto}
           photoExt={state.photoExt}

@@ -573,7 +573,9 @@ export default function CardTemplate({
               className={styles.badge}
               style={colors ? { background: colors.fill, color: colors.ink } : undefined}
             >
-              {badgeLabel(b, null)}
+              {/* With no season row (the Live Series), an extra pill dates itself
+                  from the card's own season: a Live rookie's "26-27 ROOKIE". */}
+              {badgeLabel(b, season ? null : (card.seasonLabel ?? null))}
             </div>
           );
         })}

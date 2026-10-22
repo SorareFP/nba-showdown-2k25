@@ -1,7 +1,25 @@
 {
  "set": "live",
- "mode": "mirror",
- "asOf": "2026-09-23T12:31:22.062Z",
- "source": "cards-2026-27.json",
- "cards": 348
+ "cards": 348,
+ "mode": "season",
+ "asOf": "2026-10-22T14:10:19.106Z",
+ "source": "dunksandthrees.com /epm 2027 (expected) + /epm/actual; Basketball-Reference 2027 game logs",
+ "season": 2027,
+ "built": 336,
+ "mirrored": 12,
+ "withRealGames": 0,
+ "fullWindows": 0,
+ "logs": {
+  "current": 348,
+  "behind": 0,
+  "fetched": 0,
+  "failed": [],
+  "unmatched": []
+ },
+ "teamEpm": "stale: dunksandthrees team-epm: 401 — the API key was rejected. Check DUNKSANDTHREES_API_KEY in .env.local.",
+ "fillLevel": {
+  "basis": "the 2025-26 pool: each player's real last-82 window as realGames.js hands it to computeStatBands (opponent-adjusted, minutes-damped, winsorized), against the per-4-minute rate of dunksandthrees' predicted per-100 line",
+  "generatedAt": "2026-10-01T12:46:37.909Z",
+  "players": 343
+ }
 }

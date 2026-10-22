@@ -64,8 +64,12 @@ jobs:
           python-version: '3.12'
       - run: npm ci
       - run: pip install pillow
-      # Puppeteer's Chromium for the face export.
-      - run: npx puppeteer browsers install chrome
+      # PLAYWRIGHT'S Chromium for the face export: scripts/studio/export.js
+      # launches playwright's chromium (headless shell). The step installed
+      # Puppeteer's Chrome until 2026-10-21, the first night the job reached
+      # the export: "browserType.launch: Executable doesn't exist ...
+      # chromium_headless_shell". --with-deps brings the system libraries.
+      - run: npx playwright install --with-deps chromium
 
       # The stat cache between nights: this season's game-log pages (fetched
       # only for players who have played since the cached page, at the polite

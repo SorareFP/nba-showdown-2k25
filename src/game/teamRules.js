@@ -18,11 +18,27 @@ export const MIN_TO_PLAY = 5;
 export const capSal = roster => roster.reduce((s, c) => s + (c.salary ?? 0), 0);
 
 /**
- * ONE CARD A PLAYER ON A TEAM (the user, 2026-10-07: "Yeah should only be one").
- * Two cards of one player share an id, and the engine keeps a roster's stat
- * rows and fatigue by id. Both builders read these.
+ * ARE TWO CARDS ONE PLAYER? Most of a player's cards share an id, but not all:
+ * a Team Rewards, Throwbacks or Record Breakers card is keyed by its season
+ * (Dwyane_Wade_2009 beside the Super Season's Dwyane_Wade), so comparing ids
+ * fielded the classic Heat boss with two Wades (the user, 2026-10-22: "Got 2
+ * D-Wades played from the Act 1 boss"). The same Basketball-Reference id when
+ * both cards carry one (it tells two players of one name apart); otherwise the
+ * id less a season suffix (the base set's cards carry no bbrefId).
  */
-export const playerOnRoster = (roster, card) => (roster ?? []).some(c => c && c !== card && c.id === card?.id);
+const withoutSeason = id => String(id ?? '').replace(/_\d{4}$/, '');
+export function samePlayer(a, b) {
+  if (!a || !b) return false;
+  if (a.bbrefId && b.bbrefId) return a.bbrefId === b.bbrefId;
+  return withoutSeason(a.id) === withoutSeason(b.id);
+}
+
+/**
+ * ONE CARD A PLAYER ON A TEAM (the user, 2026-10-07: "Yeah should only be one").
+ * One player, whatever the season or set (samePlayer). Both builders, the
+ * Climb and the coach's rosters read it.
+ */
+export const playerOnRoster = (roster, card) => (roster ?? []).some(c => c && c !== card && samePlayer(c, card));
 /**
  * WHAT THE CAP LEAVES (the user, 2026-10-19: "show remaining salary while
  * building team, and only show players who can fit under the cap. Also maybe
@@ -62,9 +78,9 @@ export function capRoom(roster, cap, { target = MIN_TO_PLAY, max = MAX, pool = [
 
 /** The names on a roster more than once — a team saved before the rule. */
 export function doubledPlayers(roster) {
-  const seen = new Set();
   const twice = new Set();
-  for (const c of roster ?? []) { if (!c) continue; if (seen.has(c.id)) twice.add(c.name); seen.add(c.id); }
+  const seen = [];
+  for (const c of roster ?? []) { if (!c) continue; if (seen.some(s => samePlayer(s, c))) twice.add(c.name); seen.push(c); }
   return [...twice];
 }
 

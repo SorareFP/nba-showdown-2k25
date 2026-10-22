@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   ownedPlayers, ownedRoster, capSal, randomizeTeam, filterPool, sortPool, POOL_SORTS, POSITIONS,
-  DEFAULT_FILTERS, CAP, MAX, MIN_TO_PLAY, RANDOM_MIN_SAL, salaryOrder, playerOnRoster, doubledPlayers, capRoom } from './teamRules.js';
+  DEFAULT_FILTERS, CAP, MAX, MIN_TO_PLAY, RANDOM_MIN_SAL, salaryOrder, playerOnRoster, doubledPlayers, capRoom, samePlayer } from './teamRules.js';
 import { ALL_CARDS, BASE_SET, cardKey } from './cardSets.js';
 
 const base = ALL_CARDS.find(c => (!c.set || c.set === BASE_SET) && Number.isFinite(c.salary));
@@ -168,6 +168,23 @@ describe('one card a player', () => {
   it('names a player a saved team holds twice', () => {
     expect(doubledPlayers([baseTwin, twin, other])).toEqual([twin.name]);
     expect(doubledPlayers([baseTwin, other])).toEqual([]);
+  });
+
+  // TWO WADES (the user, 2026-10-22: "Got 2 D-Wades played from the Act 1
+  // boss"): a Team Rewards, Throwbacks or Record Breakers card is keyed by its
+  // season, so the ids of one player's cards can differ.
+  it('knows one player across seasons and sets, and two players of one name apart', () => {
+    const wade = ALL_CARDS.find(c => c.set === 'super-season' && c.id === 'Dwyane_Wade');
+    const wade09 = ALL_CARDS.find(c => c.id === 'Dwyane_Wade_2009');
+    expect(wade && wade09).toBeTruthy();
+    expect(samePlayer(wade, wade09)).toBe(true);
+    expect(playerOnRoster([wade], wade09)).toBe(true);
+    expect(doubledPlayers([wade, wade09])).toEqual(['Dwyane Wade']);
+    // A base card carries no bbrefId: the id says it.
+    expect(samePlayer({ id: 'LeBron_James' }, { id: 'LeBron_James_2013', bbrefId: 'jamesle01' })).toBe(true);
+    // Two people of one name: their Basketball-Reference ids part them.
+    expect(samePlayer({ id: 'Mike_James', bbrefId: 'jamesmi01' }, { id: 'Mike_James', bbrefId: 'jamesmi02' })).toBe(false);
+    expect(samePlayer({ id: 'Gary_Payton' }, { id: 'Gary_Payton_II' })).toBe(false);
   });
 
   it('is the rule in both builders', async () => {

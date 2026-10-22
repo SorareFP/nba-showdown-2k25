@@ -7,12 +7,13 @@
 import { describe, it, expect } from 'vitest';
 import {
   newRun, chooseCamp, chooseStop, recordResult, pickPerk, presetFor, openStops, isTravel, restDay,
-  takeFreePractice, takeFreeCut, rosterCards, recoveryFor, gamePerksOf, CLIMB,
+  takeFreePractice, takeFreeCut, rosterCards, recoveryFor, gamePerksOf, CLIMB, continueClimb,
 } from './run.js';
+import { samePlayer } from '../teamRules.js';
 import { PERKS, PERK_IDS, perkOffer, perkProblem, boostsOf, WIN_NOW_CAP, TRAVEL_DAYS } from './climbPerks.js';
 import { climbRng, stopById, nextStops, potOfRun, travelCost, reachableGame, SPONSOR_SHARE } from './climbMap.js';
 import { CARDS } from '../cards.js';
-import { cardKey } from '../cardSets.js';
+import { cardKey, getCardByKey } from '../cardSets.js';
 
 const FIVE = [...CARDS].sort((a, b) => a.salary - b.salary || a.id.localeCompare(b.id)).slice(100, 105);
 const QUIET = { player: -1, perk: -1 };
@@ -195,5 +196,33 @@ describe('the pot\'s perks', () => {
   it('every perk in the list has a name, an icon and words the screens can show', () => {
     for (const id of PERK_IDS) expect([PERKS[id].name, PERKS[id].icon].every(Boolean), id).toBe(true);
     expect(CLIMB.surePlayer).toEqual(['rivalry']);
+  });
+});
+
+// A BOSS ALWAYS PAYS A PLAYER (the user, 2026-10-22: "I want to make sure that
+// the Act 1 boss gives a player reward"): three players however the roster
+// stands, never one already on it in another season's card.
+describe('the Act I boss\'s reward', () => {
+  const sorted = [...CARDS].sort((a, b) => a.salary - b.salary || a.id.localeCompare(b.id));
+  const won = extra => ({ ...camped(), status: 'won', at: 'boss', cleared: ['1-0', 'boss'], ...extra });
+  it('offers three players: five with room, ten under the cap, ten at it, and no room at all', () => {
+    const capOf = keys => keys.reduce((t, k) => t + (CARDS.find(c => cardKey(c) === k)?.salary ?? 0), 0);
+    const ten = sorted.slice(300, 310).map(cardKey);
+    const seven = sorted.slice(300, 307).map(cardKey);
+    for (const run of [
+      won({ cap: 4800 }),
+      won({ cap: 9000, roster: sorted.slice(100, 110).map(cardKey) }),
+      won({ cap: capOf(ten), roster: ten }),
+      won({ cap: capOf(seven) - CLIMB.capPerFloor, roster: seven }),
+    ]) {
+      const next = continueClimb(run);
+      expect(next.status).toBe('reward');
+      expect(next.offers.players).toHaveLength(3);
+      const mine = rosterCards(next).cards;
+      for (const k of next.offers.players) {
+        const c = getCardByKey(k);
+        expect(mine.some(m => samePlayer(m, c)), c.name).toBe(false);
+      }
+    }
   });
 });

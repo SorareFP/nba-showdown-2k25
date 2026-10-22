@@ -6,11 +6,13 @@
 import { describe, it, expect } from 'vitest';
 import { buildAiRoster, franchiseOf, CLASSIC_SETS, classicCards, classicFranchises, buildClassicRoster } from './aiTeams.js';
 import { climbRng } from './climbMap.js';
+import { samePlayer } from '../teamRules.js';
 import { isFeatCard } from '../recordBreakers.js';
 import { DORMANT_KEYS, cardKey } from '../cardSets.js';
 
 const sal = r => r.reduce((t, c) => t + (c.salary ?? 0), 0);
-const distinctPlayers = r => new Set(r.map(c => c.id)).size === r.length;
+// One player, whatever the card's season or set (samePlayer, 2026-10-22).
+const distinctPlayers = r => !r.some((c, i) => r.some((d, j) => j > i && samePlayer(c, d)));
 
 describe('a sized coach roster', () => {
   it('drafts five under a small cap, its own franchise first', () => {
@@ -76,6 +78,21 @@ describe('a classic team at every act boss', () => {
           expect(r, `${abbr} ${size}`).toHaveLength(size);
           expect(sal(r)).toBeLessThanOrEqual(cap);
         }
+      }
+    }
+  });
+});
+
+// TWO WADES (the user, 2026-10-22: "Got 2 D-Wades played from the Act 1
+// boss"): Miami's classic team could field the Super Season and the 2009
+// Team Rewards card, whose ids differ. Every act's boss size, many seeds.
+describe('the classic Heat', () => {
+  it('field Dwyane Wade once', () => {
+    for (const [cap, size] of [[4800, 8], [9600, 9], [14000, 11]]) {
+      for (let seed = 1; seed <= 40; seed += 1) {
+        const r = buildClassicRoster('MIA', { cap, size, rng: climbRng(seed, 'boss', 'MIA') });
+        expect(r.filter(c => c.name === 'Dwyane Wade').length, `seed ${seed}, ${size} deep`).toBeLessThanOrEqual(1);
+        expect(distinctPlayers(r)).toBe(true);
       }
     }
   });

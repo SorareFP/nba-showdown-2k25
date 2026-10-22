@@ -20,7 +20,7 @@ import { ALL_CARDS, DORMANT_KEYS, cardKey, getCardByKey } from '../cardSets.js';
 import { isFeatCard } from '../recordBreakers.js';
 import { capOf } from '../coinRewards.js';
 import { nearestArchetype } from '../deckFit.js';
-import { capSal } from '../teamRules.js';
+import { capSal, samePlayer } from '../teamRules.js';
 import { TEAMS } from '../../cards/teams.js';
 
 /**
@@ -220,7 +220,7 @@ export function fiveProblem(rosterKeys, ownedKeys = null) {
     const lost = cards.find(c => !ownedKeys.has(cardKey(c)));
     if (lost) return `You no longer own ${lost.name}`;
   }
-  if (new Set(cards.map(c => c.id)).size !== cards.length) return 'One card a player';
+  if (cards.some((c, i) => cards.some((d, j) => j > i && samePlayer(c, d)))) return 'One card a player';
   const sal = capSal(cards);
   if (sal > CLIMB_FIVE.cap) return `${dollars(sal)}, over the ${dollars(CLIMB_FIVE.cap)} cap`;
   return null;
@@ -527,8 +527,8 @@ export function stratOffer(run, stop, rng, rngClimb = null) {
 function playerOffer(run, rng) {
   const { cards } = rosterCards(run);
   const room = run.cap - capSal(cards);
-  const on = new Set(cards.map(c => c.id));
-  const open = PLAYER_POOL.filter(c => !on.has(c.id));
+  // Never a player already on the roster, in any season's card (samePlayer).
+  const open = PLAYER_POOL.filter(c => !cards.some(r => samePlayer(r, c)));
   // A FULL ROSTER STILL GETS AN OFFER (2026-10-21; the user, of an Act II
   // Rivalry with no player: "Rivalry games should always give card rewards").
   // At ten players — 23 of 28 Act II Rivalry wins in the sim — or with no one
@@ -541,13 +541,12 @@ function playerOffer(run, rng) {
   const fits = open
     .filter(c => (c.salary ?? 0) <= budget)
     .sort((a, b) => (b.salary ?? 0) - (a.salary ?? 0) || cardKey(a).localeCompare(cardKey(b)));
-  const taken = new Set();
+  // Three different players, each once in a band's draw.
+  const taken = [];
   const bestOf = list => {
-    const seen = new Set();
     const out = [];
     for (const c of list) {
-      if (taken.has(c.id) || seen.has(c.id)) continue;
-      seen.add(c.id);
+      if (taken.some(t => samePlayer(t, c)) || out.some(o => samePlayer(o, c))) continue;
       out.push(c);
       if (out.length >= CLIMB.offerBest) break;
     }
@@ -559,7 +558,7 @@ function playerOffer(run, rng) {
     if (!pool.length) pool = bestOf(fits);
     if (!pool.length) break;
     const c = pool[Math.floor(rng() * pool.length)];
-    taken.add(c.id);
+    taken.push(c);
     out.push(cardKey(c));
   }
   return out;

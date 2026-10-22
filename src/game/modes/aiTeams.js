@@ -11,7 +11,7 @@
 // team you could have built yourself.
 import { CARDS } from '../cards.js';
 import { TEAMS, TEAM_ALIASES } from '../../cards/teams.js';
-import { CAP, RANDOM_MIN_SAL } from '../teamRules.js';
+import { CAP, RANDOM_MIN_SAL, samePlayer } from '../teamRules.js';
 // The roster size from teamRules rather than the engine, so a dynasty's AI
 // league can be built where the engine is not shipped (the Cloud Functions).
 import { MAX as ROSTER_SIZE } from '../teamRules.js';
@@ -67,7 +67,8 @@ export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Ma
   const cheap = [...free].sort((a, b) => (a.salary ?? 0) - (b.salary ?? 0));
 
   const roster = [];
-  const ids = new Set();
+  // One card a player, whatever its season (samePlayer, 2026-10-22).
+  const has = (c, except = null) => roster.some(r => r !== except && samePlayer(r, c));
   let sal = 0;
   /**
    * Room for THIS card and the cheapest cards still available for the spots
@@ -80,29 +81,29 @@ export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Ma
     let counted = 0;
     for (const x of cheap) {
       if (counted >= spotsAfter) break;
-      if (ids.has(x.id) || x.id === c.id) continue;
+      if (has(x) || samePlayer(x, c)) continue;
       reserve += x.salary ?? 0;
       counted += 1;
     }
     if (counted < spotsAfter) return false;
     return sal + (c.salary ?? 0) + reserve <= cap;
   };
-  const take = c => { roster.push(c); ids.add(c.id); sal += c.salary ?? 0; };
+  const take = c => { roster.push(c); sal += c.salary ?? 0; };
   for (const c of rank(mine)) {
     if (roster.length >= size) break;
-    if (ids.has(c.id) || !fits(c)) continue;
+    if (has(c) || !fits(c)) continue;
     take(c);
   }
   for (const c of rank(others)) {
     if (roster.length >= size) break;
-    if (ids.has(c.id) || !fits(c)) continue;
+    if (has(c) || !fits(c)) continue;
     take(c);
   }
   // Whatever is left over goes to the cheapest cards that still fit, so the
   // roster is always full (ten deep, unless a size was asked for).
   for (const c of cheap) {
     if (roster.length >= size) break;
-    if (ids.has(c.id) || sal + (c.salary ?? 0) > cap) continue;
+    if (has(c) || sal + (c.salary ?? 0) > cap) continue;
     take(c);
   }
   // Spend up to the floor if the draw came in cheap: swap the smallest salary
@@ -112,12 +113,10 @@ export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Ma
     const worst = roster[worstIdx];
     const room = cap - sal + (worst.salary ?? 0);
     const upgrade = free
-      .filter(c => !ids.has(c.id) && (c.salary ?? 0) <= room && (c.salary ?? 0) > (worst.salary ?? 0))
+      .filter(c => !has(c, worst) && (c.salary ?? 0) <= room && (c.salary ?? 0) > (worst.salary ?? 0))
       .sort((a, b) => (b.salary ?? 0) - (a.salary ?? 0))[0];
     if (!upgrade) break;
     sal += (upgrade.salary ?? 0) - (worst.salary ?? 0);
-    ids.delete(worst.id);
-    ids.add(upgrade.id);
     roster[worstIdx] = upgrade;
   }
   return roster;
@@ -217,16 +216,19 @@ export function buildClassicRoster(abbr, { cap = CAP, size = ROSTER_SIZE, rng = 
   for (const c of ranked) {
     if (core.length >= k) break;
     // ONE CARD A PLAYER (2026-10-20): a franchise with two seasons of one star
-    // (two LeBrons on Cleveland's Act II boss) fields him once.
-    if (core.some(x => x.id === c.id)) continue;
-    const others = classic.filter(x => x !== c && x.id !== c.id && !core.some(y => y.id === x.id));
+    // (two LeBrons on Cleveland's Act II boss) fields him once — two Wades
+    // too, whose 2009 Team Rewards card has an id of its own (samePlayer).
+    if (core.some(x => samePlayer(x, c))) continue;
+    const others = classic.filter(x => x !== c && !samePlayer(x, c) && !core.some(y => samePlayer(y, x)));
     if (sal + salaryOf(c) + cheapest(others, k - core.length - 1) + cheapest(fill, size - k) > cap) continue;
     core.push(c);
     sal += salaryOf(c);
   }
-  const left = classic.filter(c => !core.includes(c));
+  // The rest of the roster never repeats a player of the core.
+  const notCore = c => !core.some(x => samePlayer(x, c));
+  const left = classic.filter(c => !core.includes(c) && notCore(c));
   const rest = buildAiRoster(abbr, {
-    own: left, cards: [...left, ...fill], cap: cap - sal, size: size - core.length, rng,
+    own: left, cards: [...left, ...fill.filter(notCore)], cap: cap - sal, size: size - core.length, rng,
     taken: new Set(core.map(c => c.id)),
   });
   return [...core, ...rest];

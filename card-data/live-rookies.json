@@ -1,0 +1,806 @@
+{
+  "note": "THE LIVE SERIES ROOKIES (2026-10-22): players on a 2026-27 NBA roster whose first NBA season this is (nba.com/players, FROM_YEAR 2026), so no 2026-27 base card. Photos first: the Card Studio lists them (players.js live-rookies) and saves their photos into the 2026-27 folder, where every Live card reads its photo. No numbers yet, and nothing in the game until the Live job cards them. id is fixed here, not re-derived, so a later source spelling the name differently cannot orphan the photo.",
+  "source": "nba.com/players, read 2026-10-22",
+  "rookies": [
+    {
+      "id": "AJ_Dybantsa",
+      "name": "AJ Dybantsa",
+      "team": "WAS",
+      "pos": "F",
+      "personId": 1643407,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 1
+      }
+    },
+    {
+      "id": "Darryn_Peterson",
+      "name": "Darryn Peterson",
+      "team": "UTA",
+      "pos": "G",
+      "personId": 1643408,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 2
+      }
+    },
+    {
+      "id": "Cameron_Boozer",
+      "name": "Cameron Boozer",
+      "team": "MEM",
+      "pos": "F",
+      "personId": 1643409,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 3
+      }
+    },
+    {
+      "id": "Caleb_Wilson",
+      "name": "Caleb Wilson",
+      "team": "CHI",
+      "pos": "F",
+      "personId": 1643410,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 4
+      }
+    },
+    {
+      "id": "Keaton_Wagler",
+      "name": "Keaton Wagler",
+      "team": "LAC",
+      "pos": "G",
+      "personId": 1643413,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 5
+      }
+    },
+    {
+      "id": "Mikel_Brown_Jr",
+      "name": "Mikel Brown Jr.",
+      "team": "BKN",
+      "pos": "G",
+      "personId": 1643414,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 6
+      }
+    },
+    {
+      "id": "Darius_Acuff_Jr",
+      "name": "Darius Acuff Jr.",
+      "team": "SAC",
+      "pos": "G",
+      "personId": 1643411,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 7
+      }
+    },
+    {
+      "id": "Kingston_Flemings",
+      "name": "Kingston Flemings",
+      "team": "ATL",
+      "pos": "G",
+      "personId": 1643412,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 8
+      }
+    },
+    {
+      "id": "Morez_Johnson_Jr",
+      "name": "Morez Johnson Jr.",
+      "team": "DAL",
+      "pos": "F",
+      "personId": 1643516,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 9
+      }
+    },
+    {
+      "id": "Brayden_Burries",
+      "name": "Brayden Burries",
+      "team": "MIL",
+      "pos": "G",
+      "personId": 1643415,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 10
+      }
+    },
+    {
+      "id": "Yaxel_Lendeborg",
+      "name": "Yaxel Lendeborg",
+      "team": "GSW",
+      "pos": "F",
+      "personId": 1642865,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 11
+      }
+    },
+    {
+      "id": "Aday_Mara",
+      "name": "Aday Mara",
+      "team": "OKC",
+      "pos": "C",
+      "personId": 1643530,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 12
+      }
+    },
+    {
+      "id": "Nate_Ament",
+      "name": "Nate Ament",
+      "team": "MIL",
+      "pos": "F",
+      "personId": 1643417,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 13
+      }
+    },
+    {
+      "id": "Hannes_Steinbach",
+      "name": "Hannes Steinbach",
+      "team": "CHA",
+      "pos": "F",
+      "personId": 1643419,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 14
+      }
+    },
+    {
+      "id": "Dailyn_Swain",
+      "name": "Dailyn Swain",
+      "team": "CHI",
+      "pos": "F",
+      "personId": 1643517,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 15
+      }
+    },
+    {
+      "id": "Bennett_Stirtz",
+      "name": "Bennett Stirtz",
+      "team": "OKC",
+      "pos": "G",
+      "personId": 1642892,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 16
+      }
+    },
+    {
+      "id": "Ebuka_Okorie",
+      "name": "Ebuka Okorie",
+      "team": "DET",
+      "pos": "G",
+      "personId": 1643536,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 17
+      }
+    },
+    {
+      "id": "Christian_Anderson",
+      "name": "Christian Anderson",
+      "team": "CHA",
+      "pos": "G",
+      "personId": 1643515,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 18
+      }
+    },
+    {
+      "id": "Allen_Graves",
+      "name": "Allen Graves",
+      "team": "TOR",
+      "pos": "F",
+      "personId": 1643512,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 19
+      }
+    },
+    {
+      "id": "Jayden_Quaintance",
+      "name": "Jayden Quaintance",
+      "team": "SAS",
+      "pos": "F",
+      "personId": 1643519,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 20
+      }
+    },
+    {
+      "id": "Karim_Lopez",
+      "name": "Karim López",
+      "team": "MEM",
+      "pos": "F",
+      "personId": 1643510,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 21
+      }
+    },
+    {
+      "id": "Labaron_Philon_Jr",
+      "name": "Labaron Philon Jr.",
+      "team": "PHI",
+      "pos": "G",
+      "personId": 1642889,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 22
+      }
+    },
+    {
+      "id": "Zuby_Ejiofor",
+      "name": "Zuby Ejiofor",
+      "team": "ATL",
+      "pos": "F",
+      "personId": 1643544,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 23
+      }
+    },
+    {
+      "id": "Cameron_Carr",
+      "name": "Cameron Carr",
+      "team": "LAL",
+      "pos": "G",
+      "personId": 1643418,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 24
+      }
+    },
+    {
+      "id": "Sergio_de_Larrea",
+      "name": "Sergio de Larrea",
+      "team": "DAL",
+      "pos": "G",
+      "personId": 1643547,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 25
+      }
+    },
+    {
+      "id": "Tarris_Reed_Jr",
+      "name": "Tarris Reed Jr.",
+      "team": "SAS",
+      "pos": "C",
+      "personId": 1643542,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 26
+      }
+    },
+    {
+      "id": "Chris_Cenac_Jr",
+      "name": "Chris Cenac Jr.",
+      "team": "BOS",
+      "pos": "F",
+      "personId": 1643416,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 27
+      }
+    },
+    {
+      "id": "Joshua_Jefferson",
+      "name": "Joshua Jefferson",
+      "team": "BKN",
+      "pos": "F",
+      "personId": 1643538,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 28
+      }
+    },
+    {
+      "id": "Alex_Karaban",
+      "name": "Alex Karaban",
+      "team": "SAC",
+      "pos": "F",
+      "personId": 1642284,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 29
+      }
+    },
+    {
+      "id": "Koa_Peat",
+      "name": "Koa Peat",
+      "team": "PHX",
+      "pos": "F",
+      "personId": 1643520,
+      "draft": {
+        "year": 2026,
+        "round": 1,
+        "pick": 30
+      }
+    },
+    {
+      "id": "Bruce_Thornton",
+      "name": "Bruce Thornton",
+      "team": "HOU",
+      "pos": "G",
+      "personId": 1643570,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 31
+      }
+    },
+    {
+      "id": "Isaiah_Evans",
+      "name": "Isaiah Evans",
+      "team": "MIN",
+      "pos": "F",
+      "personId": 1642912,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 33
+      }
+    },
+    {
+      "id": "Meleek_Thomas",
+      "name": "Meleek Thomas",
+      "team": "CLE",
+      "pos": "G",
+      "personId": 1643509,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 34
+      }
+    },
+    {
+      "id": "Trevon_Brazile",
+      "name": "Trevon Brazile",
+      "team": "DEN",
+      "pos": "F",
+      "personId": 1642350,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 35
+      }
+    },
+    {
+      "id": "Baba_Miller",
+      "name": "Baba Miller",
+      "team": "LAC",
+      "pos": "F",
+      "personId": 1642394,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 36
+      }
+    },
+    {
+      "id": "Ryan_Conwell",
+      "name": "Ryan Conwell",
+      "team": "MIA",
+      "pos": "G",
+      "personId": 1643553,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 37
+      }
+    },
+    {
+      "id": "Braden_Smith",
+      "name": "Braden Smith",
+      "team": "IND",
+      "pos": "G",
+      "personId": 1643552,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 38
+      }
+    },
+    {
+      "id": "Khalifa_Diop",
+      "name": "Khalifa Diop",
+      "team": "CLE",
+      "pos": "C",
+      "personId": 1631215,
+      "draft": {
+        "year": 2022,
+        "round": 2,
+        "pick": 39
+      }
+    },
+    {
+      "id": "Dillon_Mitchell",
+      "name": "Dillon Mitchell",
+      "team": "BOS",
+      "pos": "F",
+      "personId": 1641759,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 40
+      }
+    },
+    {
+      "id": "Otega_Oweh",
+      "name": "Otega Oweh",
+      "team": "OKC",
+      "pos": "G",
+      "personId": 1642923,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 41
+      }
+    },
+    {
+      "id": "Ja_Kobi_Gillespie",
+      "name": "Ja'Kobi Gillespie",
+      "team": "SAS",
+      "pos": "G",
+      "personId": 1643551,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 42
+      }
+    },
+    {
+      "id": "Tyler_Bilodeau",
+      "name": "Tyler Bilodeau",
+      "team": "BKN",
+      "pos": "F",
+      "personId": 1643548,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 43
+      }
+    },
+    {
+      "id": "Maliq_Brown",
+      "name": "Maliq Brown",
+      "team": "SAS",
+      "pos": "F",
+      "personId": 1643576,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 44
+      }
+    },
+    {
+      "id": "Emanuel_Sharp",
+      "name": "Emanuel Sharp",
+      "team": "SAC",
+      "pos": "G",
+      "personId": 1643567,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 45
+      }
+    },
+    {
+      "id": "Felix_Okpara",
+      "name": "Felix Okpara",
+      "team": "WAS",
+      "pos": "C",
+      "personId": 1643590,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 46
+      }
+    },
+    {
+      "id": "Bogoljub_Markovic",
+      "name": "Bogoljub Marković",
+      "team": "MIL",
+      "pos": "F",
+      "personId": 1642881,
+      "draft": {
+        "year": 2025,
+        "round": 2,
+        "pick": 47
+      }
+    },
+    {
+      "id": "Tyler_Nickel",
+      "name": "Tyler Nickel",
+      "team": "NYK",
+      "pos": "F",
+      "personId": 1643589,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 47
+      }
+    },
+    {
+      "id": "Tobi_Lawal",
+      "name": "Tobi Lawal",
+      "team": "DAL",
+      "pos": "F",
+      "personId": 1643588,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 48
+      }
+    },
+    {
+      "id": "Bryce_Hopkins",
+      "name": "Bryce Hopkins",
+      "team": "DEN",
+      "pos": "F",
+      "personId": 1643624,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 49
+      }
+    },
+    {
+      "id": "Jaden_Bradley",
+      "name": "Jaden Bradley",
+      "team": "TOR",
+      "pos": "G",
+      "personId": 1643558,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 50
+      }
+    },
+    {
+      "id": "Izaiyah_Nelson",
+      "name": "Izaiyah Nelson",
+      "team": "ORL",
+      "pos": "F",
+      "personId": 1643593,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 51
+      }
+    },
+    {
+      "id": "Henri_Veesaar",
+      "name": "Henri Veesaar",
+      "team": "ATL",
+      "pos": "C",
+      "personId": 1643539,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 52
+      }
+    },
+    {
+      "id": "Ugonna_Onyenso",
+      "name": "Ugonna Onyenso",
+      "team": "DET",
+      "pos": "C",
+      "personId": 1642391,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 53
+      }
+    },
+    {
+      "id": "Nick_Martinelli",
+      "name": "Nick Martinelli",
+      "team": "LAC",
+      "pos": "F",
+      "personId": 1643568,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 55
+      }
+    },
+    {
+      "id": "Tarik_Biberovic",
+      "name": "Tarik Biberović",
+      "team": "DAL",
+      "pos": "F",
+      "personId": 1641844,
+      "draft": {
+        "year": 2023,
+        "round": 2,
+        "pick": 56
+      }
+    },
+    {
+      "id": "Jaron_Pierre_Jr",
+      "name": "Jaron Pierre Jr.",
+      "team": "NOP",
+      "pos": "G",
+      "personId": 1643555,
+      "draft": {
+        "year": 2026,
+        "round": 2,
+        "pick": 58
+      }
+    },
+    {
+      "id": "AK_Okereke",
+      "name": "AK Okereke",
+      "team": "LAL",
+      "pos": "F",
+      "personId": 1643758,
+      "draft": null
+    },
+    {
+      "id": "Alpha_Diallo",
+      "name": "Alpha Diallo",
+      "team": "DEN",
+      "pos": "G",
+      "personId": 1643813,
+      "draft": null
+    },
+    {
+      "id": "Arthur_Kaluma",
+      "name": "Arthur Kaluma",
+      "team": "LAL",
+      "pos": "F",
+      "personId": 1641751,
+      "draft": null
+    },
+    {
+      "id": "Carson_Cooper",
+      "name": "Carson Cooper",
+      "team": "MEM",
+      "pos": "F",
+      "personId": 1643721,
+      "draft": null
+    },
+    {
+      "id": "Ernest_Udeh_Jr",
+      "name": "Ernest Udeh Jr.",
+      "team": "CLE",
+      "pos": "C",
+      "personId": 1643640,
+      "draft": null
+    },
+    {
+      "id": "Graham_Ike",
+      "name": "Graham Ike",
+      "team": "GSW",
+      "pos": "F-C",
+      "personId": 1643633,
+      "draft": null
+    },
+    {
+      "id": "Jaden_Akins",
+      "name": "Jaden Akins",
+      "team": "NYK",
+      "pos": "G",
+      "personId": 1643022,
+      "draft": null
+    },
+    {
+      "id": "Jaylin_Sellers",
+      "name": "Jaylin Sellers",
+      "team": "CHI",
+      "pos": "G",
+      "personId": 1643637,
+      "draft": null
+    },
+    {
+      "id": "Josh_Dix",
+      "name": "Josh Dix",
+      "team": "OKC",
+      "pos": "G",
+      "personId": 1643717,
+      "draft": null
+    },
+    {
+      "id": "Kylan_Boswell",
+      "name": "Kylan Boswell",
+      "team": "CHA",
+      "pos": "G",
+      "personId": 1643573,
+      "draft": null
+    },
+    {
+      "id": "Malik_Dia",
+      "name": "Malik Dia",
+      "team": "NOP",
+      "pos": "F",
+      "personId": 1643738,
+      "draft": null
+    },
+    {
+      "id": "Michael_Ajayi",
+      "name": "Michael Ajayi",
+      "team": "CHA",
+      "pos": "G",
+      "personId": 1642369,
+      "draft": null
+    },
+    {
+      "id": "Nate_Bittle",
+      "name": "Nate Bittle",
+      "team": "TOR",
+      "pos": "C",
+      "personId": 1642927,
+      "draft": null
+    },
+    {
+      "id": "Quadir_Copeland",
+      "name": "Quadir Copeland",
+      "team": "HOU",
+      "pos": "G",
+      "personId": 1643595,
+      "draft": null
+    },
+    {
+      "id": "Tobe_Awaka",
+      "name": "Tobe Awaka",
+      "team": "CHI",
+      "pos": "F",
+      "personId": 1643591,
+      "draft": null
+    },
+    {
+      "id": "Tre_Donaldson",
+      "name": "Tre Donaldson",
+      "team": "MIA",
+      "pos": "G",
+      "personId": 1643621,
+      "draft": null
+    }
+  ]
+}

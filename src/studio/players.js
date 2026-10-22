@@ -33,6 +33,7 @@
 // list is present on first paint instead of arriving a round trip later, and a
 // missing/renamed file becomes a build error rather than an empty studio.
 import rawPool from '../../card-data/generated/player-pool-2026.json';
+import liveRookiesFile from '../../card-data/live-rookies.json';
 import { SHIPPED_CARDS } from '../game/shippedCards.js';
 import { STRATS, PLUS, getStrat, plusId } from '../game/strats.js';
 import {
@@ -408,6 +409,19 @@ export const WNBA_THROWBACKS_FILE = loadSpecialSet('wnba-throwbacks');
 const byName = (a, b) => a.name.localeCompare(b.name);
 
 /**
+ * THE LIVE SERIES' ROOKIES (2026-10-22; the user: "can we add the rookies that
+ * are on rosters to the live set? We don't have to have stats for them yet,
+ * but I just want to be able to add pics now"). The players on a 2026-27
+ * roster whose first NBA season this is (card-data/live-rookies.json), with
+ * the id fixed there. Photos only until the Live job cards them.
+ */
+export const LIVE_ROOKIES = (liveRookiesFile?.rookies ?? []).map(r => ({
+  id: r.id, name: r.name, team: r.team, pos: r.pos, personId: r.personId ?? null, draft: r.draft ?? null,
+  // Searched as this season's rookie (photoSearch.js huntTarget).
+  seasonLabel: '2026-27', liveRookie: true,
+}));
+
+/**
  * One source entry for a generated special set.
  *
  * `label` composes the set's declared name with the list's own length, exactly
@@ -557,6 +571,24 @@ export const SOURCES = {
       '.github/workflows/live-series.yml). Until then a MIRROR of the base set. Photos and crops are the ' +
       'base set\'s: curate them there. Re-export with `node scripts/studio/export.js --set live`.',
   }),
+  // ITS ROOKIES, PHOTOS FIRST (LIVE_ROOKIES above). The scope is the 2026-27
+  // folder because that is where every Live card reads its photo (setPaths),
+  // and it is a folder the studio may write: a photo dropped here is waiting
+  // when the Live job cards the player. No numbers yet, so the preview prints
+  // empty rows, and nothing reaches the game.
+  'live-rookies': {
+    key: 'live-rookies',
+    set: CURRENT_SET,
+    label: `Live Series rookies · ${LIVE_ROOKIES.length} players`,
+    sub: 'on 2026-27 rosters · photos now, numbers once the season gives them',
+    editable: true,
+    hint:
+      'THE ROOKIES ON 2026-27 ROSTERS, for the Live Series: no 2026-27 base card (their first NBA season is this ' +
+      'one), so no numbers yet. Drop their photos here; they save into the 2026-27 folder, where the Live cards ' +
+      'read every photo, so each one is waiting when the nightly job cards the player. The list is ' +
+      'card-data/live-rookies.json, read from nba.com\'s rosters.',
+    players: [...LIVE_ROOKIES].sort(byName),
+  },
   cards: {
     key: 'cards',
     set: FINISHED_SET,

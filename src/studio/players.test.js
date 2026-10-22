@@ -3,6 +3,7 @@ import { STRATS } from '../game/strats.js';
 import {
   playerIdFromName,
   POOL_PLAYERS,
+  LIVE_ROOKIES,
   CARD_PLAYERS,
   SOURCES,
   DEFAULT_SOURCE,
@@ -27,6 +28,7 @@ import {
   pickBadge,
 } from '../cards/badges.js';
 import { AWARD_CODES } from '../cards/awards.js';
+import { huntTarget } from './photoSearch.js';
 import { CARD_SETS } from '../game/cardSets.js';
 import { readLegends } from '../../scripts/cardgen/wnba/generateWnbaLegends.js';
 import { isSafePlayerId } from '../../scripts/studio/studioServerPlugin.js';
@@ -670,8 +672,9 @@ describe('the special sets in the source list', () => {
     // a set removed from here is a set the studio cannot open at all.
     // The Live Series sits second, where sets.js declares it: it is the base
     // set again, as the season moves it (2026-09-23).
+    // Its rookies follow it (2026-10-22): photos first, in the 2026-27 folder.
     expect(Object.keys(SOURCES)).toEqual([
-      'pool', LIVE_SET, 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
+      'pool', LIVE_SET, 'live-rookies', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, RECORD_BREAKERS_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
       WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
       // The request-only sets: Free Agents' Throwbacks, one per league.
@@ -685,9 +688,10 @@ describe('the special sets in the source list', () => {
       'strats-plus',
     ]);
     // The SET_IDS invariant covers the player sets only, for the same reason —
-    // 'strats' is deliberately absent from sets.js.
+    // 'strats' is deliberately absent from sets.js. The Live rookies are a
+    // second source on the 2026-27 folder, not a set (2026-10-22).
     expect(
-      Object.values(SOURCES).filter(s => s.template !== 'strat').map(s => s.set)
+      Object.values(SOURCES).filter(s => s.template !== 'strat' && s.key !== 'live-rookies').map(s => s.set)
     ).toEqual(SET_IDS);
     expect(SOURCES.strats.template).toBe('strat');
   });
@@ -809,7 +813,7 @@ describe('the selector\'s reference group', () => {
       expect(source.secondary, source.key).not.toBe(true);
     }
     expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
-      'pool', LIVE_SET, SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
+      'pool', LIVE_SET, 'live-rookies', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, RECORD_BREAKERS_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
       WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
       // Free Agents' Throwbacks: request-only, and live — photos land here.
@@ -857,8 +861,12 @@ describe('the selector\'s reference group', () => {
     // when the group is open, the row reads exactly as the model does.
     // SET_IDS covers the card sets; the strategy deck is a source without a
     // set (see the SOURCES test above), and it declares last.
+    // The Live rookies (2026-10-22) are a second source on the 2026-27 folder,
+    // listed after the Live Series they are photographed for.
     const open = visibleSources({ showSecondary: true }).map(s => s.set);
-    expect(open).toEqual([...SET_IDS, 'strats', 'strats-plus']);
+    const ids = [...SET_IDS];
+    ids.splice(ids.indexOf(LIVE_SET) + 1, 0, CURRENT_SET);
+    expect(open).toEqual([...ids, 'strats', 'strats-plus']);
   });
 
   it('leaves the default source visible and selected in every state', () => {
@@ -1054,5 +1062,30 @@ describe('the Throwbacks sources', () => {
       expect(source.sub, id).not.toBe('not generated yet');
       expect(source.players.every(c => c.set === id), id).toBe(true);
     }
+  });
+});
+
+describe('the Live Series rookies (2026-10-22)', () => {
+  // The user: "can we add the rookies that are on rosters to the live set? We
+  // don't have to have stats for them yet, but I just want to be able to add
+  // pics now". Photos first, into the folder every Live card reads.
+  it('lists them on an editable source over the 2026-27 folder, each id once and none a pool card', () => {
+    const src = SOURCES['live-rookies'];
+    expect(src.editable).toBe(true);
+    expect(src.set).toBe(CURRENT_SET);
+    expect(src.players.length).toBe(LIVE_ROOKIES.length);
+    expect(LIVE_ROOKIES.length).toBeGreaterThan(0);
+    const ids = LIVE_ROOKIES.map(r => r.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    const pool = new Set(POOL_PLAYERS.map(p => p.id));
+    expect(ids.filter(id => pool.has(id))).toEqual([]);
+    for (const id of ids) expect(isSafePlayerId(id), id).toBe(true);
+  });
+
+  it('searches each as this season\u2019s rookie', () => {
+    const aj = LIVE_ROOKIES.find(r => r.name === 'AJ Dybantsa');
+    const t = huntTarget(CURRENT_SET, aj);
+    expect(t.rookie).toBe(true);
+    expect(decodeURIComponent(t.url)).toMatch(/AJ Dybantsa Washington Wizards 2026 rookie/);
   });
 });

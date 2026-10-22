@@ -59,6 +59,7 @@ export function huntTarget(setId, card, extra = null) {
   const team = getTeam(code, { league });
   const label = card.seasonLabel ?? (league === 'WNBA' ? '2026' : '2025-26');
   // A capstone reward MIGRATED out of a rookie set is still a rookie card.
-  const rookie = /rookie$/.test(setId) || /rookie$/.test(card.migratedFrom?.set ?? '');
+  // A Live Series rookie (2026-10-22) is searched as one too.
+  const rookie = /rookie$/.test(setId) || /rookie$/.test(card.migratedFrom?.set ?? '') || card.liveRookie === true;
   return { league, code, era: team?.era ?? '', team, label, rookie, url: searchUrl(card.name, team, label, league, rookie, extra) };
 }

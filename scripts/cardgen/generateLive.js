@@ -73,6 +73,7 @@ import { pathToFileURL } from 'node:url';
 import { REPO_ROOT, readCache, writeCache, politeDelay, DEFAULT_REQUEST_SPACING_MS } from './cache.js';
 import { CURRENT_SET, LIVE_SET } from '../../src/cards/sets.js';
 import { LIVE_BADGE } from '../../src/cards/badges.js';
+import { FREE_AGENT } from '../../src/cards/teams.js';
 import * as dt from './sources/dunksAndThrees.js';
 import * as dtApi from './sources/dunksAndThreesApi.js';
 import { fetchGameLogFull } from './sources/basketballReference.js';
@@ -119,6 +120,19 @@ export function ewinsPerGameFor({ epm, mpg }) {
 
 /** The expected-page fields a live card cannot be built without. */
 export const LIVE_ROW_FIELDS = ['epm', 'epmOff', 'epmDef', 'pts100', 'ast100', 'minutesPer48'];
+
+/**
+ * A LIVE CARD'S TEAM: dunksandthrees' for a player on a roster (it follows a
+ * trade the night it happens), but a Free Agent stays one. dunksandthrees keeps
+ * a waived player on their last club, and the first season-mode run (2026-10-22)
+ * printed the four cut that day (Bruce Brown, Micah Peavy, Dwight Powell, Drew
+ * Eubanks) on their old teams; the base set's FA is the rule (nba.com's rosters,
+ * card_team_mismatches, isUnsignedCard).
+ */
+export function liveTeam(card, expectedRow) {
+  if (card?.team === FREE_AGENT) return FREE_AGENT;
+  return expectedRow?.team ?? card?.team;
+}
 export const isLiveRow = row => Boolean(row) && LIVE_ROW_FIELDS.every(f => Number.isFinite(row[f]));
 
 const per75 = per100 => (per100 == null ? null : per100 * 0.75);
@@ -351,7 +365,7 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
     }
     const a = lookup(actualIndex, card.name);
     rows.push(liveActualRow(e, a));
-    const team = e.team ?? card.team;
+    const team = liveTeam(card, e);
     pool.push({ name: card.name, team, pos: card.pos, games: FULL_SEASON_GAMES, mpg: e.minutesPer48 });
     teams.push({ name: card.name, team, pos: card.pos });
     const entry = logs.get(card.id);

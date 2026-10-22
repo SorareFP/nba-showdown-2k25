@@ -18,6 +18,7 @@ import {
   liveCard,
   main,
   actualOrNone,
+  liveTeam,
 } from './generateLive.js';
 import { liveRowsFromLog, WINDOW_GAMES } from './realGames.js';
 import { LIVE_SET, CURRENT_SET, setBadge, setTreatment } from '../../src/cards/sets.js';
@@ -190,21 +191,36 @@ describe('the committed file', () => {
   const live = JSON.parse(fs.readFileSync(OUTPUT_FILE, 'utf8'));
   const base = JSON.parse(fs.readFileSync(BASE_FILE, 'utf8'));
 
-  it('mirrors the base set card for card until the season starts', () => {
+  // Card for card with the base set: a mirror before the season, the same
+  // cards moved by it after (the nightly job's first season-mode run,
+  // 2026-10-22). A base Free Agent stays one either way (liveTeam).
+  it('carries the base set card for card: mirrored before the season, re-allocated in it', () => {
     expect(live.set).toBe(LIVE_SET);
-    expect(live.live.mode).toBe('mirror');
+    expect(MODES).toContain(live.live.mode);
     expect(live.cards.map(c => c.id)).toEqual(base.cards.map(c => c.id));
     for (const [i, c] of live.cards.entries()) {
       const b = base.cards[i];
-      expect([c.salary, c.speed, c.power, c.shotLine, c.team], c.id).toEqual([b.salary, b.speed, b.power, b.shotLine, b.team]);
       expect(c.badges).toContain(LIVE_BADGE);
-      expect(c.live.source).toBe(`cards-${CURRENT_SET}.json`);
+      if (live.live.mode === 'mirror') {
+        expect([c.salary, c.speed, c.power, c.shotLine, c.team], c.id).toEqual([b.salary, b.speed, b.power, b.shotLine, b.team]);
+        expect(c.live.source).toBe(`cards-${CURRENT_SET}.json`);
+      } else {
+        expect(c.live.mode, c.id).toBe('season');
+      }
     }
   });
 
   it('names its modes and refuses any other', async () => {
     expect(MODES).toEqual(['mirror', 'season']);
     await expect(main({ mode: 'nope', log: () => {} })).rejects.toThrow(/no such mode/);
+  });
+});
+
+describe('a live card\'s team', () => {
+  it('follows dunksandthrees for a signed player and keeps a base Free Agent unsigned', () => {
+    expect(liveTeam({ team: 'MEM' }, { team: 'DAL' })).toBe('DAL');
+    expect(liveTeam({ team: 'MEM' }, {})).toBe('MEM');
+    expect(liveTeam({ team: 'FA' }, { team: 'NYK' })).toBe('FA');
   });
 });
 

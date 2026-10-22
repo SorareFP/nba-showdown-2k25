@@ -234,6 +234,7 @@ export function newRun({ id, seed, rung, rosterKeys, now = Date.now(), mapVersio
   return {
     id, seed, rung, createdAt: now, mapVersion,
     act: 1,
+    offerRules: OFFER_RULES,
     status: 'camp',
     map: generateMap(seed, mapVersion),
     cap: CLIMB.startCap,
@@ -671,6 +672,39 @@ export function pickStrat(run, id) {
     deck: addCard(run.deck, id),
     offers: { ...run.offers, picks, strats: picks > 0 ? run.offers.strats.filter(x => x !== id) : [] },
   });
+}
+
+/**
+ * THE PLAYER A FULL ROSTER WAS OWED (2026-10-22). The user, after a win at ten
+ * players with no player offered: "Can you make sure that option is there?
+ * And can you make sure that if I reload my current climb, I'll get the
+ * opportunity to add a player?" A reward is dealt once, when the win is
+ * recorded, and saved with the run — so one dealt by a tab still running the
+ * code from before sign-and-release (864bff98) kept its empty player row
+ * through every reload. `offerRules` marks a run dealt under today's rule; a
+ * run without it, at a full roster after a win, is made good once: its reward
+ * gets the offer it missed, or the map a player to sign (`freeSign`).
+ */
+export const OFFER_RULES = 2;
+
+export function owedPlayer(run) {
+  if (!run || (run.offerRules ?? 1) >= OFFER_RULES) return run;
+  const next = { ...run, offerRules: OFFER_RULES };
+  const last = (run.cleared ?? []).at(-1);
+  const full = rosterCards(run).cards.length >= CLIMB.maxRoster;
+  if (!last || !full || ['camp', 'lost', 'retired'].includes(run.status) || run.banked) return next;
+  if (run.status === 'reward' && run.offers && !(run.offers.players?.length)) {
+    return { ...next, offers: { ...run.offers, players: playerOffer(next, climbRng(run.seed, 'owed', last)) } };
+  }
+  if (run.status === 'reward') return next;
+  return { ...next, freeSign: (run.freeSign ?? 0) + 1 };
+}
+
+/** Sign the owed player, from the map: a player offer, as a reward is (settle returns to the map). */
+export function openOwedSign(run) {
+  if (run.status !== 'map' || !(run.freeSign > 0)) fail('No player is owed');
+  const players = playerOffer(run, climbRng(run.seed, 'owed-sign', run.freeSign, (run.cleared ?? []).length));
+  return settle({ ...run, status: 'reward', freeSign: run.freeSign - 1, offers: { stopId: 'owed', strats: [], picks: 0, players, perks: [] } });
 }
 
 /** Does signing this player need a release: a full roster, or over the cap? */

@@ -514,7 +514,7 @@ function reachableFrom(map, fromId) {
  */
 // `backLabel`: the read-only map is also the Climb bar's (ClimbHud, 2026-10-20),
 // from any screen; during a run game the stop being played is "here".
-export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onFreePractice = () => {}, onAbandon = null, busy = false, onBack = null, backLabel = '← Back to the Rest Day' }) {
+export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onFreePractice = () => {}, onFreeSign = () => {}, onAbandon = null, busy = false, onBack = null, backLabel = '← Back to the Rest Day' }) {
   const peek = Boolean(onBack);
   const here = peek && run.status === 'rest' ? run.restAt : peek && run.status === 'game' ? (run.game?.stopId ?? run.at) : run.at;
   const open = new Set(peek ? [] : openStops(run).map(s => s.id));
@@ -613,6 +613,7 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
           <div className={styles.sideActions}>
             {run.freeRest > 0 && <button type="button" onClick={onFreeRest} disabled={busy}>Take the free Rest Day</button>}
             {run.freePractice > 0 && <button type="button" data-free-practice="true" onClick={onFreePractice} disabled={busy}>Two-a-Days: practise a card{run.freePractice > 1 ? ` (${run.freePractice})` : ''}</button>}
+            {run.freeSign > 0 && <button type="button" className={styles.primary} data-free-sign="true" onClick={onFreeSign} disabled={busy}>Sign the player you were owed</button>}
             <button type="button" className={styles.danger} onClick={onRetire} disabled={busy}>Retire and bank the pot</button>
             {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}
           </div>
@@ -644,7 +645,7 @@ export function RewardPicker({ run, onPickStrat, onPickPlayer, onPickPerk = () =
   const stopKind = stopById(run.map, run.offers?.stopId)?.kind;
   return (
     <div className={`${styles.screen} ${styles.offerScreen}`}>
-      <h2 className={styles.title}>{bossPrize ? `${ACT_NAMES[actOfRun(run) - 1] ?? 'The act'}'s boss is beaten. Choose your reward.` : 'A win. Choose your reward.'}</h2>
+      <h2 className={styles.title}>{o.stopId === 'owed' ? 'The player you were owed' : bossPrize ? `${ACT_NAMES[actOfRun(run) - 1] ?? 'The act'}'s boss is beaten. Choose your reward.` : 'A win. Choose your reward.'}</h2>
       <DeckLine run={run} />
       {o.strats.length > 0 && o.picks > 0 && (
         <>

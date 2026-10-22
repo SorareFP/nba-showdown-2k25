@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import {
   CLIMB, BOONS, recoveryFor, newRun, chooseCamp, openStops, chooseStop, gameSetup, presetFor,
   recordResult, stratOffer, pickStrat, pickPlayer, skipOffers, restDay, takeFreeRest, retire,
-  rosterCards, deckLine, potPreview, bossTeam, needsRelease, releaseOptions,
+  rosterCards, deckLine, potPreview, bossTeam, needsRelease, releaseOptions, owedPlayer, openOwedSign, OFFER_RULES,
 } from './run.js';
 import { stopById, potOf, climbRng } from './climbMap.js';
 import { kitDeck, KIT_CARD_IDS, leanOf } from './climbKits.js';
@@ -484,5 +484,56 @@ describe('the scouting report', () => {
     expect(['speed', 'paint', 'defense']).toContain(s.playbook);
     expect(s.opponent).toEqual(setup.opponent);
     for (const id of s.rares) expect(['rare', 'legendary']).toContain(STRAT_MAP[id.replace(/\+$/, '')].rarity);
+  });
+});
+
+// THE PLAYER A FULL ROSTER WAS OWED (2026-10-22). The user: "if I reload my
+// current climb, I'll get the opportunity to add a player". A reward is dealt
+// once and saved; one dealt by the old code at ten players kept its empty row
+// through every reload. A run without offerRules is made good once.
+describe('the player a full roster was owed', () => {
+  const bench = () => [...CARDS].sort((a, b) => a.salary - b.salary).slice(0, 5).map(cardKey);
+  const oldRun = over => {
+    const { offerRules, ...r } = { ...camped(), roster: [...KEYS, ...bench()], cleared: ['1-0'], at: '1-0', ...over };
+    return r;
+  };
+
+  it('marks a new run as dealt under the current rule, and leaves it alone', () => {
+    expect(camped().offerRules).toBe(OFFER_RULES);
+    const r = camped();
+    expect(owedPlayer(r)).toBe(r);
+  });
+
+  it('deals the missed offer to a reward screen with no players, once', () => {
+    const r = oldRun({ status: 'reward', offers: { stopId: '1-0', strats: ['catch_and_shoot'], picks: 1, players: [], perks: [] } });
+    const fixed = owedPlayer(r);
+    expect(fixed.offerRules).toBe(OFFER_RULES);
+    expect(fixed.offers.players).toHaveLength(3);
+    expect(fixed.offers.players.every(k => needsRelease(fixed, k))).toBe(true);
+    expect(owedPlayer(fixed)).toBe(fixed);
+    const signed = pickPlayer(fixed, fixed.offers.players[0], releaseOptions(fixed, fixed.offers.players[0])[0]);
+    expect(signed.roster).toHaveLength(CLIMB.maxRoster);
+  });
+
+  it('puts a player to sign on the map for a run past its reward', () => {
+    const fixed = owedPlayer(oldRun({ status: 'map', offers: null }));
+    expect(fixed.freeSign).toBe(1);
+    const open = openOwedSign(fixed);
+    expect(open.status).toBe('reward');
+    expect(open.freeSign).toBe(0);
+    expect(open.offers.players).toHaveLength(3);
+    expect(open.offers.stopId).toBe('owed');
+    // Skipping returns to the map; nothing is owed after.
+    const back = skipOffers(open, 'players');
+    expect(back.status).toBe('map');
+    expect(() => openOwedSign(back)).toThrow(/No player is owed/);
+  });
+
+  it('owes nothing to a roster with room, a run not yet started, or a reward that has its players', () => {
+    const { offerRules, ...roomy } = { ...camped(), status: 'map', cleared: ['1-0'], at: '1-0' };
+    expect(owedPlayer(roomy).freeSign).toBeUndefined();
+    expect(owedPlayer(oldRun({ status: 'camp', cleared: [] })).freeSign).toBeUndefined();
+    const offered = oldRun({ status: 'reward', offers: { stopId: '1-0', strats: [], picks: 0, players: ['x'], perks: [] } });
+    expect(owedPlayer(offered).offers.players).toEqual(['x']);
   });
 });

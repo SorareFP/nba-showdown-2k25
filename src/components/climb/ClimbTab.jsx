@@ -18,6 +18,7 @@ import { ownedPlayers, capSal } from '../../game/teamRules.js';
 import {
   newRun, chooseCamp, chooseStop, presetFor, recordResult, pickStrat, pickPlayer, pickPerk, skipOffers,
   restDay, takeFreeRest, takeFreePractice, retire, rosterCards, recordServerWin, abandon, continueClimb, actOfRun,
+  owedPlayer, openOwedSign,
 } from '../../game/modes/run.js';
 import { stopById, packWords, ACT_NAMES } from '../../game/modes/climbMap.js';
 import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud } from './ClimbScreens.jsx';
@@ -62,7 +63,13 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   useEffect(() => {
     if (needsAccount) return undefined;
     let live = true;
-    store.loadActive(uid).then(r => { if (live) setRun(r ?? null); }).catch(() => { if (live) setRun(null); });
+    store.loadActive(uid).then(r => {
+      if (!live) return;
+      // A run dealt before sign-and-release gets the player it missed, once (owedPlayer).
+      const fixed = r ? owedPlayer(r) : null;
+      setRun(fixed ?? null);
+      if (fixed && fixed !== r) store.save(uid, fixed).catch(() => {});
+    }).catch(() => { if (live) setRun(null); });
     return () => { live = false; };
   }, [uid, store, needsAccount]);
 
@@ -213,7 +220,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
       return (
         <>
           {rosterCards(run).blocked && <p className={styles.note}>Fewer than five of your players are still in the game&apos;s pool. Retire to bank the pot.</p>}
-          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} onFreePractice={() => setFreePractice(true)} onAbandon={bankFailedFor === run.id ? giveUp : null} />
+          <ClimbMap run={run} busy={busy} onGo={go} onRetire={retireRun} onFreeRest={() => setFreeRest(true)} onFreePractice={() => setFreePractice(true)} onFreeSign={() => act(() => commit(openOwedSign(run)))} onAbandon={bankFailedFor === run.id ? giveUp : null} />
         </>
       );
     case 'game': {

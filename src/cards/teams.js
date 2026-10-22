@@ -216,6 +216,14 @@ export const HISTORICAL_TEAMS = {
   // never having been here — logoFiles.test.js asserts the two states are
   // exclusive, so a row with its own era art must not claim one.
   HOU03: { name: 'Rockets',  city: 'Houston',     abbr: 'HOU', primary: '#CE1141', secondary: '#C4CED4', logo: '/logos/HOU03.png', era: '2003-2019' },
+  // THE PINSTRIPE YEARS, 1995-96 TO 2002-03 (2026-10-22; the user: "Need an era
+  // check on record-breakers Hakeem"). The table went from HOU72 straight to
+  // HOU03, so these seasons fell back to today's red-and-yellow mark — Hakeem's
+  // 1995-96 Record Breakers card in a navy pinstripe photo, Yao's rookie card.
+  // The shark rocket round the ball, from sportslogos.net's 1995/96-2002/03
+  // primary; both colours sampled from the file: navy as the jersey Hakeem
+  // wears on his card, the red of the ball.
+  HOU95: { name: 'Rockets',  city: 'Houston',     abbr: 'HOU', primary: '#0B2041', secondary: '#BB2031', logo: '/logos/HOU95.png', era: '1995-2003' },
   // THE 2019 MARK, FROZEN. Every Rockets card outside the base set is a
   // 2022-2025 season, and until now they all read the CURRENT HOU.png — which
   // is about to become the 2026 rebrand. A copy of today's file, so the
@@ -348,7 +356,7 @@ export const FRANCHISE_ERAS = {
     { from: 2013, to: 2014, key: 'CHB13' },
   ],
   DAL: [{ from: 1981, to: 2001, key: 'DAL80' }],
-  HOU: [{ from: 1972, to: 1995, key: 'HOU72' }, { from: 2004, to: 2019, key: 'HOU03' }, { from: 2020, to: 2026, key: 'HOU20' }],
+  HOU: [{ from: 1972, to: 1995, key: 'HOU72' }, { from: 1996, to: 2003, key: 'HOU95' }, { from: 2004, to: 2019, key: 'HOU03' }, { from: 2020, to: 2026, key: 'HOU20' }],
   MIL: [
     { from: 1994, to: 2006, key: 'MIL94' },
     { from: 2007, to: 2015, key: 'MIL06' },

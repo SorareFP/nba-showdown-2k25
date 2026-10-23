@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'last-pair-places-itself', date: '2026-10-23', title: 'The last pair places itself',
+    body: "Once four matchups are set, each side has one player and one row left, so the last pair now goes down by itself and the matchup window opens. Undo still takes back the last player you chose, along with the pair.",
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'climb-perks-wave-two', date: '2026-10-22', title: 'The Climb: twenty new perks',
     body: "Perks are the Climb's relics, and there are twenty-four now. Build a player with Track Work (+1 Speed), Lockdown Drills (+1 Defensive Bonus) or Post Moves (+2 Paint Bonus); Signature Move is +2 on threes now, so it is a real choice against Extra Reps, and an offer never shows two shooting perks. Team perks last the run: Scouting Report, Fast Start, Closers, Rim Deterrent and Ball Movement Culture work in every game; Training Staff, Shootaround, Advance Scout and Scouting Network work between games; Sponsorship grows the pot and Travel Day lets you jump lanes. And each boss now offers a perk of its own, big and usually with a cost: Second Chance, Win-Now Trade, Max Contract, Heavy Minutes, Short Rotation and Front Office Shake-Up.",
     to: 'climb', cta: 'The Climb',

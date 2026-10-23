@@ -52,7 +52,7 @@ describe('placePlayer', () => {
     expect(placePlayer(g, g.teamA.roster[7].id)).toBeNull();   // on the roster, not picked
     expect(placePlayer(g, g.draft.bPicks[0])).toBeNull();       // the other side's pick
     let full = g;
-    for (let i = 0; i < 10; i += 1) full = placePlayer(full, nextPick(full, placingTeam(full)));
+    while (placingTeam(full)) full = placePlayer(full, nextPick(full, placingTeam(full)));
     expect(full.placementStep).toBe(10);
     expect(full.matchupTurn).toBe('A');
     expect(full.log.at(-1).msg).toMatch(/^Placement complete/);
@@ -107,9 +107,11 @@ describe('undo against the coach', () => {
       if (placingTeam(g) === 'A') ({ game: g, snap } = youPlace(g));
       else g = coach(g);
     }
-    expect(g.placementStep).toBe(10);                             // the coach placed the tenth
+    expect(g.placementStep).toBe(10);                             // the last pair placed itself
     expect(canUndoPlacement(g, snap)).toBe(true);
-    expect(undoPlacement(g, snap).placementStep).toBe(8);
+    // Your last CHOSEN pick was the eighth (step 7): it comes back, and the
+    // pair that followed it with it.
+    expect(undoPlacement(g, snap).placementStep).toBe(7);
     const passed = { ...g, log: [...g.log, { team: 'A', msg: 'Team A passes.' }] };
     expect(canUndoPlacement(passed, snap)).toBe(false);
   });
@@ -182,5 +184,45 @@ describe('the lineup submit', () => {
     const b = g.teamB.roster.slice(0, 5).map(p => p.id);
     expect(placingTeam(beginPlacement(g, a, b))).toBe('B');
     expect(placingTeam(beginPlacement(g, a, b, { order: ['A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A', 'B'] }))).toBe('A');
+  });
+});
+
+// THE LAST PAIR PLACES ITSELF (the user, 2026-10-23: "after the 4th matchup is
+// set, just auto-place the last two players as there are no other choices").
+describe('the last pair', () => {
+  for (const first of ['A', 'B']) {
+    it(`goes down by itself once eight are placed (${first} leads the snake)`, () => {
+      let g = atPlacement(first);
+      let placed = 0;
+      while ((g.placementStep ?? 10) < 8) { g = placePlayer(g, nextPick(g, placingTeam(g))); placed += 1; }
+      expect(placed).toBe(8);
+      expect(g.placementStep).toBe(10);
+      expect(g.autoPlacedFrom).toBe(8);
+      expect(g.teamA.starters).toHaveLength(5);
+      expect(g.teamB.starters).toHaveLength(5);
+      // Each side's last pick, in snake order, then the closing line.
+      expect(g.log.slice(-3).map(l => l.msg)).toEqual([
+        `${g[first === 'A' ? 'teamA' : 'teamB'].starters[4].name} takes the floor.`,
+        `${g[first === 'A' ? 'teamB' : 'teamA'].starters[4].name} takes the floor.`,
+        'Placement complete — Matchup Strategy Phase.',
+      ]);
+      expect(g.matchupTurn).toBe('A');
+    });
+  }
+
+  it('leaves your fourth pick undoable when the coach answered it before the pair went down', () => {
+    // At home (the coach leads), your fourth pick is step 6; the coach answers
+    // at 7, and 8 and 9 place themselves.
+    let g = atPlacement('B');
+    let snap = null;
+    while (placingTeam(g)) {
+      if (placingTeam(g) === 'A') ({ game: g, snap } = youPlace(g));
+      else g = coach(g);
+    }
+    expect(snap.step).toBe(6);
+    expect(canUndoPlacement(g, snap)).toBe(true);
+    const back = undoPlacement(g, snap);
+    expect(back.placementStep).toBe(6);
+    expect(back.autoPlacedFrom).toBeUndefined();
   });
 });

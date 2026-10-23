@@ -5,7 +5,7 @@ import {
   onGameState, onPrivateData, onRoomMeta,
   writeGameState, writeGameStateIf, writePrivateData, forfeitGame, abandonGame,
 } from '../firebase/pvpRoom.js';
-import { placementSnapshot, canUndoPlacement, undoPlacement, takenBackName, beginPlacement, DEFAULT_ORDER } from '../game/placement.js';
+import { placementSnapshot, canUndoPlacement, undoPlacement, takenBackName, beginPlacement, DEFAULT_ORDER, AUTO_PLACE_FROM, picksLeft } from '../game/placement.js';
 import {
   initializePvpGame, getWhoseTurn, extractPrivateData, stripPrivateData,
   fixFromFirebase, prepareForFirebase,
@@ -388,15 +388,40 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
     clone.placementStep = step + 1;
     clone.log = [...clone.log, { team: activeTeam, msg: `${player.name} takes the floor.` }];
 
+    // The opponent's full pool, read once and only when needed: the last pair
+    // and the bench both take player cards from it.
+    let oppPool = null;
+    const loadOppPool = async () => {
+      if (oppPool) return oppPool;
+      const oppRole = myRole === 'host' ? 'guest' : 'host';
+      const oppSnap = await get(ref(rtdb, `rooms/${roomCode}/private/${oppRole}`));
+      oppPool = fixFromFirebase(oppSnap.val())?.draftPool || [];
+      return oppPool;
+    };
+
+    // THE LAST PAIR PLACES ITSELF (placement.js AUTO_PLACE_FROM, 2026-10-23):
+    // the eighth placement leaves one pick a side, so whoever made it puts
+    // both down, in snake order, in this same write.
+    if (clone.placementStep === AUTO_PLACE_FROM && picksLeft(clone, 'A').length === 1 && picksLeft(clone, 'B').length === 1) {
+      const pools = { [myTeamKey]: privateData?.draftPool || [], [myTeamKey === 'A' ? 'B' : 'A']: await loadOppPool() };
+      clone.autoPlacedFrom = AUTO_PLACE_FROM;
+      while (clone.placementStep < 10) {
+        const k = order[clone.placementStep];
+        const id = picksLeft(clone, k)[0];
+        const pl = pools[k].find(p => p.id === id);
+        if (!pl) break;
+        (k === 'A' ? clone.teamA : clone.teamB).starters.push(pl);
+        clone.placementStep += 1;
+        clone.log = [...clone.log, { team: k, msg: `${pl.name} takes the floor.` }];
+      }
+    }
+
     // If placement just completed, compute bench and reset pass counters
     if (clone.placementStep === 10) {
       // Bench = full 10-player pool minus the 5 placed starters, per team.
       // We need each coach's full pool. My own is in privateData.draftPool.
       // Opponent's is at rooms/{code}/private/{oppRole}.draftPool.
-      const oppRole = myRole === 'host' ? 'guest' : 'host';
-      const oppSnap = await get(ref(rtdb, `rooms/${roomCode}/private/${oppRole}`));
-      const oppPrivate = fixFromFirebase(oppSnap.val());
-      const oppPool = oppPrivate?.draftPool || [];
+      await loadOppPool();
 
       const myPool = privateData?.draftPool || [];
       const myTeamBench = myPool.filter(p => !clone[myTeamKey === 'A' ? 'teamA' : 'teamB'].starters.find(s => s.id === p.id));

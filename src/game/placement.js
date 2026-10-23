@@ -37,10 +37,38 @@ export function placingTeam(game) {
   return step < 10 ? orderOf(game)[step] : null;
 }
 
+/** `teamKey`'s picks not yet on the floor, as ids. */
+export function picksLeft(game, teamKey) {
+  const picks = teamKey === 'A' ? game?.draft?.aPicks ?? [] : game?.draft?.bPicks ?? [];
+  const placed = new Set((teamOf(game, teamKey)?.starters ?? []).map(p => p.id));
+  return picks.filter(id => !placed.has(id));
+}
+
+/**
+ * THE LAST PAIR PLACES ITSELF (the user, 2026-10-23: "after the 4th matchup
+ * is set, just auto-place the last two players as there are no other
+ * choices"). Once eight are down, each side has one pick and one row left;
+ * both go down in snake order, and `autoPlacedFrom` marks where the choosing
+ * stopped, so Undo still takes back the last pick that was chosen.
+ */
+export const AUTO_PLACE_FROM = 8;
+
+/** One placement on the clone `g`: the player takes `teamKey`'s next row. */
+function putDown(g, teamKey, playerId) {
+  const team = teamOf(g, teamKey);
+  const player = (team.roster || []).find(r => r.id === playerId);
+  if (!player) return false;
+  team.starters.push(player);
+  g.placementStep = (g.placementStep ?? 0) + 1;
+  g.log = [...g.log, { team: teamKey, msg: `${player.name} takes the floor.` }];
+  return true;
+}
+
 /**
  * The next placement: `playerId`, one of the placing side's picks, takes
- * that side's next open row. Returns the new game, or null when the pick is
- * not legal (not a pick, already down, or placement is over).
+ * that side's next open row — and when that leaves one pick a side, the last
+ * pair too. Returns the new game, or null when the pick is not legal (not a
+ * pick, already down, or placement is over).
  */
 export function placePlayer(game, playerId) {
   const step = game?.placementStep ?? 10;
@@ -50,11 +78,15 @@ export function placePlayer(game, playerId) {
   const team = teamOf(g, teamKey);
   const picks = teamKey === 'A' ? g.draft?.aPicks ?? [] : g.draft?.bPicks ?? [];
   if (!picks.includes(playerId) || team.starters.some(pl => pl.id === playerId)) return null;
-  const player = (team.roster || []).find(r => r.id === playerId);
-  if (!player) return null;
-  team.starters.push(player);
-  g.placementStep = step + 1;
-  g.log = [...g.log, { team: teamKey, msg: `${player.name} takes the floor.` }];
+  if (!putDown(g, teamKey, playerId)) return null;
+  if (g.placementStep === AUTO_PLACE_FROM && picksLeft(g, 'A').length === 1 && picksLeft(g, 'B').length === 1) {
+    g.autoPlacedFrom = AUTO_PLACE_FROM;
+    while (g.placementStep < 10) {
+      const k = orderOf(g)[g.placementStep];
+      const left = picksLeft(g, k);
+      if (left.length !== 1 || !putDown(g, k, left[0])) break;
+    }
+  }
   if (g.placementStep === 10) {
     g.matchupTurn = 'A';
     g.matchupPasses = 0;
@@ -107,7 +139,10 @@ export function canUndoPlacement(game, snap, { pvp = false } = {}) {
   if (game.quarter !== snap.before.quarter || game.section !== snap.before.section) return false;
   const step = game.placementStep ?? 10;
   if (step <= snap.step) return false;
-  const placers = orderOf(game).slice(snap.step, step);
+  // The last pair placed itself (AUTO_PLACE_FROM): those steps were nobody's
+  // choice, so they neither end your undo nor count as the opponent's answer.
+  const chosen = snap.step < (game.autoPlacedFrom ?? 10) ? Math.min(step, game.autoPlacedFrom ?? 10) : step;
+  const placers = orderOf(game).slice(snap.step, chosen);
   if (placers[0] !== snap.teamKey) return false;
   if (placers.slice(1).includes(snap.teamKey)) return false;   // placed again: that pick has its own snapshot
   if (pvp && placers.length > 1) return false;                 // the opponent has answered
@@ -159,6 +194,7 @@ export function beginPlacement(game, aPicks, bPicks, { order = null } = {}) {
   g.teamB.starters = [];
   g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
   g.placementStep = 0;
+  delete g.autoPlacedFrom;
   g.placementOrder = order ? [...order] : orderOf(g);
   g.phase = 'matchup_strats';
   g.log = [...(g.log ?? []), { team: null, msg: LINEUPS_LOCKED }];

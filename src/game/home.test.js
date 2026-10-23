@@ -149,19 +149,19 @@ describe('The Climb in the news', () => {
   });
 
   it('leads the news with its build-arounds, its 2026-10-19 changes, then the Play hub', () => {
-    // The perks' second wave and the camp-cuts roster item (2026-10-22) sit on top.
-    expect(NEWS[0]).toMatchObject({ id: 'climb-perks-wave-two', to: 'climb' });
-    expect(NEWS[1]).toMatchObject({ id: 'rosters-after-camp-cuts', to: 'goals' });
-    expect(NEWS[2]).toMatchObject({ id: 'climb-sign-and-release', to: 'climb' });
-    expect(NEWS[3]).toMatchObject({ id: 'climb-three-acts', to: 'climb' });
-    expect(NEWS[4]).toMatchObject({ id: 'climb-wave-two', to: 'climb' });
-    expect(NEWS[5]).toMatchObject({ id: 'climb-plus-every-card', to: 'climb' });
-    expect(NEWS[6]).toMatchObject({ id: 'climb-home-court', to: 'climb' });
-    expect(NEWS[7]).toMatchObject({ id: 'climb-bar', to: 'climb' });
-    expect(NEWS[8]).toMatchObject({ id: 'putback-rebound-and-their', to: 'climb' });
-    expect(NEWS[9]).toMatchObject({ id: 'climb-build-arounds', to: 'climb' });
-    expect(NEWS[10]).toMatchObject({ id: 'climb-perks-chemistry', to: 'climb' });
-    expect(NEWS[11]).toMatchObject({ id: 'climb-pays-as-you-go', to: 'climb' });
-    expect(NEWS[12]).toMatchObject({ id: 'play-hub', to: 'modes' });
+    // AN ORDER, NOT INDICES (2026-10-23): a new item on top shifted every
+    // index here three times in two days. These run together, newest first,
+    // right under whatever is newer still.
+    const run = [
+      ['climb-perks-wave-two', 'climb'], ['rosters-after-camp-cuts', 'goals'], ['climb-sign-and-release', 'climb'],
+      ['climb-three-acts', 'climb'], ['climb-wave-two', 'climb'], ['climb-plus-every-card', 'climb'],
+      ['climb-home-court', 'climb'], ['climb-bar', 'climb'], ['putback-rebound-and-their', 'climb'],
+      ['climb-build-arounds', 'climb'], ['climb-perks-chemistry', 'climb'], ['climb-pays-as-you-go', 'climb'],
+      ['play-hub', 'modes'],
+    ];
+    const at = NEWS.findIndex(n => n.id === run[0][0]);
+    expect(at).toBeGreaterThanOrEqual(0);
+    run.forEach(([id, to], i) => expect(NEWS[at + i], id).toMatchObject({ id, to }));
+    expect(NEWS[0]).toMatchObject({ id: 'last-pair-places-itself', to: 'play' });
   });
 });

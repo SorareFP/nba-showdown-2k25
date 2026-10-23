@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { mkdtempSync, writeFileSync, readdirSync, readFileSync, rmSync, utimesSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { photoExtMap, photoTimes, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES, supersedeOldPhotos, mergeSuggestionInbox, readPhotoFlags, dismissPhotoFlag, PHOTO_FLAGS_FILE } from './studioServerPlugin.js';
+import { photoExtMap, photoTimes, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES, supersedeOldPhotos, mergeSuggestionInbox, readPhotoFlags, dismissPhotoFlag, PHOTO_FLAGS_FILE, undecodablePhoto } from './studioServerPlugin.js';
 import {
   DEFAULT_PHOTO_EXT,
   IMAGE_EXTENSIONS,
@@ -242,5 +242,20 @@ describe('photo flags', () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+// A PHOTO NO BROWSER CAN SHOW (2026-10-23): Maxime Raynaud's new photo was
+// JPEG XL saved as .jpg, and his card never painted.
+describe('a photo the browser cannot show', () => {
+  const box = brand => Buffer.concat([Buffer.from([0, 0, 0, 0x1c]), Buffer.from(`ftyp${brand}`, 'latin1'), Buffer.alloc(16)]);
+  it('is refused as JPEG XL or HEIC; JPEG, PNG and AVIF pass', () => {
+    expect(undecodablePhoto(Buffer.from([0xff, 0x0a, 0, 0]))).toBe('JPEG XL');
+    expect(undecodablePhoto(Buffer.concat([Buffer.from([0, 0, 0, 0x0c]), Buffer.from('JXL \r\n\x87\n', 'latin1')]))).toBe('JPEG XL');
+    expect(undecodablePhoto(box('heic'))).toBe('HEIC');
+    expect(undecodablePhoto(box('avif'))).toBeNull();
+    expect(undecodablePhoto(Buffer.concat([box('mif1').subarray(0, 12), Buffer.from('avifmif1', 'latin1')]))).toBeNull();
+    expect(undecodablePhoto(Buffer.from([0xff, 0xd8, 0xff, 0xe0]))).toBeNull();
+    expect(undecodablePhoto(Buffer.from([0x89, 0x50, 0x4e, 0x47]))).toBeNull();
   });
 });

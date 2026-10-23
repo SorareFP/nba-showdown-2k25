@@ -118,7 +118,14 @@ jobs:
 
       # dist/ carries the fresh faces from public/cards/live; they are not in
       # the commit above (see the header). gh-pages pushes with GITHUB_TOKEN.
+      # GLOBAL, not this checkout's config (2026-10-23): gh-pages clones into
+      # its own cache directory, where a repo-local insteadOf and user.name do
+      # not reach — the 10-22 run built and committed, then died here with
+      # "could not read Username for 'https://github.com'", so the site kept
+      # the mirror faces (Kawhi's printed $1,990 and 14/15 over a 13/9 card).
       - name: Publish
         run: |
-          git config url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          git config --global user.name "live-series[bot]"
+          git config --global user.email "live-series[bot]@users.noreply.github.com"
           npm run deploy

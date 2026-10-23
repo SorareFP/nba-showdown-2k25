@@ -159,6 +159,23 @@ function ensureDirs(paths) {
  * still needs to boot so the file can be fixed or re-saved from the UI.
  */
 /**
+ * A PHOTO NO BROWSER CAN SHOW, by its first bytes, or null (2026-10-23). The
+ * upload keeps the bytes as {id}.jpg whatever they are, and Maxime Raynaud's
+ * new photo was JPEG XL: Chromium cannot decode it, so his card never painted
+ * in the Studio or the export ("never became ready"). JPEG XL and HEIC are
+ * refused at the door; AVIF, which shares HEIC's box format, is let through.
+ */
+export function undecodablePhoto(buf) {
+  const b = Buffer.from(buf ?? []).subarray(0, 64);
+  if ((b[0] === 0xff && b[1] === 0x0a) || b.subarray(4, 8).toString('latin1') === 'JXL ') return 'JPEG XL';
+  if (b.subarray(4, 8).toString('latin1') === 'ftyp') {
+    const brands = b.subarray(8).toString('latin1');
+    if (!/avif|avis/.test(brands) && /heic|heix|hevc|hevx|mif1|msf1/.test(brands)) return 'HEIC';
+  }
+  return null;
+}
+
+/**
  * A NEW PHOTO REPLACES THE OLD ONE WHOLE (2026-09-24). An upload always lands
  * as {id}.jpg, so a placeholder .png (or an older .webp) of the same card
  * beside it would stay on disk and could still be the file the preview picks —
@@ -409,6 +426,8 @@ export function studioServerPlugin() {
           }
           const body = await readBody(req);
           if (!body.length) return json(res, 400, { error: 'empty body' });
+          const format = undecodablePhoto(body);
+          if (format) return json(res, 415, { error: `that photo is ${format}, which browsers cannot show: save it as JPG, PNG or WebP and drop it again` });
           writeFileSync(resolve(scope.photos, `${playerId}.jpg`), body);
           const replaced = supersedeOldPhotos(scope.photos, playerId);
           json(res, 200, { ok: true, set: scope.set, playerId, bytes: body.length, replaced });

@@ -2334,8 +2334,16 @@ export function endSection(g) {
   // nowhere else: the human picker, the coach's aiDraftPick and the simulator
   // all choose their five out of this list, so one filter benches him for all
   // three. The debt is paid once — the list is cleared straight after.
-  const sitA = new Set(ng.foulTrouble?.A || []);
-  const sitB = new Set(ng.foulTrouble?.B || []);
+  // NEVER FEWER THAN FIVE (2026-10-25): when the bench cannot cover every
+  // sitter (a game saved before Foul Trouble counted them, a short Climb
+  // roster), the last named come back and their foul is waived.
+  const sitters = k => {
+    const roster = getTeam(ng, k).roster;
+    const sit = [...new Set(ng.foulTrouble?.[k] || [])].filter(id => roster.some(p => p.id === id));
+    return new Set(sit.slice(0, Math.max(0, roster.length - 5)));
+  };
+  const sitA = sitters('A');
+  const sitB = sitters('B');
   ng.draft = {
     aPool: ng.teamA.roster.filter(p => !sitA.has(p.id)),
     bPool: ng.teamB.roster.filter(p => !sitB.has(p.id)),

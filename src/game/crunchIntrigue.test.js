@@ -160,6 +160,36 @@ describe('Foul Trouble', () => {
     expect(check.reason).toMatch(/no bench/);
   });
 
+  // A SHORT BENCH (the Climb's six-player teams, 2026-10-25): a second Foul
+  // Trouble on a roster of six left four to pick from, and the fifth roller
+  // had no defender (the engine threw in doRoll). The bench a sitter needs is
+  // counted after the ones already sitting.
+  it('refuses a second sitter when one bench player cannot cover two', () => {
+    const a = roster('a'); a[0] = mk('a0', { power: 16 }); a[1] = mk('a1', { power: 16 });
+    const b = roster('b', 6); b[0] = mk('b0', { power: 10 }); b[1] = mk('b1', { power: 10 });
+    const g = board({ a, b, aHand: ['foul_trouble', 'foul_trouble'] });
+    expect(canPlayCard(g, 'A', 'foul_trouble').canPlay).toBe(true);
+    const once = execCard(g, 'A', 'foul_trouble', { defIdx: 0 }).game;
+    expect(once.foulTrouble.B).toEqual(['b0']);
+    const check = canPlayCard(once, 'A', 'foul_trouble');
+    expect(check.canPlay).toBe(false);
+    expect(check.reason).toMatch(/short of five/);
+    expect(execCard(once, 'A', 'foul_trouble', { defIdx: 1 }).ok).toBe(false);
+  });
+
+  it('never leaves a section with fewer than five to pick from', () => {
+    // A game already in the bad state (two sitting, one bench player): the
+    // first named sits, the second's foul is waived.
+    const g = mismatch({ bench: 6 });
+    g.foulTrouble = { A: [], B: ['b0', 'b1'] };
+    const next = endSection(g);
+    expect(next.draft.bPool).toHaveLength(5);
+    expect(next.draft.bPool.map(p => p.id)).not.toContain('b0');
+    expect(next.draft.bPool.map(p => p.id)).toContain('b1');
+    expect(next.log.some(l => /b0 is in foul trouble/.test(l.msg))).toBe(true);
+    expect(next.log.some(l => /b1 is in foul trouble/.test(l.msg))).toBe(false);
+  });
+
   it('sends the most valuable of the beaten defenders to the bench', () => {
     const a = roster('a');
     a[0] = mk('a0', { power: 16 });

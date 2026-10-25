@@ -138,6 +138,12 @@ export function staggerPair(starters) {
  * engine all agree on who is eligible.
  */
 // `minAdv`: 4, or 3 for Foul Trouble+ (2026-10-20).
+/** Whether one more of this team can sit next section and leave five to play (Foul Trouble). */
+export function foulTroubleRoom(g, teamKey) {
+  const sitting = new Set(g.foulTrouble?.[teamKey] || []);
+  return (getTeam(g, teamKey)?.roster || []).filter(p => !sitting.has(p.id)).length >= 6;
+}
+
 export function foulTroubleTargets(g, teamKey, minAdv = 4) {
   const myT = getTeam(g, teamKey);
   const oppT = getOpp(g, teamKey);
@@ -749,6 +755,9 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
     // would give it one, but nobody knows that yet when the card is played.
     if (g.quarter === 4 && g.section === 3) return no('No section left for them to sit out');
     if ((oppT.roster || []).length < 6) return no('The opponent has no bench — nobody to replace them');
+    // Counted after the ones already sitting (2026-10-25): a second Foul
+    // Trouble on a roster of six left four for five places.
+    if (!foulTroubleRoom(g, teamKey === 'A' ? 'B' : 'A')) return no('One more sitting would leave them short of five');
     const ft = foulTroubleTargets(g, teamKey, plus ? 3 : 4);
     if (!ft.length) return no(`Need one of your players beating their defender by ${plus ? 3 : 4}+ on Speed or Power`);
     return ok('Send a beaten defender to the bench for the whole next section');

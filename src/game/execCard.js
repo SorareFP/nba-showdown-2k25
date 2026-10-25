@@ -6,7 +6,7 @@ import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupCo
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead, noteAssists, lastAssister, spendGlass, noteCheckMiss, climbCheckBonus } from './engine.js';
 import { hasGamePerk, playCapProblem, BALL_MOVEMENT_EVERY } from './engine.js';
 import { checkTerms } from './checkTerms.js';
-import { preRollTargets, starSlot, contactTargets, burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots, HACK_A } from './canPlay.js';
+import { preRollTargets, starSlot, contactTargets, burstTargets, greenLightTargets, pickUpTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, foulTroubleRoom, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem, screenLockSlots, HACK_A } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat, baseId, isPlus, PLUS, SCREEN_CARDS, CLIMB_GAME_CARDS, TALK_CARDS, buffNumber } from './strats.js';
 
@@ -1375,6 +1375,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const ftMin = plus ? 3 : 4;
       const ftList = foulTroubleTargets(g, teamKey, ftMin);
       if (!ftList.length) return fail(`Nobody is beating their defender by ${ftMin} or more`);
+      if (!foulTroubleRoom(g, ftOpp)) return fail('One more sitting would leave them short of five');
       const chosen = opts.defIdx != null
         ? ftList.find(t => t.defIdx === Number(opts.defIdx))
         : null;

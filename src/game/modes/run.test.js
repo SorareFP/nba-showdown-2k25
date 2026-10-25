@@ -111,7 +111,9 @@ describe('the map and the games', () => {
     expect(p.key).toBe('climb:r1:1-0');
     expect(p.rosterA.map(c => c.id)).toEqual(FIVE.map(c => c.id));
     expect(p.rosterB).toHaveLength(5);
-    expect(p.gameOpts).toEqual({ startQuarter: 4, fatigue: { A: { [FIVE[0].id]: 4 } }, placementFirst: 'B', system: { A: 'speed' } });
+    expect(p.gameOpts).toMatchObject({ startQuarter: 4, fatigue: { A: { [FIVE[0].id]: 4 } }, placementFirst: 'B', system: { A: 'speed' } });
+    // The coach's style (2026-10-25): its engine effects ride in gameOpts, its stat moves on the coach's cards.
+    expect(Object.keys(p.gameOpts).filter(k => !['startQuarter', 'fatigue', 'placementFirst', 'system', 'style'].includes(k))).toEqual([]);
     // At home: the coach places first and you answer.
     expect(p.humanIsHome).toBe(true);
     expect(p.returnTab).toBe('climb');

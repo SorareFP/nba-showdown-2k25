@@ -186,14 +186,14 @@ export function perkProblem(run, id, target, rosterKeys) {
  * 'game' for a Game's or Rivalry's drop, 'boss' for a boss's reward. Never
  * two shooting perks in one offer (the user, 2026-10-22).
  */
-export function perkOffer(run, rng, rosterKeys, pool = 'game') {
+export function perkOffer(run, rng, rosterKeys, pool = 'game', count = 3) {
   const can = PERK_IDS.filter(id => Boolean(PERKS[id].boss) === (pool === 'boss') && (PERKS[id].target === 'card'
     ? practicable(run.deck).length > 0
     : PERKS[id].target === 'team'
       ? !perkProblem(run, id, null, rosterKeys)
       : rosterKeys.some(k => !perkProblem(run, id, k, rosterKeys))));
   const out = [];
-  while (out.length < 3 && can.length) {
+  while (out.length < count && can.length) {
     const id = can.splice(Math.floor(rng() * can.length), 1)[0];
     out.push(id);
     if (PERKS[id].shooting) for (let i = can.length - 1; i >= 0; i -= 1) if (PERKS[can[i]].shooting) can.splice(i, 1);

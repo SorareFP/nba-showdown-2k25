@@ -21,6 +21,7 @@ import {
   owedPlayer, openOwedSign,
 } from '../../game/modes/run.js';
 import { PERKS } from '../../game/modes/climbPerks.js';
+import { styleLine } from '../../game/modes/climbStyles.js';
 import { stopById, packWords, ACT_NAMES } from '../../game/modes/climbMap.js';
 import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud } from './ClimbScreens.jsx';
 import styles from './Climb.module.css';
@@ -135,8 +136,8 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
     onPlayFixture?.(presetFor(next));
   };
 
-  const go = stopId => act(async () => {
-    const next = chooseStop(run, stopId);
+  const go = (stopId, opts = {}) => act(async () => {
+    const next = chooseStop(run, stopId, opts);
     if (stopById(run.map, stopId)?.kind === 'rest') { await commit(next); return; }
     await play(await commit(next));
   });
@@ -250,6 +251,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         <div className={styles.screen}>
           <h2 className={styles.title}>{run.game?.replay ? 'Second Chance: ' : ''}{run.game?.kind === 'boss' ? 'The boss' : run.game?.kind === 'rivalry' ? 'A Rivalry' : 'A Game'}{o ? `: ${o.classic ? 'Classic ' : ''}${o.city} ${o.name}` : ''}</h2>
           {run.game?.replay && <p className={styles.lede} data-replay="true">Second Chance: the loss is wiped and this game is played again. The pot is still yours; lose this one and the run is over.</p>}
+          {run.game?.style && <p className={styles.styleLine} data-game-style={run.game.style.id}>Their coach's style · {styleLine(run.game.style)}</p>}
           <p className={styles.lede}>
             One quarter from Q4, {run.game?.home ? 'at home: the coach places first and you answer' : 'on the road: you place first and the coach answers'}. Your game is waiting on the Play tab.
           </p>

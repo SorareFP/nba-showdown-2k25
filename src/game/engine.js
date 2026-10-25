@@ -182,9 +182,35 @@ export const ENGINE_STAMP = typeof __ENGINE_STAMP__ !== 'undefined' ? __ENGINE_S
  */
 export const hasGamePerk = (g, teamKey, id) => Boolean(g?.perks?.[teamKey]?.includes(id));
 
-/** The opening hand: seven, one more for Scouting Report and one more for Short Rotation. */
-export function openingHand(perks) {
-  return 7 + (perks?.includes('scouting_report') ? 1 : 0) + (perks?.includes('short_rotation') ? 1 : 0);
+/** The opening hand: seven, one more for Scouting Report and one more for Short Rotation; a coach's style may move it (Bench Mob, a card short). */
+export function openingHand(perks, style = null) {
+  return Math.max(5, 7 + (perks?.includes('scouting_report') ? 1 : 0) + (perks?.includes('short_rotation') ? 1 : 0) + (style?.hand ?? 0));
+}
+
+/**
+ * A COACH'S STYLE IN THE GAME (the Climb, 2026-10-25, climbStyles.js): its
+ * engine effects, `g.style` = { B: { firstRoll, crunchRoll, star, others,
+ * minutes, draw, fullRest, threes, paint, againstPaint, rebOnRoll } }.
+ */
+export const styleFx = (g, teamKey) => g?.style?.[teamKey] ?? null;
+
+/**
+ * The style's part of a scoring roll: first section, Crunch Time, and the
+ * star's +2 or the others' −1 (Heliocentric: the highest-paid starter).
+ */
+export function styleRollBonus(g, teamKey, idx) {
+  const fx = styleFx(g, teamKey);
+  if (!fx) return 0;
+  let n = 0;
+  if (fx.firstRoll && isOpeningSection(g)) n += fx.firstRoll;
+  if (fx.crunchRoll && g.crunch?.active) n += fx.crunchRoll;
+  if (fx.star || fx.others) {
+    const starters = getTeam(g, teamKey)?.starters ?? [];
+    let star = -1;
+    starters.forEach((p, i) => { if (p && (star < 0 || (p.salary ?? 0) > (starters[star]?.salary ?? 0))) star = i; });
+    n += idx === star ? (fx.star ?? 0) : (fx.others ?? 0);
+  }
+  return n;
 }
 
 /**
@@ -214,8 +240,8 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
   // THE CLIMB'S QUARTER (2026-10-18): a run game is the fourth quarter alone,
   // and each player walks on with what the run has left on his tracker.
   const startQuarter = opts.startQuarter ?? 1;
-  const teamA = makeTeam(rosterA, 'Team A', deckConfigA, openingHand(opts.perks?.A));
-  const teamB = makeTeam(rosterB, 'Team B', deckConfigB, openingHand(opts.perks?.B));
+  const teamA = makeTeam(rosterA, 'Team A', deckConfigA, openingHand(opts.perks?.A, opts.style?.A));
+  const teamB = makeTeam(rosterB, 'Team B', deckConfigB, openingHand(opts.perks?.B, opts.style?.B));
   for (const [key, team] of [['A', teamA], ['B', teamB]]) {
     const carried = opts.fatigue?.[key];
     if (carried) for (const ps of team.stats) if (carried[ps.id] > 0) ps.minutes = carried[ps.id];
@@ -238,6 +264,8 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     // played: this section (`played`, Short Rotation) and this game
     // (`playedGame`, Ball Movement Culture).
     ...(opts.perks ? { perks: opts.perks, played: {}, playedGame: {} } : {}),
+    // The coach's style (styleFx).
+    ...(opts.style ? { style: opts.style } : {}),
     // Set by endSection when the final section begins within the margin —
     // { active, margin, used: {A,B}, extra: {A,B}, timeoutUsed: {A,B} }.
     crunch: null,
@@ -928,7 +956,8 @@ export function scoringRollModifier(g, teamKey, idx) {
   // Chemistry's set-up rides on this team's next roll, whoever makes it.
   const chem = g.chem?.[teamKey]?.pending || 0;
   const perk = perkRollBonus(g, teamKey);
-  return { matchup, card, fatigue, markers, chem, perk, total: matchup + card + fatigue + markers + chem + perk };
+  const style = styleRollBonus(g, teamKey, idx);
+  return { matchup, card, fatigue, markers, chem, perk, style, total: matchup + card + fatigue + markers + chem + perk + style };
 }
 
 /**
@@ -1169,6 +1198,13 @@ export function climbCheckParts(g, teamKey, type, idx = null) {
   if (type === '3pt' && mine.let_it_fly) parts.push({ label: 'Let It Fly', n: buffNumber(mine.let_it_fly, 1) });
   if (type === 'paint' && mine.bruise_brothers) parts.push({ label: 'Bruise Crew', n: buffNumber(mine.bruise_brothers, 1) });
   if (type === 'paint' && theirs.shut_the_door) parts.push({ label: 'Shut the Door', n: -buffNumber(theirs.shut_the_door, 1) });
+  // A coach's style (2026-10-25): its own 3PT and paint checks, and the paint
+  // checks taken against it (Grit and Grind).
+  const ownStyle = styleFx(g, teamKey);
+  const theirStyle = styleFx(g, teamKey === 'A' ? 'B' : 'A');
+  if (type === '3pt' && ownStyle?.threes) parts.push({ label: 'Their style', n: ownStyle.threes });
+  if (type === 'paint' && ownStyle?.paint) parts.push({ label: 'Their style', n: ownStyle.paint });
+  if (type === 'paint' && theirStyle?.againstPaint) parts.push({ label: 'Their style', n: theirStyle.againstPaint });
   // Rim Deterrent (a perk, 2026-10-22): the first paint check against them each game, −3.
   const oppKeyR = teamKey === 'A' ? 'B' : 'A';
   if (type === 'paint' && hasGamePerk(g, oppKeyR, 'rim_deterrent') && !g.rimDeterred?.[oppKeyR]) parts.push({ label: RIM_DETERRENT_LABEL, n: -3 });
@@ -1980,8 +2016,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
     bonus += chemPts;
     ng.chem[teamKey].pending = 0;
   }
-  // The run's perks (Fast Start, Closers, Heavy Minutes).
-  bonus += perkRollBonus(ng, teamKey);
+  // The run's perks (Fast Start, Closers, Heavy Minutes), and a coach's style.
+  bonus += perkRollBonus(ng, teamKey) + styleRollBonus(ng, teamKey, idx);
 
   const fat = getFatigue(ng, teamKey, idx);
   const ps = getPS(ng, teamKey, nPlayer.id) || {};
@@ -2032,6 +2068,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
 
   // Post Domination: this player's rebounds from scoring rolls are doubled.
   if (te['reb2' + idx] && result.reb) result = { ...result, reb: result.reb * 2 };
+  // Glass Eaters (a coach's style): a rebound more on every roll.
+  if (styleFx(ng, teamKey)?.rebOnRoll) result = { ...result, reb: (result.reb ?? 0) + styleFx(ng, teamKey).rebOnRoll };
   // Point God, Post Domination's Speed twin (2026-09-23): the assists double.
   if (te['ast2' + idx] && result.ast) result = { ...result, ast: result.ast * 2 };
   if (!ng.rollResults[teamKey]) ng.rollResults[teamKey] = [];
@@ -2151,6 +2189,8 @@ export function endSection(g) {
         if (ps.extraMinutes) { ps.minutes += ps.extraMinutes; delete ps.extraMinutes; }
         // Heavy Minutes (a boss's perk, 2026-10-22): a minute more a section.
         if (hasGamePerk(ng, k, 'heavy_minutes')) ps.minutes += 1;
+        // Seven Seconds (a coach's style): they tire faster.
+        if (styleFx(ng, k)?.minutes) ps.minutes += styleFx(ng, k).minutes;
       }
     });
   });
@@ -2275,14 +2315,14 @@ export function endSection(g) {
   // FILM SESSION (the Climb, 2026-10-20): one card more as each section opens,
   // past the seven. SHORT ROTATION (a boss's perk, 2026-10-22) does the same.
   ['A', 'B'].forEach(k => {
-    for (const [on, name] of [[ng.buffs?.[k]?.film_session, 'Film Session'], [hasGamePerk(ng, k, 'short_rotation'), 'Short Rotation']]) {
-      if (!on) continue;
+    for (const [n, name] of [[ng.buffs?.[k]?.film_session ? 1 : 0, 'Film Session'], [hasGamePerk(ng, k, 'short_rotation') ? 1 : 0, 'Short Rotation'], [styleFx(ng, k)?.draw ?? 0, 'Process']]) {
+      if (!(n > 0)) continue;
       const t = getTeam(ng, k);
-      const fs = drawCards(t.hand, t.deck, 1, { overCap: true, crunchActive: Boolean(ng.crunch?.active) });
+      const fs = drawCards(t.hand, t.deck, n, { overCap: true, crunchActive: Boolean(ng.crunch?.active) });
       t.hand = fs.hand;
       t.deck = fs.deck;
       if (fs.bottomed.length) ng.log = [...ng.log, ...bottomedLines(k, t.name, fs.bottomed)];
-      if (fs.drawn.length) ng.log = [...ng.log, { team: k, msg: `${name}: ${t.name} draws a card.` }];
+      if (fs.drawn.length) ng.log = [...ng.log, { team: k, msg: `${name}: ${t.name} draws ${fs.drawn.length > 1 ? `${fs.drawn.length} cards` : 'a card'}.` }];
     }
   });
 
@@ -2344,6 +2384,8 @@ function clearBenchedMarkers(g, prevStarters) {
       ps.wasBenched = !wasPlaying.includes(ps.id);
       // Was on the bench last segment: markers off, four minutes back.
       if (!wasPlaying.includes(ps.id)) benchRest(ps);
+      // Bench Mob (a coach's style): a section out and they are fresh.
+      if (!wasPlaying.includes(ps.id) && styleFx(ng, k)?.fullRest) ps.minutes = 0;
     });
   });
   return ng;

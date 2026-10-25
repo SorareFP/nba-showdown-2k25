@@ -123,6 +123,11 @@
 .stopText { display: flex; flex-direction: column; line-height: 1.2; }
 .stopName { font-size: clamp(12px, 0.9vw, 15px); font-weight: 700; white-space: nowrap; }
 .stopCap { font-size: clamp(11px, 0.75vw, 13px); color: var(--text-muted); }
+/* The coach's style on its stop (climbStyles.js, 2026-10-25). */
+.stopStyle { font-size: clamp(10px, 0.7vw, 12px); color: var(--blue-light, #93c5fd); white-space: nowrap; }
+.styleLine { margin: 0; font-size: 13px; color: var(--blue-light, #93c5fd); }
+.fullStrength { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; cursor: pointer; }
+.fullStrength input { margin-top: 2px; }
 .boss { min-width: clamp(140px, 12vw, 220px); padding: 8px 16px !important; border-color: var(--gold) !important; border-width: 2px !important; }
 .boss .stopName { color: var(--gold); }
 .bossLogo { width: clamp(36px, 3.2vw, 56px); height: clamp(36px, 3.2vw, 56px); object-fit: contain; }
@@ -194,6 +199,7 @@
   .floorNo { left: -20px; font-size: 11px; }
   .boss { min-width: 96px; }
   .stopCap { display: none; }
+  .stopStyle { display: none; }
 }
 
 /* Saved Climb fives on the start screen (2026-10-19). */

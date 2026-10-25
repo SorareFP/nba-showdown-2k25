@@ -11,13 +11,14 @@ import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster, samePlayer, DEFAULT_FILTERS, filterPool, sortPool } from '../../game/teamRules.js';
 import PoolFilters from '../PoolFilters.jsx';
-import { CLIMB, CLIMB_FIVE, openStops, isTravel, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions } from '../../game/modes/run.js';
+import { CLIMB, CLIMB_FIVE, openStops, isTravel, stopOpponent, fullStrengthOffered, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops, ACTS, ACT_NAMES, ACT_POT, BOSS_PACKS, packWords } from '../../game/modes/climbMap.js';
 import { PLAYBOOKS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
 import { PERKS, boostsOf, boostedCard, perkProblem, practicable, hasPerk } from '../../game/modes/climbPerks.js';
 import { cardFit } from '../../game/cardFit.js';
+import { STYLES, styleLine } from '../../game/modes/climbStyles.js';
 import { fitsSystem, systemLine } from '../../game/systemFit.js';
 import styles from './Climb.module.css';
 
@@ -129,10 +130,14 @@ function PerkTile({ run, id, onPick, busy }) {
  * game's own roster and deck (bossScout), its five best by salary, its
  * playbook and the rare cards it holds — on the map from floor 1.
  */
-function ScoutReport({ run }) {
+function ScoutReport({ run, fullStrength = false, onFullStrength = null }) {
   const scout = useMemo(() => { try { return bossScout(run); } catch { return null; } }, [run.seed, run.rung]); // eslint-disable-line
   if (!scout) return null;
   const o = scout.opponent;
+  // The boss's style, and the choice to take it at Full Strength (2026-10-25).
+  const bossStop = run.map?.boss;
+  const offered = fullStrengthOffered(run, bossStop);
+  const style = stopOpponent(run, bossStop, { full: offered && fullStrength })?.style;
   return (
     <details className={styles.scout} data-scout="true" open>
       <summary className={styles.h3}>Scouting the boss <span className={styles.muted}>{o.classic ? 'classic ' : ''}{o.city} {o.name}</span></summary>
@@ -146,6 +151,13 @@ function ScoutReport({ run }) {
       </ul>
       {scout.rares.length > 0 && (
         <p className={styles.deckLine}>Its rares: {scout.rares.map(id => getStrat(baseId(id))?.name).join(', ')}</p>
+      )}
+      {style && <p className={styles.styleLine} data-boss-style={style.id}>{styleLine(style)}</p>}
+      {offered && onFullStrength && (
+        <label className={styles.fullStrength} data-full-strength="true">
+          <input type="checkbox" checked={fullStrength} onChange={e => onFullStrength(e.target.checked)} />
+          <span>Take the boss at <strong>Full Strength</strong>: its style's strength doubled, and its reward grows (one more card pick, a boss's perk from four).</span>
+        </label>
       )}
     </details>
   );
@@ -526,6 +538,8 @@ function reachableFrom(map, fromId) {
 // from any screen; during a run game the stop being played is "here".
 export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest = () => {}, onFreePractice = () => {}, onFreeCut = () => {}, onFreeSign = () => {}, onAbandon = null, busy = false, onBack = null, backLabel = '← Back to the Rest Day' }) {
   const peek = Boolean(onBack);
+  // Full Strength for this act's boss (2026-10-25), chosen before the boss is.
+  const [fullStrength, setFullStrength] = useState(false);
   const here = peek && run.status === 'rest' ? run.restAt : peek && run.status === 'game' ? (run.game?.stopId ?? run.at) : run.at;
   const open = new Set(peek ? [] : openStops(run).map(s => s.id));
   const ahead = peek ? new Set(nextStops(run.map, here).map(s => s.id)) : open;
@@ -572,6 +586,8 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
           const far = !path.has(s.id) && !reachable.has(s.id);
           const cap = capAt(s);
           const isBoss = s.kind === 'boss';
+          // Who plays here, and their coach's style (climbStyles.js).
+          const opp = !done ? stopOpponent(run, s) : null;
           const logo = isBoss && boss.logo ? logoSrc(boss.logo) : null;
           return (
             <button
@@ -586,8 +602,9 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
               className={`${styles.stop} ${styles[s.kind]} ${isOpen ? styles.open : ''} ${done ? styles.done : ''} ${isHere ? styles.here : ''} ${isAhead ? styles.ahead : ''} ${far ? styles.far : ''}`}
               style={{ left: `${xPct(s.lane)}%`, top: `${yPct(s.floor)}%` }}
               disabled={!isOpen || busy}
-              onClick={() => onGo(s.id)}
-              title={`${isBoss ? `Boss: the classic ${boss.city} ${boss.name}` : KIND[s.kind].name}${cap ? ` · coach's cap ${dollars(cap)}` : ''}${s.kind === 'rest' ? '' : CLIMB.homeKinds.includes(s.kind) ? ' · at home' : ' · on the road'}${travel ? ' · ✈️ a Travel Day' : ''}`}
+              onClick={() => onGo(s.id, isBoss ? { fullStrength } : {})}
+              data-style={opp?.style?.id}
+              title={`${isBoss ? `Boss: the classic ${boss.city} ${boss.name}` : KIND[s.kind].name}${opp && !isBoss ? ` vs the ${opp.city} ${opp.name}` : ''}${cap ? ` · coach's cap ${dollars(cap)}` : ''}${s.kind === 'rest' ? '' : CLIMB.homeKinds.includes(s.kind) ? ' · at home' : ' · on the road'}${travel ? ' · ✈️ a Travel Day' : ''}${opp?.style ? ` · ${styleLine(opp.style)}` : ''}`}
             >
               {logo && !done
                 ? <img className={styles.bossLogo} src={logo} alt="" />
@@ -595,6 +612,7 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
               <span className={styles.stopText}>
                 <span className={styles.stopName}>{travel ? '✈️ ' : ''}{isBoss ? `Boss · ${boss.name}` : KIND[s.kind].name}</span>
                 {cap && <span className={styles.stopCap}>{dollars(cap)}</span>}
+                {opp?.style && <span className={styles.stopStyle}>{isBoss ? '' : `${opp.abbr} · `}{STYLES[opp.style.id]?.name}</span>}
               </span>
             </button>
           );
@@ -606,7 +624,7 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
         <div className={styles.stat}><span>Cap</span><strong>{dollars(capSal(cards))} of {dollars(run.cap)}</strong></div>
         <DeckLine run={run} />
         <PerkList run={run} />
-        <ScoutReport run={run} />
+        <ScoutReport run={run} fullStrength={fullStrength} onFullStrength={peek ? null : setFullStrength} />
         <h3 className={styles.h3}>Your team</h3>
         {CLIMB.system && run.playbook && <p className={styles.deckLine}>{systemLine(run.playbook)}</p>}
         <ul className={styles.roster}>

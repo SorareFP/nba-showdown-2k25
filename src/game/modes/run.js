@@ -14,6 +14,7 @@
 import { generateMap, stopById, nextStops, nextFloorStops, potOfRun, climbRng, MAP_VERSION, ACTS, FLOORS, bossIdOf } from './climbMap.js';
 import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, coachDeck } from './climbKits.js';
 import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard, hasPerk, GAME_PERKS, TRAVEL_DAYS, WIN_NOW_CAP } from './climbPerks.js';
+import { styleAt, styledCard, engineFx } from './climbStyles.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
 import { STRATS, STRAT_MAP, PLUS, baseId, isPlus, plusId, buffNumber } from '../strats.js';
 import { ALL_CARDS, DORMANT_KEYS, cardKey, getCardByKey } from '../cardSets.js';
@@ -387,8 +388,36 @@ function franchiseOrder(run) {
   return shuffled(list, climbRng(run.seed, 'franchises'));
 }
 
-/** The fight at a stop: the coach's team and deck, and the key its game is saved and claimed under. */
-export function gameSetup(run, stopId) {
+/**
+ * WHO PLAYS AT A STOP (2026-10-25): each stop its own franchise, by its place
+ * on the act's map, so the coach's style can be read off the map and a route
+ * is a choice of opponent (climbStyles.js). It used to be the next franchise
+ * in the run's order, the same for every open stop.
+ */
+function stopFranchise(run, stop) {
+  const order = franchiseOrder(run);
+  const at = 21 * (actOfRun(run) - 1) + 3 * ((stop.floor ?? 1) - 1) + (stop.lane ?? 0);
+  return order[at % order.length];
+}
+
+/** Who a stop's game is against, as the map shows it: { abbr, name, city, style }, or null for a Rest Day. */
+export function stopOpponent(run, stop, { full = false } = {}) {
+  if (!stop || stop.kind === 'rest' || stop.kind === 'event') return null;
+  const act = actOfRun(run);
+  const abbr = stop.kind === 'boss' ? bossFranchise(run, act) : stopFranchise(run, stop);
+  const team = TEAMS[abbr] ?? {};
+  return { abbr, name: team.name ?? abbr, city: team.city ?? '', style: styleAt(abbr, { act, kind: stop.kind, full }) };
+}
+
+/** May the boss of this act be taken at Full Strength? Acts I and II, whose reward it grows. */
+export const fullStrengthOffered = (run, stop) => stop?.kind === 'boss' && actOfRun(run) < ACTS;
+
+/**
+ * The fight at a stop: the coach's team and deck, and the key its game is
+ * saved and claimed under. `full`: a boss taken at Full Strength (its style's
+ * strength doubled, fullStrengthOffered).
+ */
+export function gameSetup(run, stopId, { full = false } = {}) {
   const stop = stopById(run.map, stopId);
   if (!stop || stop.kind === 'rest') fail('No game there');
   const boss = stop.kind === 'boss';
@@ -402,8 +431,7 @@ export function gameSetup(run, stopId) {
     abbr = bossFranchise(run, act);
     roster = buildClassicRoster(abbr, { cap, size: bossSizeOf(act), rng });
   } else {
-    const order = franchiseOrder(run);
-    abbr = order[run.cleared.length % order.length];
+    abbr = stopFranchise(run, stop);
     const size = oppSizeOf(act, stop.floor);
     // A classic team where the act asks for one and the franchise can field it.
     classic = Boolean(act > 1 && ACT_DIALS[act].classicGames && classicFranchises({ cap, size }).includes(abbr));
@@ -420,18 +448,25 @@ export function gameSetup(run, stopId) {
     cap,
     opponent: { abbr, name: team.name ?? abbr, city: team.city ?? '', classic },
     act,
+    // The coach's style (climbStyles.js), and a boss taken at Full Strength.
+    style: styleAt(abbr, { act, kind: stop.kind, full: boss && full }),
+    ...(boss && full ? { fullStrength: true } : {}),
   };
 }
 
-/** Go to a stop: a Rest Day, or a fight set up once and stored, so a resumed game is the same game. */
-export function chooseStop(run, stopId) {
+/**
+ * Go to a stop: a Rest Day, or a fight set up once and stored, so a resumed
+ * game is the same game. `fullStrength`: take this act's boss at Full
+ * Strength (Acts I and II).
+ */
+export function chooseStop(run, stopId, { fullStrength = false } = {}) {
   if (rosterCards(run).blocked) fail('Fewer than five of your players are left; retire to bank the pot');
   if (!openStops(run).some(s => s.id === stopId)) fail('That stop is not open');
   const stop = stopById(run.map, stopId);
   // A stop that is not linked spends a Travel Day (the server counts its own).
   const moved = isTravel(run, stopId) ? { ...run, travel: run.travel - 1 } : run;
   if (stop.kind === 'rest') return { ...moved, status: 'rest', restAt: stopId };
-  return { ...moved, status: 'game', game: gameSetup(run, stopId) };
+  return { ...moved, status: 'game', game: gameSetup(run, stopId, { full: fullStrength && fullStrengthOffered(run, stop) }) };
 }
 
 /** What the Play tab deals for the run's game. */
@@ -468,7 +503,8 @@ export function presetFor(run) {
     key: g.key,
     // A perk's boosts ride on copies of the cards (climbPerks.js, 2026-10-19).
     rosterA: (() => { const b = boostsOf(run); return rosterCards(run).cards.map(c => boostedCard(c, b[c.id])); })(),
-    rosterB: g.rosterB.map(k => getCardByKey(k)).filter(Boolean),
+    // The coach's cards with its style's stat moves on them (styledCard).
+    rosterB: g.rosterB.map(k => getCardByKey(k)).filter(Boolean).map(c => styledCard(c, g.style?.fx)),
     deckA: { ...run.deck },
     deckB: { ...g.deckB },
     aiLevel: run.rung,
@@ -483,6 +519,7 @@ export function presetFor(run) {
       ...(run.signature ? { signatureBonus: { A: Math.min(SIGNATURE_MAX, 2 + run.signature) } } : {}),
       ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
       ...(perks.length ? { perks: { A: perks } } : {}),
+      ...(engineFx(g.style?.fx) ? { style: { B: engineFx(g.style.fx) } } : {}),
     },
     climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung, act: actOfRun(run), potAdd, secondChance: canReplay(run) },
     climbView: runView(run),
@@ -586,7 +623,11 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, ca
   }
   const stop = stopById(run.map, stopId);
   const cleared = [...run.cleared, stopId];
-  if (stop.kind === 'boss') return { ...run, status: 'won', at: stopId, cleared, game: null };
+  // A boss beaten at Full Strength grows the act's reward (continueClimb).
+  if (stop.kind === 'boss') {
+    const full = run.game?.fullStrength ? { fullStrengthWon: { ...(run.fullStrengthWon ?? {}), [actOfRun(run)]: true } } : {};
+    return { ...run, ...full, status: 'won', at: stopId, cleared, game: null };
+  }
   // Training Staff (a perk, 2026-10-22): two minutes more off every tracker.
   const rec = recoveryFor(margin) + (hasPerk(run, 'training_staff') ? 2 : 0);
   const fatigue = {};
@@ -881,15 +922,18 @@ export function continueClimb(run) {
   };
   const rng = climbRng(run.seed, 'offers', bossId);
   const players = playerOffer(next, rng);
+  // FULL STRENGTH (2026-10-25): a boss beaten with its style doubled pays one
+  // more card pick and a boss's perk from four.
+  const full = Boolean(run.fullStrengthWon?.[act]);
   // The boss's own pool (climbPerks.js `boss`, 2026-10-22).
-  const perks = perkOffer(next, climbRng(run.seed, 'perks', bossId), rosterCards(next).cards.map(c => c.id), 'boss');
+  const perks = perkOffer(next, climbRng(run.seed, 'perks', bossId), rosterCards(next).cards.map(c => c.id), 'boss', full ? 4 : 3);
   // Offered as a Rivalry's are (its third card always rare), at the act's last floor.
   const strats = stratOffer(next, { kind: 'rivalry', floor: FLOORS }, rng, climbRng(run.seed, 'climb-only', bossId));
   return settle({
     ...next,
     status: 'reward',
     extraPicks: Math.max(0, (run.extraPicks ?? 0) - 1),
-    offers: { stopId: bossId, strats, picks: 1 + ((run.extraPicks ?? 0) > 0 ? 1 : 0), players, perks },
+    offers: { stopId: bossId, strats, picks: 1 + ((run.extraPicks ?? 0) > 0 ? 1 : 0) + (full ? 1 : 0), players, perks },
   });
 }
 

@@ -162,6 +162,10 @@ describe('The Climb in the news', () => {
     const at = NEWS.findIndex(n => n.id === run[0][0]);
     expect(at).toBeGreaterThanOrEqual(0);
     run.forEach(([id, to], i) => expect(NEWS[at + i], id).toMatchObject({ id, to }));
-    expect(NEWS[0]).toMatchObject({ id: 'last-pair-places-itself', to: 'play' });
+    // Newer items sit above it, newest first.
+    const pair = NEWS.findIndex(n => n.id === 'last-pair-places-itself');
+    expect(pair).toBeGreaterThanOrEqual(0);
+    expect(pair).toBeLessThan(at);
+    expect(NEWS.findIndex(n => n.id === 'climb-sixth-player')).toBeLessThan(pair);
   });
 });

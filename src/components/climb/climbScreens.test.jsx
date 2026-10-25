@@ -56,7 +56,7 @@ describe("the start screen's saved fives", () => {
     const good = { id: 't1', name: 'Bench Mob', climb: true, players: FIVE.map(cardKey), salary: 2000 };
     const sold = { id: 't2', name: 'Old Guard', climb: true, players: [...FIVE.slice(0, 4).map(cardKey), 'gone:Nobody'], salary: 1900 };
     const out = html(<ClimbStart owned={owned} saved={[good, sold]} onStart={noop} onSaveFive={noop} />);
-    expect(out).toContain('Your Climb fives');
+    expect(out).toContain('Your Climb teams');
     expect(out).toMatch(/data-five="t1"(?![^>]*disabled)/);
     expect(out).toMatch(/data-five="t2"[^>]*disabled/);
     expect(out).toContain('no longer exists');

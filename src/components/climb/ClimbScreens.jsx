@@ -9,9 +9,9 @@ import { AI_LEVELS, payNote } from '../../game/aiLevels.js';
 import { capOf } from '../../game/coinRewards.js';
 import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
-import { capSal, playerOnRoster, DEFAULT_FILTERS, filterPool, sortPool } from '../../game/teamRules.js';
+import { capSal, playerOnRoster, samePlayer, DEFAULT_FILTERS, filterPool, sortPool } from '../../game/teamRules.js';
 import PoolFilters from '../PoolFilters.jsx';
-import { CLIMB, openStops, isTravel, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions } from '../../game/modes/run.js';
+import { CLIMB, CLIMB_FIVE, openStops, isTravel, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops, ACTS, ACT_NAMES, ACT_POT, BOSS_PACKS, packWords } from '../../game/modes/climbMap.js';
@@ -325,16 +325,17 @@ export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null,
   const cards = picked.map(k => list.find(o => o.key === k)?.card).filter(Boolean);
   const total = capSal(cards);
   // What is left must still buy the rest of the five: a player fits when
-  // they and the cheapest others for the open spots fit under the cap.
+  // they and the cheapest others for the open spots fit under the cap. A
+  // sixth is optional (CLIMB_FIVE.max, 2026-10-25), so only the five is held back for.
   const byPrice = useMemo(() => [...list].sort((a, b) => (a.card.salary ?? 0) - (b.card.salary ?? 0)), [list]);
   const fits = o => {
-    if (picked.length >= 5 || playerOnRoster(cards, o.card)) return false;
-    const spotsAfter = 4 - picked.length;
+    if (picked.length >= CLIMB_FIVE.max || playerOnRoster(cards, o.card)) return false;
+    const spotsAfter = Math.max(0, CLIMB_FIVE.size - 1 - picked.length);
     let reserve = 0;
     let n = 0;
     for (const x of byPrice) {
       if (n >= spotsAfter) break;
-      if (x.card.id === o.card.id || picked.includes(x.key) || playerOnRoster(cards, x.card)) continue;
+      if (samePlayer(x.card, o.card) || picked.includes(x.key) || playerOnRoster(cards, x.card)) continue;
       reserve += x.card.salary ?? 0;
       n += 1;
     }
@@ -354,12 +355,12 @@ export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null,
   const rest = shown.filter(o => !picked.includes(o.key));
   const open = rest.filter(fits);
   const hidden = rest.length - open.length;
-  const ready = picked.length === 5 && total <= CLIMB.startCap;
+  const ready = picked.length >= CLIMB_FIVE.size && picked.length <= CLIMB_FIVE.max && total <= CLIMB.startCap;
   return (
     <div className={styles.screen}>
       <h2 className={styles.title}>The Climb</h2>
       <p className={styles.lede}>
-        Bring five of your players under a {dollars(CLIMB.startCap)} cap, then climb seven floors of one-quarter games to a classic team.
+        Bring five or six of your players under a {dollars(CLIMB.startCap)} cap (a sixth is a bench to rotate), then climb seven floors of one-quarter games to a classic team.
         Wins add to the pot; one loss ends the run and the pot with it. Retire between stops to bank it.
       </p>
       <h3 className={styles.h3}>Coach</h3>
@@ -372,7 +373,7 @@ export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null,
       </div>
       {fives.length > 0 && (
         <>
-          <h3 className={styles.h3}>Your Climb fives <span className={styles.muted}>saved in My Teams</span></h3>
+          <h3 className={styles.h3}>Your Climb teams <span className={styles.muted}>saved in My Teams</span></h3>
           <div className={styles.fives}>
             {fives.map(t => {
               const problem = fiveProblem(t.players, ownedKeys);
@@ -388,7 +389,7 @@ export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null,
           </div>
         </>
       )}
-      <h3 className={styles.h3}>Your five <span className={total > CLIMB.startCap ? styles.over : styles.muted}>{dollars(total)} of {dollars(CLIMB.startCap)} · {picked.length}/5</span></h3>
+      <h3 className={styles.h3}>Your team <span className={total > CLIMB.startCap ? styles.over : styles.muted}>{dollars(total)} of {dollars(CLIMB.startCap)} · {picked.length} of {CLIMB_FIVE.size}-{CLIMB_FIVE.max}</span></h3>
       {list.length === 0 && <p className={styles.muted}>Open your starter pack first: a climb starts with players you own.</p>}
       {list.length > 0 && <PoolFilters value={filters} onChange={setFilters} teams={teams} />}
       <div className={styles.grid}>
@@ -401,10 +402,10 @@ export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null,
           );
         })}
       </div>
-      {hidden > 0 && <p className={styles.muted}>{hidden} more of your players {picked.length >= 5 ? 'wait for the next climb' : 'do not fit what is left of the cap'}.</p>}
+      {hidden > 0 && <p className={styles.muted}>{hidden} more of your players {picked.length >= CLIMB_FIVE.max ? 'wait for the next climb' : 'do not fit what is left of the cap'}.</p>}
       <div className={styles.actions}>
         <button type="button" className={styles.primary} disabled={!ready || busy} onClick={() => onStart({ rung, keys: picked })}>Start the climb</button>
-        {onSaveFive && <button type="button" disabled={!ready || busy} onClick={() => onSaveFive(picked)}>Save these five</button>}
+        {onSaveFive && <button type="button" disabled={!ready || busy} onClick={() => onSaveFive(picked)}>Save this team</button>}
       </div>
     </div>
   );

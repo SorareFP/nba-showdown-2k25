@@ -34,7 +34,9 @@ import styles from './TeamBuilderTab.module.css';
 export default function TeamEditor({ team, collection, onSaved, onCancel, limits = null }) {
   const climb = Boolean(limits) || Boolean(team?.climb);
   const capLimit = climb ? (limits?.cap ?? CLIMB_FIVE.cap) : CAP;
-  const maxLimit = climb ? (limits?.size ?? CLIMB_FIVE.size) : MAX;
+  // A Climb team is five or six (CLIMB_FIVE: `size` the fewest, `max` the most, 2026-10-25).
+  const maxLimit = climb ? (limits?.max ?? limits?.size ?? CLIMB_FIVE.max) : MAX;
+  const minLimit = climb ? (limits?.size ?? CLIMB_FIVE.size) : MIN_TO_PLAY;
   const { user } = useAuth();
   const { open } = useLightbox();
   const poolRef = useRef(null);
@@ -66,8 +68,8 @@ export default function TeamEditor({ team, collection, onSaved, onCancel, limits
   // maybe show average remaining"): the list holds only the players who fit
   // with room left to finish the five, and the roster's own cards.
   const room = useMemo(
-    () => capRoom(roster, capLimit, { target: climb ? maxLimit : MIN_TO_PLAY, max: maxLimit, pool: owned.map(o => o.card) }),
-    [roster, capLimit, climb, maxLimit, owned],
+    () => capRoom(roster, capLimit, { target: minLimit, max: maxLimit, pool: owned.map(o => o.card) }),
+    [roster, capLimit, minLimit, maxLimit, owned],
   );
 
   // Filter and sort the CARDS, then carry each row's key and count back.
@@ -87,7 +89,7 @@ export default function TeamEditor({ team, collection, onSaved, onCancel, limits
     if (inRoster(card)) return;
     // One card a player: the Team Builder's rule, now here too (2026-10-07).
     if (playerOnRoster(roster, card)) return setError(`${card.name} is already on this team — one card a player.`);
-    if (roster.length >= maxLimit) return setError(climb ? `A Climb five is five players` : `Team full (max ${maxLimit})`);
+    if (roster.length >= maxLimit) return setError(climb ? `A Climb team is five or six players` : `Team full (max ${maxLimit})`);
     if (sal + card.salary > capLimit) return setError(`Over the ${climb ? "Climb's " : ''}salary cap ($${capLimit})`);
     setRoster([...roster, card]);
   };
@@ -98,7 +100,7 @@ export default function TeamEditor({ team, collection, onSaved, onCancel, limits
   const twice = doubledPlayers(roster);
   const canSave =
     !saving && name.trim().length > 0 && roster.length > 0 && !over && unowned.length === 0 && twice.length === 0
-    && (!climb || roster.length === maxLimit);
+    && (!climb || (roster.length >= minLimit && roster.length <= maxLimit));
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -149,7 +151,7 @@ export default function TeamEditor({ team, collection, onSaved, onCancel, limits
           </div>
 
           {climb && roster.length < maxLimit && (
-            <div className={styles.empty}>{`${maxLimit - roster.length} more for a Climb five`} · at most ${capLimit.toLocaleString('en-US')}</div>
+            <div className={styles.empty}>{roster.length < minLimit ? `${minLimit - roster.length} more for a Climb team` : 'Room for a sixth, a bench to rotate'} · at most ${capLimit.toLocaleString('en-US')}</div>
           )}
           {!climb && roster.length < MIN_TO_PLAY && (
             <div className={styles.empty}>

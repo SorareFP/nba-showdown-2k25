@@ -406,13 +406,20 @@ describe('a run that disagrees with its ledger', () => {
 // able to pre-make eligible lineups"). One rule says what a five may be, for
 // the editor in My Teams, the start screen and newRun alike.
 describe('a Climb five', () => {
-  it('is five players you own, one card a player, at most the starting cap — or says why not', async () => {
+  it('is five or six players you own, one card a player, at most the starting cap — or says why not', async () => {
     const { fiveProblem, CLIMB_FIVE } = await import('./run.js');
-    expect(CLIMB_FIVE).toEqual({ cap: 2200, size: 5 });
+    // A sixth since 2026-10-25 (the user: "the ability to start with a sixth player"), under the same cap.
+    expect(CLIMB_FIVE).toEqual({ cap: 2200, size: 5, max: 6 });
     const owned = new Set(KEYS);
     expect(fiveProblem(KEYS, owned)).toBe(null);
     expect(fiveProblem(KEYS)).toBe(null);
-    expect(fiveProblem(KEYS.slice(0, 4), owned)).toMatch(/five/);
+    expect(fiveProblem(KEYS.slice(0, 4), owned)).toMatch(/five or six/);
+    // A sixth fits when the six fit the cap; a seventh never does.
+    const cheap = [...CARDS].sort((a, b) => a.salary - b.salary);
+    const six = cheap.filter((c, i, all) => all.findIndex(d => d.id === c.id) === i).slice(0, 6).map(cardKey);
+    expect(fiveProblem(six)).toBe(null);
+    const seven = cheap.filter((c, i, all) => all.findIndex(d => d.id === c.id) === i).slice(0, 7).map(cardKey);
+    expect(fiveProblem(seven)).toMatch(/five or six/);
     expect(fiveProblem([...KEYS.slice(0, 4), 'gone:Nobody'], owned)).toMatch(/no longer exists/);
     const sold = new Set(KEYS.slice(1));
     expect(fiveProblem(KEYS, sold)).toMatch(new RegExp(`no longer own ${FIVE[0].name}`));

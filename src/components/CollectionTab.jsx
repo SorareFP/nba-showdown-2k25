@@ -498,7 +498,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     return (
       <TeamEditor
         team={editingTeam === 'new' || editingTeam === 'new-climb' ? null : editingTeam}
-        // A Climb five (2026-10-19): five owned players under The Climb's cap.
+        // A Climb team (2026-10-19): five or six owned players under The Climb's cap.
         limits={editingTeam === 'new-climb' || editingTeam?.climb ? CLIMB_FIVE : null}
         collection={collection}
         onSaved={() => { setEditingTeam(null); refresh(); }}
@@ -599,7 +599,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>My Teams</h2>
             <span style={{ display: 'flex', gap: 8 }}>
-              <button className={styles.newBtn} onClick={() => setEditingTeam('new-climb')} title="Five of your players under The Climb's $2,200 cap, ready for its start screen">+ New Climb five</button>
+              <button className={styles.newBtn} onClick={() => setEditingTeam('new-climb')} title="Five or six of your players under The Climb's $2,200 cap, ready for its start screen">+ New Climb team</button>
               <button className={styles.newBtn} onClick={() => setEditingTeam('new')}>+ New Team</button>
             </span>
           </div>
@@ -614,7 +614,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
                   <div>
                     <div className={styles.itemName}>{t.name}</div>
                     <div className={styles.itemMeta}>
-                      {t.climb && '🧗 Climb five · '}{t.players.length} players · ${t.salary}
+                      {t.climb && '🧗 Climb team · '}{t.players.length} players · ${t.salary}
                       {getDeckName(t.linkedDeckId) && ` · 🃏 ${getDeckName(t.linkedDeckId)}`}
                       {t.updatedAt?.toDate && ` · ${t.updatedAt.toDate().toLocaleDateString()}`}
                     </div>

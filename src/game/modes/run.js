@@ -198,11 +198,14 @@ const fitsOf = cards => PLAYBOOK_OF_ARCHETYPE[nearestArchetype(cards)?.id] ?? PL
 
 /** A new run: five owned players under the starting cap, at a rung. Opens on Training Camp. */
 /**
- * A CLIMB FIVE — what a run starts with, and what My Teams saves ahead (the
+ * A CLIMB TEAM — what a run starts with, and what My Teams saves ahead (the
  * user, 2026-10-19: "we definitely need to be able to pre-make eligible
- * lineups").
+ * lineups"). Five players, or six (the user, 2026-10-25: "we do need in the
+ * climb is the ability to start with a sixth player"): the same cap, so a
+ * sixth is a bench bought with a cheaper five. `size` is the fewest, `max`
+ * the most.
  */
-export const CLIMB_FIVE = { cap: CLIMB.startCap, size: 5 };
+export const CLIMB_FIVE = { cap: CLIMB.startCap, size: 5, max: 6 };
 
 /**
  * Why these keys cannot start a climb, or null when they can: five players,
@@ -212,7 +215,7 @@ export const CLIMB_FIVE = { cap: CLIMB.startCap, size: 5 };
  */
 export function fiveProblem(rosterKeys, ownedKeys = null) {
   const keys = rosterKeys ?? [];
-  if (keys.length !== CLIMB_FIVE.size) return 'A climb starts with five players';
+  if (keys.length < CLIMB_FIVE.size || keys.length > CLIMB_FIVE.max) return 'A climb starts with five or six players';
   const cards = keys.map(k => getCardByKey(k));
   const gone = keys.find((k, i) => !cards[i]);
   if (gone) return `${gone.split(':').pop().replace(/_/g, ' ')} no longer exists`;

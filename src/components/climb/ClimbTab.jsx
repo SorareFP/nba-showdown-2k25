@@ -105,7 +105,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   useEffect(() => { if (run === null) loadSaved(); }, [run, loadSaved]);
 
   const saveFive = async keys => {
-    const name = await askText({ title: 'Name this Climb five', placeholder: 'Bench Mob', confirmLabel: 'Save five' });
+    const name = await askText({ title: 'Name this Climb team', placeholder: 'Bench Mob', confirmLabel: 'Save team' });
     if (!name) return;
     await act(async () => {
       const salary = capSal(keys.map(k => getCardByKey(k)).filter(Boolean));

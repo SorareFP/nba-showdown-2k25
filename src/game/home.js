@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-sixth-player', date: '2026-10-25', title: 'The Climb: start with a sixth player',
+    body: "A climb can start with five players or six, under the same $2,200 cap. A sixth means a cheaper five, but it gives you a bench from the first game, so your starters can rest between sections instead of carrying every minute. Climb fives in My Teams are Climb teams now, and hold a sixth too.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'last-pair-places-itself', date: '2026-10-23', title: 'The last pair places itself',
     body: "Once four matchups are set, each side has one player and one row left, so the last pair now goes down by itself and the matchup window opens. Undo still takes back the last player you chose, along with the pair.",
     to: 'play', cta: 'Play',

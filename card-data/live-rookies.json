@@ -1,5 +1,5 @@
 {
-  "note": "THE LIVE SERIES ROOKIES (2026-10-22): players on a 2026-27 NBA roster whose first NBA season this is (nba.com/players, FROM_YEAR 2026), so no 2026-27 base card. Photos first: the Card Studio lists them (players.js live-rookies) and saves their photos into the 2026-27 folder, where every Live card reads its photo. No numbers yet, and nothing in the game until the Live job cards them. id is fixed here, not re-derived, so a later source spelling the name differently cannot orphan the photo. RETURNING (2026-10-25; the user: \"guys like Mario Hezonja who were not on rosters last year\"): players on a 2026-27 roster who played no NBA game in 2025-26 (Basketball-Reference and dunksandthrees 2025-26 tables) and are not rookies, so no base card either. Same photos-first treatment, the plain Live look.",
+  "note": "THE LIVE SERIES ROOKIES (2026-10-22): players on a 2026-27 NBA roster whose first NBA season this is (nba.com/players, FROM_YEAR 2026), so no 2026-27 base card. Photos first: the Card Studio lists them (players.js live-rookies) and saves their photos into the 2026-27 folder, where every Live card reads its photo. No numbers yet, and nothing in the game until the Live job cards them. id is fixed here, not re-derived, so a later source spelling the name differently cannot orphan the photo. RETURNING (2026-10-25; the user: \"guys like Mario Hezonja who were not on rosters last year\"): players on a 2026-27 roster who played no NBA game in 2025-26 (Basketball-Reference and dunksandthrees 2025-26 tables) and are not rookies, so no base card either. Same photos-first treatment, the plain Live look. SHORT SEASONS (2026-10-25; the user: \"Yeah go ahead and add them\"): on a 2026-27 roster, 12+ minutes a game in 2025-26 but under 40 games, so under the base set's cutoff (MPG>=12 and G>=40). `last` is their 2025-26 line.",
   "source": "nba.com/players, read 2026-10-22 (rookies) and 2026-10-25 (returning, Sorber)",
   "rookies": [
     {
@@ -876,6 +876,632 @@
         "year": 2016,
         "round": 1,
         "pick": 1
+      }
+    }
+  ],
+  "shortSeason": [
+    {
+      "id": "Bogdan_Bogdanovic",
+      "name": "Bogdan Bogdanović",
+      "team": "HOU",
+      "pos": "G",
+      "personId": 203992,
+      "draft": {
+        "year": 2014,
+        "round": 1,
+        "pick": 27
+      },
+      "last": {
+        "games": 23,
+        "mpg": 19.7
+      }
+    },
+    {
+      "id": "Bradley_Beal",
+      "name": "Bradley Beal",
+      "team": "LAC",
+      "pos": "G",
+      "personId": 203078,
+      "draft": {
+        "year": 2012,
+        "round": 1,
+        "pick": 3
+      },
+      "last": {
+        "games": 6,
+        "mpg": 20.2
+      }
+    },
+    {
+      "id": "Cam_Whitmore",
+      "name": "Cam Whitmore",
+      "team": "DEN",
+      "pos": "F",
+      "personId": 1641715,
+      "draft": {
+        "year": 2023,
+        "round": 1,
+        "pick": 20
+      },
+      "last": {
+        "games": 21,
+        "mpg": 16.9
+      }
+    },
+    {
+      "id": "Chaney_Johnson",
+      "name": "Chaney Johnson",
+      "team": "BKN",
+      "pos": "G-F",
+      "personId": 1643052,
+      "draft": null,
+      "last": {
+        "games": 17,
+        "mpg": 20.5
+      }
+    },
+    {
+      "id": "Cormac_Ryan",
+      "name": "Cormac Ryan",
+      "team": "MIL",
+      "pos": "G",
+      "personId": 1642504,
+      "draft": null,
+      "last": {
+        "games": 11,
+        "mpg": 24.6
+      }
+    },
+    {
+      "id": "Daeqwon_Plowden",
+      "name": "Daeqwon Plowden",
+      "team": "SAC",
+      "pos": "G-F",
+      "personId": 1631342,
+      "draft": null,
+      "last": {
+        "games": 32,
+        "mpg": 26.4
+      }
+    },
+    {
+      "id": "DeAndre_Jordan",
+      "name": "DeAndre Jordan",
+      "team": "NOP",
+      "pos": "C",
+      "personId": 201599,
+      "draft": {
+        "year": 2008,
+        "round": 2,
+        "pick": 35
+      },
+      "last": {
+        "games": 12,
+        "mpg": 16.6
+      }
+    },
+    {
+      "id": "Dereck_Lively_II",
+      "name": "Dereck Lively II",
+      "team": "DAL",
+      "pos": "C",
+      "personId": 1641726,
+      "draft": {
+        "year": 2023,
+        "round": 1,
+        "pick": 12
+      },
+      "last": {
+        "games": 7,
+        "mpg": 16.4
+      }
+    },
+    {
+      "id": "Devin_Carter",
+      "name": "Devin Carter",
+      "team": "BOS",
+      "pos": "G",
+      "personId": 1642269,
+      "draft": {
+        "year": 2024,
+        "round": 1,
+        "pick": 13
+      },
+      "last": {
+        "games": 38,
+        "mpg": 18.4
+      }
+    },
+    {
+      "id": "Dorian_Finney_Smith",
+      "name": "Dorian Finney-Smith",
+      "team": "ATL",
+      "pos": "F",
+      "personId": 1627827,
+      "draft": null,
+      "last": {
+        "games": 37,
+        "mpg": 16.8
+      }
+    },
+    {
+      "id": "Elijah_Harkless",
+      "name": "Elijah Harkless",
+      "team": "DET",
+      "pos": "G",
+      "personId": 1641989,
+      "draft": null,
+      "last": {
+        "games": 26,
+        "mpg": 21
+      }
+    },
+    {
+      "id": "Grant_Williams",
+      "name": "Grant Williams",
+      "team": "CHA",
+      "pos": "F",
+      "personId": 1629684,
+      "draft": {
+        "year": 2019,
+        "round": 1,
+        "pick": 22
+      },
+      "last": {
+        "games": 36,
+        "mpg": 19.8
+      }
+    },
+    {
+      "id": "Jahmai_Mashack",
+      "name": "Jahmai Mashack",
+      "team": "MEM",
+      "pos": "G",
+      "personId": 1642942,
+      "draft": {
+        "year": 2025,
+        "round": 2,
+        "pick": 59
+      },
+      "last": {
+        "games": 31,
+        "mpg": 21.7
+      }
+    },
+    {
+      "id": "Jalen_Slawson",
+      "name": "Jalen Slawson",
+      "team": "IND",
+      "pos": "F",
+      "personId": 1641771,
+      "draft": {
+        "year": 2023,
+        "round": 2,
+        "pick": 54
+      },
+      "last": {
+        "games": 13,
+        "mpg": 23.9
+      }
+    },
+    {
+      "id": "James_Wiseman",
+      "name": "James Wiseman",
+      "team": "NYK",
+      "pos": "C",
+      "personId": 1630164,
+      "draft": {
+        "year": 2020,
+        "round": 1,
+        "pick": 2
+      },
+      "last": {
+        "games": 4,
+        "mpg": 14.5
+      }
+    },
+    {
+      "id": "Johnny_Furphy",
+      "name": "Johnny Furphy",
+      "team": "IND",
+      "pos": "G",
+      "personId": 1642277,
+      "draft": {
+        "year": 2024,
+        "round": 2,
+        "pick": 35
+      },
+      "last": {
+        "games": 35,
+        "mpg": 18.4
+      }
+    },
+    {
+      "id": "Jonathan_Kuminga",
+      "name": "Jonathan Kuminga",
+      "team": "MIN",
+      "pos": "F",
+      "personId": 1630228,
+      "draft": {
+        "year": 2021,
+        "round": 1,
+        "pick": 7
+      },
+      "last": {
+        "games": 36,
+        "mpg": 23.1
+      }
+    },
+    {
+      "id": "Jordan_Poole",
+      "name": "Jordan Poole",
+      "team": "NOP",
+      "pos": "G",
+      "personId": 1629673,
+      "draft": {
+        "year": 2019,
+        "round": 1,
+        "pick": 28
+      },
+      "last": {
+        "games": 39,
+        "mpg": 23.9
+      }
+    },
+    {
+      "id": "Julian_Reese",
+      "name": "Julian Reese",
+      "team": "NOP",
+      "pos": "F",
+      "personId": 1642882,
+      "draft": null,
+      "last": {
+        "games": 13,
+        "mpg": 30.9
+      }
+    },
+    {
+      "id": "Kam_Jones",
+      "name": "Kam Jones",
+      "team": "MIL",
+      "pos": "G",
+      "personId": 1642880,
+      "draft": {
+        "year": 2025,
+        "round": 2,
+        "pick": 38
+      },
+      "last": {
+        "games": 37,
+        "mpg": 16.6
+      }
+    },
+    {
+      "id": "Keshon_Gilbert",
+      "name": "Keshon Gilbert",
+      "team": "ATL",
+      "pos": "G",
+      "personId": 1642933,
+      "draft": null,
+      "last": {
+        "games": 4,
+        "mpg": 18.5
+      }
+    },
+    {
+      "id": "Kevon_Looney",
+      "name": "Kevon Looney",
+      "team": "LAL",
+      "pos": "F",
+      "personId": 1626172,
+      "draft": {
+        "year": 2015,
+        "round": 1,
+        "pick": 30
+      },
+      "last": {
+        "games": 21,
+        "mpg": 14.7
+      }
+    },
+    {
+      "id": "Kristaps_Porzingis",
+      "name": "Kristaps Porziņģis",
+      "team": "GSW",
+      "pos": "F-C",
+      "personId": 204001,
+      "draft": {
+        "year": 2015,
+        "round": 1,
+        "pick": 4
+      },
+      "last": {
+        "games": 32,
+        "mpg": 24
+      }
+    },
+    {
+      "id": "Larry_Nance_Jr",
+      "name": "Larry Nance Jr.",
+      "team": "IND",
+      "pos": "F-C",
+      "personId": 1626204,
+      "draft": {
+        "year": 2015,
+        "round": 1,
+        "pick": 27
+      },
+      "last": {
+        "games": 35,
+        "mpg": 12.8
+      }
+    },
+    {
+      "id": "Leaky_Black",
+      "name": "Leaky Black",
+      "team": "SAC",
+      "pos": "F",
+      "personId": 1641778,
+      "draft": null,
+      "last": {
+        "games": 15,
+        "mpg": 28.9
+      }
+    },
+    {
+      "id": "LJ_Cryer",
+      "name": "LJ Cryer",
+      "team": "GSW",
+      "pos": "G",
+      "personId": 1643018,
+      "draft": null,
+      "last": {
+        "games": 18,
+        "mpg": 16.2
+      }
+    },
+    {
+      "id": "Malachi_Smith",
+      "name": "Malachi Smith",
+      "team": "TOR",
+      "pos": "G",
+      "personId": 1641869,
+      "draft": null,
+      "last": {
+        "games": 15,
+        "mpg": 23.9
+      }
+    },
+    {
+      "id": "Marcus_Sasser",
+      "name": "Marcus Sasser",
+      "team": "DAL",
+      "pos": "G",
+      "personId": 1631204,
+      "draft": {
+        "year": 2023,
+        "round": 1,
+        "pick": 25
+      },
+      "last": {
+        "games": 38,
+        "mpg": 12
+      }
+    },
+    {
+      "id": "Matisse_Thybulle",
+      "name": "Matisse Thybulle",
+      "team": "LAL",
+      "pos": "G-F",
+      "personId": 1629680,
+      "draft": {
+        "year": 2019,
+        "round": 1,
+        "pick": 20
+      },
+      "last": {
+        "games": 30,
+        "mpg": 16
+      }
+    },
+    {
+      "id": "Max_Strus",
+      "name": "Max Strus",
+      "team": "LAC",
+      "pos": "G-F",
+      "personId": 1629622,
+      "draft": null,
+      "last": {
+        "games": 12,
+        "mpg": 24
+      }
+    },
+    {
+      "id": "Moussa_Cisse",
+      "name": "Moussa Cissé",
+      "team": "DAL",
+      "pos": "C",
+      "personId": 1630619,
+      "draft": null,
+      "last": {
+        "games": 38,
+        "mpg": 13.9
+      }
+    },
+    {
+      "id": "Nikola_Topic",
+      "name": "Nikola Topić",
+      "team": "OKC",
+      "pos": "G",
+      "personId": 1642260,
+      "draft": {
+        "year": 2024,
+        "round": 1,
+        "pick": 12
+      },
+      "last": {
+        "games": 10,
+        "mpg": 16
+      }
+    },
+    {
+      "id": "Obi_Toppin",
+      "name": "Obi Toppin",
+      "team": "IND",
+      "pos": "F",
+      "personId": 1630167,
+      "draft": {
+        "year": 2020,
+        "round": 1,
+        "pick": 8
+      },
+      "last": {
+        "games": 24,
+        "mpg": 17.7
+      }
+    },
+    {
+      "id": "Oscar_Tshiebwe",
+      "name": "Oscar Tshiebwe",
+      "team": "HOU",
+      "pos": "F-C",
+      "personId": 1631131,
+      "draft": null,
+      "last": {
+        "games": 27,
+        "mpg": 16.6
+      }
+    },
+    {
+      "id": "RayJ_Dennis",
+      "name": "RayJ Dennis",
+      "team": "ATL",
+      "pos": "G",
+      "personId": 1642484,
+      "draft": null,
+      "last": {
+        "games": 17,
+        "mpg": 12.1
+      }
+    },
+    {
+      "id": "Scoot_Henderson",
+      "name": "Scoot Henderson",
+      "team": "POR",
+      "pos": "G",
+      "personId": 1630703,
+      "draft": {
+        "year": 2023,
+        "round": 1,
+        "pick": 3
+      },
+      "last": {
+        "games": 30,
+        "mpg": 24.9
+      }
+    },
+    {
+      "id": "Scotty_Pippen_Jr",
+      "name": "Scotty Pippen Jr.",
+      "team": "MEM",
+      "pos": "G",
+      "personId": 1630590,
+      "draft": null,
+      "last": {
+        "games": 10,
+        "mpg": 21.2
+      }
+    },
+    {
+      "id": "Steven_Adams",
+      "name": "Steven Adams",
+      "team": "HOU",
+      "pos": "C",
+      "personId": 203500,
+      "draft": {
+        "year": 2013,
+        "round": 1,
+        "pick": 12
+      },
+      "last": {
+        "games": 32,
+        "mpg": 22.8
+      }
+    },
+    {
+      "id": "Taurean_Prince",
+      "name": "Taurean Prince",
+      "team": "DET",
+      "pos": "F",
+      "personId": 1627752,
+      "draft": {
+        "year": 2016,
+        "round": 1,
+        "pick": 12
+      },
+      "last": {
+        "games": 26,
+        "mpg": 23.5
+      }
+    },
+    {
+      "id": "Tidjane_Salaun",
+      "name": "Tidjane Salaün",
+      "team": "CHA",
+      "pos": "F",
+      "personId": 1642275,
+      "draft": {
+        "year": 2024,
+        "round": 1,
+        "pick": 6
+      },
+      "last": {
+        "games": 37,
+        "mpg": 15.5
+      }
+    },
+    {
+      "id": "Trey_Alexander",
+      "name": "Trey Alexander",
+      "team": "UTA",
+      "pos": "G",
+      "personId": 1641725,
+      "draft": null,
+      "last": {
+        "games": 9,
+        "mpg": 12.3
+      }
+    },
+    {
+      "id": "Walker_Kessler",
+      "name": "Walker Kessler",
+      "team": "LAL",
+      "pos": "C",
+      "personId": 1631117,
+      "draft": {
+        "year": 2022,
+        "round": 1,
+        "pick": 22
+      },
+      "last": {
+        "games": 5,
+        "mpg": 30.8
+      }
+    },
+    {
+      "id": "Zach_Collins",
+      "name": "Zach Collins",
+      "team": "CHI",
+      "pos": "F-C",
+      "personId": 1628380,
+      "draft": {
+        "year": 2017,
+        "round": 1,
+        "pick": 10
+      },
+      "last": {
+        "games": 10,
+        "mpg": 18.4
       }
     }
   ]

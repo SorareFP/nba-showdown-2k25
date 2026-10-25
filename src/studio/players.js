@@ -410,15 +410,23 @@ export const WNBA_THROWBACKS_FILE = loadSpecialSet('wnba-throwbacks');
 const byName = (a, b) => a.name.localeCompare(b.name);
 
 /**
- * THE LIVE SERIES' RETURNEES (2026-10-25; the user: "guys like Mario Hezonja
- * who were not on rosters last year"): on a 2026-27 roster, no NBA game in
- * 2025-26, not a rookie — so no base card. The same photos-first entries as
- * the rookies, in the plain Live look; searched for this season's photos.
+ * THE LIVE SERIES' ADDITIONS (2026-10-25): players on a 2026-27 roster with no
+ * base card who are not rookies. Two kinds, from live-rookies.json:
+ *   returning    no NBA game in 2025-26 (the user: "guys like Mario Hezonja
+ *                who were not on rosters last year")
+ *   shortSeason  12+ minutes a game but under 40 games, so under the base
+ *                set's cutoff (the user, of the 43: "Yeah go ahead and add them")
+ * The same photos-first entries as the rookies, in the plain Live look;
+ * searched for this season's photos.
  */
-export const LIVE_RETURNING = (liveRookiesFile?.returning ?? []).map(r => ({
+const liveAddition = kind => r => ({
   id: r.id, name: r.name, team: r.team, pos: r.pos, personId: r.personId ?? null, draft: r.draft ?? null,
-  seasonLabel: '2026-27', searchYear: '2026',
-}));
+  seasonLabel: '2026-27', searchYear: '2026', addition: kind, ...(r.last ? { last: r.last } : {}),
+});
+export const LIVE_ADDITIONS = [
+  ...(liveRookiesFile?.returning ?? []).map(liveAddition('returning')),
+  ...(liveRookiesFile?.shortSeason ?? []).map(liveAddition('shortSeason')),
+];
 
 /**
  * THE LIVE SERIES' ROOKIES (2026-10-22; the user: "can we add the rookies that
@@ -605,19 +613,20 @@ export const SOURCES = {
       'card-data/live-rookies.json, read from nba.com\'s rosters.',
     players: [...LIVE_ROOKIES].sort(byName),
   },
-  // ITS RETURNEES (LIVE_RETURNING above), the same way: Live cards to be, their
-  // photos in the 2026-27 folder.
-  'live-returning': {
-    key: 'live-returning',
+  // ITS ADDITIONS (LIVE_ADDITIONS above), the same way: Live cards to be,
+  // their photos in the 2026-27 folder.
+  'live-additions': {
+    key: 'live-additions',
     set: LIVE_SET,
-    label: `Live Series returnees · ${LIVE_RETURNING.length} players`,
-    sub: 'back on 2026-27 rosters after a season out of the NBA · photos now',
+    label: `Live Series additions · ${LIVE_ADDITIONS.length} players`,
+    sub: 'on 2026-27 rosters, no base card: back from a season away, or a short 2025-26 · photos now',
     editable: true,
     hint:
-      'PLAYERS BACK IN THE NBA THIS SEASON: on a 2026-27 roster, no NBA game in 2025-26, not rookies, so no ' +
-      'base card. Drop their photos here; like every Live card they save into the 2026-27 folder. The list is ' +
-      'the `returning` block of card-data/live-rookies.json.',
-    players: [...LIVE_RETURNING].sort(byName),
+      'PLAYERS ON 2026-27 ROSTERS WITH NO BASE CARD WHO ARE NOT ROOKIES: back after a season out of the NBA ' +
+      '(the `returning` block of card-data/live-rookies.json), or 12+ minutes a game in under 40 games last ' +
+      'season, under the base set\'s cutoff (`shortSeason`). Drop their photos here; like every Live card ' +
+      'they save into the 2026-27 folder.',
+    players: [...LIVE_ADDITIONS].sort(byName),
   },
   cards: {
     key: 'cards',

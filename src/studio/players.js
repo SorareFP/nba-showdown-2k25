@@ -410,6 +410,17 @@ export const WNBA_THROWBACKS_FILE = loadSpecialSet('wnba-throwbacks');
 const byName = (a, b) => a.name.localeCompare(b.name);
 
 /**
+ * THE LIVE SERIES' RETURNEES (2026-10-25; the user: "guys like Mario Hezonja
+ * who were not on rosters last year"): on a 2026-27 roster, no NBA game in
+ * 2025-26, not a rookie — so no base card. The same photos-first entries as
+ * the rookies, in the plain Live look; searched for this season's photos.
+ */
+export const LIVE_RETURNING = (liveRookiesFile?.returning ?? []).map(r => ({
+  id: r.id, name: r.name, team: r.team, pos: r.pos, personId: r.personId ?? null, draft: r.draft ?? null,
+  seasonLabel: '2026-27', searchYear: '2026',
+}));
+
+/**
  * THE LIVE SERIES' ROOKIES (2026-10-22; the user: "can we add the rookies that
  * are on rosters to the live set? We don't have to have stats for them yet,
  * but I just want to be able to add pics now"). The players on a 2026-27
@@ -593,6 +604,20 @@ export const SOURCES = {
       'read every photo, so each one is waiting when the nightly job cards the player. The list is ' +
       'card-data/live-rookies.json, read from nba.com\'s rosters.',
     players: [...LIVE_ROOKIES].sort(byName),
+  },
+  // ITS RETURNEES (LIVE_RETURNING above), the same way: Live cards to be, their
+  // photos in the 2026-27 folder.
+  'live-returning': {
+    key: 'live-returning',
+    set: LIVE_SET,
+    label: `Live Series returnees · ${LIVE_RETURNING.length} players`,
+    sub: 'back on 2026-27 rosters after a season out of the NBA · photos now',
+    editable: true,
+    hint:
+      'PLAYERS BACK IN THE NBA THIS SEASON: on a 2026-27 roster, no NBA game in 2025-26, not rookies, so no ' +
+      'base card. Drop their photos here; like every Live card they save into the 2026-27 folder. The list is ' +
+      'the `returning` block of card-data/live-rookies.json.',
+    players: [...LIVE_RETURNING].sort(byName),
   },
   cards: {
     key: 'cards',

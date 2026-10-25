@@ -61,5 +61,7 @@ export function huntTarget(setId, card, extra = null) {
   // A capstone reward MIGRATED out of a rookie set is still a rookie card.
   // A Live Series rookie (2026-10-22) is searched as one too.
   const rookie = /rookie$/.test(setId) || /rookie$/.test(card.migratedFrom?.set ?? '') || card.liveRookie === true;
-  return { league, code, era: team?.era ?? '', team, label, rookie, url: searchUrl(card.name, team, label, league, rookie, extra) };
+  // `searchYear`: a card that names the year to search outright (the Live
+  // returnees, 2026-10-25: their photos are this autumn's).
+  return { league, code, era: team?.era ?? '', team, label, rookie, url: searchUrl(card.name, team, card.searchYear ?? label, league, rookie, extra) };
 }

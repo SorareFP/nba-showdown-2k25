@@ -1,6 +1,6 @@
 {
-  "note": "THE LIVE SERIES ROOKIES (2026-10-22): players on a 2026-27 NBA roster whose first NBA season this is (nba.com/players, FROM_YEAR 2026), so no 2026-27 base card. Photos first: the Card Studio lists them (players.js live-rookies) and saves their photos into the 2026-27 folder, where every Live card reads its photo. No numbers yet, and nothing in the game until the Live job cards them. id is fixed here, not re-derived, so a later source spelling the name differently cannot orphan the photo.",
-  "source": "nba.com/players, read 2026-10-22",
+  "note": "THE LIVE SERIES ROOKIES (2026-10-22): players on a 2026-27 NBA roster whose first NBA season this is (nba.com/players, FROM_YEAR 2026), so no 2026-27 base card. Photos first: the Card Studio lists them (players.js live-rookies) and saves their photos into the 2026-27 folder, where every Live card reads its photo. No numbers yet, and nothing in the game until the Live job cards them. id is fixed here, not re-derived, so a later source spelling the name differently cannot orphan the photo. RETURNING (2026-10-25; the user: \"guys like Mario Hezonja who were not on rosters last year\"): players on a 2026-27 roster who played no NBA game in 2025-26 (Basketball-Reference and dunksandthrees 2025-26 tables) and are not rookies, so no base card either. Same photos-first treatment, the plain Live look.",
+  "source": "nba.com/players, read 2026-10-22 (rookies) and 2026-10-25 (returning, Sorber)",
   "rookies": [
     {
       "id": "AJ_Dybantsa",
@@ -789,6 +789,19 @@
       "pos": "G",
       "personId": 1643621,
       "draft": null
+    },
+    {
+      "id": "Thomas_Sorber",
+      "name": "Thomas Sorber",
+      "team": "OKC",
+      "pos": "C",
+      "personId": 1642850,
+      "draft": {
+        "year": 2025,
+        "round": 1,
+        "pick": 15
+      },
+      "note": "a 2025 pick who missed all of 2025-26: his first NBA season is this one, so he is a 2026-27 rookie (the NBA counts a rookie by the first season played)"
     }
   ],
   "leftOut": [
@@ -798,6 +811,72 @@
       "team": "OKC",
       "personId": 1642923,
       "why": "out for the season (Achilles); the user, 2026-10-22: \"You can remove Otega Oweh, as he will miss the season with an achilles injury\". Keep him out of any rebuild of this list from the rosters."
+    }
+  ],
+  "returning": [
+    {
+      "id": "Reece_Beekman",
+      "name": "Reece Beekman",
+      "team": "WAS",
+      "pos": "G",
+      "personId": 1641736,
+      "draft": null
+    },
+    {
+      "id": "Tacko_Fall",
+      "name": "Tacko Fall",
+      "team": "PHI",
+      "pos": "C",
+      "personId": 1629605,
+      "draft": null
+    },
+    {
+      "id": "Mario_Hezonja",
+      "name": "Mario Hezonja",
+      "team": "CLE",
+      "pos": "F-G",
+      "personId": 1626209,
+      "draft": {
+        "year": 2015,
+        "round": 1,
+        "pick": 5
+      }
+    },
+    {
+      "id": "Trey_Lyles",
+      "name": "Trey Lyles",
+      "team": "MIN",
+      "pos": "F",
+      "personId": 1626168,
+      "draft": {
+        "year": 2015,
+        "round": 1,
+        "pick": 12
+      }
+    },
+    {
+      "id": "Georges_Niang",
+      "name": "Georges Niang",
+      "team": "GSW",
+      "pos": "F",
+      "personId": 1627777,
+      "draft": {
+        "year": 2016,
+        "round": 2,
+        "pick": 50
+      }
+    },
+    {
+      "id": "Ben_Simmons",
+      "name": "Ben Simmons",
+      "team": "SAC",
+      "pos": "G-F",
+      "personId": 1627732,
+      "draft": {
+        "year": 2016,
+        "round": 1,
+        "pick": 1
+      }
     }
   ]
 }

@@ -674,7 +674,7 @@ describe('the special sets in the source list', () => {
     // set again, as the season moves it (2026-09-23).
     // Its rookies follow it (2026-10-22): photos first, in the 2026-27 folder.
     expect(Object.keys(SOURCES)).toEqual([
-      'pool', LIVE_SET, 'live-rookies', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
+      'pool', LIVE_SET, 'live-rookies', 'live-returning', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, RECORD_BREAKERS_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
       WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
       // The request-only sets: Free Agents' Throwbacks, one per league.
@@ -691,7 +691,7 @@ describe('the special sets in the source list', () => {
     // 'strats' is deliberately absent from sets.js. The Live rookies are a
     // second source on the 2026-27 folder, not a set (2026-10-22).
     expect(
-      Object.values(SOURCES).filter(s => s.template !== 'strat' && s.key !== 'live-rookies').map(s => s.set)
+      Object.values(SOURCES).filter(s => s.template !== 'strat' && !['live-rookies', 'live-returning'].includes(s.key)).map(s => s.set)
     ).toEqual(SET_IDS);
     expect(SOURCES.strats.template).toBe('strat');
   });
@@ -813,7 +813,7 @@ describe('the selector\'s reference group', () => {
       expect(source.secondary, source.key).not.toBe(true);
     }
     expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
-      'pool', LIVE_SET, 'live-rookies', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
+      'pool', LIVE_SET, 'live-rookies', 'live-returning', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, RECORD_BREAKERS_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
       WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
       // Free Agents' Throwbacks: request-only, and live — photos land here.
@@ -865,7 +865,7 @@ describe('the selector\'s reference group', () => {
     // Live Series they are photographed for.
     const open = visibleSources({ showSecondary: true }).map(s => s.set);
     const ids = [...SET_IDS];
-    ids.splice(ids.indexOf(LIVE_SET) + 1, 0, LIVE_SET);
+    ids.splice(ids.indexOf(LIVE_SET) + 1, 0, LIVE_SET, LIVE_SET);
     expect(open).toEqual([...ids, 'strats', 'strats-plus']);
   });
 
@@ -1091,5 +1091,29 @@ describe('the Live Series rookies (2026-10-22)', () => {
     const t = huntTarget(CURRENT_SET, aj);
     expect(t.rookie).toBe(true);
     expect(decodeURIComponent(t.url)).toMatch(/AJ Dybantsa Washington Wizards 2026 rookie/);
+  });
+});
+
+describe('the Live Series returnees (2026-10-25)', () => {
+  // The user: "guys like Mario Hezonja who were not on rosters last year".
+  it('lists them on an editable Live source in the plain Live look, searched for this season', () => {
+    const src = SOURCES['live-returning'];
+    expect(src.editable).toBe(true);
+    expect(src.set).toBe(LIVE_SET);
+    expect(src.players.map(p => p.id)).toContain('Mario_Hezonja');
+    const pool = new Set(POOL_PLAYERS.map(p => p.id));
+    const rookies = new Set(LIVE_ROOKIES.map(p => p.id));
+    for (const p of src.players) {
+      expect(p.badges, p.id).toBeUndefined();
+      expect(pool.has(p.id) || rookies.has(p.id), p.id).toBe(false);
+      expect(isSafePlayerId(p.id), p.id).toBe(true);
+    }
+    const t = huntTarget(LIVE_SET, src.players.find(p => p.id === 'Mario_Hezonja'));
+    expect(decodeURIComponent(t.url)).toMatch(/Mario Hezonja Cleveland Cavaliers 2026 /);
+    expect(t.rookie).toBe(false);
+  });
+
+  it('counts Thomas Sorber, who missed his first season, among the rookies', () => {
+    expect(LIVE_ROOKIES.find(p => p.id === 'Thomas_Sorber')?.badges).toEqual(['rookie']);
   });
 });

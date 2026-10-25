@@ -147,7 +147,7 @@ describe('the game-long Climb cards', () => {
     // Stay Hot's markers reach the next game's deal, then go.
     const hot = recordResult(inGame, { stopId: stop, won: true, margin: 2, endMinutes: tired, carryHot: { [FIVE[0].id]: 2 } });
     expect(hot.carryHot).toEqual({ [FIVE[0].id]: 2 });
-    const nextStop = openStops({ ...hot, status: 'map', offers: null }).find(s => s.kind !== 'rest');
+    const nextStop = openStops({ ...hot, status: 'map', offers: null }).find(s => !['rest', 'event'].includes(s.kind));
     if (nextStop) expect(presetFor(chooseStop({ ...hot, status: 'map', offers: null }, nextStop.id)).gameOpts.hot).toEqual({ A: { [FIVE[0].id]: 2 } });
   });
 });

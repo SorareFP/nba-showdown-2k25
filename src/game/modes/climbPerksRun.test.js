@@ -147,8 +147,8 @@ describe('Travel Day', () => {
     const from = map.floors[0].find(s => s.next.length < 3);
     const linked = stopById(map, from.next[0]);
     const unlinked = map.floors[1].find(s => !from.next.includes(s.id));
-    if (linked.kind !== 'rest') expect(travelCost(map, from.id, linked.id)).toBe(0);
-    if (unlinked.kind !== 'rest') {
+    if (!['rest', 'event'].includes(linked.kind)) expect(travelCost(map, from.id, linked.id)).toBe(0);
+    if (!['rest', 'event'].includes(unlinked.kind)) {
       expect(travelCost(map, from.id, unlinked.id)).toBe(1);
       expect(reachableGame(map, from.id, unlinked.id)).toBe(false);
     }

@@ -100,7 +100,7 @@ describe('a style in the game', () => {
 describe('a style in the run', () => {
   it('gives each stop of an act its own opponent, shown on the map, and plays it', () => {
     const run = camped();
-    const stops = run.map.floors.flat().filter(s => s.kind !== 'rest');
+    const stops = run.map.floors.flat().filter(s => !['rest', 'event'].includes(s.kind));
     const abbrs = stops.map(s => stopOpponent(run, s).abbr);
     expect(new Set(abbrs).size).toBe(abbrs.length);
     const g1 = run.map.floors[0][0];
@@ -116,7 +116,7 @@ describe('a style in the run', () => {
     // stats, and one with engine effects.
     const base = camped();
     const r = { ...base, act: 2, map: generateMap(base.seed, base.mapVersion, 2), status: 'map', at: null };
-    const fights = r.map.floors.flat().filter(st => st.kind !== 'rest');
+    const fights = r.map.floors.flat().filter(st => !['rest', 'event'].includes(st.kind));
     const statStop = fights.find(st => { const fx = stopOpponent(r, st).style.fx; return fx.speed || fx.power || fx.defBoost; });
     const engineStop = fights.find(st => engineFx(stopOpponent(r, st).style.fx));
     expect(statStop && engineStop).toBeTruthy();

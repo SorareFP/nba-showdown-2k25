@@ -100,8 +100,8 @@ function twoGames(map) {
   for (const a of map.floors[0]) {
     for (const id of a.next) {
       const s = stopById(map, id);
-      if (s.kind !== 'rest') return [a.id, s.id];
-      for (const id2 of s.next) if (stopById(map, id2).kind !== 'rest') return [a.id, id2];
+      if (!['rest', 'event'].includes(s.kind)) return [a.id, s.id];
+      for (const id2 of s.next) if (!['rest', 'event'].includes(stopById(map, id2).kind)) return [a.id, id2];
     }
   }
   throw new Error('no second game');
@@ -268,8 +268,9 @@ describe('a stop the ledger already cleared', () => {
 
   it('stamps the map version the run was drawn at', async () => {
     const { runId, mapVersion } = await call(climbStart, { rung: 'prince' });
-    expect(mapVersion).toBe(1);
-    expect(ledger(runId).mapVersion).toBe(1);
+    // 2 since 2026-10-25 (? stops); a run drawn at 1 keeps 1.
+    expect(mapVersion).toBe(2);
+    expect(ledger(runId).mapVersion).toBe(2);
   });
 });
 
@@ -372,9 +373,9 @@ describe('the ledger\'s perks', () => {
     let runId, map, from;
     for (let i = 0; i < 50 && !from; i += 1) {
       ({ runId, map } = await started());
-      from = map.floors[0].find(s => map.floors[1].some(t => !s.next.includes(t.id) && t.kind !== 'rest'));
+      from = map.floors[0].find(s => map.floors[1].some(t => !s.next.includes(t.id) && !['rest', 'event'].includes(t.kind)));
     }
-    const off = map.floors[1].find(t => !from.next.includes(t.id) && t.kind !== 'rest');
+    const off = map.floors[1].find(t => !from.next.includes(t.id) && !['rest', 'event'].includes(t.kind));
     await winAt(runId, from.id);
     await expect(call(climbGame, { runId, stopId: off.id })).rejects.toThrow(/not open/);
     await call(climbPerk, { runId, perk: 'travel_day' });

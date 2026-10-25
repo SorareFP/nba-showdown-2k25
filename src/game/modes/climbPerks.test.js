@@ -33,7 +33,9 @@ describe('the perks', () => {
   it('are the drafted perks, each with its text and its target', () => {
     // The first four of "Build a player" (2026-10-19), then the 2026-10-22 draft.
     expect(PERK_IDS.slice(0, 4)).toEqual(['gym_rat', 'extra_reps', 'signature_move', 'film_study']);
-    expect(PERK_IDS).toHaveLength(24);
+    // 24 offered, and Contract Year, an event's (never offered).
+    expect(PERK_IDS).toHaveLength(25);
+    expect(PERK_IDS.filter(id => PERKS[id].event)).toEqual(['contract_year']);
     for (const id of PERK_IDS) {
       expect(PERKS[id].text, id).toBeTruthy();
       expect(['player', 'card', 'team'], id).toContain(PERKS[id].target);
@@ -97,7 +99,7 @@ describe('a Rivalry drops a perk', () => {
     expect(took.offers?.perks ?? []).toEqual([]);
     expect(() => pickPerk(took, perk, who)).toThrow();
     // The next game deals him with the boost; the card in the pool is untouched.
-    const next = openStops({ ...took, status: 'map', offers: null }).find(s => s.kind !== 'rest');
+    const next = openStops({ ...took, status: 'map', offers: null }).find(s => !['rest', 'event'].includes(s.kind));
     if (next) {
       const p = presetFor(chooseStop({ ...took, status: 'map', offers: null }, next.id));
       const him = p.rosterA.find(c => c.id === who);

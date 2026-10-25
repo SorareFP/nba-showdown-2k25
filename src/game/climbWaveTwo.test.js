@@ -141,7 +141,7 @@ describe('Signature Set grows across the run', () => {
     after = recordResult({ ...inGame, signature: 3 }, { stopId: stop, won: true, margin: 2, signatureStep: 2 });
     expect(after.signature).toBe(SIGNATURE_MAX - 2);
     const back = { ...after, status: 'map', offers: null };
-    const next = openStops(back).find(s => s.kind !== 'rest');
+    const next = openStops(back).find(s => !['rest', 'event'].includes(s.kind));
     if (next) expect(presetFor(chooseStop(back, next.id)).gameOpts.signatureBonus).toEqual({ A: 6 });
   });
 });

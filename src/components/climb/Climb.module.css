@@ -128,6 +128,20 @@
 .styleLine { margin: 0; font-size: 13px; color: var(--blue-light, #93c5fd); }
 .fullStrength { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; cursor: pointer; }
 .fullStrength input { margin-top: 2px; }
+/* A ? stop (2026-10-25): a centred moment like the end of a run, the two
+   choices as big cards across a wide row (one column on a phone). */
+.eventScreen { padding-top: clamp(16px, 9vh, 120px); gap: clamp(14px, 2vh, 26px); }
+.eventIcon { font-size: clamp(44px, 4.6vw, 96px); line-height: 1; }
+.eventScreen .lede { font-size: clamp(15px, 1.15vw, 22px); max-width: 60ch; }
+.eventChoices { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(12px, 1.6vw, 32px); width: min(100%, 1500px); margin-top: clamp(6px, 2vh, 28px); }
+.screen .eventChoice {
+  display: flex; flex-direction: column; justify-content: center; gap: 8px; text-align: left; line-height: 1.4;
+  min-height: clamp(96px, 20vh, 240px); padding: clamp(16px, 1.6vw, 34px); font-size: clamp(15px, 1.25vw, 24px);
+  border-radius: var(--radius);
+}
+.screen .eventChoice:hover:not(:disabled) { border-color: var(--blue-light, #93c5fd); }
+.eventChoice .muted { font-size: 0.8em; }
+.event .stopName { color: var(--blue-light, #93c5fd); }
 .boss { min-width: clamp(140px, 12vw, 220px); padding: 8px 16px !important; border-color: var(--gold) !important; border-width: 2px !important; }
 .boss .stopName { color: var(--gold); }
 .bossLogo { width: clamp(36px, 3.2vw, 56px); height: clamp(36px, 3.2vw, 56px); object-fit: contain; }

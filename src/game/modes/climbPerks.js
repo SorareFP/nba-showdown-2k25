@@ -127,6 +127,12 @@ export const PERKS = Object.freeze({
     name: 'Short Rotation', icon: '✂️', target: 'team', game: true, boss: true,
     text: 'Draw one more card each section, and play at most two strategy cards a section.',
   }),
+  // AN EVENT'S, NEVER OFFERED (`event`, 2026-10-25): Contract Year's raise
+  // (climbEvents.js), kept with the perks so the boost rides the same way.
+  contract_year: Object.freeze({
+    name: 'Contract Year', icon: '📝', target: 'player', boost: Object.freeze({ speed: 1, power: 1 }), event: true,
+    text: 'Playing for a new deal: +1 Speed and +1 Power for the run, and $150 more salary.',
+  }),
   front_office: Object.freeze({
     name: 'Front Office Shake-Up', icon: '🏢', target: 'team', boss: true,
     text: 'Now: cut two cards from your deck and practise two.',
@@ -187,7 +193,7 @@ export function perkProblem(run, id, target, rosterKeys) {
  * two shooting perks in one offer (the user, 2026-10-22).
  */
 export function perkOffer(run, rng, rosterKeys, pool = 'game', count = 3) {
-  const can = PERK_IDS.filter(id => Boolean(PERKS[id].boss) === (pool === 'boss') && (PERKS[id].target === 'card'
+  const can = PERK_IDS.filter(id => !PERKS[id].event && Boolean(PERKS[id].boss) === (pool === 'boss') && (PERKS[id].target === 'card'
     ? practicable(run.deck).length > 0
     : PERKS[id].target === 'team'
       ? !perkProblem(run, id, null, rosterKeys)

@@ -28,7 +28,9 @@ describe('the strategy-card face', () => {
       // renderToStaticMarkup HTML-escapes text ("High Screen &amp; Roll").
       expect(html, s.id).toContain(s.name.replace(/&/g, '&amp;').replace(/'/g, '&#x27;'));
       expect(html, s.id).toContain('NO ART');
-      expect(html, s.id).toContain(s.side === 'def' ? 'DEFENSE' : 'OFFENSE');
+      // A dead card (Bad Contract) is never played: no phase, no side.
+      expect(html, s.id).toContain(s.dead ? 'DEAD CARD' : s.side === 'def' ? 'DEFENSE' : 'OFFENSE');
+      if (s.dead) expect(html, s.id).toContain('Cannot be played.');
     }
   });
 

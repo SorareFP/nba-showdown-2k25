@@ -26,8 +26,9 @@
 import {
   CLIMB, CLIMB_FIVE, newRun, chooseCamp, openStops, chooseStop, presetFor, recordResult, resultFromGame,
   pickStrat, pickPlayer, pickPerk, skipOffers, restDay, rosterCards, potPreview, continueClimb, actOfRun, needsRelease, releaseOptions, ACT_DIALS,
+  chooseEvent, eventView,
 } from '../../src/game/modes/run.js';
-import { climbRng, KIND_WEIGHTS, stopById, ACTS } from '../../src/game/modes/climbMap.js';
+import { climbRng, KIND_WEIGHTS_V2 as KIND_WEIGHTS, stopById, ACTS } from '../../src/game/modes/climbMap.js';
 import { leanOf } from '../../src/game/modes/climbKits.js';
 import { PERKS, practicable, perkProblem, boostsOf, boostedCard, hasPerk } from '../../src/game/modes/climbPerks.js';
 import { cardFit } from '../../src/game/cardFit.js';
@@ -70,10 +71,12 @@ for (const act of [2, 3]) {
 }
 if (overrides.rivalry != null) CLIMB.rivalryExtra = overrides.rivalry;
 if (overrides.boss != null) CLIMB.bossCap = overrides.boss;
-if (overrides.rest != null || overrides.rivalryW != null) {
+// The weights of today's maps (version 2, with ? stops); event=0 turns them off.
+if (overrides.rest != null || overrides.rivalryW != null || overrides.event != null) {
   KIND_WEIGHTS.rest = overrides.rest ?? KIND_WEIGHTS.rest;
   KIND_WEIGHTS.rivalry = overrides.rivalryW ?? KIND_WEIGHTS.rivalry;
-  KIND_WEIGHTS.game = Math.max(0, 1 - KIND_WEIGHTS.rest - KIND_WEIGHTS.rivalry);
+  KIND_WEIGHTS.event = overrides.event ?? KIND_WEIGHTS.event;
+  KIND_WEIGHTS.game = Math.max(0, 1 - KIND_WEIGHTS.rest - KIND_WEIGHTS.rivalry - KIND_WEIGHTS.event);
 }
 // extra=0,0,0,3,5,6: the cards the coach adds to its kit, floor by floor.
 // singles=0 (two of a kit's doubles), bossextra=9, bossrares=1, home=0 (always
@@ -162,7 +165,7 @@ function chooseRoute(run, rng) {
   const stops = openStops(run);
   if (DRAFTER !== 'careful') return pick(rng, stops);
   const pain = painOf(run);
-  const want = pain <= -8 ? ['rest', 'game', 'rivalry'] : pain >= -4 ? ['rivalry', 'game', 'rest'] : ['game', 'rivalry', 'rest'];
+  const want = pain <= -8 ? ['rest', 'event', 'game', 'rivalry'] : pain >= -4 ? ['rivalry', 'game', 'event', 'rest'] : ['game', 'event', 'rivalry', 'rest'];
   for (const kind of want) { const s = stops.find(x => x.kind === kind); if (s) return s; }
   return stops[0];
 }
@@ -258,6 +261,8 @@ const bossGames = [];
 const pots = [];
 // Games by the coach's style and level (climbStyles.js, 2026-10-25): won / played.
 const byStyle = {};
+// ? stops (climbEvents.js, 2026-10-25): each scene:choice taken.
+const byEvent = {};
 let tiredOpens = 0;
 let games = 0;
 const deaths = Array(9).fill(0);
@@ -282,6 +287,13 @@ for (let i = 0; i < RUNS; i += 1) {
       run = restDay(run, choice.choice === 'rest' && hasPerk(run, 'win_now_trade')
         ? (prac.length ? { choice: 'practice', cardId: prac[0] } : { choice: 'cut', cardId: Object.keys(run.deck).find(id => run.deck[id] > 0) })
         : choice);
+    } else if (run.status === 'event') {
+      // A ? stop: a choice that can be taken (careful: the scene's first, else at random).
+      const open = eventView(run).choices.filter(c => !c.problem);
+      const choice = DRAFTER === 'careful' ? open[0] : pick(rng, open);
+      const k = `${run.event.id}:${choice.id}`;
+      byEvent[k] = (byEvent[k] ?? 0) + 1;
+      run = chooseEvent(run, choice.id);
     } else if (run.status === 'game') {
       const stop = stopById(run.map, run.game.stopId);
       const p = presetFor(run);
@@ -371,6 +383,7 @@ console.log(`  your roster salary at each floor (median): ${ourSalary.map((xs, f
 }
 console.log(`  median pot of a won act ${median(pots)} coins; games a starter opened at -6 or worse ${pct(tiredOpens, games)}`);
 console.log(`  a Rivalry's player offer: ${JSON.stringify(rivalryOffers)}${rivalryRoom.length ? `; room left when none fit: median $${median(rivalryRoom)}` : ''}`);
+console.log(`  ? stops (${Object.values(byEvent).reduce((t, n) => t + n, 0)} in ${RUNS} runs): ` + Object.entries(byEvent).sort().map(([k, n]) => `${k} ${n}`).join(', '));
 console.log('  by coach style (won/played): ' + Object.entries(byStyle).sort().map(([k, v]) => `${k} ${(100 * v.won / v.played).toFixed(0)}% of ${v.played}`).join(', '));
 console.log(`  THREE ACTS (every drafter keeps climbing): of ${RUNS} runs`);
 for (let a = 1; a <= ACTS_TO_CLIMB; a += 1) {

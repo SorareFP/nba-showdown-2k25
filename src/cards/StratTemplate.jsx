@@ -211,7 +211,8 @@ export default function StratTemplate({
 
       <div className={styles.body}>
         {crunch ? <div className={styles.crunchStamp}>CRUNCH TIME</div> : null}
-        <div className={styles.phase}>{phaseLine(s.phase)}</div>
+        {/* A dead card (Bad Contract, 2026-10-25) is never played, so it names no phase or side. */}
+        <div className={styles.phase}>{s.dead ? 'Cannot be played.' : phaseLine(s.phase)}</div>
         {paragraphs.map((p, i) => (
           <p key={i} className={styles.rule}>{p}</p>
         ))}
@@ -236,7 +237,7 @@ export default function StratTemplate({
               />
             </div>
           ) : null}
-          <div className={styles.side}>{s.side === 'def' ? 'DEFENSE' : 'OFFENSE'}</div>
+          <div className={styles.side}>{s.dead ? 'DEAD CARD' : s.side === 'def' ? 'DEFENSE' : 'OFFENSE'}</div>
         </div>
       </div>
     </div>

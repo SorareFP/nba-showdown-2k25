@@ -18,12 +18,12 @@ import { ownedPlayers, capSal } from '../../game/teamRules.js';
 import {
   newRun, chooseCamp, chooseStop, presetFor, recordResult, pickStrat, pickPlayer, pickPerk, skipOffers,
   restDay, takeFreeRest, takeFreePractice, takeFreeCut, retire, rosterCards, recordServerWin, abandon, continueClimb, actOfRun,
-  owedPlayer, openOwedSign,
+  owedPlayer, openOwedSign, chooseEvent,
 } from '../../game/modes/run.js';
 import { PERKS } from '../../game/modes/climbPerks.js';
 import { styleLine } from '../../game/modes/climbStyles.js';
 import { stopById, packWords, ACT_NAMES } from '../../game/modes/climbMap.js';
-import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud } from './ClimbScreens.jsx';
+import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud, EventScreen } from './ClimbScreens.jsx';
 import styles from './Climb.module.css';
 
 /**
@@ -138,7 +138,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
 
   const go = (stopId, opts = {}) => act(async () => {
     const next = chooseStop(run, stopId, opts);
-    if (stopById(run.map, stopId)?.kind === 'rest') { await commit(next); return; }
+    if (['rest', 'event'].includes(stopById(run.map, stopId)?.kind)) { await commit(next); return; }
     await play(await commit(next));
   });
 
@@ -272,6 +272,8 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
           onSkip={part => act(() => commit(skipOffers(run, part ?? null)))}
         />
       );
+    case 'event':
+      return <EventScreen run={run} busy={busy} onChoose={choice => act(() => commit(chooseEvent(run, choice)))} />;
     case 'rest':
       if (peekMap) return <ClimbMap run={run} onBack={() => setPeekMap(false)} />;
       return (

@@ -21,6 +21,15 @@ export const LANES = 3;
  * fights; at 0.15 they are about a quarter (runClimbSim.js, 2026-10-18).
  */
 export const KIND_WEIGHTS = { game: 0.6, rivalry: 0.15, rest: 0.25 };
+/**
+ * VERSION 2 (2026-10-25): ? stops, events (climbEvents.js; the user: "Those
+ * work"), drawn in place of some Games, about one in six of floors 2-6.
+ * Like a Rest Day an event is no game: the server never hears of it, and a
+ * way to the next game may pass through one (PASS_THROUGH).
+ */
+export const KIND_WEIGHTS_V2 = { game: 0.45, rivalry: 0.15, rest: 0.25, event: 0.15 };
+/** The stops a way to a game may pass through: the server hears of neither. */
+export const PASS_THROUGH = new Set(['rest', 'event']);
 /** What each stop adds to the pot, before the rung's pay factor. */
 export const POT = { gameBase: 30, gamePerFloor: 5, rivalry: 70, boss: 120 };
 
@@ -78,7 +87,7 @@ const perkAt = (perks, id) => {
  * how maps are drawn would reshape every run in flight. A change bumps this
  * and keeps the old draw for the runs drawn with it.
  */
-export const MAP_VERSION = 1;
+export const MAP_VERSION = 2;
 /** Set on a map that came from the fixed fallback rather than the seed's draw. */
 export const FALLBACK_SEED_USE = 'fallback';
 const MAX_TRIES = 500;
@@ -111,8 +120,8 @@ export function climbRng(seed, ...parts) {
 
 const stopId = (floor, lane) => `${floor}-${lane}`;
 
-function pickKind(rng, allowRest) {
-  const w = allowRest ? KIND_WEIGHTS : { game: KIND_WEIGHTS.game, rivalry: KIND_WEIGHTS.rivalry };
+function pickKind(rng, allowRest, weights = KIND_WEIGHTS) {
+  const w = allowRest ? weights : Object.fromEntries(Object.entries(weights).filter(([k]) => k !== 'rest'));
   const total = Object.values(w).reduce((t, x) => t + x, 0);
   let r = rng() * total;
   for (const [kind, x] of Object.entries(w)) { r -= x; if (r < 0) return kind; }
@@ -153,12 +162,13 @@ function drawLinks(rng) {
   return LINK_PATTERNS[Math.floor(rng() * LINK_PATTERNS.length)];
 }
 
-function draw(rng) {
+function draw(rng, version = 1) {
+  const weights = version >= 2 ? KIND_WEIGHTS_V2 : KIND_WEIGHTS;
   const floors = [];
   for (let f = 1; f <= FLOORS; f += 1) {
     const row = [];
     for (let lane = 0; lane < LANES; lane += 1) {
-      const kind = f === 1 ? 'game' : f === FLOORS ? 'rest' : pickKind(rng, f !== FLOORS - 1);
+      const kind = f === 1 ? 'game' : f === FLOORS ? 'rest' : pickKind(rng, f !== FLOORS - 1, weights);
       row.push({ id: stopId(f, lane), floor: f, lane, kind, next: [] });
     }
     floors.push(row);
@@ -253,10 +263,10 @@ function fallbackMap() {
  * at a generator version. Act I draws exactly as it always has.
  */
 export function generateMap(seed, version = MAP_VERSION, act = 1) {
-  if (version !== 1) throw new Error(`No act map version ${version}`);
+  if (version !== 1 && version !== 2) throw new Error(`No act map version ${version}`);
   const rng = act > 1 ? climbRng(seed, 'map', 'act', act) : climbRng(seed, 'map');
   for (let i = 0; i < MAX_TRIES; i += 1) {
-    const m = draw(rng);
+    const m = draw(rng, version);
     if (m && repair(m, rng) && keepsTheRules(m)) return inAct(m, act);
   }
   return inAct(fallbackMap(), act);
@@ -311,7 +321,7 @@ export function nextFloorStops(map, fromId) {
  */
 export function travelCost(map, fromId, toId) {
   const target = stopById(map, toId);
-  if (!target || target.kind === 'rest') return Infinity;
+  if (!target || PASS_THROUGH.has(target.kind)) return Infinity;
   const best = new Map();
   // Linked steps cost nothing; a jump to the next floor costs one.
   const steps = id => [
@@ -326,7 +336,7 @@ export function travelCost(map, fromId, toId) {
     if ((best.get(s.id) ?? Infinity) <= cost) continue;
     best.set(s.id, cost);
     if (s.id === toId) return cost;
-    if (s.kind === 'rest') for (const [n, c] of steps(s.id)) queue.push([n, cost + c]);
+    if (PASS_THROUGH.has(s.kind)) for (const [n, c] of steps(s.id)) queue.push([n, cost + c]);
   }
   return Infinity;
 }
@@ -355,8 +365,9 @@ export function potOf(map, clearedIds, rung) {
  */
 // THE POT'S PERKS (2026-10-22): Sponsorship adds SPONSOR_SHARE to every win
 // after it; Max Contract's Games add nothing after it. `perks` is the
-// ledger's (or the run's) list of { id, at }.
-export function potOfRun({ seed, mapVersion = MAP_VERSION, cleared = [], rung, perks = [] }) {
+// ledger's (or the run's) list of { id, at }. A run saved before map versions
+// were stamped is a version 1 run (as the server reads it), not today's.
+export function potOfRun({ seed, mapVersion = 1, cleared = [], rung, perks = [] }) {
   const ids = [...new Set(cleared ?? [])];
   const maps = {};
   const mapOf = act => (maps[act] ??= generateMap(seed, mapVersion, act));

@@ -355,6 +355,11 @@ export const STRATS = [
     desc:"Gain 3 Rebounds. At the end of this section, your two highest-Power starters each add 2 minutes." },
   { id:'play_through_contact', name:'Play Through Contact', phase:'scoring', side:'off', copies:1, locked:false, color:'#9A3412', rarity:'uncommon', climbOnly:true,
     desc:"A player with a Power advantage takes a Paint Shot Check at +3. Hit: a hot marker. At the end of this section they add 3 minutes." },
+  // A DEAD CARD (2026-10-25): Summer-League Tape's price (climbEvents.js).
+  // Never played, never offered (`promo`), never in a pack (`climbOnly`): it
+  // only fills a draw until it goes back under the deck or is cut.
+  { id:'bad_contract',       name:'Bad Contract',     phase:'matchup', side:'off', copies:3, locked:false, color:'#57534E', rarity:'common', climbOnly:true, promo:true, dead:true,
+    desc:"Does nothing. A contract nobody wanted: put it back under your deck, or cut it at a Rest Day." },
   { id:'two_a_days',         name:'Two-a-Days',       phase:'matchup', side:'off', copies:1, locked:false, color:'#6D28D9', rarity:'uncommon', climbOnly:true,
     desc:"After this game, practise one card in your deck into its \"+\" (from the map), and your players carry 4 more minutes into the next game. Two-a-Days then leaves your deck." },
 ];

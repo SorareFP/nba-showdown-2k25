@@ -120,7 +120,7 @@ describe('the "+" that outlive the card', () => {
     expect(iced.deck['ice_bath+']).toBe(1);
     expect(iced.conditioned).toBe(true);
     const back = { ...iced, status: 'map', offers: null };
-    const nextStop = openStops(back).find(s => s.kind !== 'rest');
+    const nextStop = openStops(back).find(s => !['rest', 'event'].includes(s.kind));
     if (nextStop) expect(presetFor(chooseStop(back, nextStop.id)).gameOpts.buffs).toEqual({ A: { conditioning_carry: true } });
     // ...and only that one game.
     expect(recordResult(inGame, { stopId: stop, won: true, margin: 2, endMinutes: tired }).conditioned).toBe(false);

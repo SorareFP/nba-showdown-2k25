@@ -15,6 +15,9 @@ import { generateMap, stopById, nextStops, nextFloorStops, potOfRun, climbRng, M
 import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, coachDeck } from './climbKits.js';
 import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard, hasPerk, GAME_PERKS, TRAVEL_DAYS, WIN_NOW_CAP } from './climbPerks.js';
 import { styleAt, styledCard, engineFx } from './climbStyles.js';
+import { EVENTS, EVENT_IDS, eventText } from './climbEvents.js';
+import AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
+import { CARDS } from '../cards.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
 import { STRATS, STRAT_MAP, PLUS, baseId, isPlus, plusId, buffNumber } from '../strats.js';
 import { ALL_CARDS, DORMANT_KEYS, cardKey, getCardByKey } from '../cardSets.js';
@@ -184,16 +187,27 @@ function takeCard(deck, id) {
   return out;
 }
 
-/** The run's players, through the aliases; a key that no longer resolves is dropped, and under five blocks play. */
+/**
+ * The run's players, through the aliases; a key that no longer resolves is
+ * dropped, and under five blocks play. A salary an event moved (Veteran
+ * Minimum's half, Contract Year's raise, 2026-10-25) is on the copy, so every
+ * cap reader sees it.
+ */
 export function rosterCards(run) {
   const cards = [];
   const dropped = [];
   for (const key of run.roster ?? []) {
     const c = getCardByKey(key);
-    if (c) cards.push(c); else dropped.push(key);
+    if (!c) { dropped.push(key); continue; }
+    const half = run.discounts?.[key];
+    const raise = run.salaryBumps?.[key] ?? 0;
+    cards.push(half || raise ? { ...c, salary: Math.round((c.salary ?? 0) * (half || 1)) + raise } : c);
   }
   return { cards, dropped, blocked: cards.length < 5 ? 'roster' : null };
 }
+
+/** The two-way player an event signed (2026-10-25), or null: off the cap and the roster, for a few games. */
+export const twoWayCard = run => (run?.twoWay?.key && run.twoWay.games > 0 ? getCardByKey(run.twoWay.key) : null);
 
 const fitsOf = cards => PLAYBOOK_OF_ARCHETYPE[nearestArchetype(cards)?.id] ?? PLAYBOOKS[0];
 
@@ -338,7 +352,8 @@ export function rareChanceOf(floor, act = 1) {
 
 /** The coach's cap at a stop (the rung's multiple on), or null for a Rest Day — the game and the map read it. */
 export function stopCap(run, stop) {
-  if (!stop || stop.kind === 'rest') return null;
+  // No game at a Rest Day or a ? stop, so no coach's cap.
+  if (!stop || stop.kind === 'rest' || stop.kind === 'event') return null;
   const act = actOfRun(run);
   const mult = capOf(run.rung);
   if (stop.kind === 'boss') return Math.round(bossCapOf(act) * mult);
@@ -466,6 +481,7 @@ export function chooseStop(run, stopId, { fullStrength = false } = {}) {
   // A stop that is not linked spends a Travel Day (the server counts its own).
   const moved = isTravel(run, stopId) ? { ...run, travel: run.travel - 1 } : run;
   if (stop.kind === 'rest') return { ...moved, status: 'rest', restAt: stopId };
+  if (stop.kind === 'event') return { ...moved, status: 'event', event: drawEvent(moved, stopId) };
   return { ...moved, status: 'game', game: gameSetup(run, stopId, { full: fullStrength && fullStrengthOffered(run, stop) }) };
 }
 
@@ -483,9 +499,9 @@ export function runView(run) {
   return JSON.parse(JSON.stringify(rest));
 }
 
-/** A run back from runView, its map rebuilt from the seed. */
+/** A run back from runView, its map rebuilt from the seed (unstamped = version 1, as the server reads it). */
 export function runFromView(view) {
-  return view ? { ...view, map: generateMap(view.seed, view.mapVersion ?? MAP_VERSION, view.act ?? 1) } : null;
+  return view ? { ...view, map: generateMap(view.seed, view.mapVersion ?? 1, view.act ?? 1) } : null;
 }
 
 /** The run's game-long perks, for the engine (climbPerks.js `game`). */
@@ -499,10 +515,20 @@ export function presetFor(run) {
   const perks = gamePerksOf(run);
   // What a win here adds to the pot, the run's perks on (the results screen's preview).
   const potAdd = potOfRun({ ...run, cleared: [...run.cleared, g.stopId] }).coins - potOfRun(run).coins;
+  // WHAT AN EVENT SET FOR THIS GAME (2026-10-25, run.nextGame): a player
+  // sitting it, a Power boost, hot markers; and a two-way player on top.
+  const next = run.nextGame ?? {};
+  const boosts = boostsOf(run);
+  let mine = rosterCards(run).cards.map(c => boostedCard(c, boosts[c.id]));
+  if (next.sit?.length && mine.length - next.sit.length >= 5) mine = mine.filter(c => !next.sit.includes(c.id));
+  const twoWay = twoWayCard(run);
+  if (twoWay && !mine.some(c => c.id === twoWay.id)) mine = [...mine, twoWay];
+  if (next.power) mine = mine.map(c => ({ ...c, power: (c.power ?? 0) + next.power }));
+  const hot = { ...(run.carryHot ?? {}), ...(next.hot ?? {}) };
   return {
     key: g.key,
     // A perk's boosts ride on copies of the cards (climbPerks.js, 2026-10-19).
-    rosterA: (() => { const b = boostsOf(run); return rosterCards(run).cards.map(c => boostedCard(c, b[c.id])); })(),
+    rosterA: mine,
     // The coach's cards with its style's stat moves on them (styledCard).
     rosterB: g.rosterB.map(k => getCardByKey(k)).filter(Boolean).map(c => styledCard(c, g.style?.fx)),
     deckA: { ...run.deck },
@@ -514,7 +540,7 @@ export function presetFor(run) {
     gameOpts: {
       startQuarter: 4, fatigue: { A: { ...run.fatigue } },
       placementFirst: g.home ? 'B' : 'A',
-      ...(run.carryHot ? { hot: { A: { ...run.carryHot } } } : {}),
+      ...(Object.keys(hot).length ? { hot: { A: hot } } : {}),
       ...(run.conditioned ? { buffs: { A: { conditioning_carry: true } } } : {}),
       ...(run.signature ? { signatureBonus: { A: Math.min(SIGNATURE_MAX, 2 + run.signature) } } : {}),
       ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
@@ -621,6 +647,11 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, ca
     if (canReplay(run)) return { ...run, secondChanceUsed: true, game: { ...run.game, key: `${run.game.key}:2`, replay: true } };
     return { ...run, status: 'lost', lostAt: stopId, game: null };
   }
+  // The game an event set up is played (run.nextGame), and a two-way deal
+  // has one game fewer to run.
+  const surePerk = Boolean(run.nextGame?.surePerk);
+  const twoWay = run.twoWay?.games > 1 ? { ...run.twoWay, games: run.twoWay.games - 1 } : null;
+  run = { ...run, nextGame: null, twoWay };
   const stop = stopById(run.map, stopId);
   const cleared = [...run.cleared, stopId];
   // A boss beaten at Full Strength grows the act's reward (continueClimb).
@@ -631,7 +662,7 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, ca
   // Training Staff (a perk, 2026-10-22): two minutes more off every tracker.
   const rec = recoveryFor(margin) + (hasPerk(run, 'training_staff') ? 2 : 0);
   const fatigue = {};
-  for (const c of rosterCards(run).cards) {
+  for (const c of [...rosterCards(run).cards, ...(twoWayCard(run) ? [twoWayCard(run)] : [])]) {
     const left = Math.max(0, (endMinutes[c.id] ?? 0) - rec);
     if (left > 0) fatigue[c.id] = left;
   }
@@ -663,7 +694,10 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, ca
   // as before the drops were chances; the drop roll has its own stream.
   const playerPool = playerOffer(next, rng);
   const perkPool = perkOffer(next, climbRng(run.seed, 'perks', stopId), rosterCards(next).cards.map(c => c.id));
-  const { players, perks, dropOdds } = rollDrops(run, stop, stopId, playerPool, perkPool);
+  const drops = rollDrops(run, stop, stopId, playerPool, perkPool);
+  const { players, dropOdds } = drops;
+  // Back-to-Back's promise (an event, 2026-10-25): a win there pays a perk.
+  const perks = surePerk && perkPool.length ? perkPool : drops.perks;
   // A Rivalry's win takes CLIMB.rivalryPicks cards (2026-10-19: riskier, richer Rivalries).
   const picks = (stop.kind === 'rivalry' ? CLIMB.rivalryPicks : 1) + (run.extraPicks > 0 ? 1 : 0);
   return {
@@ -796,22 +830,27 @@ export function openOwedSign(run) {
 
 /** Does signing this player need a release: a full roster, or over the cap? */
 export function needsRelease(run, key) {
+  // An event's two-way deal is off the roster, and a trade sends its own player back.
+  if (run.offers?.twoWay || run.offers?.tradeFor) return false;
   const { cards } = rosterCards(run);
-  const card = getCardByKey(key);
-  return cards.length >= CLIMB.maxRoster || capSal([...cards, card].filter(Boolean)) > run.cap;
+  return cards.length >= CLIMB.maxRoster || capSal([...cards, signedCard(run, key)].filter(Boolean)) > run.cap;
 }
+
+/** `key` as signing them puts them on the cap: a Veteran Minimum offer counts half (2026-10-25). */
+const signedCard = (run, key) => rosterCards({ roster: [key], discounts: run.offers?.discount ? { [key]: run.offers.discount } : null }).cards[0] ?? null;
 
 /** The players of yours (roster keys) whose release makes room to sign `key`, cheapest first. */
 export function releaseOptions(run, key) {
-  const card = getCardByKey(key);
+  const card = signedCard(run, key);
   if (!card) return [];
   const keys = run.roster ?? [];
+  const pay = k => rosterCards({ ...run, roster: [k] }).cards[0]?.salary ?? 0;
   return keys
     .filter(k => {
-      const rest = keys.filter(x => x !== k).map(x => getCardByKey(x)).filter(Boolean);
+      const rest = rosterCards({ ...run, roster: keys.filter(x => x !== k) }).cards;
       return rest.length + 1 <= CLIMB.maxRoster && capSal([...rest, card]) <= run.cap;
     })
-    .sort((a, b) => (getCardByKey(a)?.salary ?? 0) - (getCardByKey(b)?.salary ?? 0));
+    .sort((a, b) => pay(a) - pay(b));
 }
 
 /**
@@ -821,11 +860,18 @@ export function releaseOptions(run, key) {
  */
 export function pickPlayer(run, key, release = null) {
   if (run.status !== 'reward' || !run.offers?.players.includes(key)) fail('That player is not on offer');
+  // AN EVENT'S OFFER (2026-10-25): a two-way deal signs off the roster; a
+  // trade sends the named player back; a veteran's half salary is noted.
+  if (run.offers.twoWay) {
+    return settle({ ...run, twoWay: { key, games: run.offers.twoWay }, offers: { ...run.offers, players: [] } });
+  }
+  if (run.offers.tradeFor) release = run.offers.tradeFor;
+  if (run.offers.discount) run = { ...run, discounts: { ...(run.discounts ?? {}), [key]: run.offers.discount } };
   let roster = [...(run.roster ?? [])];
   let perks = run.perks ?? [];
   let fatigue = run.fatigue ?? {};
   if (release != null) {
-    if (!releaseOptions(run, key).includes(release)) fail('Releasing that player does not make room');
+    if (!run.offers.tradeFor && !releaseOptions(run, key).includes(release)) fail('Releasing that player does not make room');
     const gone = getCardByKey(release);
     roster = roster.filter(k => k !== release);
     // Their perks go with them; one the pot reads (Max Contract) stays on the
@@ -834,6 +880,10 @@ export function pickPlayer(run, key, release = null) {
       .filter(p => p.target !== gone?.id || PERKS[p.id]?.ledger)
       .map(p => (p.target === gone?.id ? { ...p, target: null } : p));
     fatigue = Object.fromEntries(Object.entries(fatigue).filter(([id]) => id !== gone?.id));
+    // A half salary or a raise was this contract's; it leaves with the player.
+    const { [release]: _d, ...discounts } = run.discounts ?? {};
+    const { [release]: _b, ...salaryBumps } = run.salaryBumps ?? {};
+    run = { ...run, discounts, salaryBumps };
   } else if (needsRelease(run, key)) {
     fail(`Release a player of yours to sign ${getCardByKey(key)?.name ?? 'them'}`);
   }
@@ -848,6 +898,190 @@ export function skipOffers(run, part = null) {
   if (part === 'perks') return settle({ ...run, offers: { ...run.offers, perks: [] } });
   return { ...run, status: 'map', offers: null };
 }
+
+// ── Events (? stops) ─────────────────────────────────────────────────────────
+//
+// THE CLIMB'S ? STOPS (2026-10-25, climbEvents.js; the user: "Those work").
+// A scene with two choices; like a Rest Day it is no game, clears the floor and
+// raises the cap. Each scene comes once a run, drawn from the run's seed among
+// the ones that can be played as the run stands.
+
+const salaryOf = c => c?.salary ?? 0;
+const byPay = cards => [...cards].sort((a, b) => salaryOf(a) - salaryOf(b) || a.id.localeCompare(b.id));
+/** Players not on the run's roster (any season's card), from a pool. */
+const offRoster = (run, pool) => {
+  const { cards } = rosterCards(run);
+  const tw = twoWayCard(run);
+  return pool.filter(c => !cards.some(r => samePlayer(r, c)) && !(tw && samePlayer(tw, c)));
+};
+/** Three of the best `list` has, distinct players, seeded. */
+function threeOf(list, rng) {
+  const best = [];
+  for (const c of [...list].sort((a, b) => salaryOf(b) - salaryOf(a) || cardKey(a).localeCompare(cardKey(b)))) {
+    if (best.some(b => samePlayer(b, c))) continue;
+    best.push(c);
+    if (best.length >= CLIMB.offerBest) break;
+  }
+  const out = [];
+  while (out.length < 3 && best.length) out.push(best.splice(Math.floor(rng() * best.length), 1)[0]);
+  return out.map(cardKey);
+}
+/**
+ * The trade's three: players better than {name} (paid more than their card,
+ * not their cap hit: a veteran on the minimum is no $205 player), whom the cap
+ * can take in their place.
+ */
+function tradeOffer(run, rng) {
+  const { cards } = rosterCards(run);
+  const low = byPay(cards)[0];
+  if (!low) return [];
+  const worth = salaryOf(getCardByKey(run.roster.find(k => getCardByKey(k)?.id === low.id)));
+  const room = run.cap - capSal(cards) + salaryOf(low);
+  return threeOf(offRoster(run, PLAYER_POOL).filter(c => salaryOf(c) > worth && salaryOf(c) <= room), rng);
+}
+const TWO_WAY_MAX = 250;
+const VETERAN_AGE = 32;
+const VETERAN_MAX = 600;
+const veterans = run => offRoster(run, CARDS.filter(c => (AGES[c.id] ?? 0) >= VETERAN_AGE && salaryOf(c) <= VETERAN_MAX));
+
+/** The player a scene is about: who it names, by its own rule. */
+function eventTarget(run, id, rng) {
+  const cards = byPay(rosterCards(run).cards);
+  if (!cards.length) return null;
+  if (id === 'trade_call') return cards[0].id;
+  if (id === 'locker_room') return cards[cards.length - 1].id;
+  if (id === 'injury_scare' || id === 'contract_year') return cards[Math.floor(rng() * cards.length)].id;
+  return null;
+}
+
+/** Why a scene cannot come up for this run now, or null. */
+function eventProblem(run, id) {
+  const n = rosterCards(run).cards.length;
+  if ((run.eventsSeen ?? []).includes(id)) return 'seen';
+  if ((id === 'locker_room' || id === 'injury_scare') && n < 6) return 'needs a sixth player to sit one';
+  if (id === 'veteran_min' && (n >= CLIMB.maxRoster || !veterans(run).length)) return 'no room';
+  if (id === 'two_way' && run.twoWay) return 'already a two-way player';
+  return null;
+}
+
+/** The scene at a ? stop: { id, stopId, target }. */
+export function drawEvent(run, stopId) {
+  const rng = climbRng(run.seed, 'event', stopId);
+  const can = EVENT_IDS.filter(id => !eventProblem(run, id));
+  const pool = can.length ? can : EVENT_IDS.filter(id => id === 'film_room' || id === 'team_meeting');
+  const id = pool[Math.floor(rng() * pool.length)];
+  return { id, stopId, target: eventTarget(run, id, rng) };
+}
+
+/** The scene as the screen shows it: title, text, and each choice with why it cannot be taken. */
+export function eventView(run) {
+  const e = run.event;
+  const def = EVENTS[e?.id];
+  if (!def) return null;
+  const name = rosterCards(run).cards.find(c => c.id === e.target)?.name ?? null;
+  return {
+    id: e.id, title: def.title, text: eventText(def.text, name),
+    choices: Object.entries(def.choices).map(([choice, label]) => ({ id: choice, label: eventText(label, name), problem: choiceProblem(run, choice) })),
+  };
+}
+
+/** The rares Summer-League Tape can deal: any the deck is not at its limit of. */
+const tapeRares = run => OFFERABLE.filter(s => s.rarity === 'rare' && !s.climbOnly && !atLimit(run.deck, s.id));
+
+/** Why a choice of the run's scene cannot be taken, or null. */
+function choiceProblem(run, choice) {
+  const e = run.event;
+  const deck = Object.values(run.deck ?? {}).reduce((t, n) => t + n, 0);
+  if (e.id === 'trade_call' && choice === 'take' && !tradeOffer(run, climbRng(run.seed, 'event-offer', e.stopId)).length) return 'No one better fits under the cap';
+  if (e.id === 'film_room' && choice === 'cut' && deck - 2 < MIN_DECK) return `A deck keeps at least ${MIN_DECK} cards`;
+  if (e.id === 'summer_tape' && choice === 'take' && !tapeRares(run).length) return 'No rare card your deck can take';
+  if (e.id === 'film_room' && choice === 'upgrade' && !Object.keys(run.deck ?? {}).some(id => !isPlus(id) && PLUS[id])) return 'No card to practise';
+  if (e.id === 'contract_year' && choice === 'pay') {
+    const { cards } = rosterCards(run);
+    if (capSal(cards) + 150 > run.cap) return 'The raise does not fit under the cap';
+  }
+  return null;
+}
+
+/** Leave the ? stop: the floor cleared, the cap up a floor's worth, the scene seen. */
+const leaveEvent = run => ({
+  ...run, status: 'map', at: run.event.stopId, event: null,
+  eventsSeen: [...(run.eventsSeen ?? []), run.event.id], cap: run.cap + CLIMB.capPerFloor,
+});
+/** An offer an event makes, on the reward screen (`title` names it there). */
+const eventOffer = (run, title, players, extra = {}) => settle({
+  ...leaveEvent(run), status: 'reward',
+  offers: { stopId: run.event.stopId, title, strats: [], picks: 0, players, perks: [], ...extra },
+});
+
+/** Take a choice of the scene at a ? stop (eventView names them). */
+export function chooseEvent(run, choice) {
+  if (run.status !== 'event' || !run.event) fail('No event here');
+  const e = run.event;
+  if (!EVENTS[e.id]?.choices?.[choice]) fail('No such choice');
+  const problem = choiceProblem(run, choice);
+  if (problem) fail(problem);
+  const rng = climbRng(run.seed, 'event-offer', e.stopId);
+  const { cards } = rosterCards(run);
+  const target = cards.find(c => c.id === e.target);
+  const targetKey = target ? run.roster.find(k => getCardByKey(k)?.id === target.id) : null;
+  const allTired = add => Object.fromEntries(cards.map(c => [c.id, (run.fatigue?.[c.id] ?? 0) + add]));
+  switch (`${e.id}:${choice}`) {
+    case 'trade_call:take':
+      return eventOffer(run, `Trade ${target?.name ?? 'your lowest-paid player'} for one of three`, tradeOffer(run, rng), { tradeFor: targetKey });
+    case 'locker_room:sit':
+      return leaveEvent({ ...run, nextGame: { ...(run.nextGame ?? {}), sit: [e.target] } });
+    case 'locker_room:grind':
+    case 'back_to_back:play':
+      return leaveEvent({ ...run, fatigue: allTired(4), ...(e.id === 'back_to_back' ? { nextGame: { ...(run.nextGame ?? {}), surePerk: true } } : {}) });
+    case 'film_room:upgrade':
+    case 'team_meeting:upgrade':
+      return leaveEvent({ ...run, freePractice: (run.freePractice ?? 0) + 1 });
+    case 'film_room:cut':
+      return leaveEvent({ ...run, freeCut: (run.freeCut ?? 0) + 2 });
+    case 'two_way:sign':
+      return eventOffer(run, 'A two-way contract: free, for three games', threeOf(offRoster(run, PLAYER_POOL).filter(c => salaryOf(c) <= TWO_WAY_MAX), rng), { twoWay: 3 });
+    case 'summer_tape:take': {
+      const deck = addCard(addCard(run.deck, pickFrom(rng, tapeRares(run)).id), 'bad_contract');
+      return leaveEvent({ ...run, deck });
+    }
+    case 'injury_scare:gamble':
+      return leaveEvent({ ...run, nextGame: { ...(run.nextGame ?? {}), ...(rng() < 0.5 ? { sit: [e.target] } : { hot: { [e.target]: 2 } }) } });
+    case 'injury_scare:rest': {
+      const fatigue = { ...(run.fatigue ?? {}) };
+      delete fatigue[e.target];
+      return leaveEvent({ ...run, fatigue, nextGame: { ...(run.nextGame ?? {}), sit: [e.target] } });
+    }
+    case 'veteran_min:sign':
+      return eventOffer(run, 'A veteran on the minimum: half their salary counts', threeOf(veterans(run), rng), { discount: 0.5 });
+    case 'team_meeting:rest':
+    case 'back_to_back:rest':
+      return leaveEvent({ ...run, fatigue: {} });
+    case 'front_office_leak:scout': {
+      const floor = stopById(run.map, e.stopId)?.floor ?? 0;
+      const ids = run.map.floors.flat().filter(s => s.floor > floor && s.floor <= floor + 2 && !PASS.has(s.kind)).map(s => s.id);
+      return leaveEvent({ ...run, scouted: [...(run.scouted ?? []), ...ids] });
+    }
+    case 'front_office_leak:cap':
+      return leaveEvent({ ...run, cap: run.cap + 200 });
+    case 'hot_streak:hot': {
+      const two = byPay(cards).slice(-2).map(c => c.id);
+      return leaveEvent({ ...run, nextGame: { ...(run.nextGame ?? {}), hot: Object.fromEntries(two.map(id => [id, 1])) } });
+    }
+    case 'hot_streak:power':
+      return leaveEvent({ ...run, nextGame: { ...(run.nextGame ?? {}), power: 1 } });
+    case 'contract_year:pay':
+      return leaveEvent({
+        ...run,
+        perks: [...(run.perks ?? []), { id: 'contract_year', target: e.target, at: (run.cleared ?? []).length }],
+        salaryBumps: { ...(run.salaryBumps ?? {}), [targetKey]: (run.salaryBumps?.[targetKey] ?? 0) + 150 },
+      });
+    default:
+      // Hang up, pass, not now.
+      return leaveEvent(run);
+  }
+}
+const PASS = new Set(['rest', 'event']);
 
 // ── Rest ─────────────────────────────────────────────────────────────────────
 
@@ -917,7 +1151,7 @@ export function continueClimb(run) {
   const bossId = bossIdOf(act);
   const nextAct = act + 1;
   const next = {
-    ...run, act: nextAct, map: generateMap(run.seed, run.mapVersion ?? MAP_VERSION, nextAct),
+    ...run, act: nextAct, map: generateMap(run.seed, run.mapVersion ?? 1, nextAct),
     at: null, restAt: null, game: null, fatigue: {}, cap: run.cap + CLIMB.capPerFloor,
   };
   const rng = climbRng(run.seed, 'offers', bossId);

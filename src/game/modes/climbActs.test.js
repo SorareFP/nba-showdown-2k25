@@ -29,7 +29,8 @@ const wonAct = (act = 1) => {
 
 describe('the acts\' maps', () => {
   it('keeps Act I\'s map exactly as it was, and draws Acts II and III from their own streams', () => {
-    const one = generateMap(42);
+    // Version 1 is the map a run drawn before ? stops keeps (MAP_VERSION is 2 since 2026-10-25).
+    const one = generateMap(42, 1);
     expect(generateMap(42, 1, 1)).toEqual(one);
     expect(one.act).toBeUndefined();
     const two = generateMap(42, 1, 2);

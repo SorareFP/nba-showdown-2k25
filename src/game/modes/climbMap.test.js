@@ -95,7 +95,9 @@ describe('the act map', () => {
 });
 
 describe('moving on the map', () => {
-  const m = generateMap(3);
+  // Version 1, whose stops are Games, Rivalries and Rest Days only: the ? stops
+  // of version 2 have a test of their own (the map version, below).
+  const m = generateMap(3, 1);
   it('opens on floor 1 and follows the links', () => {
     expect(nextStops(m, null).map(s => s.id)).toEqual(['1-0', '1-1', '1-2']);
     const s = m.floors[0][1];
@@ -111,10 +113,10 @@ describe('moving on the map', () => {
     expect(reachableGame(m, before.id, after.id)).toBe(true);
     // Not the rest stop itself, and not a game two floors up through a game.
     expect(reachableGame(m, before.id, restStop.id)).toBe(false);
-    const game = m.floors[1].find(s => s.kind !== 'rest');
+    const game = m.floors[1].find(s => !['rest', 'event'].includes(s.kind));
     const start = m.floors[0].find(s => s.next.includes(game.id));
     const twoUp = stopById(m, game.next[0]);
-    if (twoUp.kind !== 'rest') expect(reachableGame(m, start.id, twoUp.id)).toBe(false);
+    if (!['rest', 'event'].includes(twoUp.kind)) expect(reachableGame(m, start.id, twoUp.id)).toBe(false);
     // Floor 1 from the start; the boss through floor 7's Rest Day.
     expect(reachableGame(m, null, '1-0')).toBe(true);
     expect(reachableGame(m, null, '2-0')).toBe(false);
@@ -161,10 +163,34 @@ describe('the pot', () => {
 // rebuilds the map from the seed, so a later change to the generator would
 // reshape every run in flight. Each run carries the version it was drawn at.
 describe('the map version', () => {
-  it('is 1, draws the same map named or not, and refuses a version it does not know', async () => {
+  it('is 2, draws the same map named or not, keeps version 1 for runs drawn under it, and refuses a version it does not know', async () => {
     const { MAP_VERSION } = await import('./climbMap.js');
-    expect(MAP_VERSION).toBe(1);
-    expect(generateMap(11, 1)).toEqual(generateMap(11));
+    // 2 since 2026-10-25: ? stops (events).
+    expect(MAP_VERSION).toBe(2);
+    expect(generateMap(11, 2)).toEqual(generateMap(11));
+    expect(generateMap(11, 1).floors.flat().some(s => s.kind === 'event')).toBe(false);
     expect(() => generateMap(11, 99)).toThrow(/version/);
+  });
+
+  // ? STOPS (2026-10-25): about one in six of floors 2-6, never floor 1 or 7,
+  // and a way to a game passes through one as through a Rest Day.
+  it('draws ? stops on floors 2-6, and lets a way to a game pass through one', () => {
+    let events = 0, mid = 0;
+    for (let seed = 1; seed <= 200; seed += 1) {
+      const m = generateMap(seed, 2);
+      expect(m.floors[0].concat(m.floors[6]).some(s => s.kind === 'event'), `seed ${seed}`).toBe(false);
+      const midStops = m.floors.slice(1, 6).flat();
+      mid += midStops.length;
+      events += midStops.filter(s => s.kind === 'event').length;
+      const ev = midStops.find(s => s.kind === 'event' && s.next.some(id => !['rest', 'event'].includes(stopById(m, id).kind)));
+      if (ev) {
+        const below = m.floors[ev.floor - 2].find(s => s.next.includes(ev.id) && !['rest', 'event'].includes(s.kind));
+        const above = ev.next.map(id => stopById(m, id)).find(s => !['rest', 'event'].includes(s.kind));
+        if (below && above) expect(reachableGame(m, below.id, above.id), `seed ${seed}`).toBe(true);
+        expect(reachableGame(m, below?.id ?? null, ev.id)).toBe(false);   // an event is no game to open
+      }
+    }
+    expect(events / mid).toBeGreaterThan(0.1);
+    expect(events / mid).toBeLessThan(0.22);
   });
 });

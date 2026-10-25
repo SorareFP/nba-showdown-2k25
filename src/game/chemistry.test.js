@@ -112,6 +112,8 @@ describe('Chemistry', () => {
     expect(chem).toBeGreaterThan(0);
     const holding = { ...run, deck: { ...run.deck, chemistry: 1 } };
     for (let i = 0; i < 30; i += 1) expect(stratOffer(holding, stop, climbRng(i, 'offers'), climbRng(i, 'climb-only'))).not.toContain('chemistry');
-    expect(STRATS.filter(s => s.climbOnly).length).toBe(24);
+    // 24 offered, and Bad Contract (a dead card, never offered: promo).
+    expect(STRATS.filter(s => s.climbOnly).length).toBe(25);
+    expect(STRATS.filter(s => s.climbOnly && !s.promo).length).toBe(24);
   });
 });

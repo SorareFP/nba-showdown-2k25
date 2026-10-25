@@ -485,6 +485,8 @@ function cardVerdict(g, teamKey, cardId, plus = false) {
   const phase = g.phase;
 
   if (phase === 'draft') return no('Cannot play cards during draft');
+  // A dead card (Bad Contract, 2026-10-25) is never played.
+  if (getStrat(cardId)?.dead) return no('It does nothing: put it back under your deck');
 
   // While a shot check is pending, only the answers to it are allowed — and
   // Coach's Challenge, which re-rolls a check that has ALREADY landed, never

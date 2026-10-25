@@ -233,6 +233,8 @@ function cardDraw(g, teamKey, n) {
  * driver, PvP) comes through here, so none of them can forget it.
  */
 export function execCard(game, teamKey, cardId, opts = {}) {
+  // A dead card (Bad Contract) is never played.
+  if (getStrat(baseId(cardId))?.dead) return { game, ok: false, msg: 'Bad Contract does nothing' };
   // Short Rotation (a Climb perk): two strategy cards a section.
   const capped = playCapProblem(game, teamKey);
   if (capped) return { game, ok: false, msg: capped };

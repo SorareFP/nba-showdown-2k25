@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 vi.mock('../../firebase/CardStatsProvider.jsx', () => ({ useCardStats: () => ({ stats: {} }) }));
 
-import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, practiceTiles, ClimbHud, deckFaces } from './ClimbScreens.jsx';
+import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, practiceTiles, ClimbHud, deckFaces, EventScreen } from './ClimbScreens.jsx';
 import { baseId } from '../../game/strats.js';
 import { newRun, chooseCamp, chooseStop, recordResult, bossTeam, presetFor, runFromView } from '../../game/modes/run.js';
 import { CARDS } from '../../game/cards.js';
@@ -398,9 +398,9 @@ describe('the new perks on screen', () => {
 
   it('Front Office Shake-Up: a cut button on the map, a cut-only screen', () => {
     const r = { ...camped(), status: 'map', freeCut: 2 };
-    expect(html(<ClimbMap run={r} onGo={noop} onRetire={noop} onFreeRest={noop} />)).toMatch(/data-free-cut="true"[^>]*>Front Office: cut a card \(2\)/);
+    expect(html(<ClimbMap run={r} onGo={noop} onRetire={noop} onFreeRest={noop} />)).toMatch(/data-free-cut="true"[^>]*>Cut a card \(2\)/);
     const out = html(<RestDay run={r} cutOnly free onRest={noop} onPractice={noop} onCut={noop} />);
-    expect(out).toContain('Front Office Shake-Up');
+    expect(out).toContain('Cut a card');
     expect(out).toMatch(/data-cut=/);
     expect(out).not.toMatch(/data-practice="/);
   });
@@ -412,5 +412,29 @@ describe('the new perks on screen', () => {
     const out = html(<ClimbMap run={r} onGo={noop} onRetire={noop} onFreeRest={noop} />);
     expect(out).toMatch(/data-travel="true"/);
     expect(out).toContain('2 left');
+  });
+});
+
+// A ? STOP (2026-10-25, climbEvents.js): the scene, its player named, and a
+// choice that cannot be taken disabled with why.
+describe('an event', () => {
+  it('shows the scene and its two choices, a closed one saying why', () => {
+    const run = { ...camped(), status: 'event', event: { id: 'contract_year', stopId: '2-0', target: FIVE[0].id } };
+    const out = html(<EventScreen run={run} onChoose={noop} />);
+    expect(out).toContain('data-event="contract_year"');
+    expect(out).toContain('Contract Year');
+    expect(out).toContain(`${FIVE[0].name.replace(/'/g, '&#x27;')} is playing for a new deal`);
+    expect(out).toMatch(/data-choice="pay"/);
+    expect(out).toMatch(/data-choice="pass"/);
+    // No room for the raise: the choice is closed, and says so.
+    const tight = { ...run, cap: 0 };
+    expect(html(<EventScreen run={tight} onChoose={noop} />)).toMatch(/data-choice="pay"[^>]*disabled=""[^]*The raise does not fit under the cap/);
+    expect(html(<EventScreen run={{ ...run, event: null }} onChoose={noop} />)).toBe('');
+  });
+
+  it('marks a ? stop on the map, with no coach or cap of its own', () => {
+    const run = { ...camped(), map: { ...camped().map, floors: camped().map.floors.map((f, i) => (i === 1 ? f.map(s => ({ ...s, kind: 'event' })) : f)) } };
+    const out = html(<ClimbMap run={run} onGo={noop} onRetire={noop} onFreeRest={noop} />);
+    expect(out).toMatch(/data-stop="2-0"[^>]*title="Event"/);
   });
 });

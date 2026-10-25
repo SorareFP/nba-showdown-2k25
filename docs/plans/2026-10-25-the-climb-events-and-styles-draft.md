@@ -41,14 +41,21 @@ hole, spread over the thirty franchises. Act I plays them at half strength
 |---|---|---|---|
 | **Seven Seconds** | their rolls +1 in the first section | they tire a minute faster each section | PHX, SAC, IND |
 | **Grit and Grind** | your paint checks −1 | their 3PT checks −1 | MEM, MIA, NYK |
-| **Splash** | their 3PT checks +1 | their paint checks −1 | GSW, BOS, ATL |
-| **Bully Ball** | their paint checks +1 | their 3PT checks −1 | CLE, MIN, NOP |
+| **Splash** | their 3PT checks +1 | their whole team −1 Power *(was: their paint checks −1)* | GSW, BOS, ATL |
+| **Bully Ball** | their paint checks +1 | their whole team −1 Speed *(was: their 3PT checks −1)* | CLE, MIN, NOP |
 | **Heliocentric** | their highest-paid player's rolls +2 | their other starters' rolls −1 | DAL, LAL, MIL |
 | **Bench Mob** | their bench comes in fresh (no carried minutes) | their opening hand is a card short | TOR, SAS, UTA |
 | **Closers** | their rolls +1 in Crunch Time | their rolls −1 in the first section | LAC, CHI, DEN |
-| **Glass Eaters** | +1 rebound on each of their scoring rolls | their Speed −1 | DET, OKC, POR |
+| **Glass Eaters** | +1 rebound on each of their scoring rolls that scores nothing *(was: every roll)* | their whole team −1 Speed | DET, OKC, POR |
 | **Pace and Space** | their whole five +1 Speed | their whole five −1 Power | CHA, HOU, ORL |
 | **Process** | they draw a card more each section | their starters −1 on Defensive Bonus | PHI, WAS, BKN |
+
+**As built (2026-10-25):** the sim's by-style tally (400 runs at Prince)
+had Glass Eaters winning 63%, Bully Ball 67% and Splash 68% against 76-83%
+for the rest: a rebound on every roll was too many, and a hole on a check the
+coach seldom takes was no hole. The three rows above carry the retune; every
+style then won 75-82% with both halves playing, and Act II's Games came back
+to 84.3% (84.7% before styles). Act I's Games play only the hole.
 
 ## 3. Boss abilities, only with a trade (the user's condition)
 

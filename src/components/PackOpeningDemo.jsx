@@ -26,7 +26,7 @@ import ClimbTab from './climb/ClimbTab.jsx';
 import TeamEditor from './TeamEditor.jsx';
 import PlayHub from './PlayHub.jsx';
 import { packRun, unpackRun, isActiveRun } from '../firebase/climb.js';
-import { potOfRun } from '../game/modes/climbMap.js';
+import { potOfRun, MAP_VERSION } from '../game/modes/climbMap.js';
 import { resultFromGame } from '../game/modes/run.js';
 import { simulateGame } from '../game/modes/simulate.js';
 import { CARDS } from '../game/cards.js';
@@ -188,7 +188,8 @@ const climbDemoStore = {
   },
 };
 const climbDemoServer = {
-  async start() { return { runId: `demo${Date.now()}`, seed: Math.floor(Math.random() * 2 ** 31) }; },
+  // The map version the server would stamp (? stops since version 2).
+  async start() { return { runId: `demo${Date.now()}`, seed: Math.floor(Math.random() * 2 ** 31), mapVersion: MAP_VERSION }; },
   async openGame() { return { ok: true, status: 'active' }; },
   async continueTo(_uid, _runId, toAct) { return { ok: true, act: toAct }; },
   async perk() { return { ok: true }; },

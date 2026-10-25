@@ -29,6 +29,16 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-events', date: '2026-10-25', title: 'The Climb: ❓ stops',
+    body: "Some stops on the map are a ❓ now: a scene with two choices, most of them a trade-off. Take a trade call for your lowest-paid player, sign a two-way player for three games or a veteran on the minimum at half their salary, gamble on an injury scare, play through a back-to-back for a sure perk, take a rare card that comes with a Bad Contract. Twelve scenes, each once a run. Like a Rest Day a ❓ is no game: it clears the floor and raises the cap. A climb already under way keeps its map; the next one you start has them.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
+    id: 'climb-coach-styles', date: '2026-10-25', title: "The Climb: every coach has a style",
+    body: "Every team on the map is its own franchise now, and its coach plays that franchise's style: a strength with a hole in it. Splash shoots threes at +1 but plays a Power down; Seven Seconds rolls +1 in the first section but tires faster; Heliocentric's star rolls +2 while the rest roll −1. Ten styles, named on each stop, so the route you take is a choice of who you play. In Act I's Games only the hole plays. And an Act I or Act II boss can be taken at Full Strength, its strength doubled, for a bigger reward: one more card pick and a boss's perk from four.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'climb-sixth-player', date: '2026-10-25', title: 'The Climb: start with a sixth player',
     body: "A climb can start with five players or six, under the same $2,200 cap. A sixth means a cheaper five, but it gives you a bench from the first game, so your starters can rest between sections instead of carrying every minute. Climb fives in My Teams are Climb teams now, and hold a sixth too.",
     to: 'climb', cta: 'The Climb',

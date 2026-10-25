@@ -1229,7 +1229,27 @@ def s_two_a_days(d, s):
     text(d, (W - 220, 300), '+', size=110, fill=NAVY, shadow=None, anchor='mm')
 
 
+def s_bad_contract(d, s):
+    # BAD CONTRACT (2026-10-25): Summer-League Tape's price. A deal nobody
+    # wanted, stamped VOID, its player parked at the end of the bench.
+    court(d)
+    bench(d, W - 260, H * 0.95 - 210 * 0.42 + 40, w=320)
+    player(d, W - 260, H * 0.95, GREY, h=210, pose='sit', number=0)
+    # The contract: a sheet with its lines, the money, and a scrawl.
+    x0, y0 = 150, 150
+    poly(d, [(x0, y0 + 30), (x0 + 430, y0), (x0 + 470, y0 + 560), (x0 + 40, y0 + 590)], fill=WHITE, width=6)
+    text(d, (x0 + 235, y0 + 90), 'CONTRACT', size=54, fill=BLACK, shadow=None, anchor='mm')
+    for k in range(5):
+        yy = y0 + 170 + k * 62
+        line(d, (x0 + 70, yy + 8 - k * 2), (x0 + 400, yy - 14 - k * 2), width=4, amt=2)
+    text(d, (x0 + 250, y0 + 480), '$$$$', size=70, fill=GREEN, shadow=None, anchor='mm')
+    # The stamp, across it.
+    poly(d, [(x0 + 40, y0 + 250), (x0 + 450, y0 + 200), (x0 + 465, y0 + 330), (x0 + 55, y0 + 380)], outline=RED, width=12, amt=2)
+    text(d, (x0 + 252, y0 + 290), 'VOID', size=110, fill=RED, shadow=None, anchor='mm')
+
+
 SCENES = {
+    'bad_contract': s_bad_contract,
     'blitz': s_blitz,
     'kick_out_three': s_kick_out_three, 'grab_and_go': s_grab_and_go,
     'rebound_and_push': s_rebound_and_push, 'own_the_glass': s_own_the_glass,

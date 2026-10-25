@@ -8,7 +8,14 @@
 // A style is a set of effects the game reads (styleFx): stat moves on the
 // coach's cards (speed, power, defBoost), and engine effects through
 // gameOpts.style (firstRoll, crunchRoll, star, others, minutes, draw, hand,
-// fullRest, threes, paint, againstPaint, rebOnRoll). Act I's Games play only
+// fullRest, threes, paint, againstPaint, rebOnMiss).
+//
+// BALANCED BY THE SIM (2026-10-25, runClimbSim's by-style tally, 400 runs):
+// the first cut made Act II's Games 5 points harder, and three styles were
+// the reason — Glass Eaters won 63%, Bully Ball 67%, Splash 68%, against 76-83%
+// for the rest. A rebound on every roll was too many, and a hole on the check
+// a coach seldom takes was no hole: Glass Eaters' board comes on a scoreless
+// roll now, and Bully Ball and Splash give up Speed and Power instead. Act I's Games play only
 // the hole; a Rivalry, a boss and every game of Acts II and III play both; a
 // boss at Full Strength doubles the strength.
 
@@ -25,13 +32,13 @@ export const STYLES = Object.freeze({
   },
   splash: {
     name: 'Splash',
-    strength: 'their 3PT checks +1', hole: 'their paint checks −1',
-    fx: { strength: { threes: 1 }, hole: { paint: -1 } },
+    strength: 'their 3PT checks +1', hole: 'their whole team −1 Power',
+    fx: { strength: { threes: 1 }, hole: { power: -1 } },
   },
   bully_ball: {
     name: 'Bully Ball',
-    strength: 'their paint checks +1', hole: 'their 3PT checks −1',
-    fx: { strength: { paint: 1 }, hole: { threes: -1 } },
+    strength: 'their paint checks +1', hole: 'their whole team −1 Speed',
+    fx: { strength: { paint: 1 }, hole: { speed: -1 } },
   },
   heliocentric: {
     name: 'Heliocentric',
@@ -50,8 +57,8 @@ export const STYLES = Object.freeze({
   },
   glass_eaters: {
     name: 'Glass Eaters',
-    strength: '+1 rebound on each of their scoring rolls', hole: 'their Speed −1',
-    fx: { strength: { rebOnRoll: 1 }, hole: { speed: -1 } },
+    strength: '+1 rebound on each of their scoring rolls that scores nothing', hole: 'their whole team −1 Speed',
+    fx: { strength: { rebOnMiss: 1 }, hole: { speed: -1 } },
   },
   pace_and_space: {
     name: 'Pace and Space',

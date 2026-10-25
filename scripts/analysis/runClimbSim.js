@@ -256,6 +256,8 @@ let wonAct = 0;
 const bossSalaries = [];
 const bossGames = [];
 const pots = [];
+// Games by the coach's style and level (climbStyles.js, 2026-10-25): won / played.
+const byStyle = {};
 let tiredOpens = 0;
 let games = 0;
 const deaths = Array(9).fill(0);
@@ -295,6 +297,10 @@ for (let i = 0; i < RUNS; i += 1) {
       const at = actTally[act];
       if (stop.kind === 'boss') at.atBoss.push(capSal(p.rosterA));
       if (stop.floor === 1) at.atStart.push(capSal(p.rosterA));
+      const st = run.game.style ? `${run.game.style.id}:${run.game.style.level}` : 'none';
+      byStyle[st] ??= { won: 0, played: 0 };
+      byStyle[st].played += 1;
+      if (result.won) byStyle[st].won += 1;
       const at2 = stop.kind === 'boss' ? at.boss : at.games;
       at2.played += 1;
       if (result.won) at2.won += 1; else at.died += 1;
@@ -365,6 +371,7 @@ console.log(`  your roster salary at each floor (median): ${ourSalary.map((xs, f
 }
 console.log(`  median pot of a won act ${median(pots)} coins; games a starter opened at -6 or worse ${pct(tiredOpens, games)}`);
 console.log(`  a Rivalry's player offer: ${JSON.stringify(rivalryOffers)}${rivalryRoom.length ? `; room left when none fit: median $${median(rivalryRoom)}` : ''}`);
+console.log('  by coach style (won/played): ' + Object.entries(byStyle).sort().map(([k, v]) => `${k} ${(100 * v.won / v.played).toFixed(0)}% of ${v.played}`).join(', '));
 console.log(`  THREE ACTS (every drafter keeps climbing): of ${RUNS} runs`);
 for (let a = 1; a <= ACTS_TO_CLIMB; a += 1) {
   const t = actTally[a];

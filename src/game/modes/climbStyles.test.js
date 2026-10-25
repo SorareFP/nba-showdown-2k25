@@ -88,8 +88,11 @@ describe('a style in the game', () => {
     expect(getPS(next, 'A', 'a0').minutes).toBe(4);
     expect(next.teamB.hand).toHaveLength(8);
     expect(next.teamA.hand).toHaveLength(7);
-    const glass = doRoll(scoring({ rebOnRoll: 1 }), 'B', 0);
-    expect(glass.rollResults.B[0].reb).toBe(2);
+    // A scoreless roll is a board (the chart here scores 2 on every roll, so none).
+    expect(doRoll(scoring({ rebOnMiss: 1 }), 'B', 0).rollResults.B[0].reb).toBe(1);
+    const dry = scoring({ rebOnMiss: 1 });
+    for (const p of getTeam(dry, 'B').starters) p.chart = [{ lo: 1, hi: 99, pts: 0, reb: 1, ast: 0 }];
+    expect(doRoll(dry, 'B', 0).rollResults.B[0].reb).toBe(2);
     expect(newGame(roster('a'), roster('b'), undefined, undefined, { style: { B: { hand: -1 } } }).teamB.hand).toHaveLength(6);
   });
 });

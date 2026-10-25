@@ -190,7 +190,7 @@ export function openingHand(perks, style = null) {
 /**
  * A COACH'S STYLE IN THE GAME (the Climb, 2026-10-25, climbStyles.js): its
  * engine effects, `g.style` = { B: { firstRoll, crunchRoll, star, others,
- * minutes, draw, fullRest, threes, paint, againstPaint, rebOnRoll } }.
+ * minutes, draw, fullRest, threes, paint, againstPaint, rebOnMiss } }.
  */
 export const styleFx = (g, teamKey) => g?.style?.[teamKey] ?? null;
 
@@ -2068,8 +2068,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
 
   // Post Domination: this player's rebounds from scoring rolls are doubled.
   if (te['reb2' + idx] && result.reb) result = { ...result, reb: result.reb * 2 };
-  // Glass Eaters (a coach's style): a rebound more on every roll.
-  if (styleFx(ng, teamKey)?.rebOnRoll) result = { ...result, reb: (result.reb ?? 0) + styleFx(ng, teamKey).rebOnRoll };
+  // Glass Eaters (a coach's style): a scoreless roll is an offensive board.
+  if (styleFx(ng, teamKey)?.rebOnMiss && !result.pts) result = { ...result, reb: (result.reb ?? 0) + styleFx(ng, teamKey).rebOnMiss };
   // Point God, Post Domination's Speed twin (2026-09-23): the assists double.
   if (te['ast2' + idx] && result.ast) result = { ...result, ast: result.ast * 2 };
   if (!ng.rollResults[teamKey]) ng.rollResults[teamKey] = [];

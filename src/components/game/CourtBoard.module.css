@@ -619,7 +619,7 @@
 .zigzagOn > .cardFace { box-shadow: 0 0 0 2px var(--zz-team); }
 .zigzagTile:has(.cardArtSide:hover) { z-index: 10; }
 .zigzagTile:has(.cardArtSide:hover) > .cardFace {
-  height: auto; min-height: 100%; max-height: calc(100% + 48px); overflow: hidden;
+  height: auto; min-height: 100%; max-height: none; overflow: hidden;
   box-shadow: 0 10px 34px rgba(0,0,0,0.7), 0 0 0 2px var(--zz-team);
 }
 .zigzagLit > .cardFace, .zigzagLit > .placementWaiting { box-shadow: 0 0 0 3px #F59E0B, 0 6px 22px rgba(245,158,11,0.35); }
@@ -687,10 +687,14 @@
 .cardPortrait .cardSidebar > .gameStats { order: 1; flex: 1 1 0; min-height: 0; max-height: max-content; overflow: hidden; }
 .cardPortrait .cardSidebar > .rollArea { order: 2; margin-top: auto; }
 /* Grown on a photo hover: every line at its own height, the photo whole, and
-   past the growth cap it is the text that gives, never the roll area. */
+   NO CAP (2026-10-25; the user: "When expanding, I can't see the breadth of
+   Haliburton (or any player's) bonuses" — in Crunch Time five buttons left
+   the 48px of growth no room for the chips). A grown bottom-row tile may hang
+   past the court's foot, so the court stops clipping while one is grown. */
 .zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardArtSide { flex-shrink: 0; }
 .zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar { flex: 1 1 auto; }
 .zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar > .advBlock,
 .zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar > .boostRow,
 .zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar > .liveRow,
-.zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar > .gameStats { flex: 0 1 auto; max-height: none; }
+.zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar > .gameStats { flex: 0 0 auto; max-height: none; }
+.court:has(.zigzagLow .cardArtSide:hover) { overflow: visible; }

@@ -1832,6 +1832,11 @@ function ZigZagFloor({ game, ...rest }) {
 // Reads my picks from game.draft.aPicks / bPicks and shows remaining ones.
 function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
   const [open, setOpen] = useState(false);
+  // Each row's card beside the picker on a short hover (the user, 2026-10-26,
+  // on Michael Jordan's row: "I should also get the lightbox card pop up").
+  // The click stays the placement.
+  const rowCard = useRowCard();
+  const close = () => { rowCard.leave(); setOpen(false); };
   const pickIds = teamKey === 'A' ? (game.draft?.aPicks || []) : (game.draft?.bPicks || []);
   const team = teamKey === 'A' ? game.teamA : game.teamB;
   const placedIds = new Set(team.starters.map(p => p.id));
@@ -1884,8 +1889,10 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
             const sgn = n => (n > 0 ? '+' : '') + n;
             const fmt = (a, roll) => 'S' + sgn(a.rawSpeedDiff) + ' P' + sgn(a.rawPowerDiff) + ' · roll ' + sgn(roll) + (a.hasPenalty ? ' ⚠' : '');
             return (
-              <button key={id} className={styles.placementOption}
-                onClick={() => { setOpen(false); onPlacePlayer(id); }}>
+              <button key={id} className={styles.placementOption} data-place-row={id}
+                onMouseEnter={e => rowCard.enter(p, e)}
+                onMouseLeave={rowCard.leave}
+                onClick={() => { close(); onPlacePlayer(id); }}>
                 <span className={styles.placementName}>{p.name}</span>
                 <span className={styles.placementStats}>S{p.speed}·P{p.power}·D{p.defBoost||0}</span>
                 {mine && theirs && (
@@ -1897,9 +1904,11 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
               </button>
             );
           })}
-          <button className={styles.placementCancel} onClick={() => setOpen(false)}>Cancel</button>
+          <button className={styles.placementCancel} onClick={close}>Cancel</button>
         </div>
       )}
+      {open && rowCard.hover && <RowCardPop player={rowCard.hover.p} rect={rowCard.hover.rect}
+        side={rowCard.hover.rect.left > window.innerWidth - rowCard.hover.rect.right ? 'left' : 'right'} />}
     </div>
   );
 }
@@ -2513,6 +2522,20 @@ export function rowCardSpot(rect, side, vw, vh) {
   return { left, top, width: ROW_CARD_W };
 }
 
+/** The hover half: a short hover on a row shows its card, leaving the row (or choosing it) hides it. */
+function useRowCard() {
+  const [hover, setHover] = useState(null);
+  const timer = useRef(null);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const enter = (p, e) => {
+    clearTimeout(timer.current);
+    const rect = e.currentTarget.getBoundingClientRect();
+    timer.current = setTimeout(() => setHover({ p, rect }), ROW_CARD_DELAY_MS);
+  };
+  const leave = () => { clearTimeout(timer.current); setHover(null); };
+  return { hover, enter, leave };
+}
+
 function RowCardPop({ player, rect, side }) {
   if (typeof document === 'undefined') return null;
   const spot = rowCardSpot(rect, side, window.innerWidth, window.innerHeight);
@@ -2527,16 +2550,8 @@ function RowCardPop({ player, rect, side }) {
 export function OppStatusPanel({ game, teamKey }) {
   const t = getTeam(game, teamKey);
   const lb = useLightbox();
-  const [hover, setHover] = useState(null);
-  const hoverTimer = useRef(null);
-  useEffect(() => () => clearTimeout(hoverTimer.current), []);
-  const enterRow = (p, e) => {
-    clearTimeout(hoverTimer.current);
-    const rect = e.currentTarget.getBoundingClientRect();
-    hoverTimer.current = setTimeout(() => setHover({ p, rect }), ROW_CARD_DELAY_MS);
-  };
-  const leaveRow = () => { clearTimeout(hoverTimer.current); setHover(null); };
-  const openCard = p => { clearTimeout(hoverTimer.current); setHover(null); lb?.open?.('player', p); };
+  const { hover, enter: enterRow, leave: leaveRow } = useRowCard();
+  const openCard = p => { leaveRow(); lb?.open?.('player', p); };
   const col = teamKey === 'A' ? 'var(--orange)' : 'var(--blue)';
   const onFloor = new Set((t.starters || []).map(p => p?.id).filter(Boolean));
   // WHO CAN PLAY STAYS HIDDEN UNTIL THEIR FIVE ARE DOWN (2026-09-30, the

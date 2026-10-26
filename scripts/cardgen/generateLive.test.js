@@ -19,8 +19,11 @@ import {
   main,
   actualOrNone,
   liveTeam,
+  gamesByPlayer,
+  gamesPlayed,
 } from './generateLive.js';
 import { liveRowsFromLog, WINDOW_GAMES } from './realGames.js';
+import { indexByName } from './generateCards.js';
 import { LIVE_SET, CURRENT_SET, setBadge, setTreatment } from '../../src/cards/sets.js';
 import { LIVE_BADGE } from '../../src/cards/badges.js';
 
@@ -239,5 +242,33 @@ describe('the actual table in the opening week', () => {
     expect(await actualOrNone(async () => [{ id: 1 }], 2027)).toEqual([{ id: 1 }]);
     await expect(actualOrNone(async () => { throw served(2025); }, 2027)).rejects.toThrow(/2025/);
     await expect(actualOrNone(async () => { throw new Error('dunksandthrees fetch failed: 503'); }, 2027)).rejects.toThrow(/503/);
+  });
+});
+
+// WHO HAS PLAYED (2026-10-26): Basketball-Reference's per-game page counts the
+// games, since dunksandthrees' actual page sat on 2025-26 a week into 2026-27.
+describe('the games each player has played', () => {
+  it('counts a traded player by the row with the most games', () => {
+    const counts = gamesByPlayer([
+      { playerId: 'harpedy01', games: 3 },
+      { playerId: 'tradedx01', games: 2 },
+      { playerId: 'tradedx01', games: 5 },
+      { playerId: 'tradedx01', games: 3 },
+      { playerId: null, games: 9 },
+    ]);
+    expect(counts.get('harpedy01')).toBe(3);
+    expect(counts.get('tradedx01')).toBe(5);
+    expect(counts.size).toBe(2);
+    expect(gamesByPlayer(null).size).toBe(0);
+  });
+
+  it('takes the larger count of the two sources, so either one moving fetches the log', () => {
+    const counts = new Map([['harpedy01', 3]]);
+    const none = new Map();
+    expect(gamesPlayed('harpedy01', 'Dylan Harper', counts, none)).toBe(3);
+    const actual = indexByName([{ name: 'Dylan Harper', games: 4 }]);
+    expect(gamesPlayed('harpedy01', 'Dylan Harper', counts, actual)).toBe(4);
+    expect(gamesPlayed('harpedy01', 'Dylan Harper', new Map([['harpedy01', 6]]), actual)).toBe(6);
+    expect(gamesPlayed('nobody01', 'Nobody', counts, none)).toBe(0);
   });
 });

@@ -60,10 +60,11 @@
 // WHAT THE RUNNER NEEDS, and nothing else: the committed generated files
 // (calibration, biometrics, positional shares, the EPM archive, the pool's
 // game-log index for Basketball-Reference ids), two page reads from
-// dunksandthrees, one keyed API call for the opponent table, and this season's
-// game-log pages — fetched only for players whose game count on
-// dunksandthrees has moved past the cached log, at the polite spacing, capped
-// per night and cached between nights (actions/cache). No 325 MB cache, no
+// dunksandthrees, one keyed API call for the opponent table, Basketball-
+// Reference's per-game page (who has played how many games) and this season's
+// game-log pages — fetched only for players whose game count has moved past
+// the cached log, at the polite spacing, capped per night and cached between
+// nights (actions/cache). No 325 MB cache, no
 // last-season basis: the user answered the two design questions on
 // 2026-09-23 ("yes, and the latter"), and the latter made the basis
 // unnecessary.
@@ -85,7 +86,7 @@ import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { OUTPUT_FILE as LIVE_FILL_FILE } from './calibrateLiveFill.js';
-import { CURRENT_STATS_SEASON } from './fetchCalibrationData.js';
+import { CURRENT_STATS_SEASON, fetchSeasonTableCached } from './fetchCalibrationData.js';
 import { normalizeName } from './resolveTeams.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
@@ -196,6 +197,28 @@ export const readBase = () => JSON.parse(fs.readFileSync(BASE_FILE, 'utf8'));
 const countGames = log => (log ? (log.reg?.length ?? 0) + (log.post?.length ?? 0) : 0);
 
 /**
+ * WHO HAS PLAYED HOW MANY GAMES (2026-10-26). The logs used to be fetched
+ * when dunksandthrees' ACTUAL page counted new games, and a week into the
+ * season that page still served 2025-26 only, so no card had a real game in
+ * it (live-status: withRealGames 0). Basketball-Reference's per-game page
+ * counts every player's games on one page, by the same ids the logs are kept
+ * under; a traded player's rows give the most games (the 2TM total). The user:
+ * "Yes please" to counting from it.
+ */
+export function gamesByPlayer(rows) {
+  const out = new Map();
+  for (const r of rows ?? []) {
+    const n = Number(r?.games) || 0;
+    if (r?.playerId && n > (out.get(r.playerId) ?? 0)) out.set(r.playerId, n);
+  }
+  return out;
+}
+
+/** A player's games so far: the larger of Basketball-Reference's count and dunksandthrees'. */
+export const gamesPlayed = (playerId, name, counts, actualIndex) =>
+  Math.max(counts?.get(playerId) ?? 0, lookup(actualIndex, name)?.games ?? 0);
+
+/**
  * Tonight's inputs: the two dunksandthrees pages, the opponent table and
  * this season's game logs for the pool. `offline` reads the cache alone (a
  * dry run on a finished season); otherwise every page is re-read and the logs
@@ -230,6 +253,7 @@ export async function fetchLiveInputs({
   spacingMs = DEFAULT_REQUEST_SPACING_MS,
   base = readBase(),
   fetchLog = fetchGameLogFull,
+  fetchCounts = s => fetchSeasonTableCached(s, 'perGame', { force: true }),
   log = console.log,
 } = {}) {
   const force = !offline;
@@ -279,6 +303,19 @@ export async function fetchLiveInputs({
   const defense = seasonTeamDefense(season);
   log(`  opponent table: ${defense.size} teams (${teamEpm})`);
 
+  // The games each player has played, from Basketball-Reference's per-game
+  // page; without it, dunksandthrees' count alone (the run goes on).
+  let counts = new Map();
+  let countsFrom = 'basketball-reference';
+  try {
+    counts = gamesByPlayer(offline ? readCache(`bbref-${season}-perGame`) : await fetchCounts(season));
+    log(`  games played: ${counts.size} players on Basketball-Reference's ${season} per-game page`);
+    if (!offline) await politeDelay(spacingMs);
+  } catch (e) {
+    countsFrom = `dunksandthrees only (${String(e.message).split('\n')[0]})`;
+    log(`  no Basketball-Reference games-played page: ${e.message}`);
+  }
+
   // This season's game logs, for whoever has played since the cached page.
   const index = fs.existsSync(INDEX_FILE) ? JSON.parse(fs.readFileSync(INDEX_FILE, 'utf8')).players ?? {} : {};
   const actualIndex = indexByName(actual);
@@ -294,7 +331,7 @@ export async function fetchLiveInputs({
       unmatched.push(card.name);
       continue;
     }
-    const known = lookup(actualIndex, card.name)?.games ?? 0;
+    const known = gamesPlayed(playerId, card.name, counts, actualIndex);
     const key = `gamelog-full-${playerId}-${season}`;
     let have = countGames(readCache(key));
     if (!offline && known > have && fetched < maxFetches) {
@@ -314,9 +351,9 @@ export async function fetchLiveInputs({
     else behind += 1;
     logs.set(card.id, { playerId, known, have });
   }
-  const logStatus = { current, behind, fetched, failed, unmatched };
+  const logStatus = { countsFrom, current, behind, fetched, failed, unmatched };
   log(
-    `Game logs: ${current} current, ${behind} behind dunksandthrees' count, ${fetched} fetched tonight, ` +
+    `Game logs: ${current} current, ${behind} behind the games played, ${fetched} fetched tonight, ` +
       `${failed.length} failed, ${unmatched.length} unmatched`
   );
   return { season, expected, actual, defense, teamEpm, logs, logStatus };
@@ -401,7 +438,7 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
   }
 
   const byId = new Map(built.cards.map(c => [c.id, c]));
-  const source = `dunksandthrees.com /epm ${season} (expected) + /epm/actual; Basketball-Reference ${season} game logs`;
+  const source = `dunksandthrees.com /epm ${season} (expected) + /epm/actual; Basketball-Reference ${season} games played and game logs`;
   const cards = base.cards.map(card => {
     const b = byId.get(card.id);
     if (!b) throw new Error(`generateLive: ${card.id} fell out of the build`);

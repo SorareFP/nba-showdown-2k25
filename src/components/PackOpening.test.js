@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest';
 import { RARITY_ORDER, RARITY_CONFIG } from '../game/rarity.js';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import PackOpening, { TIER, burstFor, revealRank } from './PackOpening.jsx';
+import PackOpening, { TIER, burstFor, revealRank, markNew, ownedKeysOf } from './PackOpening.jsx';
 import { CHIMES } from '../game/packAudio.js';
 
 describe('every rarity the game defines is handled', () => {
@@ -105,5 +105,22 @@ describe('the set pill beside the rarity', () => {
     expect(setPillFor({ set: '2026-27' })).toBeNull();
     expect(setPillFor({ id: 'turnover' })).toBeNull();
     expect(setPillFor(undefined)).toBeNull();
+  });
+});
+
+// NEW (the user, 2026-10-27: "a 'NEW' badge when opening packs if you don't
+// have the player already").
+describe('the NEW mark', () => {
+  const p = id => ({ id, type: 'player' });
+  it('marks a player card the collection held no copy of, on its first pull only', () => {
+    const owned = ownedKeysOf({ LeBron_James: { count: 2 }, Sold_Off: { count: 0 }, close_out: { count: 1, type: 'strat' } });
+    expect(owned.has('LeBron_James')).toBe(true);
+    expect(owned.has('Sold_Off')).toBe(false);
+    const marked = markNew([p('LeBron_James'), p('Sold_Off'), p('Jalen_Brunson'), { id: 'close_out', type: 'strat' }, p('Jalen_Brunson')], owned);
+    expect(marked.map(c => Boolean(c.isNew))).toEqual([false, true, true, false, false]);
+  });
+
+  it('marks nothing when it does not know what you held', () => {
+    expect(markNew([p('Jalen_Brunson')], null).some(c => c.isNew)).toBe(false);
   });
 });

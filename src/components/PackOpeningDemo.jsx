@@ -14,7 +14,7 @@
 // seen on demand rather than once every sixty packs. Nothing is written
 // anywhere: Done reloads the page.
 import { useEffect, useMemo, useRef, useState } from 'react';
-import PackOpening from './PackOpening.jsx';
+import PackOpening, { ownedKeysOf } from './PackOpening.jsx';
 import ClaimReveal from './ClaimReveal.jsx';
 import MyCollection from './MyCollection.jsx';
 import CollectionGoals from './CollectionGoals.jsx';
@@ -261,6 +261,8 @@ function ClimbDemo() {
 
 export default function PackOpeningDemo() {
   const cards = useMemo(demoPulls, []);
+  // The demo "owns" the pack's first player, so it shows a pull with no NEW mark beside the rest.
+  const owned = useMemo(() => ownedKeysOf(Object.fromEntries(cards.filter(c => c.type === 'player').slice(0, 1).map(c => [c.id, { count: 1 }]))), [cards]);
   if (demoKind() === 'claim') return <ClaimDemo />;
   if (demoKind() === 'collection') return <CollectionDemo />;
   // The real Play tab with no account: Quick Match deals a game, and it saves
@@ -277,6 +279,7 @@ export default function PackOpeningDemo() {
         cards={cards}
         coins={4321}
         packName="Booster Pack"
+        owned={owned}
         onDone={() => window.location.reload()}
       />
     </div>

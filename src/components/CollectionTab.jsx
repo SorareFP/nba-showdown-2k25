@@ -17,7 +17,7 @@ import DeckEditor from './DeckEditor.jsx';
 import TeamEditor from './TeamEditor.jsx';
 import { CLIMB_FIVE } from '../game/modes/run.js';
 import PackShop from './PackShop.jsx';
-import PackOpening from './PackOpening.jsx';
+import PackOpening, { ownedKeysOf } from './PackOpening.jsx';
 import { getStrat } from '../game/strats.js';
 import { myListings } from '../firebase/market.js';
 import { canonicalKey } from '../game/cardSets.js';
@@ -199,7 +199,8 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
       // A BOX BOUGHT IS A BOX OF SLOTS. Nothing is decided yet, so the reveal
       // opens on the first pack and asks for each one after it.
       if (box) { await startBox(box); return; }
-      setOpeningPack({ cards, packType, options });
+      // What you held before the pack, for its NEW marks (PackOpening markNew).
+      setOpeningPack({ cards, packType, options, owned: ownedKeysOf(collection) });
     } catch (e) {
       setToast(e.message);
     }
@@ -236,7 +237,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     const first = await openBoxPack(user.uid, box.id, supply);
     noteBurned(first.burned);
     // A box of one (a Climb boss's pack) opens as that pack (boxShelf.js).
-    setOpeningPack(boxReveal(box, first));
+    setOpeningPack({ ...boxReveal(box, first), owned: ownedKeysOf(collection) });
   };
 
   /** The reveal has reached the end of a pack and wants the next one. */
@@ -270,7 +271,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     try {
       const { cards, spent } = await openPack(user.uid, 'starter', {});
       setUserData(u => (u ? { ...u, currency: (u.currency ?? 0) - (spent ?? 0) } : u));
-      setOpeningPack({ cards, packType: 'starter', options: {} });
+      setOpeningPack({ cards, packType: 'starter', options: {}, owned: ownedKeysOf(collection) });
     } catch (e) {
       setToast(e.message);
     }
@@ -487,6 +488,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         onRequestPack={handleRequestPack}
         packName={PACK_TYPES[openingPack.packType]?.name ?? null}
         friendNote={key => friendNoteFor(friendWants, key)}
+        owned={openingPack.owned ?? null}
       />
     );
   }

@@ -39,7 +39,7 @@ import { CARD_MAP } from '../game/cards.js';
 import { STRAT_MAP } from '../game/strats.js';
 import { getPlayerRarity, getStratRarity, RARITY_CONFIG, RARITY_ORDER } from '../game/rarity.js';
 import { getSet } from '../cards/sets.js';
-import { BASE_SET } from '../game/cardSets.js';
+import { BASE_SET, baseKey, canonicalKey } from '../game/cardSets.js';
 import { getPlayerImageUrl, getStratImagePath } from '../game/cardImages.js';
 import { playFlip, playReveal, playComplete, playRip, playFanfare, isMuted, toggleMute } from '../game/packAudio.js';
 import { PACK_TYPES } from '../game/packEngine.js';
@@ -92,13 +92,36 @@ export function setPillFor(card) {
   return { id: set, label: getSet(set)?.name ?? set };
 }
 
+/**
+ * NEW (the user, 2026-10-27: "a 'NEW' badge when opening packs if you don't
+ * have the player already"). `owned` is the collection's keys from before the
+ * pack (ownedKeysOf); a player card it holds no copy of is new on its first
+ * pull, in reveal order, and a second copy later in the pack or the box is
+ * not. Without `owned` nothing is marked.
+ */
+export const ownedKeysOf = collection => new Set(Object.entries(collection ?? {})
+  .filter(([, v]) => (v?.count ?? 0) > 0)
+  .map(([k]) => canonicalKey(baseKey(k))));
+
+export function markNew(list, owned) {
+  if (!owned) return list;
+  const seen = new Set();
+  return list.map(c => {
+    if (c.type !== 'player') return c;
+    const key = canonicalKey(baseKey(c.id));
+    const isNew = !owned.has(key) && !seen.has(key);
+    seen.add(key);
+    return isNew ? { ...c, isNew: true } : c;
+  });
+}
+
 /** A FRIEND NEEDS THIS ONE (2026-10-11): the nameplate's line for a pulled card a friend needs. */
 export function FriendChip({ cardId, note }) {
   if (!note) return null;
   return <div className={styles.plateFriend} data-friend-note={cardId}>● {note}</div>;
 }
 
-export default function PackOpening({ cards, coins = null, onDone, onSaveRest = null, box = null, onRequestPack = null, packName = null, friendNote = null }) {
+export default function PackOpening({ cards, coins = null, onDone, onSaveRest = null, box = null, onRequestPack = null, packName = null, friendNote = null, owned = null }) {
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [dismissed, setDismissed] = useState([]);
@@ -146,7 +169,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
     // Strats first, then players by ascending rarity — the pack builds. In a
     // box that order holds WITHIN each pack, and the packs come in box order:
     // thirty-six boosters, then the bonus.
-    return list.sort((a, b) => {
+    return markNew(list.sort((a, b) => {
       const pa = a.packIndex ?? 0;
       const pb = b.packIndex ?? 0;
       if (pa !== pb) return pa - pb;
@@ -157,8 +180,8 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
       if (promoA !== promoB) return promoA ? -1 : 1;
       if (a.type !== b.type) return a.type === 'strat' ? -1 : 1;
       return revealRank(a.rarity) - revealRank(b.rarity);
-    });
-  }, [cards]);
+    }), owned);
+  }, [cards, owned]);
 
   // THE PACKS. A single pack is one group; a box is thirty-seven. The reveal
   // only ever looks at the current group, so everything below that used to
@@ -498,6 +521,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
                 {flipped && setPillFor(currentCard.card) && (
                   <div className={`${styles.plateRarity} ${styles.plateSet}`}>{setPillFor(currentCard.card).label}</div>
                 )}
+                {flipped && currentCard.isNew && <div className={`${styles.plateRarity} ${styles.plateNew}`} data-new={currentCard.id}>New</div>}
               </div>
               <div className={styles.plateName}>{flipped ? currentCard.name : 'Tap the card'}</div>
               <div className={styles.plateSub}>{flipped ? currentCard.sub : `${remaining.length + 1} left in the pack`}</div>
@@ -568,7 +592,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
                   />
                   <div className={styles.railText}>
                     <div className={styles.railName}>{c.name}</div>
-                    <div className={styles.railTag} style={{ color: cfg.color }}>{cfg.label}</div>
+                    <div className={styles.railTag} style={{ color: cfg.color }}>{cfg.label}{c.isNew && <span className={styles.railNew}> · New</span>}</div>
                   </div>
                 </div>
               );

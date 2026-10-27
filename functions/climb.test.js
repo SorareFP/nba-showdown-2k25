@@ -347,17 +347,33 @@ describe('three acts', () => {
     const cleared = ['1-0', 'boss', 'a2:1-0', 'a2:boss', 'a3:1-0', 'a3:boss'];
     docs.set(`users/${UID}/runLedger/${runId}`, { ...ledger(runId), act: 3, cleared, status: 'won' });
     const pot = potOfRun({ ...ledger(runId) });
-    expect(pot.packs).toEqual(['booster', 'rare_deluxe', 'mega_deluxe']);
+    // A Prince run since map version 3: the Mega Deluxe is King's and Deity's (bossPacksOf).
+    expect(pot.packs).toEqual(['booster', 'rare_deluxe', 'super_deluxe']);
     // Act II's floor-1 Game pays half again Act I's, Act III's double.
     const one = potOfRun({ ...ledger(runId), cleared: ['1-0'] }).coins;
     expect(potOfRun({ ...ledger(runId), cleared: ['a2:1-0'] }).coins).toBe(Math.round(one * 1.5));
     expect(potOfRun({ ...ledger(runId), cleared: ['a3:1-0'] }).coins).toBe(one * 2);
     const before = coins();
     const res = await call(climbBank, { runId });
-    expect(res).toMatchObject({ coins: pot.coins, booster: true, packs: ['booster', 'rare_deluxe', 'mega_deluxe'] });
+    expect(res).toMatchObject({ coins: pot.coins, booster: true, packs: ['booster', 'rare_deluxe', 'super_deluxe'] });
     expect(coins()).toBe(before + pot.coins);
     const boxes = [...docs.entries()].filter(([k]) => k.startsWith(`users/${UID}/boxes/`)).map(([, v]) => v.packType).sort();
-    expect(boxes).toEqual(['booster', 'mega_deluxe', 'rare_deluxe']);
+    expect(boxes).toEqual(['booster', 'rare_deluxe', 'super_deluxe']);
+  });
+
+  // THE PACKS CLIMB WITH THE RUNG (2026-10-27; the user: "boy there's a lot
+  // of loot!"): the server banks the ledger's rung's packs, and a run drawn
+  // before map version 3 keeps the old three.
+  it('banks the packs of the ledger\'s rung, and the old three for a run drawn before them', async () => {
+    const cleared = ['1-0', 'boss', 'a2:1-0', 'a2:boss', 'a3:1-0', 'a3:boss'];
+    const bank = async (rung, mapVersion) => {
+      const { runId } = await started(rung);
+      docs.set(`users/${UID}/runLedger/${runId}`, { ...ledger(runId), mapVersion, act: 3, cleared, status: 'won' });
+      return (await call(climbBank, { runId })).packs;
+    };
+    expect(await bank('settler', 3)).toEqual(['booster']);
+    expect(await bank('deity', 3)).toEqual(['rare_deluxe', 'super_deluxe', 'mega_deluxe']);
+    expect(await bank('settler', 2)).toEqual(['booster', 'rare_deluxe', 'mega_deluxe']);
   });
 });
 

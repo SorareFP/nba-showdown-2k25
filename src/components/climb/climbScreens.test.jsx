@@ -230,7 +230,23 @@ describe('the end of a run', () => {
     const last = html(<RunOver run={{ ...w, act: 3, cleared: [...w.cleared, 'a2:boss', 'a3:boss'] }} onBank={noop} onNew={noop} onContinue={noop} />);
     expect(last).toContain('You climbed all three acts!');
     expect(last).not.toContain('Keep climbing');
-    expect(last).toContain('a Mega Deluxe');
+    // Prince's Act III boss pays a Super Deluxe since 2026-10-27 (bossPacksOf).
+    expect(last).toContain('a Super Deluxe');
+  });
+
+  it('says on the start screen what each rung\'s bosses pay', () => {
+    const out = html(<ClimbStart owned={[]} onStart={noop} />);
+    const line = rung => { const at = out.indexOf(`data-boss-packs="${rung}"`); return out.slice(out.indexOf('>', at) + 1, out.indexOf('</button>', at)).replace(/<[^>]+>/g, ''); };
+    expect(line('settler')).toBe('Bosses: — · — · Booster');
+    expect(line('prince')).toBe('Bosses: Booster · Rare Deluxe · Super Deluxe');
+    expect(line('deity')).toBe('Bosses: Rare Deluxe · Super Deluxe · Mega Deluxe');
+  });
+
+  it('leaves out a next boss that pays no pack', () => {
+    const w = { ...camped(), rung: 'settler', status: 'won', cleared: ['1-0', 'boss'] };
+    const out = html(<RunOver run={w} onBank={noop} onNew={noop} onContinue={noop} />);
+    expect(out).not.toContain('Its boss adds');
+    expect(out).toContain('Your players start it rested');
   });
 });
 

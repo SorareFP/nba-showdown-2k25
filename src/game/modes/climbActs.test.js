@@ -62,6 +62,14 @@ describe('the pot is one pot', () => {
     expect(potOfRun({ ...base, cleared: ['a3:1-0'] }).coins).toBe(Math.round(one * ACT_POT[3]));
     expect(potOfRun({ ...base, cleared: ['1-0', 'boss', 'a2:boss', 'a3:boss'] }).packs).toEqual([...BOSS_PACKS[1], ...BOSS_PACKS[2], ...BOSS_PACKS[3]]);
     expect(BOSS_PACKS[3]).toEqual(['mega_deluxe']);
+    // Since map version 3 the packs climb with the rung (2026-10-27).
+    const v3 = { ...base, mapVersion: 3, cleared: ['boss', 'a2:boss', 'a3:boss'] };
+    expect(potOfRun({ ...v3, rung: 'settler' }).packs).toEqual(['booster']);
+    expect(potOfRun({ ...v3, rung: 'prince' }).packs).toEqual(['booster', 'rare_deluxe', 'super_deluxe']);
+    expect(potOfRun({ ...v3, rung: 'king' }).packs).toEqual(['booster', 'rare_deluxe', 'mega_deluxe']);
+    expect(potOfRun({ ...v3, rung: 'deity' }).packs).toEqual(['rare_deluxe', 'super_deluxe', 'mega_deluxe']);
+    expect(potOfRun({ ...v3, rung: 'settler' }).booster).toBe(true);
+    expect(potOfRun({ ...v3, rung: 'settler', cleared: ['boss'] }).packs).toEqual([]);
     expect(packWords(['booster', 'rare_deluxe', 'mega_deluxe'])).toBe('a Booster, a Rare Deluxe and a Mega Deluxe');
     const r = wonAct(2);
     expect(potPreview(r)).toEqual(potOfRun(r));
@@ -70,6 +78,12 @@ describe('the pot is one pot', () => {
   it('says a later boss\'s packs on the results screen', () => {
     const map = generateMap(42, 1, 2);
     expect(runClaimPreview(map.boss, 'prince', true, 4).breakdown.at(-1).label).toMatch(/and a Rare Deluxe$/);
+    // The results screen hands over the game's climb line ({ act, kind }), not a
+    // map stop: its act is read off it, and since map version 3 the rung's packs.
+    const line = (act, rung) => runClaimPreview({ kind: 'boss', act }, rung, true, 4, { mapVersion: 3 }).breakdown.at(-1).label;
+    expect(line(3, 'deity')).toMatch(/and a Mega Deluxe$/);
+    expect(line(3, 'prince')).toMatch(/and a Super Deluxe$/);
+    expect(line(1, 'settler')).not.toMatch(/ and /);
   });
 });
 

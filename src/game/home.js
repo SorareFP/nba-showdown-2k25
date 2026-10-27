@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-boss-packs', date: '2026-10-27', title: "The Climb: the bosses' packs climb with the coach",
+    body: "Beating the Climb at a harder coach now pays harder-earned packs. Prince's bosses pay a Booster, a Rare Deluxe and a Super Deluxe; the Mega Deluxe is for King (a Booster, a Rare Deluxe and a Mega Deluxe) and Deity (a Rare Deluxe, a Super Deluxe and a Mega Deluxe), and the easier coaches pay less. The start screen shows every coach's packs under its pay. A climb already under way keeps the packs it started with.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'pack-new-badge', date: '2026-10-27', title: 'Packs mark what is NEW',
     body: "Opening a pack now marks every player card you did not already own with a green NEW, beside its rarity and in the list of pulls. A second copy of it later in the same pack or box is not marked again.",
     to: 'shop', cta: 'The pack shop',

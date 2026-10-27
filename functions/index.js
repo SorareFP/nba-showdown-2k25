@@ -1130,7 +1130,7 @@ async function climbClaim(uid, runId, claim, claimKey) {
       : replay ? { open: null, secondChanceUsed: true, replay: run.open }
         : { status, lostAt: run.open, open: null });
     const potAdd = claim.won ? potOfRun({ ...run, cleared }).coins - potOfRun(run).coins : null;
-    const { coins, breakdown } = runClaimPreview(stop, run.rung, claim.won, claim.margin, { potAdd, replay });
+    const { coins, breakdown } = runClaimPreview(stop, run.rung, claim.won, claim.margin, { potAdd, replay, mapVersion: run.mapVersion ?? 1 });
     tx.update(userRef, { gameWindow: { at: now, n: recent + 1 }, ...(coins > 0 ? { currency: FieldValue.increment(coins) } : {}) });
     if (receiptRef) {
       tx.set(receiptRef, {
@@ -1239,8 +1239,8 @@ export const climbBank = onCall({ region: 'us-central1' }, async request => {
     if (run.status !== 'active' && run.status !== 'won') throw new HttpsError('failed-precondition', 'Nothing to bank');
     const pot = potOfRun(run);
     if (pot.coins > 0) tx.update(userRef, { currency: FieldValue.increment(pot.coins) });
-    // Each beaten boss's pack (a Booster, a Rare Deluxe, a Mega Deluxe): a box
-    // of one, opened like any box (openBoxPack).
+    // Each beaten boss's pack (by act and, since map version 3, by rung:
+    // climbMap.js bossPacksOf): a box of one, opened like any box (openBoxPack).
     for (const packType of pot.packs ?? []) {
       tx.set(db.collection(`users/${uid}/boxes`).doc(), {
         packType, bonus: null, left: 1, bonusLeft: 0, boughtAs: 'climb', options: {},

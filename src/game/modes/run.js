@@ -560,7 +560,7 @@ export function presetFor(run) {
       ...(perks.length ? { perks: { A: perks } } : {}),
       ...(engineFx(g.style?.fx) ? { style: { B: engineFx(g.style.fx) } } : {}),
     },
-    climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung, act: actOfRun(run), potAdd, secondChance: canReplay(run) },
+    climb: { runId: run.id, stopId: g.stopId, kind: g.kind, floor: g.floor, rung: run.rung, act: actOfRun(run), mapVersion: run.mapVersion ?? 1, potAdd, secondChance: canReplay(run) },
     climbView: runView(run),
   };
 }

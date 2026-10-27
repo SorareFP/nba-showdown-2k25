@@ -2,7 +2,7 @@
 // container (ClimbTab.jsx) owns the run, the store and the server calls; each
 // screen here is the run plus the buttons for its next steps.
 // docs/plans/2026-10-18-the-climb-design.md, docs/plans/2026-10-18-the-climb.md Task 9.
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { ZoomImg } from '../CardLightbox.jsx';
 import { getPlayerThumbUrl, getPlayerImageUrl, getStratThumbPath, getStratImagePath, fallbackTo } from '../../game/cardImages.js';
 import { AI_LEVELS, payNote } from '../../game/aiLevels.js';
@@ -14,7 +14,7 @@ import PoolFilters from '../PoolFilters.jsx';
 import { CLIMB, CLIMB_FIVE, openStops, isTravel, stopOpponent, fullStrengthOffered, eventView, twoWayCard, gameSetup, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions, shownKind } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
-import { FLOORS, stopById, nextStops, ACTS, ACT_NAMES, ACT_POT, BOSS_PACKS, packWords } from '../../game/modes/climbMap.js';
+import { FLOORS, stopById, nextStops, ACTS, ACT_NAMES, ACT_POT, MAP_VERSION, bossPacksOf, packName, packWords } from '../../game/modes/climbMap.js';
 import { PLAYBOOKS, kitDeck, CORE, KITS } from '../../game/modes/climbKits.js';
 import { PERKS, boostsOf, boostedCard, perkProblem, practicable, hasPerk } from '../../game/modes/climbPerks.js';
 import { cardFit } from '../../game/cardFit.js';
@@ -323,6 +323,9 @@ export function ClimbHud({ run }) {
 
 // ── Start ────────────────────────────────────────────────────────────────────
 
+/** A rung's boss packs, Act I to Act III, as the start screen says them: ['Booster', 'Rare Deluxe', 'Super Deluxe'], '—' for none. */
+export const bossPackNote = rung => [1, 2, 3].map(act => bossPacksOf(act, rung, MAP_VERSION).map(packName).join(' + ') || '—');
+
 /** Pick a rung and five of your players under the starting cap. */
 // `saved`: your saved teams; the Climb fives among them (made in My Teams,
 // or with "Save these five" here) fill the five in one tap (the user,
@@ -384,6 +387,8 @@ export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null,
         {AI_LEVELS.map(l => (
           <button key={l.id} type="button" className={`${styles.rung} ${rung === l.id ? styles.on : ''}`} aria-pressed={rung === l.id} onClick={() => setRung(l.id)}>
             <strong>{l.label}</strong><span>{payNote(l.id)}</span>
+            {/* The bosses' packs climb with the rung (climbMap.js RUNG_BOSS_PACKS, 2026-10-27). */}
+            <span data-boss-packs={l.id}>Bosses: {bossPackNote(l.id).map((p, i) => <Fragment key={i}>{i ? ' · ' : ''}<span className={styles.nowrap}>{p}</span></Fragment>)}</span>
           </button>
         ))}
       </div>
@@ -890,6 +895,7 @@ export function RunOver({ run, onBank, onNew, onContinue = null, onAbandon = nul
   const won = run.status === 'won';
   const more = won && !banked && act < ACTS && Boolean(onContinue);
   const packs = banked ? (banked.packs ?? (banked.booster ? ['booster'] : [])) : pot.packs ?? [];
+  const nextPacks = more ? bossPacksOf(act + 1, run.rung, run.mapVersion ?? 1) : [];
   const potWords = `${pot.coins.toLocaleString('en-US')} coins${packs.length ? ` and ${packWords(packs)}` : ''}`;
   return (
     <div className={`${styles.screen} ${styles.offerScreen} ${styles.endScreen}`}>
@@ -905,7 +911,7 @@ export function RunOver({ run, onBank, onNew, onContinue = null, onAbandon = nul
           <p className={styles.lede}>The pot so far: {potWords}.</p>
           <p className={`${styles.muted} ${styles.nextAct}`} data-next-act="true">
             {ACT_NAMES[act + 1]} is harder: bigger teams with deeper decks, and its wins add {ACT_POT[act + 1]}× as much to the pot.
-            Its boss adds {packWords(BOSS_PACKS[act + 1])}. Your players start it rested, and the boss pays a card, a player and a perk on the way.
+            {nextPacks.length ? `Its boss adds ${packWords(nextPacks)}. ` : ''}Your players start it rested, and the boss pays a card, a player and a perk on the way.
             One loss from here loses the whole pot.
           </p>
           {onAbandon && <p className={styles.muted}>The bank did not go through. Try again; if it keeps failing, giving up the run starts you fresh, but its pot is lost.</p>}

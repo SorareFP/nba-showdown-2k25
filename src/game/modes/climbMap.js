@@ -55,9 +55,34 @@ export const POT = { gameBase: 30, gamePerFloor: 5, rivalry: 70, boss: 120 };
 export const ACTS = 3;
 /** Each act's stops add this much more to the pot (the rung's pay on top). */
 export const ACT_POT = { 1: 1, 2: 1.5, 3: 2 };
-/** The packs a boss adds to the pot, by act. */
+/** The packs a boss adds to the pot, by act, for a run drawn before 2026-10-27 (map versions 1 and 2). */
 export const BOSS_PACKS = { 1: ['booster'], 2: ['rare_deluxe'], 3: ['mega_deluxe'] };
-const PACK_WORDS = { booster: 'a Booster', rare_deluxe: 'a Rare Deluxe', super_deluxe: 'a Super Deluxe', mega_deluxe: 'a Mega Deluxe' };
+/**
+ * THE PACKS CLIMB WITH THE RUNG (map version 3, 2026-10-27). The user: "I'm
+ * running through Prince pretty easy ... I want to reward players for that
+ * mode because it's a great way to know if you're actually good at the game,
+ * but boy there's a lot of loot!" Coins already scaled with the rung; the
+ * packs did not, and a full Prince climb paid about $5,850 for fifteen
+ * quarters, two-thirds of it the Mega Deluxe Settler got too. The Mega Deluxe
+ * is King's and Deity's now. A run keeps the table it started under: the
+ * packs ride on the map version, as the server reads it.
+ */
+export const RUNG_BOSS_PACKS = {
+  settler:   { 1: [], 2: [], 3: ['booster'] },
+  chieftain: { 1: [], 2: ['booster'], 3: ['deluxe'] },
+  warlord:   { 1: ['booster'], 2: ['deluxe'], 3: ['rare_deluxe'] },
+  prince:    { 1: ['booster'], 2: ['rare_deluxe'], 3: ['super_deluxe'] },
+  king:      { 1: ['booster'], 2: ['rare_deluxe'], 3: ['mega_deluxe'] },
+  deity:     { 1: ['rare_deluxe'], 2: ['super_deluxe'], 3: ['mega_deluxe'] },
+};
+/** What an act's boss adds to the pot, for a run at a rung drawn at a map version (an unknown rung is Prince, as the server reads it). */
+export function bossPacksOf(act, rung, mapVersion = 1) {
+  if (mapVersion < 3) return BOSS_PACKS[act] ?? [];
+  return (RUNG_BOSS_PACKS[rung] ?? RUNG_BOSS_PACKS.prince)[act] ?? [];
+}
+const PACK_WORDS = { booster: 'a Booster', deluxe: 'a Deluxe Booster', rare_deluxe: 'a Rare Deluxe', super_deluxe: 'a Super Deluxe', mega_deluxe: 'a Mega Deluxe' };
+/** A pack's name as the screens say it, without the article: "Rare Deluxe". */
+export const packName = p => (PACK_WORDS[p] ?? p).replace(/^an? /, '');
 /** "a Booster and a Rare Deluxe" — the pot's packs as the screens say them. */
 export function packWords(packs) {
   const w = (packs ?? []).map(p => PACK_WORDS[p] ?? p);
@@ -401,7 +426,7 @@ export function potOfRun({ seed, mapVersion = 1, cleared = [], rung, perks = [] 
     if (stop?.kind === 'game' && maxAt != null && i >= maxAt) add = 0;
     if (sponsorAt != null && i >= sponsorAt) add *= 1 + SPONSOR_SHARE;
     sum += add;
-    if (stop?.kind === 'boss') packs.push(...(BOSS_PACKS[act] ?? []));
+    if (stop?.kind === 'boss') packs.push(...bossPacksOf(act, rung, mapVersion));
   });
   return { coins: Math.round(sum * payFactorOf(rung)), booster: packs.includes('booster'), packs };
 }
@@ -411,12 +436,15 @@ export function potOfRun({ seed, mapVersion = 1, cleared = [], rung, perks = [] 
 // `margin` is the game's (the claim's, sanitized there). The pot line follows.
 // `potAdd`: what the win adds with the run's perks on (potOfRun after less
 // before); `replay`: a loss Second Chance replays (2026-10-22).
-export function runClaimPreview(stop, rung, won, margin = null, { potAdd = null, replay = false } = {}) {
+// `mapVersion`: the run's, which picks its boss packs (bossPacksOf).
+export function runClaimPreview(stop, rung, won, margin = null, { potAdd = null, replay = false, mapVersion = 1 } = {}) {
   const pay = climbGamePay({ won, margin, aiLevel: rung });
   if (!won && replay) return { coins: pay.coins, breakdown: [...pay.breakdown, { label: 'Second Chance: this game is replayed, and the pot stays', coins: 0 }] };
   if (!won) return { coins: pay.coins, breakdown: [...pay.breakdown, { label: 'The run is over and the pot is lost', coins: 0 }] };
-  const act = actOf(stop?.id);
+  // The results screen passes the game's climb line ({ act, kind }), the server a map stop.
+  const act = stop?.act ?? actOf(stop?.id);
   const n = Number.isFinite(potAdd) ? potAdd : Math.round(stopPot(stop) * (ACT_POT[act] ?? 1) * payFactorOf(rung));
-  const label = stop?.kind === 'boss' ? `Into the pot: +${n} and ${packWords(BOSS_PACKS[act])}` : `Into the pot: +${n}`;
+  const packs = stop?.kind === 'boss' ? bossPacksOf(act, rung, mapVersion) : [];
+  const label = packs.length ? `Into the pot: +${n} and ${packWords(packs)}` : `Into the pot: +${n}`;
   return { coins: pay.coins, breakdown: [...pay.breakdown, { label, coins: 0 }] };
 }

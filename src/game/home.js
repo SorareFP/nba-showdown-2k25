@@ -30,7 +30,7 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 export const NEWS = [
   {
     id: 'climb-events', date: '2026-10-25', title: 'The Climb: ❓ stops',
-    body: "Some stops on the map are a ❓ now: a scene with two choices, most of them a trade-off. Take a trade call for your lowest-paid player, sign a two-way player for three games or a veteran on the minimum at half their salary, gamble on an injury scare, play through a back-to-back for a sure perk, take a rare card that comes with a Bad Contract. Twelve scenes, each once a run. Like a Rest Day a ❓ is no game: it clears the floor and raises the cap. A climb already under way keeps its map; the next one you start has them.",
+    body: "Some stops on the map are a ❓ now: a scene with choices, and many of them cost you something whichever way you go. Take a trade call for your lowest-paid player, sign a two-way player for three games or a veteran on the minimum at half their salary, gamble on an injury scare or a hot streak, pay a holdout or lose them for two games, play through a flu bug, play a back-to-back for a sure perk or sit your star. Fifteen scenes, each once a run; a ❓ clears the floor and raises the cap as a Rest Day does. And one ❓ in four is a Makeup Game: a Game that plays and pays like any other, and a loss there ends the run. A climb already under way keeps its map; the next one you start has them.",
     to: 'climb', cta: 'The Climb',
   },
   {

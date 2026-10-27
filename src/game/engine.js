@@ -248,6 +248,9 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     // Stay Hot's markers, carried from the last game (2026-10-19).
     const hot = opts.hot?.[key];
     if (hot) for (const ps of team.stats) if (hot[ps.id] > 0) ps.hot = hot[ps.id];
+    // A Climb event's cold start (Hot Streak gone the wrong way, 2026-10-27).
+    const cold = opts.cold?.[key];
+    if (cold) for (const ps of team.stats) if (cold[ps.id] > 0) ps.cold = cold[ps.id];
   }
   return {
     // Card id -> extra Clutch Possession dice (MVP and CPOY each add one —

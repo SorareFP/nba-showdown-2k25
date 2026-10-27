@@ -76,6 +76,27 @@ describe('Training Camp', () => {
 });
 
 describe('the map', () => {
+  // A MAKEUP GAME (map version 3, 2026-10-27): a ❓ until it is played — no
+  // team, no style, no cap on the stop to give it away.
+  it('shows a Makeup Game as a ❓, and as the Game it was once played', () => {
+    let r = null;
+    let mk = null;
+    for (let seed = 1; seed < 400 && !mk; seed += 1) {
+      const run = newRun({ id: 'r1', seed, rung: 'prince', rosterKeys: FIVE.map(cardKey), now: 1 });
+      mk = run.map.floors.flat().find(s => s.makeup) ?? null;
+      if (mk) r = { ...chooseCamp(run, { playbook: 'speed', boon: run.camp.boons[0] }), dropOdds: { player: -1, perk: -1 } };
+    }
+    const stopHtml = run => { const out = html(<ClimbMap run={run} onGo={noop} onRetire={noop} onFreeRest={noop} />); const at = out.indexOf(`data-stop="${mk.id}"`); return out.slice(at, out.indexOf('</button>', at)); };
+    const hidden = stopHtml(r);
+    expect(hidden).toContain('❓');
+    expect(hidden).toContain('Event');
+    expect(hidden).not.toContain('data-style');
+    expect(hidden).not.toContain('$');
+    const played = stopHtml({ ...r, cleared: [mk.id] });
+    expect(played).toContain('Game');
+    expect(played).not.toContain('Event');
+  });
+
   it('opens the three floor-1 stops and nothing else, with the pot and the cap', () => {
     const out = html(<ClimbMap run={camped()} onGo={noop} onRetire={noop} onFreeRest={noop} />);
     expect(out.match(/data-open="true"/g)).toHaveLength(3);

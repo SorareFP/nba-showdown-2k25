@@ -30,6 +30,16 @@ export const KIND_WEIGHTS = { game: 0.6, rivalry: 0.15, rest: 0.25 };
 export const KIND_WEIGHTS_V2 = { game: 0.45, rivalry: 0.15, rest: 0.25, event: 0.15 };
 /** The stops a way to a game may pass through: the server hears of neither. */
 export const PASS_THROUGH = new Set(['rest', 'event']);
+/**
+ * VERSION 3 (2026-10-27): A MAKEUP GAME. The user, of the ? stops: "I just want
+ * variance in the experience". Slay the Spire's ? room is sometimes a fight;
+ * here a quarter of the ? stops are a Game behind the ? — kind 'game' with
+ * `makeup` set, so the server opens, prices and clears it as the Game it is,
+ * and the screens show a ❓ until it is played (run.js shownKind). Drawn from
+ * a stream of its own, after the act is drawn, so the rest of the map is
+ * version 2's.
+ */
+export const MAKEUP_CHANCE = 0.25;
 /** What each stop adds to the pot, before the rung's pay factor. */
 export const POT = { gameBase: 30, gamePerFloor: 5, rivalry: 70, boss: 120 };
 
@@ -87,7 +97,7 @@ const perkAt = (perks, id) => {
  * how maps are drawn would reshape every run in flight. A change bumps this
  * and keeps the old draw for the runs drawn with it.
  */
-export const MAP_VERSION = 2;
+export const MAP_VERSION = 3;
 /** Set on a map that came from the fixed fallback rather than the seed's draw. */
 export const FALLBACK_SEED_USE = 'fallback';
 const MAX_TRIES = 500;
@@ -263,13 +273,21 @@ function fallbackMap() {
  * at a generator version. Act I draws exactly as it always has.
  */
 export function generateMap(seed, version = MAP_VERSION, act = 1) {
-  if (version !== 1 && version !== 2) throw new Error(`No act map version ${version}`);
+  if (![1, 2, 3].includes(version)) throw new Error(`No act map version ${version}`);
   const rng = act > 1 ? climbRng(seed, 'map', 'act', act) : climbRng(seed, 'map');
   for (let i = 0; i < MAX_TRIES; i += 1) {
     const m = draw(rng, version);
-    if (m && repair(m, rng) && keepsTheRules(m)) return inAct(m, act);
+    if (m && repair(m, rng) && keepsTheRules(m)) return inAct(version >= 3 ? withMakeups(m, seed, act) : m, act);
   }
   return inAct(fallbackMap(), act);
+}
+
+/** Version 3: a quarter of the ? stops turned into Makeup Games (MAKEUP_CHANCE). */
+function withMakeups(map, seed, act) {
+  for (const s of map.floors.flat()) {
+    if (s.kind === 'event' && climbRng(seed, 'makeup', act, s.id)() < MAKEUP_CHANCE) { s.kind = 'game'; s.makeup = true; }
+  }
+  return map;
 }
 
 /** A drawn map as an act's: its ids prefixed past Act I, and the act stamped. */

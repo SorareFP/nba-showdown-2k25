@@ -73,3 +73,32 @@ reachability treating ? stops like Rest Days. Styles: engine hooks of the
 kind the perks already use (roll bonus by section, check terms, minutes,
 draws), the map and header labels, and the sim re-run so Act I stays as hard
 as it is now. How to Play, the Rulebook and a NEWS item the same day.
+
+## 4. The variance pass (2026-10-27)
+
+The user: "It feels like all the question mark rooms in the climb are
+positive", and then "I'm ok with there being a few instances of all good, I
+just want variance in the experience. I am good with 1-3" (rework the all-good
+scenes, add scenes that cost either way, let a ? be a game). Ten of the twelve
+had a choice that cost nothing; in a 300-run sim only 15% of ? stops forced a
+cost.
+
+| Event | Choices now |
+|---|---|
+| **Hot Streak** *(reworked)* | A coin flip: your two highest-paid start the next game with 2 hot markers each, or a cold marker each · Every player +1 Power and −1 Speed next game |
+| **Back-to-Back** *(reworked)* | Unchanged · Rest your star: the highest-paid sits the next game, every tracker cleared (needs six) |
+| **Holdout** *(new)* | One of your three highest-paid: $200 more on their salary for the run · They sit the next two games (needs six) |
+| **Flu Bug** *(new)* | A random player sits the next game (needs six) · Every player −1 Speed and −1 Power next game |
+| **Budget Cuts** *(new)* | $300 less cap room · A random rare or "+" card leaves the deck |
+| **Makeup Game** *(new, map version 3)* | A quarter of the ? stops are a Game behind the ?: one choice, Play it; it plays, pays and clears as a Game, and a loss ends the run |
+
+The mix of the fifteen drawn scenes: three all good (Film Room, Team Meeting,
+Front-Office Leak), three a gain or nothing (Trade Call, Two-Way, Veteran
+Minimum), two an optional risk (Summer-League Tape, Contract Year), and seven
+that cost something whichever way (Locker-Room, Injury Scare, Hot Streak,
+Back-to-Back, Holdout, Flu Bug, Budget Cuts). A coin flip's result is said
+as you leave the scene.
+
+**Measured** (300 runs, Prince, plain drafter): Makeup Games 64 of 254 ?
+stops (25%); Act I cleared by 24.7% of runs, Act I Games won 90.8%, Act II
+Games 82.8% — about where they were.

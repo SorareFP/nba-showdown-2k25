@@ -268,9 +268,30 @@ describe('a stop the ledger already cleared', () => {
 
   it('stamps the map version the run was drawn at', async () => {
     const { runId, mapVersion } = await call(climbStart, { rung: 'prince' });
-    // 2 since 2026-10-25 (? stops); a run drawn at 1 keeps 1.
-    expect(mapVersion).toBe(2);
-    expect(ledger(runId).mapVersion).toBe(2);
+    // 2 since 2026-10-25 (? stops), 3 since 2026-10-27 (Makeup Games); a run keeps its own.
+    expect(mapVersion).toBe(3);
+    expect(ledger(runId).mapVersion).toBe(3);
+  });
+
+  // A MAKEUP GAME (map version 3): a ? on the screens, a Game to the ledger.
+  it('opens, clears and prices a Makeup Game as the Game it is', async () => {
+    const { runId } = await started();
+    let seed = 1;
+    let pair = null;
+    for (; seed < 2000 && !pair; seed += 1) {
+      const m = generateMap(seed, 3);
+      const mk = m.floors[1].find(s => s.makeup);
+      const from = mk && m.floors[0].find(s => s.next.includes(mk.id));
+      if (from) pair = [from.id, mk.id, m];
+    }
+    expect(pair).toBeTruthy();
+    const [from, mk, map] = pair;
+    Object.assign(ledger(runId), { seed: seed - 1 });
+    await winAt(runId, from);
+    const before = potOfRun(ledger(runId)).coins;
+    await winAt(runId, mk);
+    expect(ledger(runId).cleared).toEqual([from, mk]);
+    expect(potOfRun(ledger(runId)).coins - before).toBe(potOf(map, [mk], 'prince').coins);
   });
 });
 

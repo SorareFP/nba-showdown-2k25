@@ -22,7 +22,7 @@ import {
 } from '../../game/modes/run.js';
 import { PERKS } from '../../game/modes/climbPerks.js';
 import { styleLine } from '../../game/modes/climbStyles.js';
-import { stopById, packWords, ACT_NAMES } from '../../game/modes/climbMap.js';
+import { packWords, ACT_NAMES } from '../../game/modes/climbMap.js';
 import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud, EventScreen } from './ClimbScreens.jsx';
 import styles from './Climb.module.css';
 
@@ -138,7 +138,8 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
 
   const go = (stopId, opts = {}) => act(async () => {
     const next = chooseStop(run, stopId, opts);
-    if (['rest', 'event'].includes(stopById(run.map, stopId)?.kind)) { await commit(next); return; }
+    // A Rest Day or a ? stop (a Makeup Game too, until its scene is chosen) is the browser's alone.
+    if (next.status !== 'game') { await commit(next); return; }
     await play(await commit(next));
   });
 
@@ -249,7 +250,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
       const o = run.game?.opponent;
       return (
         <div className={styles.screen}>
-          <h2 className={styles.title}>{run.game?.replay ? 'Second Chance: ' : ''}{run.game?.kind === 'boss' ? 'The boss' : run.game?.kind === 'rivalry' ? 'A Rivalry' : 'A Game'}{o ? `: ${o.classic ? 'Classic ' : ''}${o.city} ${o.name}` : ''}</h2>
+          <h2 className={styles.title}>{run.game?.replay ? 'Second Chance: ' : ''}{run.game?.kind === 'boss' ? 'The boss' : run.game?.kind === 'rivalry' ? 'A Rivalry' : run.game?.makeup ? 'A Makeup Game' : 'A Game'}{o ? `: ${o.classic ? 'Classic ' : ''}${o.city} ${o.name}` : ''}</h2>
           {run.game?.replay && <p className={styles.lede} data-replay="true">Second Chance: the loss is wiped and this game is played again. The pot is still yours; lose this one and the run is over.</p>}
           {run.game?.style && <p className={styles.styleLine} data-game-style={run.game.style.id}>Their coach's style · {styleLine(run.game.style)}</p>}
           <p className={styles.lede}>
@@ -273,7 +274,16 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
         />
       );
     case 'event':
-      return <EventScreen run={run} busy={busy} onChoose={choice => act(() => commit(chooseEvent(run, choice)))} />;
+      return (
+        <EventScreen run={run} busy={busy} onChoose={choice => act(async () => {
+          const next = chooseEvent(run, choice);
+          // A Makeup Game's Play it opens its game on the server, as any game does.
+          if (next.status === 'game') { await play(await commit(next)); return; }
+          await commit(next);
+          // How a coin flip or a draw came out (Injury Scare, Hot Streak, Budget Cuts).
+          if (next.eventNote) toast(next.eventNote);
+        })} />
+      );
     case 'rest':
       if (peekMap) return <ClimbMap run={run} onBack={() => setPeekMap(false)} />;
       return (

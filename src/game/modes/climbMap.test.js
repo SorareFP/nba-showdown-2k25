@@ -163,11 +163,12 @@ describe('the pot', () => {
 // rebuilds the map from the seed, so a later change to the generator would
 // reshape every run in flight. Each run carries the version it was drawn at.
 describe('the map version', () => {
-  it('is 2, draws the same map named or not, keeps version 1 for runs drawn under it, and refuses a version it does not know', async () => {
+  it('is 3, draws the same map named or not, keeps versions 1 and 2 for runs drawn under them, and refuses a version it does not know', async () => {
     const { MAP_VERSION } = await import('./climbMap.js');
-    // 2 since 2026-10-25: ? stops (events).
-    expect(MAP_VERSION).toBe(2);
-    expect(generateMap(11, 2)).toEqual(generateMap(11));
+    // 2 since 2026-10-25: ? stops (events); 3 since 2026-10-27: Makeup Games.
+    expect(MAP_VERSION).toBe(3);
+    expect(generateMap(11, 3)).toEqual(generateMap(11));
+    expect(generateMap(11, 2).floors.flat().some(s => s.makeup)).toBe(false);
     expect(generateMap(11, 1).floors.flat().some(s => s.kind === 'event')).toBe(false);
     expect(() => generateMap(11, 99)).toThrow(/version/);
   });
@@ -192,5 +193,43 @@ describe('the map version', () => {
     }
     expect(events / mid).toBeGreaterThan(0.1);
     expect(events / mid).toBeLessThan(0.22);
+  });
+
+  // A MAKEUP GAME (version 3, 2026-10-27; the user: "I just want variance in
+  // the experience"): a quarter of the ? stops are a Game behind the ?. The
+  // rest of the map is version 2's, and the server opens and prices one as
+  // the Game it is.
+  it('turns about a quarter of the ? stops into Games, and changes nothing else', async () => {
+    const { MAKEUP_CHANCE, stopPot } = await import('./climbMap.js');
+    let events = 0, makeups = 0;
+    for (let seed = 1; seed <= 300; seed += 1) {
+      for (const act of [1, 2, 3]) {
+        const v3 = generateMap(seed, 3, act).floors.flat();
+        const v2 = generateMap(seed, 2, act).floors.flat();
+        v3.forEach((s, i) => {
+          if (s.makeup) {
+            expect(v2[i].kind).toBe('event');
+            expect(s.kind).toBe('game');
+            makeups += 1;
+          } else {
+            expect(s).toEqual(v2[i]);
+          }
+          if (v2[i].kind === 'event') events += 1;
+        });
+      }
+    }
+    expect(makeups / events).toBeGreaterThan(MAKEUP_CHANCE - 0.04);
+    expect(makeups / events).toBeLessThan(MAKEUP_CHANCE + 0.04);
+    // The server's facts: a Game to open from the stop below it, and a Game's pot.
+    for (let seed = 1; seed <= 300; seed += 1) {
+      const m = generateMap(seed, 3);
+      const mk = m.floors.flat().find(s => s.makeup);
+      const below = mk && m.floors[mk.floor - 2].find(s => s.next.includes(mk.id) && !['rest', 'event'].includes(s.kind));
+      if (!below) continue;
+      expect(reachableGame(m, below.id, mk.id)).toBe(true);
+      expect(stopPot(mk)).toBe(stopPot({ kind: 'game', floor: mk.floor }));
+      return;
+    }
+    throw new Error('no seed has a Makeup Game above a game');
   });
 });

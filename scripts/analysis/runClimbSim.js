@@ -26,7 +26,7 @@
 import {
   CLIMB, CLIMB_FIVE, newRun, chooseCamp, openStops, chooseStop, presetFor, recordResult, resultFromGame,
   pickStrat, pickPlayer, pickPerk, skipOffers, restDay, rosterCards, potPreview, continueClimb, actOfRun, needsRelease, releaseOptions, ACT_DIALS,
-  chooseEvent, eventView,
+  chooseEvent, eventView, shownKind,
 } from '../../src/game/modes/run.js';
 import { climbRng, KIND_WEIGHTS_V2 as KIND_WEIGHTS, stopById, ACTS } from '../../src/game/modes/climbMap.js';
 import { leanOf } from '../../src/game/modes/climbKits.js';
@@ -166,7 +166,8 @@ function chooseRoute(run, rng) {
   if (DRAFTER !== 'careful') return pick(rng, stops);
   const pain = painOf(run);
   const want = pain <= -8 ? ['rest', 'event', 'game', 'rivalry'] : pain >= -4 ? ['rivalry', 'game', 'event', 'rest'] : ['game', 'event', 'rivalry', 'rest'];
-  for (const kind of want) { const s = stops.find(x => x.kind === kind); if (s) return s; }
+  // A Makeup Game looks like a ? stop to the drafter, as it does on the map.
+  for (const kind of want) { const s = stops.find(x => shownKind(x) === kind); if (s) return s; }
   return stops[0];
 }
 

@@ -15,7 +15,7 @@ import { generateMap, stopById, nextStops, nextFloorStops, potOfRun, climbRng, M
 import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, coachDeck } from './climbKits.js';
 import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard, hasPerk, GAME_PERKS, TRAVEL_DAYS, WIN_NOW_CAP } from './climbPerks.js';
 import { styleAt, styledCard, engineFx } from './climbStyles.js';
-import { EVENTS, EVENT_IDS, eventText } from './climbEvents.js';
+import { EVENTS, EVENT_IDS, MAKEUP, eventText } from './climbEvents.js';
 import AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
 import { CARDS } from '../cards.js';
 import { buildAiRoster, buildClassicRoster, classicFranchises, franchisePool } from './aiTeams.js';
@@ -317,6 +317,9 @@ export function isTravel(run, stopId) {
   return !nextStops(run.map, run.at).some(s => s.id === stopId) && openStops(run).some(s => s.id === stopId);
 }
 
+/** The kind a stop shows on the map: a Makeup Game is a ❓ until it is played (climbMap.js MAKEUP_CHANCE). */
+export const shownKind = stop => (stop?.makeup ? 'event' : stop?.kind);
+
 // ── Opponents ────────────────────────────────────────────────────────────────
 
 /** The act a run is in (a run drawn before acts is in Act I). */
@@ -466,6 +469,7 @@ export function gameSetup(run, stopId, { full = false } = {}) {
     // The coach's style (climbStyles.js), and a boss taken at Full Strength.
     style: styleAt(abbr, { act, kind: stop.kind, full: boss && full }),
     ...(boss && full ? { fullStrength: true } : {}),
+    ...(stop.makeup ? { makeup: true } : {}),
   };
 }
 
@@ -482,6 +486,8 @@ export function chooseStop(run, stopId, { fullStrength = false } = {}) {
   const moved = isTravel(run, stopId) ? { ...run, travel: run.travel - 1 } : run;
   if (stop.kind === 'rest') return { ...moved, status: 'rest', restAt: stopId };
   if (stop.kind === 'event') return { ...moved, status: 'event', event: drawEvent(moved, stopId) };
+  // A Makeup Game shows its scene, and Play it opens the game (chooseEvent).
+  if (stop.makeup) return { ...moved, status: 'event', event: { id: MAKEUP, stopId, target: null } };
   return { ...moved, status: 'game', game: gameSetup(run, stopId, { full: fullStrength && fullStrengthOffered(run, stop) }) };
 }
 
@@ -520,10 +526,16 @@ export function presetFor(run) {
   const next = run.nextGame ?? {};
   const boosts = boostsOf(run);
   let mine = rosterCards(run).cards.map(c => boostedCard(c, boosts[c.id]));
-  if (next.sit?.length && mine.length - next.sit.length >= 5) mine = mine.filter(c => !next.sit.includes(c.id));
+  // Who sits (an event's next game, a Holdout's games): never fewer than
+  // five left, the first named sitting first.
+  const sit = [...new Set([...(next.sit ?? []), ...Object.keys(run.sitOut ?? {})])]
+    .filter(id => mine.some(c => c.id === id))
+    .slice(0, Math.max(0, mine.length - 5));
+  if (sit.length) mine = mine.filter(c => !sit.includes(c.id));
   const twoWay = twoWayCard(run);
   if (twoWay && !mine.some(c => c.id === twoWay.id)) mine = [...mine, twoWay];
   if (next.power) mine = mine.map(c => ({ ...c, power: (c.power ?? 0) + next.power }));
+  if (next.speed) mine = mine.map(c => ({ ...c, speed: (c.speed ?? 0) + next.speed }));
   const hot = { ...(run.carryHot ?? {}), ...(next.hot ?? {}) };
   return {
     key: g.key,
@@ -541,6 +553,7 @@ export function presetFor(run) {
       startQuarter: 4, fatigue: { A: { ...run.fatigue } },
       placementFirst: g.home ? 'B' : 'A',
       ...(Object.keys(hot).length ? { hot: { A: hot } } : {}),
+      ...(next.cold ? { cold: { A: { ...next.cold } } } : {}),
       ...(run.conditioned ? { buffs: { A: { conditioning_carry: true } } } : {}),
       ...(run.signature ? { signatureBonus: { A: Math.min(SIGNATURE_MAX, 2 + run.signature) } } : {}),
       ...(CLIMB.system && run.playbook ? { system: { A: run.playbook } } : {}),
@@ -651,7 +664,8 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, ca
   // has one game fewer to run.
   const surePerk = Boolean(run.nextGame?.surePerk);
   const twoWay = run.twoWay?.games > 1 ? { ...run.twoWay, games: run.twoWay.games - 1 } : null;
-  run = { ...run, nextGame: null, twoWay };
+  const sitOut = Object.fromEntries(Object.entries(run.sitOut ?? {}).map(([id, n]) => [id, n - 1]).filter(([, n]) => n > 0));
+  run = { ...run, nextGame: null, twoWay, sitOut };
   const stop = stopById(run.map, stopId);
   const cleared = [...run.cleared, stopId];
   // A boss beaten at Full Strength grows the act's reward (continueClimb).
@@ -883,7 +897,8 @@ export function pickPlayer(run, key, release = null) {
     // A half salary or a raise was this contract's; it leaves with the player.
     const { [release]: _d, ...discounts } = run.discounts ?? {};
     const { [release]: _b, ...salaryBumps } = run.salaryBumps ?? {};
-    run = { ...run, discounts, salaryBumps };
+    const { [gone?.id]: _s, ...sitOut } = run.sitOut ?? {};
+    run = { ...run, discounts, salaryBumps, sitOut };
   } else if (needsRelease(run, key)) {
     fail(`Release a player of yours to sign ${getCardByKey(key)?.name ?? 'them'}`);
   }
@@ -904,7 +919,8 @@ export function skipOffers(run, part = null) {
 // THE CLIMB'S ? STOPS (2026-10-25, climbEvents.js; the user: "Those work").
 // A scene with two choices; like a Rest Day it is no game, clears the floor and
 // raises the cap. Each scene comes once a run, drawn from the run's seed among
-// the ones that can be played as the run stands.
+// the ones that can be played as the run stands. A Makeup Game (map version 3)
+// is the exception: a Game behind the ?, whose one choice opens it.
 
 const salaryOf = c => c?.salary ?? 0;
 const byPay = cards => [...cards].sort((a, b) => salaryOf(a) - salaryOf(b) || a.id.localeCompare(b.id));
@@ -950,7 +966,9 @@ function eventTarget(run, id, rng) {
   if (!cards.length) return null;
   if (id === 'trade_call') return cards[0].id;
   if (id === 'locker_room') return cards[cards.length - 1].id;
-  if (id === 'injury_scare' || id === 'contract_year') return cards[Math.floor(rng() * cards.length)].id;
+  if (id === 'injury_scare' || id === 'contract_year' || id === 'flu_bug') return cards[Math.floor(rng() * cards.length)].id;
+  // A star holds out: one of the three highest-paid.
+  if (id === 'holdout') { const top = cards.slice(-3); return top[Math.floor(rng() * top.length)].id; }
   return null;
 }
 
@@ -958,7 +976,7 @@ function eventTarget(run, id, rng) {
 function eventProblem(run, id) {
   const n = rosterCards(run).cards.length;
   if ((run.eventsSeen ?? []).includes(id)) return 'seen';
-  if ((id === 'locker_room' || id === 'injury_scare') && n < 6) return 'needs a sixth player to sit one';
+  if ((id === 'locker_room' || id === 'injury_scare' || id === 'holdout') && n < 6) return 'needs a sixth player to sit one';
   if (id === 'veteran_min' && (n >= CLIMB.maxRoster || !veterans(run).length)) return 'no room';
   if (id === 'two_way' && run.twoWay) return 'already a two-way player';
   return null;
@@ -988,10 +1006,23 @@ export function eventView(run) {
 /** The rares Summer-League Tape can deal: any the deck is not at its limit of. */
 const tapeRares = run => OFFERABLE.filter(s => s.rarity === 'rare' && !s.climbOnly && !atLimit(run.deck, s.id));
 
+/** The copies Budget Cuts can sell: every rare and every "+" in the deck, one entry a copy. */
+const prizedCopies = run => Object.entries(run.deck ?? {})
+  .filter(([id, n]) => n > 0 && !STRAT_MAP[baseId(id)]?.dead && (isPlus(id) || ['rare', 'legendary'].includes(STRAT_MAP[baseId(id)]?.rarity)))
+  .flatMap(([id, n]) => Array(n).fill(id))
+  .sort();
+
 /** Why a choice of the run's scene cannot be taken, or null. */
 function choiceProblem(run, choice) {
   const e = run.event;
   const deck = Object.values(run.deck ?? {}).reduce((t, n) => t + n, 0);
+  const n = rosterCards(run).cards.length;
+  if (((e.id === 'back_to_back' && choice === 'rest') || (e.id === 'flu_bug' && choice === 'quarantine')) && n < 6) return 'Needs a sixth player to sit one';
+  if (e.id === 'holdout' && choice === 'pay' && capSal(rosterCards(run).cards) + 200 > run.cap) return 'The raise does not fit under the cap';
+  if (e.id === 'budget_cuts' && choice === 'card') {
+    if (!prizedCopies(run).length) return 'No rare or "+" card in your deck';
+    if (deck - 1 < MIN_DECK) return `A deck keeps at least ${MIN_DECK} cards`;
+  }
   if (e.id === 'trade_call' && choice === 'take' && !tradeOffer(run, climbRng(run.seed, 'event-offer', e.stopId)).length) return 'No one better fits under the cap';
   if (e.id === 'film_room' && choice === 'cut' && deck - 2 < MIN_DECK) return `A deck keeps at least ${MIN_DECK} cards`;
   if (e.id === 'summer_tape' && choice === 'take' && !tapeRares(run).length) return 'No rare card your deck can take';
@@ -1005,7 +1036,7 @@ function choiceProblem(run, choice) {
 
 /** Leave the ? stop: the floor cleared, the cap up a floor's worth, the scene seen. */
 const leaveEvent = run => ({
-  ...run, status: 'map', at: run.event.stopId, event: null,
+  ...run, status: 'map', at: run.event.stopId, event: null, eventNote: null,
   eventsSeen: [...(run.eventsSeen ?? []), run.event.id], cap: run.cap + CLIMB.capPerFloor,
 });
 /** An offer an event makes, on the reward screen (`title` names it there). */
@@ -1026,11 +1057,19 @@ export function chooseEvent(run, choice) {
   const target = cards.find(c => c.id === e.target);
   const targetKey = target ? run.roster.find(k => getCardByKey(k)?.id === target.id) : null;
   const allTired = add => Object.fromEntries(cards.map(c => [c.id, (run.fatigue?.[c.id] ?? 0) + add]));
+  const next = run.nextGame ?? {};
+  // A number on every player next game, on top of any an earlier scene set.
+  const shift = (power, speed) => ({ ...next, power: (next.power ?? 0) + power, speed: (next.speed ?? 0) + speed });
+  const top = byPay(cards).at(-1);
+  // How a coin flip or a draw came out, for the screen to say (ClimbTab).
+  const noted = (r, eventNote) => ({ ...r, eventNote });
   switch (`${e.id}:${choice}`) {
+    case 'makeup_game:play':
+      return { ...run, status: 'game', event: null, game: gameSetup(run, e.stopId) };
     case 'trade_call:take':
       return eventOffer(run, `Trade ${target?.name ?? 'your lowest-paid player'} for one of three`, tradeOffer(run, rng), { tradeFor: targetKey });
     case 'locker_room:sit':
-      return leaveEvent({ ...run, nextGame: { ...(run.nextGame ?? {}), sit: [e.target] } });
+      return leaveEvent({ ...run, nextGame: { ...next, sit: [...(next.sit ?? []), e.target] } });
     case 'locker_room:grind':
     case 'back_to_back:play':
       return leaveEvent({ ...run, fatigue: allTired(4), ...(e.id === 'back_to_back' ? { nextGame: { ...(run.nextGame ?? {}), surePerk: true } } : {}) });
@@ -1045,18 +1084,22 @@ export function chooseEvent(run, choice) {
       const deck = addCard(addCard(run.deck, pickFrom(rng, tapeRares(run)).id), 'bad_contract');
       return leaveEvent({ ...run, deck });
     }
-    case 'injury_scare:gamble':
-      return leaveEvent({ ...run, nextGame: { ...(run.nextGame ?? {}), ...(rng() < 0.5 ? { sit: [e.target] } : { hot: { [e.target]: 2 } }) } });
+    case 'injury_scare:gamble': {
+      const out = rng() < 0.5;
+      return noted(leaveEvent({ ...run, nextGame: { ...next, ...(out ? { sit: [...(next.sit ?? []), e.target] } : { hot: { ...(next.hot ?? {}), [e.target]: 2 } }) } }),
+        out ? `Bad news: ${target?.name} misses the next game.` : `Good news: ${target?.name} starts the next game with 2 hot markers.`);
+    }
     case 'injury_scare:rest': {
       const fatigue = { ...(run.fatigue ?? {}) };
       delete fatigue[e.target];
-      return leaveEvent({ ...run, fatigue, nextGame: { ...(run.nextGame ?? {}), sit: [e.target] } });
+      return leaveEvent({ ...run, fatigue, nextGame: { ...next, sit: [...(next.sit ?? []), e.target] } });
     }
     case 'veteran_min:sign':
       return eventOffer(run, 'A veteran on the minimum: half their salary counts', threeOf(veterans(run), rng), { discount: 0.5 });
     case 'team_meeting:rest':
-    case 'back_to_back:rest':
       return leaveEvent({ ...run, fatigue: {} });
+    case 'back_to_back:rest':
+      return leaveEvent({ ...run, fatigue: {}, nextGame: { ...next, sit: [...(next.sit ?? []), top.id] } });
     case 'front_office_leak:scout': {
       const floor = stopById(run.map, e.stopId)?.floor ?? 0;
       const ids = run.map.floors.flat().filter(s => s.floor > floor && s.floor <= floor + 2 && !PASS.has(s.kind)).map(s => s.id);
@@ -1065,11 +1108,28 @@ export function chooseEvent(run, choice) {
     case 'front_office_leak:cap':
       return leaveEvent({ ...run, cap: run.cap + 200 });
     case 'hot_streak:hot': {
-      const two = byPay(cards).slice(-2).map(c => c.id);
-      return leaveEvent({ ...run, nextGame: { ...(run.nextGame ?? {}), hot: Object.fromEntries(two.map(id => [id, 1])) } });
+      const two = byPay(cards).slice(-2);
+      const names = two.map(c => c.name).join(' and ');
+      return rng() < 0.5
+        ? noted(leaveEvent({ ...run, nextGame: { ...next, hot: { ...(next.hot ?? {}), ...Object.fromEntries(two.map(c => [c.id, 2])) } } }), `It broke your way: ${names} start the next game with 2 hot markers each.`)
+        : noted(leaveEvent({ ...run, nextGame: { ...next, cold: { ...(next.cold ?? {}), ...Object.fromEntries(two.map(c => [c.id, 1])) } } }), `It broke the wrong way: ${names} start the next game with a cold marker each.`);
     }
     case 'hot_streak:power':
-      return leaveEvent({ ...run, nextGame: { ...(run.nextGame ?? {}), power: 1 } });
+      return leaveEvent({ ...run, nextGame: shift(1, -1) });
+    case 'holdout:pay':
+      return leaveEvent({ ...run, salaryBumps: { ...(run.salaryBumps ?? {}), [targetKey]: (run.salaryBumps?.[targetKey] ?? 0) + 200 } });
+    case 'holdout:sit':
+      return leaveEvent({ ...run, sitOut: { ...(run.sitOut ?? {}), [e.target]: 2 } });
+    case 'flu_bug:quarantine':
+      return leaveEvent({ ...run, nextGame: { ...next, sit: [...(next.sit ?? []), e.target] } });
+    case 'flu_bug:play':
+      return leaveEvent({ ...run, nextGame: shift(-1, -1) });
+    case 'budget_cuts:cap':
+      return leaveEvent({ ...run, cap: run.cap - 300 });
+    case 'budget_cuts:card': {
+      const sold = pickFrom(rng, prizedCopies(run));
+      return noted(leaveEvent({ ...run, deck: takeCard(run.deck, sold) }), `${STRAT_MAP[baseId(sold)]?.name ?? sold}${isPlus(sold) ? '+' : ''} left your deck.`);
+    }
     case 'contract_year:pay':
       return leaveEvent({
         ...run,

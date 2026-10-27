@@ -11,7 +11,7 @@ import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster, samePlayer, DEFAULT_FILTERS, filterPool, sortPool } from '../../game/teamRules.js';
 import PoolFilters from '../PoolFilters.jsx';
-import { CLIMB, CLIMB_FIVE, openStops, isTravel, stopOpponent, fullStrengthOffered, eventView, twoWayCard, gameSetup, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions } from '../../game/modes/run.js';
+import { CLIMB, CLIMB_FIVE, openStops, isTravel, stopOpponent, fullStrengthOffered, eventView, twoWayCard, gameSetup, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions, shownKind } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
 import { FLOORS, stopById, nextStops, ACTS, ACT_NAMES, ACT_POT, BOSS_PACKS, packWords } from '../../game/modes/climbMap.js';
@@ -580,11 +580,13 @@ export function ClimbMap({ run, onGo = () => {}, onRetire = () => {}, onFreeRest
               className={path.has(a.id) && path.has(b.id) ? styles.linkLit : a.id === (here ?? null) && ahead.has(b.id) ? styles.linkAhead : styles.link} />
           ))}
         </svg>
-        {stops.map(s => {
+        {stops.map(stop => {
+          const done = run.cleared.includes(stop.id) || run.at === stop.id;
+          // A Makeup Game is a ❓ until it is played (run.js shownKind): no team, no cap.
+          const s = done || run.game?.stopId === stop.id ? stop : { ...stop, kind: shownKind(stop) };
           const isOpen = open.has(s.id);
           // Off the links: Travel Day takes you there (2026-10-22).
           const travel = isOpen && isTravel(run, s.id);
-          const done = run.cleared.includes(s.id) || run.at === s.id;
           const isHere = s.id === here;
           const isAhead = peek && ahead.has(s.id);
           const far = !path.has(s.id) && !reachable.has(s.id);

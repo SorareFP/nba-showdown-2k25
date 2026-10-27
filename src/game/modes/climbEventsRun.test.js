@@ -5,9 +5,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   newRun, chooseCamp, chooseStop, chooseEvent, eventView, drawEvent, presetFor, recordResult, pickPlayer,
-  rosterCards, twoWayCard, openStops, needsRelease, runView, runFromView, CLIMB,
+  rosterCards, twoWayCard, openStops, needsRelease, runView, runFromView, CLIMB, shownKind,
 } from './run.js';
-import { EVENT_IDS, EVENTS } from './climbEvents.js';
+import { EVENT_IDS, EVENTS, MAKEUP } from './climbEvents.js';
 import { boostsOf } from './climbPerks.js';
 import { stopById, generateMap, potOfRun, MAP_VERSION } from './climbMap.js';
 import { capSal } from '../teamRules.js';
@@ -184,13 +184,33 @@ describe('the scenes', () => {
     expect(chooseEvent(run, 'cap').cap).toBe(run.cap + CLIMB.capPerFloor + 200);
   });
 
-  it('Hot Streak: hot markers for the two highest-paid, or +1 Power for all, in the next game', () => {
+  // THE VARIANCE PASS (2026-10-27; the user: "I just want variance in the
+  // experience"): Hot Streak is a coin flip or a trade, never a free gift.
+  it('Hot Streak: a coin flip on the two highest-paid, or +1 Power and −1 Speed for all', () => {
     const run = at('hot_streak');
-    const hot = presetFor(atGame(chooseEvent(run, 'hot')));
-    expect(Object.keys(hot.gameOpts.hot.A)).toHaveLength(2);
-    const power = presetFor(atGame(chooseEvent(run, 'power')));
+    const two = [...rosterCards(run).cards].sort((a, b) => a.salary - b.salary || a.id.localeCompare(b.id)).slice(-2).map(c => c.id).sort();
+    const seen = new Set();
+    for (let seed = 0; seed < 40; seed += 1) {
+      const flipped = chooseEvent({ ...run, seed }, 'hot');
+      const p = presetFor(atGame(flipped));
+      if (p.gameOpts.hot) {
+        expect(Object.keys(p.gameOpts.hot.A).sort()).toEqual(two);
+        expect(Object.values(p.gameOpts.hot.A)).toEqual([2, 2]);
+        expect(flipped.eventNote).toMatch(/broke your way/);
+        seen.add('hot');
+      } else {
+        expect(Object.keys(p.gameOpts.cold.A).sort()).toEqual(two);
+        expect(flipped.eventNote).toMatch(/wrong way/);
+        const g = newGame(p.rosterA, p.rosterB, null, null, p.gameOpts);
+        expect(getTeam(g, 'A').stats.find(ps => ps.id === two[0]).cold).toBe(1);
+        seen.add('cold');
+      }
+    }
+    expect([...seen].sort()).toEqual(['cold', 'hot']);
+    const slow = presetFor(atGame(chooseEvent(run, 'power')));
     const plain = presetFor(atGame(run));
-    expect(power.rosterA[0].power).toBe(plain.rosterA[0].power + 1);
+    expect(slow.rosterA[0].power).toBe(plain.rosterA[0].power + 1);
+    expect(slow.rosterA[0].speed).toBe(plain.rosterA[0].speed - 1);
   });
 
   it('Contract Year: +1 Speed and +1 Power for the run, $150 more on the cap', () => {
@@ -210,14 +230,114 @@ describe('the scenes', () => {
     const won = recordResult(game, { stopId: game.game.stopId, won: true, margin: 6 });
     expect(won.offers.perks.length).toBeGreaterThan(0);
     expect(won.nextGame).toBeNull();
-    expect(chooseEvent({ ...run, fatigue: { x: 5 } }, 'rest').fatigue).toEqual({});
+    // Resting costs the star the game (the variance pass, 2026-10-27).
+    const top = [...rosterCards(run).cards].sort((a, b) => a.salary - b.salary || a.id.localeCompare(b.id)).at(-1);
+    const rested = chooseEvent({ ...run, fatigue: { x: 5 } }, 'rest');
+    expect(rested.fatigue).toEqual({});
+    expect(presetFor(atGame(rested)).rosterA.map(c => c.id)).not.toContain(top.id);
+    // A team of five has no one to sit: it plays the back-to-back.
+    const five = at('back_to_back', camped(5));
+    expect(eventView(five).choices.find(c => c.id === 'rest').problem).toMatch(/sixth/);
+  });
+
+  it('Holdout: a $200 raise for the run, or two games without them', () => {
+    const run = at('holdout');
+    const who = run.event.target;
+    const byPay = [...rosterCards(run).cards].sort((a, b) => a.salary - b.salary || a.id.localeCompare(b.id));
+    expect(byPay.slice(-3).map(c => c.id)).toContain(who);
+    const paid = chooseEvent(run, 'pay');
+    expect(rosterCards(paid).cards.find(c => c.id === who).salary).toBe(byPay.find(c => c.id === who).salary + 200);
+    expect(eventView({ ...run, cap: capSal(rosterCards(run).cards) + 199 }).choices.find(c => c.id === 'pay').problem).toMatch(/cap/);
+    let r = chooseEvent(run, 'sit');
+    for (let g = 0; g < 2; g += 1) {
+      const game = atGame({ ...r, cleared: [] });
+      expect(presetFor(game).rosterA.map(c => c.id), `game ${g + 1}`).not.toContain(who);
+      r = { ...recordResult(game, { stopId: game.game.stopId, won: true, margin: 6 }), status: 'map', offers: null };
+    }
+    expect(presetFor(atGame({ ...r, cleared: [] })).rosterA.map(c => c.id)).toContain(who);
+  });
+
+  it('Flu Bug: one player home for the next game, or everyone −1 Speed and −1 Power', () => {
+    const run = at('flu_bug');
+    const who = run.event.target;
+    expect(presetFor(atGame(chooseEvent(run, 'quarantine'))).rosterA.map(c => c.id)).not.toContain(who);
+    const sick = presetFor(atGame(chooseEvent(run, 'play')));
+    const plain = presetFor(atGame(run));
+    sick.rosterA.forEach((c, i) => {
+      expect(c.speed).toBe(plain.rosterA[i].speed - 1);
+      expect(c.power).toBe(plain.rosterA[i].power - 1);
+    });
+    // Five players: nobody can stay home, so they all play sick.
+    const five = at('flu_bug', camped(5));
+    expect(eventView(five).choices.find(c => c.id === 'quarantine').problem).toMatch(/sixth/);
+    expect(eventView(five).choices.find(c => c.id === 'play').problem).toBeNull();
+  });
+
+  it('Budget Cuts: $300 of cap gone, or a rare or "+" card sold at random', () => {
+    const run = at('budget_cuts');
+    expect(chooseEvent(run, 'cap').cap).toBe(run.cap + CLIMB.capPerFloor - 300);
+    const plain = { ...run, deck: Object.fromEntries(Object.entries(run.deck).filter(([id]) => !id.endsWith('+') && getStrat(id)?.rarity !== 'rare')) };
+    expect(eventView(plain).choices.find(c => c.id === 'card').problem).toMatch(/No rare/);
+    const prized = { ...plain, deck: { ...plain.deck, 'close_out+': 1 } };
+    const sold = chooseEvent(prized, 'card');
+    expect(sold.deck['close_out+']).toBeUndefined();
+    expect(sold.eventNote).toBe('Close Out+ left your deck.');
+  });
+
+  it('Injury Scare says how the gamble came out', () => {
+    const run = at('injury_scare');
+    const notes = new Set();
+    for (let seed = 0; seed < 30; seed += 1) notes.add(chooseEvent({ ...run, seed }, 'gamble').eventNote.split(':')[0]);
+    expect([...notes].sort()).toEqual(['Bad news', 'Good news']);
+    // A note lasts until the next scene is left.
+    expect(chooseEvent(at('film_room', { ...run, eventNote: 'old' }), 'upgrade').eventNote).toBeNull();
   });
 
   it('never deals a scene that needs a sixth to a team of five', () => {
     const five = camped(5);
     for (let i = 0; i < 40; i += 1) {
       const e = drawEvent({ ...five, seed: i }, five.map.floors[1][0].id);
-      expect(['locker_room', 'injury_scare']).not.toContain(e.id);
+      expect(['locker_room', 'injury_scare', 'holdout']).not.toContain(e.id);
     }
+  });
+});
+
+// A MAKEUP GAME (map version 3, 2026-10-27): a Game behind a ?. Its scene has
+// one choice, and that opens the game: it plays, pays and clears as a Game.
+describe('a Makeup Game', () => {
+  /** A camped run whose map has a Makeup Game, standing on a stop linked to it. */
+  function beside() {
+    for (let seed = 1; seed < 400; seed += 1) {
+      const r = newRun({ id: 'r1', seed, rung: 'prince', rosterKeys: SIX.map(cardKey), now: 1 });
+      const mk = r.map.floors.flat().find(s => s.makeup);
+      const below = mk && r.map.floors[mk.floor - 2].find(s => s.next.includes(mk.id));
+      if (!below) continue;
+      const run = { ...chooseCamp(r, { playbook: 'speed', boon: r.camp.boons.find(b => b !== 'cut_two') }), dropOdds: { player: -1, perk: -1 } };
+      return { run: { ...run, status: 'map', at: below.id, cleared: [below.id] }, mk };
+    }
+    throw new Error('no seed has a Makeup Game');
+  }
+
+  it('shows as a ❓, opens its scene, and Play it starts a Game there', () => {
+    const { run, mk } = beside();
+    expect(shownKind(mk)).toBe('event');
+    expect(EVENT_IDS).not.toContain(MAKEUP);
+    const there = chooseStop(run, mk.id);
+    expect(there.status).toBe('event');
+    expect(there.event.id).toBe(MAKEUP);
+    const v = eventView(there);
+    expect(v.title).toBe('Makeup Game');
+    expect(v.choices.map(c => c.id)).toEqual(['play']);
+    const game = chooseEvent(there, 'play');
+    expect(game.status).toBe('game');
+    expect(game.game).toMatchObject({ stopId: mk.id, kind: 'game', makeup: true });
+    expect(game.cap).toBe(run.cap);
+    expect(game.eventsSeen ?? []).toEqual(run.eventsSeen ?? []);
+    expect(presetFor(game).rosterB.length).toBeGreaterThan(0);
+    const won = recordResult(game, { stopId: mk.id, won: true, margin: 6 });
+    expect(won.cleared).toContain(mk.id);
+    expect(won.cap).toBe(run.cap + CLIMB.capPerFloor);
+    expect(won.gameWins).toBe(run.gameWins + 1);
+    expect(recordResult(game, { stopId: mk.id, won: false }).status).toBe('lost');
   });
 });

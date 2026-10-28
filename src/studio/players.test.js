@@ -1141,6 +1141,10 @@ describe('the Live additions in the studio', () => {
     expect(shown.pos).toBe('SF');
     expect(shown.liveRookie).toBe(true);
     expect(shown.seasonLabel).toBe('2026-27');
+    // The Studio's look is the entry's: the LIVE pill comes with the source.
+    expect(shown.badges).toEqual(['rookie']);
+    const { badges: _, ...plain } = entry;
+    expect(withLiveCard(plain, new Map([['A_One', card]])).badges).toBeUndefined();
     expect(withLiveCard(entry, new Map())).toBe(entry);
   });
 });

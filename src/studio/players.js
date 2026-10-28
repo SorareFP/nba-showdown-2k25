@@ -429,10 +429,14 @@ const byName = (a, b) => a.name.localeCompare(b.name);
 const studioFields = e => Object.fromEntries(
   ['seasonLabel', 'searchYear', 'liveRookie', 'addition', 'last'].filter(k => e[k] !== undefined).map(k => [k, e[k]])
 );
-/** A photos-first entry with its carded Live card over it (`cards`: id -> card), or as it was. */
+/**
+ * A photos-first entry with its carded Live card over it (`cards`: id -> card),
+ * or as it was. The badges stay the entry's, none included: the Studio's Live
+ * source brings the LIVE pill itself, so the card's own would print it twice.
+ */
 export function withLiveCard(entry, cards) {
   const card = cards?.get(entry.id);
-  return card ? { ...entry, ...card, ...studioFields(entry) } : entry;
+  return card ? { ...entry, ...card, ...studioFields(entry), badges: entry.badges } : entry;
 }
 const carded = new Map((LIVE_FILE?.cards ?? []).map(c => [c.id, c]));
 const withCard = entry => withLiveCard(entry, carded);

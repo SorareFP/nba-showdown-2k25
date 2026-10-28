@@ -21,7 +21,13 @@ import {
   liveTeam,
   gamesByPlayer,
   gamesPlayed,
+  readAdditions,
+  photoIds,
+  cardPosition,
+  buildAdditions,
 } from './generateLive.js';
+import os from 'node:os';
+import path from 'node:path';
 import { liveRowsFromLog, WINDOW_GAMES } from './realGames.js';
 import { indexByName } from './generateCards.js';
 import { LIVE_SET, CURRENT_SET, setBadge, setTreatment } from '../../src/cards/sets.js';
@@ -270,5 +276,66 @@ describe('the games each player has played', () => {
     expect(gamesPlayed('harpedy01', 'Dylan Harper', counts, actual)).toBe(4);
     expect(gamesPlayed('harpedy01', 'Dylan Harper', new Map([['harpedy01', 6]]), actual)).toBe(6);
     expect(gamesPlayed('nobody01', 'Nobody', counts, none)).toBe(0);
+  });
+});
+
+// THE ADDITIONS (2026-10-28; the user: "Can we try to generate charts for the
+// live series cards that don't have them? Then withhold players who don't have
+// charts from packs").
+describe('the additions', () => {
+  const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'live-'));
+
+  it('reads the rookies, the returning and the short seasons, never one left out', () => {
+    const dir = tmp();
+    const file = path.join(dir, 'live-rookies.json');
+    fs.writeFileSync(file, JSON.stringify({
+      rookies: [{ id: 'A_One', name: 'A One', team: 'WAS', pos: 'F' }, { id: 'Gone', name: 'Gone', team: 'NOP', pos: 'G' }],
+      returning: [{ id: 'B_Two', name: 'B Two', team: 'HOU', pos: 'G' }],
+      shortSeason: [{ id: 'C_Three', name: 'C Three', team: 'GSW', pos: 'C', last: { games: 30 } }],
+      leftOut: [{ id: 'Gone' }],
+    }));
+    expect(readAdditions(file).map(a => `${a.id}:${a.kind}`)).toEqual(['A_One:rookie', 'B_Two:returning', 'C_Three:shortSeason']);
+    expect(readAdditions(path.join(dir, 'nothing.json'))).toEqual([]);
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('counts a photo in any format the Studio saves, and nothing else', () => {
+    const dir = tmp();
+    for (const f of ['A_One.jpg', 'B_Two.avif', 'C_Three.txt', '_flags.json']) fs.writeFileSync(path.join(dir, f), 'x');
+    expect([...photoIds(dir)].sort()).toEqual(['A_One', 'B_Two']);
+    expect(photoIds(path.join(dir, 'none')).size).toBe(0);
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('takes a position from Basketball-Reference, else reads nba.com\'s through the rates', () => {
+    expect(cardPosition('G', { ast100: 9 }, 'PG-SG')).toBe('PG');
+    expect(cardPosition('G', { ast100: 8 })).toBe('PG');
+    expect(cardPosition('G', { ast100: 4 })).toBe('SG');
+    expect(cardPosition('F', { orb100: 4, drb100: 9 })).toBe('PF');
+    expect(cardPosition('F', { orb100: 1, drb100: 6 })).toBe('SF');
+    expect(cardPosition('C-F')).toBe('C');
+    expect(cardPosition('F-C')).toBe('PF');
+    expect(cardPosition('G-F')).toBe('SG');
+    expect(cardPosition('')).toBe('SF');
+  });
+
+  it('withholds a player with no expected row or no photo, and says why', () => {
+    const row = { name: 'A One', epm: 1, epmOff: 1, epmDef: 0, pts100: 20, ast100: 4, minutesPer48: 20 };
+    const out = buildAdditions({
+      additions: [
+        { id: 'A_One', name: 'A One', team: 'WAS', pos: 'F', kind: 'rookie' },
+        { id: 'B_Two', name: 'B Two', team: 'HOU', pos: 'G', kind: 'returning' },
+      ],
+      photos: new Set(['B_Two']),
+      inputs: { logs: new Map(), bbrefByName: new Map() },
+      expectedIndex: indexByName([row]),
+      actualIndex: new Map(),
+      field: [],
+    });
+    expect(out.cards).toEqual([]);
+    expect(out.withheld).toEqual([
+      { id: 'A_One', name: 'A One', kind: 'rookie', why: 'no photo yet' },
+      { id: 'B_Two', name: 'B Two', kind: 'returning', why: 'no expected EPM yet' },
+    ]);
   });
 });

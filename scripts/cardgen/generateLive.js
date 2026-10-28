@@ -53,6 +53,18 @@
 // it at all, or no expected EPM yet) is MIRRORED — the base card's numbers,
 // repriced against the live field — and stamped with why.
 //
+// THE ADDITIONS (2026-10-28; the user: "Can we try to generate charts for the
+// live series cards that don't have them? Then withhold players who don't have
+// charts from packs"). Players on a 2026-27 roster with no base card — the
+// rookies, the returning and the short seasons of card-data/live-rookies.json —
+// are carded from the same expected page, in a second build whose charts are
+// placed against the base cards' field and whose salaries are priced against
+// it (priceSet's basis), so adding them moves no base card. A player is carded
+// only with a usable expected row AND a photo (one photo, one card); everyone
+// else is WITHHELD — out of the set, so out of every pack — and listed, with
+// why, in live-status.json. The rookies wear the Live rookie look (the ROOKIE
+// pill dated 2026-27).
+//
 // Every card carries `live: { mode, asOf, source, season, status, games }`,
 // so a face, a tile or a test can tell what it is looking at, and
 // live-status.json says the same for the whole set.
@@ -72,8 +84,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { REPO_ROOT, readCache, writeCache, politeDelay, DEFAULT_REQUEST_SPACING_MS } from './cache.js';
-import { CURRENT_SET, LIVE_SET } from '../../src/cards/sets.js';
-import { LIVE_BADGE } from '../../src/cards/badges.js';
+import { CURRENT_SET, LIVE_SET, IMAGE_EXTENSIONS } from '../../src/cards/sets.js';
+import { LIVE_BADGE, ROOKIE_BADGE } from '../../src/cards/badges.js';
+import { playerIdFromName } from '../../src/cards/playerId.js';
 import { FREE_AGENT } from '../../src/cards/teams.js';
 import * as dt from './sources/dunksAndThrees.js';
 import * as dtApi from './sources/dunksAndThreesApi.js';
@@ -82,6 +95,8 @@ import { poolActualSeasons } from './poolSeasons.js';
 import { liveSeasonRows, seasonTeamDefense, WINDOW_GAMES } from './realGames.js';
 import { buildSpeedPowerTotals } from './speedPower.js';
 import { generateCards, indexByName, STAT_NAME_ALIASES } from './generateCards.js';
+import { computePlayValue, priceSet } from './playValue.js';
+import { roundSalary, SALARY_MIN, SALARY_MAX } from './attributes.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
@@ -96,6 +111,50 @@ export const STATUS_FILE = path.join(GEN_DIR, 'live-status.json');
 /** The pool's Basketball-Reference ids, written by fetchPoolGameLogs.mjs. */
 export const INDEX_FILE = path.join(GEN_DIR, 'pool-gamelogs-index.json');
 export const MODES = ['mirror', 'season'];
+/** The Live Series' additions: on a 2026-27 roster with no base card (see the header). */
+export const ADDITIONS_FILE = path.join(REPO_ROOT, 'card-data', 'live-rookies.json');
+/** Every Live card's photo folder: the base set's, unpacked by the nightly job before this runs. */
+export const PHOTO_DIR = path.join(REPO_ROOT, 'card-art', 'sets', CURRENT_SET, 'photos');
+/** The season a carded rookie's pill is dated (the base set's name). */
+export const ROOKIE_SEASON_LABEL = CURRENT_SET;
+
+/** The additions, in file order: rookies, then returning, then short seasons; never one left out. */
+export function readAdditions(file = ADDITIONS_FILE) {
+  if (!fs.existsSync(file)) return [];
+  const body = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const out = new Set((body.leftOut ?? []).map(x => x?.id ?? x));
+  const of = (list, kind) => (list ?? [])
+    .filter(a => a?.id && !out.has(a.id))
+    .map(a => ({ id: a.id, name: a.name, team: a.team, pos: a.pos, kind }));
+  return [...of(body.rookies, 'rookie'), ...of(body.returning, 'returning'), ...of(body.shortSeason, 'shortSeason')];
+}
+
+/** The card ids with a photo in a folder: the formats the Studio counts (IMAGE_EXTENSIONS). */
+export function photoIds(dir = PHOTO_DIR) {
+  if (!fs.existsSync(dir)) return new Set();
+  return new Set(fs.readdirSync(dir)
+    .filter(f => !f.startsWith('_') && IMAGE_EXTENSIONS.includes(path.extname(f).toLowerCase()))
+    .map(f => f.replace(/\.[^.]+$/, '')));
+}
+
+/**
+ * A card's position for a player with no base card: Basketball-Reference's
+ * when they have played (its first listed), else nba.com's three-letter kind
+ * read through the expected rates — a guard who sets up six assists per 100
+ * is a PG, a forward with 11 rebounds per 100 a PF.
+ */
+export function cardPosition(nbaPos, row = null, bbrefPos = null) {
+  const bb = String(bbrefPos ?? '').split('-')[0];
+  if (['PG', 'SG', 'SF', 'PF', 'C'].includes(bb)) return bb;
+  const p = String(nbaPos ?? '').toUpperCase();
+  if (p === 'C' || p === 'C-F') return 'C';
+  if (p === 'F-C') return 'PF';
+  if (p === 'G-F') return 'SG';
+  if (p === 'F-G') return 'SF';
+  if (p === 'G') return (row?.ast100 ?? 0) >= 6 ? 'PG' : 'SG';
+  if (p === 'F') return (row?.orb100 ?? 0) + (row?.drb100 ?? 0) >= 11 ? 'PF' : 'SF';
+  return 'SF';
+}
 
 /** The season the live cards are played in — the END year of the base set's name (2026-27 → 2027). */
 export const LIVE_SEASON = Number(`20${CURRENT_SET.slice(-2)}`);
@@ -252,6 +311,7 @@ export async function fetchLiveInputs({
   maxFetches = MAX_LOG_FETCHES,
   spacingMs = DEFAULT_REQUEST_SPACING_MS,
   base = readBase(),
+  additions = readAdditions(),
   fetchLog = fetchGameLogFull,
   fetchCounts = s => fetchSeasonTableCached(s, 'perGame', { force: true }),
   log = console.log,
@@ -306,15 +366,21 @@ export async function fetchLiveInputs({
   // The games each player has played, from Basketball-Reference's per-game
   // page; without it, dunksandthrees' count alone (the run goes on).
   let counts = new Map();
+  let countRows = [];
   let countsFrom = 'basketball-reference';
   try {
-    counts = gamesByPlayer(offline ? readCache(`bbref-${season}-perGame`) : await fetchCounts(season));
+    countRows = (offline ? readCache(`bbref-${season}-perGame`) : await fetchCounts(season)) ?? [];
+    counts = gamesByPlayer(countRows);
     log(`  games played: ${counts.size} players on Basketball-Reference's ${season} per-game page`);
     if (!offline) await politeDelay(spacingMs);
   } catch (e) {
     countsFrom = `dunksandthrees only (${String(e.message).split('\n')[0]})`;
     log(`  no Basketball-Reference games-played page: ${e.message}`);
   }
+
+  // A player's row on that page by name: the Basketball-Reference id and
+  // position an addition has no index entry for.
+  const bbrefByName = new Map((countRows ?? []).filter(r => r?.playerId).map(r => [normalizeName(r.name), r]));
 
   // This season's game logs, for whoever has played since the cached page.
   const index = fs.existsSync(INDEX_FILE) ? JSON.parse(fs.readFileSync(INDEX_FILE, 'utf8')).players ?? {} : {};
@@ -325,8 +391,8 @@ export async function fetchLiveInputs({
   let fetched = 0;
   let current = 0;
   let behind = 0;
-  for (const card of base.cards) {
-    const playerId = index[card.id]?.playerId;
+  for (const card of [...base.cards, ...additions]) {
+    const playerId = index[card.id]?.playerId ?? bbrefByName.get(normalizeName(card.name))?.playerId;
     if (!playerId) {
       unmatched.push(card.name);
       continue;
@@ -356,7 +422,7 @@ export async function fetchLiveInputs({
     `Game logs: ${current} current, ${behind} behind the games played, ${fetched} fetched tonight, ` +
       `${failed.length} failed, ${unmatched.length} unmatched`
   );
-  return { season, expected, actual, defense, teamEpm, logs, logStatus };
+  return { season, expected, actual, defense, teamEpm, logs, logStatus, additions, bbrefByName };
 }
 
 const statusFor = real =>
@@ -370,7 +436,7 @@ const statusFor = real =>
  * The season's cards from tonight's inputs, in base-set order. `loadRows` is
  * realGames.js's cached-log reader, injectable so a test can hand in a log.
  */
-export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = liveSeasonRows } = {}) {
+export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = liveSeasonRows, photos = photoIds() } = {}) {
   const { season, expected, actual, defense, logs } = inputs;
   const asOfDate = String(asOf).slice(0, 10);
   const expectedIndex = indexByName(expected);
@@ -444,9 +510,16 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
     if (!b) throw new Error(`generateLive: ${card.id} fell out of the build`);
     return liveCard({ ...card, ...b }, { mode: 'season', asOf, source, season, ...stamps.get(card.id) });
   });
+  const added = buildAdditions({
+    additions: inputs.additions ?? [], photos, inputs, expectedIndex, actualIndex, asOf, asOfDate, source,
+    calibration, fill, field: built.cards, loadRows,
+  });
+  for (const [id, s] of added.stamps) stamps.set(id, s);
+  cards.push(...added.cards);
   const real = [...stamps.values()].filter(s => s.games.real > 0).length;
   const full = [...stamps.values()].filter(s => s.games.real >= WINDOW_GAMES).length;
   log(`Live Series ${season}: ${rows.length} built from the expected page, ${mirrors.length} mirrored; ${real} with real games, ${full} on a full window`);
+  log(`  additions: ${added.cards.length} carded, ${added.withheld.length} withheld (${[...new Set(added.withheld.map(w => w.why))].join('; ') || 'none'})`);
   return {
     set: LIVE_SET,
     generatedAt: asOf,
@@ -457,6 +530,7 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
       season,
       built: rows.length,
       mirrored: mirrors.length,
+      additions: { carded: added.cards.length, withheld: added.withheld },
       withRealGames: real,
       fullWindows: full,
       logs: inputs.logStatus,
@@ -470,6 +544,71 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
       'the expected per-100 rates, salary priced against the live field. Faces: node scripts/studio/export.js --set live.',
     cards,
   };
+}
+
+/**
+ * THE ADDITIONS' BUILD (see the header): those with an expected row and a
+ * photo, built against the base cards' field and priced on its values. The
+ * rest come back as `withheld`, with why.
+ */
+export function buildAdditions({ additions, photos, inputs, expectedIndex, actualIndex, asOf, asOfDate, source, calibration, fill, field, loadRows }) {
+  const withheld = [];
+  const pool = [];
+  const teams = [];
+  const rows = [];
+  const realGamesById = new Map();
+  const stamps = new Map();
+  const picked = [];
+  for (const a of additions) {
+    const e = lookup(expectedIndex, a.name);
+    if (!isLiveRow(e)) { withheld.push({ id: a.id, name: a.name, kind: a.kind, why: 'no expected EPM yet' }); continue; }
+    if (!photos.has(a.id)) { withheld.push({ id: a.id, name: a.name, kind: a.kind, why: 'no photo yet' }); continue; }
+    const pos = cardPosition(e.position || a.pos, e, inputs.bbrefByName?.get(normalizeName(a.name))?.pos);
+    const team = e.team || a.team;
+    rows.push(liveActualRow(e, lookup(actualIndex, a.name)));
+    pool.push({ name: a.name, team, pos, games: FULL_SEASON_GAMES, mpg: e.minutesPer48 });
+    teams.push({ name: a.name, team, pos });
+    // The generator keys a card by the id it makes from the name; the file's id is the card's.
+    const genId = playerIdFromName(a.name);
+    const entry = inputs.logs?.get(a.id);
+    const real = entry ? loadRows(entry.playerId, inputs.season, inputs.defense, { asOf: asOfDate }) : null;
+    if (real) realGamesById.set(genId, real);
+    const n = real?.length ?? 0;
+    stamps.set(a.id, { status: statusFor(n), games: { real: n, synthetic: Math.max(0, WINDOW_GAMES - n) }, addition: a.kind });
+    picked.push({ a, genId });
+  }
+  if (!picked.length) return { cards: [], withheld, stamps };
+
+  const speedPower = buildSpeedPowerTotals({ pool, actual: rows });
+  const built = generateCards({
+    pool,
+    teams,
+    speedPower: speedPower.records,
+    rates: inputs.expected,
+    actual: rows,
+    calibration,
+    biometrics: indexBiometrics(loadBiometrics()),
+    positionShares: indexPositionShares(loadPositionShares()),
+    overrides: {},
+    carryForwardCards: { cards: [], missing: [] },
+    realGamesById,
+    windowCounts: new Map(),
+    chartFill: WINDOW_GAMES,
+    chartFillCalibration: fill,
+    sharesSeason: CURRENT_STATS_SEASON,
+    opponentField: field.map(c => ({ speed: c.speed, power: c.power, defBoost: c.defBoost ?? 0 })),
+  });
+  // Priced against the set they join, on its own values: its prices stay put.
+  const { value: basis } = computePlayValue(field, { field });
+  const salaries = priceSet(built.cards, { field, basis, roundSalary, min: SALARY_MIN, max: SALARY_MAX });
+  const byGen = new Map(built.cards.map((c, i) => [c.id, { ...c, salary: salaries[i] }]));
+  const cards = picked.map(({ a, genId }) => {
+    const b = byGen.get(genId);
+    if (!b) throw new Error(`generateLive: the addition ${a.id} fell out of the build`);
+    const look = a.kind === 'rookie' ? { badges: [LIVE_BADGE, ROOKIE_BADGE], seasonLabel: ROOKIE_SEASON_LABEL } : {};
+    return liveCard({ ...b, id: a.id, name: a.name, ...look }, { mode: 'season', asOf, source, season: inputs.season, ...stamps.get(a.id) });
+  });
+  return { cards, withheld, stamps };
 }
 
 function mirrorBody(base, asOf) {

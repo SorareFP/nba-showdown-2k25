@@ -385,6 +385,11 @@ export function generateCards({
   chartFill = 0,
   chartFillCalibration = null,
   sharesSeason = CURRENT_STATS_SEASON,
+  // THE LIVE SERIES' ADDITIONS (2026-10-28): a second build whose charts are
+  // placed against ANOTHER field's opponents ({ speed, power, defBoost } each),
+  // so the cards it adds are drawn against the set they join and that set is
+  // not redrawn around them. Null: the pool is its own field, as always.
+  opponentField = null,
 }) {
   // The carried-forward players are IN THE POOL, because the studio takes its
   // identity from the pool and a card nobody can find has no use. But their
@@ -547,7 +552,7 @@ export function generateCards({
   // as the best card in the set) and ramps to the CDF at the ceiling. See
   // scripts/analysis/runRollDistribution.js for the measurement behind it.
   const rollCdfs = CDF_BANDS
-    ? fieldStubs.map(c => effectiveRollCdf(c, fieldStubs, calcAdv))
+    ? fieldStubs.map(c => effectiveRollCdf(c, opponentField ?? fieldStubs, calcAdv))
     : fieldStubs.map(() => null);
 
   // Real last-82 game logs (opponent-adjusted, minutes-damped), keyed by card

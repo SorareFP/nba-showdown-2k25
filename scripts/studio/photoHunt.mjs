@@ -133,11 +133,78 @@ function stratRows() {
     });
 }
 
+// ── The Live Series (2026-10-28) ────────────────────────────────────────────
+//
+// The Live Series' additions — rookies, the returning and the short seasons of
+// card-data/live-rookies.json, with no base card — are carded by the nightly
+// job only once they have a photo (one photo, one card; generateLive.js
+// withholds the rest from the set and every pack). So the ones with none are
+// owed one like any card. And a rookie whose photo is from college or an
+// overseas club is flagged in the 2026-27 folder's _flags.json, kind 'college'
+// (the user: "add to the photo hunt rookies who have college pictures but not
+// pics with their NBA teams"); a photo newer than its flag is the replacement,
+// and the row goes. Their photos live in the base set's folder, as every Live
+// card's does.
+const LIVE_FILE = path.join(ROOT, 'card-data', 'live-rookies.json');
+const LIVE_PHOTOS = '2026-27';
+
+function liveAdditions() {
+  if (!fs.existsSync(LIVE_FILE)) return [];
+  const body = JSON.parse(fs.readFileSync(LIVE_FILE, 'utf8'));
+  const out = new Set((body.leftOut ?? []).map(x => x?.id ?? x));
+  const of = (list, kind) => (list ?? []).filter(a => a?.id && !out.has(a.id)).map(a => ({
+    id: a.id, name: a.name, team: a.team, kind,
+    // Searched as the Studio searches them (players.js): this season's, a rookie as one.
+    seasonLabel: '2026-27', searchYear: '2026', liveRookie: kind === 'rookie',
+  }));
+  return [...of(body.rookies, 'rookie'), ...of(body.returning, 'returning'), ...of(body.shortSeason, 'short season')];
+}
+
+const KIND_LABEL = { rookie: 'Rookie', returning: 'Returning', 'short season': 'Short season' };
+
+function liveRow(prefix, card, note) {
+  const t = huntTarget('live', card);
+  return `<tr data-k="${esc(prefix)}/${esc(card.id)}">` +
+    `<td class="pick"><button class="tick" aria-label="done"></button></td>` +
+    `<td class="who"><a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(card.name)}</a></td>` +
+    `<td class="season">${esc(KIND_LABEL[card.kind] ?? card.kind)}</td>` +
+    `<td class="jersey"><span class="code">${esc(t.code)}</span> <span class="era">${esc(note)}</span></td>` +
+    `<td class="fileid">${esc(card.id)}</td></tr>`;
+}
+
+/** Additions with no photo: out of the set until they have one. */
+function liveMissingRows() {
+  const have = photoIds(LIVE_PHOTOS);
+  return liveAdditions().filter(c => !have.has(c.id))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(c => liveRow('live', c, 'not in packs until it has a photo'));
+}
+
+/** The modified time of a card's photo in a folder, or null. */
+function photoTime(set, id) {
+  const dir = path.join(ROOT, 'card-art', 'sets', set, 'photos');
+  if (!fs.existsSync(dir)) return null;
+  const f = fs.readdirSync(dir).find(x => x.replace(/\.[^.]+$/, '') === id && IMAGE_EXTENSIONS.includes(path.extname(x).toLowerCase()));
+  return f ? fs.statSync(path.join(dir, f)).mtimeMs : null;
+}
+
+/** Additions whose photo is flagged as not in their NBA uniform, until a newer one lands. */
+function liveReplaceRows() {
+  const file = path.join(ROOT, 'card-art', 'sets', LIVE_PHOTOS, 'photos', '_flags.json');
+  const flags = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
+  return liveAdditions()
+    .filter(c => flags[c.id]?.kind === 'college' && !(photoTime(LIVE_PHOTOS, c.id) > flags[c.id].at))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(c => liveRow('live-replace', c, flags[c.id].note ?? 'not in an NBA uniform'));
+}
+
 const PLAYER_HEADS = ['', 'Player (click = tuned image search)', 'Season', 'Jersey', 'Save as (any ext)'];
 const STRAT_HEADS = ['', 'Card (click = image search for the idea)', 'Phase', 'Side · rarity', 'Save as (any ext)'];
 
 const sections = [
   ...SECTIONS.map(([id, label, league]) => ({ id, label, league, heads: PLAYER_HEADS, rows: rowsFor(id, league) })),
+  { id: 'live', label: 'Live Series additions — no photo yet', league: 'NBA', heads: PLAYER_HEADS, rows: liveMissingRows() },
+  { id: 'live-replace', label: 'Live Series rookies — wanted in their NBA uniform', league: 'NBA', heads: PLAYER_HEADS, rows: liveReplaceRows() },
   { id: 'strats', label: 'Strategy cards', league: null, heads: STRAT_HEADS, rows: stratRows() },
 ].filter(s => s.rows.length > 0);
 const total = sections.reduce((n, s) => n + s.rows.length, 0);

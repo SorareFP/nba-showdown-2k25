@@ -30,7 +30,7 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 export const NEWS = [
   {
     id: 'live-series', date: '2026-10-28', title: 'The Live Series is here',
-    body: "Blue-trim cards of this season's players whose numbers move every night with the season: Speed, Power, shooting, chart and salary are rebuilt from the season's expected numbers and the games actually played, so the Live card you own can heat up or cool off. This season's rookies and players back in the league join as they get their photos. Find them in boosters and in the 100-coin Live Series Pack, and start on the Live Series collection.",
+    body: "Blue-trim cards of this season's players whose numbers move every night with the season: Speed, Power, shooting, chart and salary are rebuilt from the season's expected numbers and the games actually played, so the Live card you own can heat up or cool off. This season's rookies and players back in the league join as soon as there are numbers to chart them. Find them in boosters and in the 100-coin Live Series Pack, and start on the Live Series collection.",
     to: 'shop', cta: 'The pack shop',
   },
   {

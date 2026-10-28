@@ -22,7 +22,6 @@ import {
   gamesByPlayer,
   gamesPlayed,
   readAdditions,
-  photoIds,
   cardPosition,
   buildAdditions,
 } from './generateLive.js';
@@ -299,14 +298,6 @@ describe('the additions', () => {
     fs.rmSync(dir, { recursive: true, force: true });
   });
 
-  it('counts a photo in any format the Studio saves, and nothing else', () => {
-    const dir = tmp();
-    for (const f of ['A_One.jpg', 'B_Two.avif', 'C_Three.txt', '_flags.json']) fs.writeFileSync(path.join(dir, f), 'x');
-    expect([...photoIds(dir)].sort()).toEqual(['A_One', 'B_Two']);
-    expect(photoIds(path.join(dir, 'none')).size).toBe(0);
-    fs.rmSync(dir, { recursive: true, force: true });
-  });
-
   it('takes a position from Basketball-Reference, else reads nba.com\'s through the rates', () => {
     expect(cardPosition('G', { ast100: 9 }, 'PG-SG')).toBe('PG');
     expect(cardPosition('G', { ast100: 8 })).toBe('PG');
@@ -319,22 +310,24 @@ describe('the additions', () => {
     expect(cardPosition('')).toBe('SF');
   });
 
-  it('withholds a player with no expected row or no photo, and says why', () => {
-    const row = { name: 'A One', epm: 1, epmOff: 1, epmDef: 0, pts100: 20, ast100: 4, minutesPer48: 20 };
+  // A photo is not required (the user, 2026-10-28: "Placeholder photos are
+  // fine, I just don't want non-chart cards in packs"): only a missing chart
+  // withholds a player.
+  it('withholds a player with no expected row to chart, and says why', () => {
+    const partial = { name: 'A One', epm: 1, epmOff: 1, epmDef: 0, pts100: 20, ast100: 4 };   // no minutes: no chart
     const out = buildAdditions({
       additions: [
         { id: 'A_One', name: 'A One', team: 'WAS', pos: 'F', kind: 'rookie' },
         { id: 'B_Two', name: 'B Two', team: 'HOU', pos: 'G', kind: 'returning' },
       ],
-      photos: new Set(['B_Two']),
       inputs: { logs: new Map(), bbrefByName: new Map() },
-      expectedIndex: indexByName([row]),
+      expectedIndex: indexByName([partial]),
       actualIndex: new Map(),
       field: [],
     });
     expect(out.cards).toEqual([]);
     expect(out.withheld).toEqual([
-      { id: 'A_One', name: 'A One', kind: 'rookie', why: 'no photo yet' },
+      { id: 'A_One', name: 'A One', kind: 'rookie', why: 'no expected EPM yet' },
       { id: 'B_Two', name: 'B Two', kind: 'returning', why: 'no expected EPM yet' },
     ]);
   });

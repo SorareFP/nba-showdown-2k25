@@ -60,10 +60,12 @@
 // are carded from the same expected page, in a second build whose charts are
 // placed against the base cards' field and whose salaries are priced against
 // it (priceSet's basis), so adding them moves no base card. A player is carded
-// only with a usable expected row AND a photo (one photo, one card); everyone
-// else is WITHHELD — out of the set, so out of every pack — and listed, with
-// why, in live-status.json. The rookies wear the Live rookie look (the ROOKIE
-// pill dated 2026-27).
+// once they have a usable expected row, which is what makes a chart; one with
+// no row yet is WITHHELD — out of the set, so out of every pack — and listed,
+// with why, in live-status.json. A photo is not required: the face shows the
+// placeholder until one lands (the user, 2026-10-28: "Placeholder photos are
+// fine, I just don't want non-chart cards in packs"). The rookies wear the
+// Live rookie look (the ROOKIE pill dated 2026-27).
 //
 // Every card carries `live: { mode, asOf, source, season, status, games }`,
 // so a face, a tile or a test can tell what it is looking at, and
@@ -84,7 +86,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { REPO_ROOT, readCache, writeCache, politeDelay, DEFAULT_REQUEST_SPACING_MS } from './cache.js';
-import { CURRENT_SET, LIVE_SET, IMAGE_EXTENSIONS } from '../../src/cards/sets.js';
+import { CURRENT_SET, LIVE_SET } from '../../src/cards/sets.js';
 import { LIVE_BADGE, ROOKIE_BADGE } from '../../src/cards/badges.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { FREE_AGENT } from '../../src/cards/teams.js';
@@ -113,8 +115,6 @@ export const INDEX_FILE = path.join(GEN_DIR, 'pool-gamelogs-index.json');
 export const MODES = ['mirror', 'season'];
 /** The Live Series' additions: on a 2026-27 roster with no base card (see the header). */
 export const ADDITIONS_FILE = path.join(REPO_ROOT, 'card-data', 'live-rookies.json');
-/** Every Live card's photo folder: the base set's, unpacked by the nightly job before this runs. */
-export const PHOTO_DIR = path.join(REPO_ROOT, 'card-art', 'sets', CURRENT_SET, 'photos');
 /** The season a carded rookie's pill is dated (the base set's name). */
 export const ROOKIE_SEASON_LABEL = CURRENT_SET;
 
@@ -127,14 +127,6 @@ export function readAdditions(file = ADDITIONS_FILE) {
     .filter(a => a?.id && !out.has(a.id))
     .map(a => ({ id: a.id, name: a.name, team: a.team, pos: a.pos, kind }));
   return [...of(body.rookies, 'rookie'), ...of(body.returning, 'returning'), ...of(body.shortSeason, 'shortSeason')];
-}
-
-/** The card ids with a photo in a folder: the formats the Studio counts (IMAGE_EXTENSIONS). */
-export function photoIds(dir = PHOTO_DIR) {
-  if (!fs.existsSync(dir)) return new Set();
-  return new Set(fs.readdirSync(dir)
-    .filter(f => !f.startsWith('_') && IMAGE_EXTENSIONS.includes(path.extname(f).toLowerCase()))
-    .map(f => f.replace(/\.[^.]+$/, '')));
 }
 
 /**
@@ -436,7 +428,7 @@ const statusFor = real =>
  * The season's cards from tonight's inputs, in base-set order. `loadRows` is
  * realGames.js's cached-log reader, injectable so a test can hand in a log.
  */
-export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = liveSeasonRows, photos = photoIds() } = {}) {
+export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = liveSeasonRows } = {}) {
   const { season, expected, actual, defense, logs } = inputs;
   const asOfDate = String(asOf).slice(0, 10);
   const expectedIndex = indexByName(expected);
@@ -511,7 +503,7 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
     return liveCard({ ...card, ...b }, { mode: 'season', asOf, source, season, ...stamps.get(card.id) });
   });
   const added = buildAdditions({
-    additions: inputs.additions ?? [], photos, inputs, expectedIndex, actualIndex, asOf, asOfDate, source,
+    additions: inputs.additions ?? [], inputs, expectedIndex, actualIndex, asOf, asOfDate, source,
     calibration, fill, field: built.cards, loadRows,
   });
   for (const [id, s] of added.stamps) stamps.set(id, s);
@@ -547,11 +539,11 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
 }
 
 /**
- * THE ADDITIONS' BUILD (see the header): those with an expected row and a
- * photo, built against the base cards' field and priced on its values. The
- * rest come back as `withheld`, with why.
+ * THE ADDITIONS' BUILD (see the header): those with an expected row, built
+ * against the base cards' field and priced on its values. The rest come back
+ * as `withheld`, with why.
  */
-export function buildAdditions({ additions, photos, inputs, expectedIndex, actualIndex, asOf, asOfDate, source, calibration, fill, field, loadRows }) {
+export function buildAdditions({ additions, inputs, expectedIndex, actualIndex, asOf, asOfDate, source, calibration, fill, field, loadRows }) {
   const withheld = [];
   const pool = [];
   const teams = [];
@@ -562,7 +554,6 @@ export function buildAdditions({ additions, photos, inputs, expectedIndex, actua
   for (const a of additions) {
     const e = lookup(expectedIndex, a.name);
     if (!isLiveRow(e)) { withheld.push({ id: a.id, name: a.name, kind: a.kind, why: 'no expected EPM yet' }); continue; }
-    if (!photos.has(a.id)) { withheld.push({ id: a.id, name: a.name, kind: a.kind, why: 'no photo yet' }); continue; }
     const pos = cardPosition(e.position || a.pos, e, inputs.bbrefByName?.get(normalizeName(a.name))?.pos);
     const team = e.team || a.team;
     rows.push(liveActualRow(e, lookup(actualIndex, a.name)));

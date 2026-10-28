@@ -137,9 +137,9 @@ function stratRows() {
 //
 // The Live Series' additions — rookies, the returning and the short seasons of
 // card-data/live-rookies.json, with no base card — are carded by the nightly
-// job only once they have a photo (one photo, one card; generateLive.js
-// withholds the rest from the set and every pack). So the ones with none are
-// owed one like any card. And a rookie whose photo is from college or an
+// job once they have numbers, and one with no photo yet wears the placeholder
+// face (the user, 2026-10-28: "Placeholder photos are fine"). So the ones with
+// none are owed one like any card. And a rookie whose photo is from college or an
 // overseas club is flagged in the 2026-27 folder's _flags.json, kind 'college'
 // (the user: "add to the photo hunt rookies who have college pictures but not
 // pics with their NBA teams"); a photo newer than its flag is the replacement,
@@ -177,7 +177,7 @@ function liveMissingRows() {
   const have = photoIds(LIVE_PHOTOS);
   return liveAdditions().filter(c => !have.has(c.id))
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map(c => liveRow('live', c, 'not in packs until it has a photo'));
+    .map(c => liveRow('live', c, 'placeholder face until it has a photo'));
 }
 
 /** The modified time of a card's photo in a folder, or null. */

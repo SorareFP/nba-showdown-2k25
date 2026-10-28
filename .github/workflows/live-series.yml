@@ -88,8 +88,9 @@ jobs:
       # so this checkout has none: the live-photos branch carries them, pushed
       # by `npm run live:photos` whenever a photo changes. Unpacked with git
       # archive, so nothing lands in the index the commit step below uses.
-      # BEFORE the regeneration since 2026-10-28: an addition (a rookie, a
-      # returning player, a short season) is carded only once it has a photo.
+      # Before the regeneration (2026-10-28), so the faces it exports below
+      # find every photo, the additions' (rookies, returning, short seasons)
+      # included; one with no photo yet exports with the placeholder.
       - name: Unpack the base set's photos
         run: |
           git fetch --depth 1 origin live-photos

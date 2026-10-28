@@ -20,7 +20,8 @@
 # THE FACES ARE NEVER COMMITTED. One set's faces are ~230 MB and every one of
 # them changes every night, so they go straight from the runner to Pages
 # (`npm run deploy` publishes dist/, and gh-pages keeps whatever a later
-# deploy does not touch). Only the two JSON files are committed, so the app's
+# deploy does not touch). Only the JSON files are committed (the cards, the
+# status, and the night-by-night history the Live Series view reads), so the app's
 # numbers and the faces on Pages come from the same run. public/cards/live is
 # gitignored for the same reason.
 name: Live Series
@@ -115,7 +116,7 @@ jobs:
         run: |
           git config user.name "live-series[bot]"
           git config user.email "live-series[bot]@users.noreply.github.com"
-          git add card-data/generated/cards-live.json card-data/generated/live-status.json
+          git add card-data/generated/cards-live.json card-data/generated/live-status.json card-data/generated/live-history.json
           git diff --cached --quiet && echo "nothing moved today" || git commit -m "chore(live): the Live Series as of $(date -u +%F)"
           git push
 

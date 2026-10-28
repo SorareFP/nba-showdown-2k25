@@ -1,0 +1,91 @@
+/* The Live Series view (LiveMovers.jsx). The widths are the mockup's the user
+   signed off (2026-10-28): the player, the salary line and the rarity take the
+   room, the six numbers stay narrow, and the charts column fits its charts with
+   a little to spare on the right. Rows are as tall as the charts, no taller. */
+.wrap { display: flex; flex-direction: column; gap: 12px; }
+
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+.windows { display: flex; gap: 6px; flex-wrap: wrap; }
+.win { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border); background: transparent;
+  color: var(--text-muted); font-size: 13px; cursor: pointer; transition: background var(--dur-quick, 120ms), color var(--dur-quick, 120ms); }
+.win:hover { color: var(--text); background: var(--card-hover); }
+.winOn, .winOn:hover { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+.asOf { color: var(--text-muted); font-size: 13px; }
+.tools { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.mine { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; cursor: pointer; }
+.search { width: 220px; padding: 7px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: var(--card-bg); color: var(--text); font-size: 13px; }
+
+.note { color: var(--text-muted); padding: 24px 4px; }
+.legend { color: var(--text-dim); font-size: 12px; margin: 0; }
+
+/* A phone scrolls the table sideways, the player column pinned. */
+.scroller { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card-bg); }
+.table { width: 100%; border-collapse: collapse; min-width: 1180px; }
+.table > thead > tr > th { position: sticky; top: 0; z-index: 2; background: var(--navy-light); text-align: left; padding: 8px 10px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted);
+  border-bottom: 1px solid var(--border); white-space: nowrap; }
+.table > thead > tr > th.num { text-align: right; }
+.sortBtn { all: unset; cursor: pointer; }
+.sortBtn:hover { color: var(--text); }
+.table > thead > tr > th[aria-sort] { color: var(--text); }
+/* Child selectors: the charts are tables too, and keep their own cells. */
+.table > tbody > tr > td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.table > tbody > tr:last-child > td { border-bottom: 0; }
+.table > tbody > tr:hover > td { background: rgba(255, 255, 255, 0.03); }
+
+.colPlayer { width: 18%; }
+.colLine { width: 22%; }
+.colSalary { width: 8%; }
+.colRarity { width: 13%; }
+.colStat { width: 4%; }
+.colCharts { width: 1%; }
+
+.player { white-space: nowrap; }
+/* A phone pins a narrower player column, its header with it. */
+@media (max-width: 768px) {
+  .player { position: sticky; left: 0; z-index: 1; background: var(--navy); white-space: normal; max-width: 140px; }
+  .table > thead > tr > th.colPlayer { position: sticky; left: 0; z-index: 3; }
+  .name { font-size: 15px !important; }
+  .collected { display: table; margin: 3px 0 0 !important; }
+  .tools { margin-left: 0; flex-wrap: wrap; }
+  .search { width: 100%; }
+}
+.name { all: unset; cursor: zoom-in; font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.name:hover, .name:focus-visible { color: #93C5FD; }
+.collected { display: inline-block; margin-left: 10px; padding: 2px 7px; border: 1px solid #60A5FA; border-radius: 4px;
+  color: #60A5FA; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; vertical-align: 3px; }
+.meta { margin-top: 3px; color: var(--text-muted); font-size: 13px; }
+
+.lineCell { padding-right: 24px !important; }
+.spark { display: block; width: 100%; height: 44px; overflow: visible; }
+.spark polyline, .spark line { fill: none; stroke-width: 2; stroke-linejoin: round; }
+.sparkUp { stroke: #4ADE80; }
+.sparkDown { stroke: #F87171; }
+.sparkFlat { stroke: var(--text-dim); }
+
+.num { text-align: right; white-space: nowrap; }
+.big { display: block; font-size: 15px; font-weight: 700; color: var(--text); }
+.then { color: var(--text-muted); font-size: 12px; }
+.move { display: block; font-size: 11px; font-weight: 600; color: var(--text-dim); }
+.up { color: #4ADE80; }
+.down { color: #F87171; }
+
+.rarity { white-space: nowrap; }
+.chip { display: inline-block; padding: 5px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; }
+.arrow { color: var(--text-dim); margin: 0 8px; }
+
+.charts { white-space: nowrap; padding-left: 28px !important; padding-right: 3% !important; }
+.mini { display: inline-table; vertical-align: middle; border-collapse: collapse; font-size: 11px;
+  font-variant-numeric: tabular-nums; border: 1px solid var(--border); border-radius: 4px; }
+.mini th { padding: 1px 5px; font-size: 9.5px; font-weight: 600; color: var(--text-muted); text-align: center; border-bottom: 1px solid var(--border); }
+.mini td { padding: 0 5px; line-height: 15px; text-align: center; color: var(--text); }
+.mini td.range { text-align: left; color: var(--text-muted); min-width: 34px; }
+.mini td.rangeMoved { color: #60A5FA; font-weight: 600; }
+.miniThen td, .miniThen td.range { color: var(--text-dim); }
+.cell_up { color: #4ADE80 !important; font-weight: 700; background: rgba(74, 222, 128, 0.12); }
+.cell_down { color: #F87171 !important; font-weight: 700; background: rgba(248, 113, 113, 0.12); }
+
+.more { align-self: center; margin: 12px auto; display: block; padding: 8px 18px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--card-bg); color: var(--text); cursor: pointer; }
+.more:hover { background: var(--card-hover); }

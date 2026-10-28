@@ -31,6 +31,8 @@ describe('what the build reads', () => {
     const status = [' M card-art/sets/2026-27/crops.json', ' M src/game/run.js', '?? public/cards/team-rewards/X.png', 'R  src/a.js -> src/b.js'].join('\n');
     expect(changedBuildInputs(status)).toEqual(['src/game/run.js', 'src/b.js']);
     expect(botOnly(LIVE_BOT_FILES)).toBe(true);
+    // The Live Series view's night by night (2026-10-28) is the bot's too.
+    expect(botOnly(['card-data/generated/live-history.json'])).toBe(true);
     expect(botOnly(['card-data/generated/cards-live.json', 'src/x.js'])).toBe(false);
   });
 });

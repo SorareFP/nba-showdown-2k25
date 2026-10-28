@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, glassBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, placementRolls, matchupContest, heldByTimeout } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
 import { canPlayCard, burstTargets, greenLightTargets, pickUpTargets, myHouseTargets, fwdTargets, preRollTargets, contactTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, answerWindow, passAnswer, screenLockSlots, HACK_A } from '../../game/canPlay.js';
@@ -13,6 +12,7 @@ import { aiDraftPick, aiPlacementPick, forfeitNet, FORFEIT_CARDS } from '../../g
 import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName, submitSoloLineup, DEFAULT_ORDER, placingTeam } from '../../game/placement.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getPlayerThumbUrl, getStratImagePath, getStratThumbPath, fallbackTo } from '../../game/cardImages.js';
+import { useRowCard, RowCardPop } from '../RowCardPop.jsx';
 import { useLightbox, ZoomImg } from '../CardLightbox.jsx';
 import { useCardPeek } from '../CardPeek.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
@@ -2499,53 +2499,10 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
  * is the same table, pointed the other way. The hand and deck COUNTS stay
  * visible — how many cards someone is holding was never secret.
  */
-// THE ROSTER ROW'S CARD (the user, 2026-10-20: "When I hover over this, I
-// should be able to see a pop-up of the card I'm hovering over"). A short hover
-// shows the card beside the list and holds it while the pointer is on the row
-// (the one-second magnifier, CardPeek.jsx, suits a card image, not a list you
-// sweep down); a click opens the whole card, as every card on a menu does.
-// Drawn on <body>: the wide board is zoomed, and the row's screen rectangle is
-// what the card is placed against.
-export const ROW_CARD_DELAY_MS = 150;
-const ROW_CARD_W = 260;
-const ROW_CARD_H = Math.round(ROW_CARD_W * 1238 / 825);
-
-/** Where the card goes: beside the row, on the side away from the panel's edge of the screen. */
-export function rowCardSpot(rect, side, vw, vh) {
-  const gap = 12;
-  const leftOf = rect.left - ROW_CARD_W - gap;
-  const rightOf = rect.right + gap;
-  let left = side === 'left' ? leftOf : rightOf;
-  if (left < 8) left = rightOf;
-  if (left + ROW_CARD_W > vw - 8) left = Math.max(8, leftOf);
-  const top = Math.min(Math.max(8, rect.top + rect.height / 2 - ROW_CARD_H / 2), Math.max(8, vh - ROW_CARD_H - 8));
-  return { left, top, width: ROW_CARD_W };
-}
-
-/** The hover half: a short hover on a row shows its card, leaving the row (or choosing it) hides it. */
-function useRowCard() {
-  const [hover, setHover] = useState(null);
-  const timer = useRef(null);
-  useEffect(() => () => clearTimeout(timer.current), []);
-  const enter = (p, e) => {
-    clearTimeout(timer.current);
-    const rect = e.currentTarget.getBoundingClientRect();
-    timer.current = setTimeout(() => setHover({ p, rect }), ROW_CARD_DELAY_MS);
-  };
-  const leave = () => { clearTimeout(timer.current); setHover(null); };
-  return { hover, enter, leave };
-}
-
-function RowCardPop({ player, rect, side }) {
-  if (typeof document === 'undefined') return null;
-  const spot = rowCardSpot(rect, side, window.innerWidth, window.innerHeight);
-  return createPortal(
-    <div className={styles.rowCardPop} style={spot} aria-hidden="true" data-row-card={player.id}>
-      <img src={getPlayerThumbUrl(player.id, player.set)} onError={fallbackTo(getPlayerImageUrl(player.id, player.set))} alt="" />
-    </div>,
-    document.body,
-  );
-}
+// THE ROSTER ROW'S CARD (2026-10-20): RowCardPop.jsx, shared with the Live
+// Series table since 2026-10-28. rowCardSpot and the delay stay importable
+// from here for what already reads them.
+export { ROW_CARD_DELAY_MS, rowCardSpot } from '../RowCardPop.jsx';
 
 export function OppStatusPanel({ game, teamKey }) {
   const t = getTeam(game, teamKey);

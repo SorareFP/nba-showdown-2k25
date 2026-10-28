@@ -201,12 +201,15 @@ describe('the committed file', () => {
 
   // Card for card with the base set: a mirror before the season, the same
   // cards moved by it after (the nightly job's first season-mode run,
-  // 2026-10-22). A base Free Agent stays one either way (liveTeam).
+  // 2026-10-22). A base Free Agent stays one either way (liveTeam). Since
+  // 2026-10-28 the additions follow them, players with no base card.
   it('carries the base set card for card: mirrored before the season, re-allocated in it', () => {
     expect(live.set).toBe(LIVE_SET);
     expect(MODES).toContain(live.live.mode);
-    expect(live.cards.map(c => c.id)).toEqual(base.cards.map(c => c.id));
-    for (const [i, c] of live.cards.entries()) {
+    const baseIds = new Set(base.cards.map(c => c.id));
+    expect(live.cards.slice(0, base.cards.length).map(c => c.id)).toEqual(base.cards.map(c => c.id));
+    expect(live.cards.slice(base.cards.length).filter(c => baseIds.has(c.id))).toEqual([]);
+    for (const [i, c] of live.cards.slice(0, base.cards.length).entries()) {
       const b = base.cards[i];
       expect(c.badges).toContain(LIVE_BADGE);
       if (live.live.mode === 'mirror') {
@@ -216,6 +219,15 @@ describe('the committed file', () => {
         expect(c.live.mode, c.id).toBe('season');
       }
     }
+  });
+
+  // The history is the season's (liveHistory.js): a mirror build is not a night of it.
+  it('keeps no history for a mirror build', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'live-mirror-'));
+    const historyFile = path.join(dir, 'live-history.json');
+    await main({ mode: 'mirror', out: path.join(dir, 'cards-live.json'), statusFile: null, historyFile, log: () => {} });
+    expect(fs.existsSync(historyFile)).toBe(false);
+    fs.rmSync(dir, { recursive: true, force: true });
   });
 
   it('names its modes and refuses any other', async () => {

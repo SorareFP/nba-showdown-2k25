@@ -247,7 +247,7 @@ function rosterFor(goal, counts, limit = 60) {
   return { shown: ordered.slice(0, limit), hidden: Math.max(0, ordered.length - limit), counts };
 }
 
-function GoalRow({ goal, counts, collected, claimed, coins, busy, busyCard, onClaim, onCollect, expanded, onToggle }) {
+function GoalRow({ goal, counts, collected, claimed, coins, busy, busyCard, onClaim, onCollect, expanded, onToggle, onOpenLive = null }) {
   const pct = goal.total ? Math.round((goal.owned / goal.total) * 100) : 0;
   const roster = expanded ? rosterFor(goal, counts) : { shown: [], hidden: 0, counts };
   const { band, packs } = difficultyOf(goal.id);
@@ -345,6 +345,10 @@ function GoalRow({ goal, counts, collected, claimed, coins, busy, busyCard, onCl
             🪙 {fmt(payout)} coins
           </span>
         ) : null}
+        {/* The Live set moves every night: its row opens the Live Series view (2026-10-28). */}
+        {goal.id === 'set-live' && onOpenLive && (
+          <button type="button" className={styles.liveLink} data-open-live onClick={onOpenLive}>How they've moved →</button>
+        )}
       </div>
 
       {expanded && roster.shown.length > 0 && (
@@ -368,7 +372,7 @@ function GoalRow({ goal, counts, collected, claimed, coins, busy, busyCard, onCl
   );
 }
 
-export default function CollectionGoals({ collection, claims, coins, onClaim, onCollect, busyGoal, busyCard }) {
+export default function CollectionGoals({ collection, claims, coins, onClaim, onCollect, busyGoal, busyCard, onOpenLive = null }) {
   const [league, setLeague] = useState('NBA');
   const [expanded, setExpanded] = useState(null);
   const [hideDone, setHideDone] = useState(false);
@@ -452,6 +456,7 @@ export default function CollectionGoals({ collection, claims, coins, onClaim, on
                   busyCard={busyCard}
                   expanded={expanded === goal.id}
                   onToggle={() => setExpanded(expanded === goal.id ? null : goal.id)}
+                  onOpenLive={onOpenLive}
                 />
                 </Fragment>
               ))}

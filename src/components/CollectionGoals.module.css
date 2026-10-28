@@ -118,6 +118,9 @@
 @media (prefers-reduced-motion: reduce) { .claim { animation: none; } }
 
 .claimed { font-size: 12px; font-weight: 700; color: var(--green); }
+/* The Live collection's way into the Live Series view (2026-10-28). */
+.liveLink { all: unset; cursor: pointer; font-size: 12px; font-weight: 600; color: #60A5FA; }
+.liveLink:hover, .liveLink:focus-visible { text-decoration: underline; }
 .togo { font-size: 11px; color: var(--text-dim); }
 .rewardChip {
   display: inline-flex; align-items: center; gap: 6px;

@@ -25,9 +25,14 @@ import { teamIdFor } from './modes/league.js';
  * THE COLLECTION PAGES HOME CAN OPEN, by the name a NEWS item or a Home link
  * uses (App.jsx homeGo). Anything else is a tab of its own.
  */
-export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collection', freeagents: 'freeagents', market: 'market', friends: 'friends' };
+export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collection', freeagents: 'freeagents', market: 'market', friends: 'friends', live: 'live' };
 
 export const NEWS = [
+  {
+    id: 'live-table', date: '2026-10-28', title: 'How the Live cards have moved',
+    body: "A new Live Series page in Collection lists every Live card with what has changed: the salary night by night, Speed, Power, the shooting numbers and Defense with their moves, the rarity when it crosses a line, and the chart then and now. Compare with the night before, the last 7 or 21 days, or the whole season, and tick Only my cards to see just yours.",
+    to: 'live', cta: 'The Live Series',
+  },
   {
     id: 'live-series', date: '2026-10-28', title: 'The Live Series is here',
     body: "Blue-trim cards of this season's players whose numbers move every night with the season: Speed, Power, shooting, chart and salary are rebuilt from the season's expected numbers and the games actually played, so the Live card you own can heat up or cool off. This season's rookies and players back in the league join as soon as there are numbers to chart them. Find them in boosters and in the 100-coin Live Series Pack, and start on the Live Series collection.",

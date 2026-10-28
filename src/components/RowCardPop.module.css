@@ -1,0 +1,6 @@
+/* The row's card (RowCardPop.jsx): beside the list, on <body>. */
+.rowCardPop { position:fixed; z-index:1100; pointer-events:none; border-radius:10px; overflow:hidden;
+  box-shadow:0 12px 36px rgba(0,0,0,0.55); animation:rowCardIn var(--dur-quick, 120ms) var(--ease-out, ease-out); }
+.rowCardPop img { display:block; width:100%; height:auto; }
+@keyframes rowCardIn { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce) { .rowCardPop { animation:none; } }

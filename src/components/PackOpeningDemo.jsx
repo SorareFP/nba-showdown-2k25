@@ -25,6 +25,7 @@ import DynastyTab from './DynastyTab.jsx';
 import ClimbTab from './climb/ClimbTab.jsx';
 import TeamEditor from './TeamEditor.jsx';
 import PlayHub from './PlayHub.jsx';
+import LiveMovers from './LiveMovers.jsx';
 import { packRun, unpackRun, isActiveRun } from '../firebase/climb.js';
 import { potOfRun, MAP_VERSION } from '../game/modes/climbMap.js';
 import { resultFromGame } from '../game/modes/run.js';
@@ -45,7 +46,7 @@ const PACKABLE = [BASE_SET, ...SPECIAL_SETS_IN_PACKS].flatMap(id => CARD_SETS[id
 export const demoKind = () => {
   if (!import.meta.env?.DEV || typeof window === 'undefined') return null;
   const kind = new URLSearchParams(window.location.search).get('demo');
-  return ['pack', 'claim', 'collection', 'play', 'dynasty', 'climb', 'team', 'modes'].includes(kind) ? kind : null;
+  return ['pack', 'claim', 'collection', 'play', 'dynasty', 'climb', 'team', 'modes', 'live'].includes(kind) ? kind : null;
 };
 export const isPackDemo = () => demoKind() !== null;
 
@@ -85,6 +86,12 @@ function TeamDemo() {
   const collection = useMemo(() => Object.fromEntries(PACKABLE.map(c => [cardKey(c), { type: 'player', count: 1, collected: true }])), []);
   const noop = () => {};
   return <TeamEditor team={null} collection={collection} onSaved={noop} onCancel={noop} />;
+}
+
+function LiveDemo() {
+  const collection = useMemo(() => Object.fromEntries((CARD_SETS.live ?? [])
+    .filter((_, i) => i % 5 === 0).map(c => [cardKey(c), { type: 'player', count: 1 }])), []);
+  return <LiveMovers collection={collection} />;
 }
 
 function CollectionDemo() {
@@ -273,6 +280,8 @@ export default function PackOpeningDemo() {
   if (demoKind() === 'team') return <TeamDemo />;
   // The Play hub with nothing on an account; a game saved on this device shows.
   if (demoKind() === 'modes') return <PlayHub onGo={() => {}} />;
+  // ?demo=live — the Live Series view; the demo "owns" every fifth Live card.
+  if (demoKind() === 'live') return <LiveDemo />;
   return (
     <div style={{ padding: '16px 20px' }}>
       <PackOpening

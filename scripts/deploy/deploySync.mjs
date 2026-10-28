@@ -31,7 +31,12 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 /** The files the Live Series bot commits to main, and the only ones it may. */
-export const LIVE_BOT_FILES = ['card-data/generated/cards-live.json', 'card-data/generated/live-status.json'];
+export const LIVE_BOT_FILES = [
+  'card-data/generated/cards-live.json',
+  'card-data/generated/live-status.json',
+  // The Live Series view's night by night (scripts/cardgen/liveHistory.js, 2026-10-28).
+  'card-data/generated/live-history.json',
+];
 
 /** The Live faces and thumbs a build copies from public/, which the bot owns on the site. */
 export const LIVE_FACE_DIRS = ['cards/live', 'cards/thumbs/live'];

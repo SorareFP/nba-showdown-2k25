@@ -105,6 +105,7 @@ import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { OUTPUT_FILE as LIVE_FILL_FILE } from './calibrateLiveFill.js';
 import { CURRENT_STATS_SEASON, fetchSeasonTableCached } from './fetchCalibrationData.js';
 import { normalizeName } from './resolveTeams.js';
+import { HISTORY_FILE, updateHistory } from './liveHistory.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
 export const BASE_FILE = path.join(GEN_DIR, `cards-${CURRENT_SET}.json`);
@@ -625,6 +626,7 @@ export async function main({
   maxFetches = MAX_LOG_FETCHES,
   out = OUTPUT_FILE,
   statusFile = STATUS_FILE,
+  historyFile = HISTORY_FILE,
   log = console.log,
 } = {}) {
   if (!MODES.includes(mode)) throw new Error(`generateLive: no such mode ${mode} (${MODES.join(', ')})`);
@@ -642,6 +644,9 @@ export async function main({
     fs.writeFileSync(statusFile, `${JSON.stringify({ set: LIVE_SET, cards: body.cards.length, ...body.live }, null, 1)}\n`);
   }
   log(`Live Series: ${body.cards.length} cards, mode ${mode}, as of ${asOf}.\n  ${out}`);
+  // The night by night the Live Series view reads (liveHistory.js): the
+  // season's nights only, so a mirror build records none.
+  if (historyFile && mode === 'season') updateHistory({ file: historyFile, date: String(asOf).slice(0, 10), cards: body.cards, log });
   return body;
 }
 
@@ -658,8 +663,9 @@ function parseArgs(argv) {
     offline: argv.includes('--offline'),
     maxFetches: flag('--max-fetches') ? Number(flag('--max-fetches')) : MAX_LOG_FETCHES,
     out: flag('--out') ? path.resolve(flag('--out')) : OUTPUT_FILE,
-    // A dry run written elsewhere leaves the committed status alone too.
+    // A dry run written elsewhere leaves the committed status alone too, and the history.
     statusFile: flag('--out') ? null : STATUS_FILE,
+    historyFile: flag('--out') ? null : HISTORY_FILE,
   };
 }
 

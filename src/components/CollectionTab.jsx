@@ -24,6 +24,8 @@ import { canonicalKey } from '../game/cardSets.js';
 import { delistCard } from '../firebase/serverWrites.js';
 import MyCollection from './MyCollection.jsx';
 import Market from './Market.jsx';
+import LiveMovers from './LiveMovers.jsx';
+import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
 import CollectionGoals from './CollectionGoals.jsx';
 import ClaimReveal, { claimRevealFrom } from './ClaimReveal.jsx';
 import FavoriteTeamPicker, { teamForOption, favoriteTeamName } from './FavoriteTeamPicker.jsx';
@@ -49,6 +51,8 @@ const VIEWS = [
   // players selling copies that already exist. Keeping them as separate views
   // is the clearest way to stop the second reading as the first.
   { key: 'market', label: 'Market' },
+  // How the Live cards have moved, night by night (LiveMovers.jsx, 2026-10-28).
+  ...(LIVE_SERIES_ON ? [{ key: 'live', label: 'Live Series' }] : []),
   // Requested cards: ask for any archived season (FreeAgentsPanel).
   { key: 'freeagents', label: 'Free Agents' },
   // Friends (2026-10-11): codes, requests, and who needs what.
@@ -741,8 +745,11 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
           onCollect={handleCollect}
           busyGoal={busyGoal}
           busyCard={busyCard}
+          onOpenLive={LIVE_SERIES_ON ? () => setView('live') : null}
         />
       )}
+
+      {view === 'live' && <LiveMovers collection={collection} />}
 
       {/* ── Pack Shop ── */}
       {view === 'market' && (

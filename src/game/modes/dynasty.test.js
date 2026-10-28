@@ -10,7 +10,7 @@ import {
   rookieTerms, rookieCommitted, rookieProblem, teamOf, pickId, pickValue, projectedSlot,
   waiverList, onWaivers, waiverOrder, claimWaiver, withdrawClaim, claimProblem, resolveWaivers, seasonTurn,
   AI_TRADES_PER_OFFSEASON, aiSalaryCap, aiSalaryOf, salaryFits, signingFits, floorOf,
-  closeRetirements, retirementsOf, retirementWatch, isOffseason, PHASE_LABEL,
+  closeRetirements, retirementsOf, retirementWatch, isOffseason, PHASE_LABEL, draftClassCards,
 } from './dynasty.js';
 import { CAP_DP, APRON_DP, AI_APRON_DP, FA_DAYS, fairDp, PERSONALITIES, CONTRACT_YEARS, rookieScale, talentValue, contractValue, preferredYears } from './dynastyMarket.js';
 import { getPlayerRarity } from '../rarity.js';
@@ -636,6 +636,16 @@ describe('the turn of the year', () => {
     d = closeRookies(d, { rng });
     expect(d.phase).toBe(DPHASE.freeAgency);
     expectConserved(d);
+  });
+});
+
+// NO LIVE CARD IN A DRAFT (2026-10-28). The Live Series' numbers move every
+// night, and a dynasty keys contracts and history by card. Its base players'
+// cards were always out, as base players; its additions (this season's
+// rookies, the returning, the short seasons) have no base card and slipped in.
+describe('the draft class leaves the Live Series out', () => {
+  it('holds no Live card', () => {
+    expect(draftClassCards().some(c => c.set === 'live')).toBe(false);
   });
 });
 

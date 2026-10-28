@@ -37,6 +37,7 @@
 // storage or the screen. DynastyTab.jsx is the shell.
 import { CARDS } from '../cards.js';
 import { ALL_CARDS, BASE_SET, cardKey, getCardByKey, baseKey, copyKey } from '../cardSets.js';
+import { LIVE_SET } from '../../cards/liveSeries.js';
 import { fitDeck } from '../deckFit.js';
 // payFactorOf, not aiLevels.js's payOf: this file runs on the server too
 // (functions/prepare.mjs copies it), and coinRewards.js is what is shared.
@@ -512,13 +513,15 @@ function spreadSample(cards, n, rng) {
 /**
  * The draft's raw material: every NBA player with a card in a special set and
  * none in the base set — the legends and the rookies the league has never
- * seen. One card per person, his rookie card when he has one.
+ * seen. One card per person, his rookie card when he has one. Never a Live
+ * Series card (2026-10-28): its numbers move every night, and a dynasty keys
+ * contracts and history by card.
  */
 export function draftClassCards(excludePersons = new Set()) {
   const base = new Set(CARDS.map(c => c.id));
   const byPerson = new Map();
   for (const c of ALL_CARDS) {
-    if (!c.set || c.set === BASE_SET || c.set.startsWith('wnba')) continue;
+    if (!c.set || c.set === BASE_SET || c.set === LIVE_SET || c.set.startsWith('wnba')) continue;
     if (base.has(c.id) || excludePersons.has(c.id)) continue;
     const prev = byPerson.get(c.id);
     if (!prev || (c.set === 'rookie' && prev.set !== 'rookie')) byPerson.set(c.id, c);

@@ -16900,8 +16900,17 @@
         0.6692
       ],
       "badge": null
+    },
+    "throwbacks/Barry_Clemens_1976": {
+      "name": [
+        0.0252,
+        0.1199,
+        0.1253,
+        0.722
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-10-14T18:05:31.440Z",
+  "generatedAt": "2026-10-28T20:06:53.610Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

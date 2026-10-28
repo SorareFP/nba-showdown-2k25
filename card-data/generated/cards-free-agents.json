@@ -1760,6 +1760,75 @@
    "requested": true,
    "requestId": "ic2Oll505002z7oJDeSo",
    "builtAt": "2026-10-14T13:03:20.465Z"
+  },
+  {
+   "id": "Barry_Clemens_1976",
+   "name": "Barry Clemens",
+   "team": "POR",
+   "pos": "SF",
+   "speed": 8,
+   "power": 8,
+   "shotLine": 13,
+   "paintBoost": -4,
+   "threePtBoost": -7,
+   "defBoost": 1,
+   "salary": 580,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 26,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 27,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1976,
+   "seasonLabel": "1975-76",
+   "age": 32,
+   "games": 49,
+   "mpg": 9,
+   "bbrefId": "clemeba01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.6,
+    "vorp": 0.3,
+    "ws": 1.1,
+    "ws48": 0.116,
+    "per": 13.8
+   },
+   "provisional": true,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "yrSuFg0ENSb1TEWhhqkH",
+   "builtAt": "2026-10-28T20:05:29.579Z"
   }
  ]
 }

@@ -33,6 +33,8 @@ export const invoiceCardRequest = call('invoiceCardRequest');
 export const giftCardRequest = call('giftCardRequest');
 /** Admins: `{ id }` — take back a copy gifted the old way (minted on the spot) and re-send it as a gift to sign. */
 export const regiftCardRequest = call('regiftCardRequest');
+/** Admins: `{ id, friendUid }` or `{ id, code }` — move a request to another player, as a gift once the card is live. */
+export const sendCardRequest = call('sendCardRequest');
 /** Requester: `{ id }` — pay the invoice, get the card. */
 export const signFreeAgent = call('signFreeAgent');
 /** Requester: `{ id }` — say no to the invoice. */

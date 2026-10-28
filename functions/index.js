@@ -2345,6 +2345,40 @@ export const declineCardRequest = onCall({ region: 'us-central1' }, async reques
 });
 
 /**
+ * The copies a request minted into its owner's account — EXACTLY those, the
+ * ones whose source is freeagent:<request id>, never another copy of the same
+ * card — read before any write, as a transaction requires.
+ */
+async function readMintedCopies(tx, requestId, req) {
+  const copiesOfCard = await tx.get(db.collection(`users/${req.uid}/copies`).where('cardKey', '==', req.cardKey));
+  const indexRef = db.doc(`users/${req.uid}/collection/${req.cardKey}`);
+  const index = (await tx.get(indexRef)).data() ?? {};
+  const source = freeAgentSource(requestId);
+  return {
+    indexRef, index,
+    removing: copiesOfCard.docs.filter(d => d.data().source === source),
+    staying: copiesOfCard.docs.filter(d => d.data().source !== source),
+  };
+}
+
+/** Take those copies back with the burn's own bookkeeping: the collection entry and the supply. */
+function takeBackCopies(tx, req, { indexRef, index, removing, staying }) {
+  for (const d of removing) tx.delete(d.ref);
+  if (removing.length === 0) return;
+  if (staying.length === 0) {
+    tx.delete(indexRef);
+  } else {
+    tx.set(indexRef, {
+      count: FieldValue.increment(-removing.length),
+      // Still earned only if a copy that stays is.
+      earned: staying.some(d => d.data().state === EARNED) ? true : FieldValue.delete(),
+      ...(removing.some(d => d.id === index.collectedCopyId) ? { collectedCopyId: FieldValue.delete() } : {}),
+    }, { merge: true });
+  }
+  tx.set(db.doc('supply/current'), { counts: { [req.cardKey]: FieldValue.increment(-removing.length) } }, { merge: true });
+}
+
+/**
  * RE-SEND AN OLD GIFT AS A GIFT TO SIGN. Admins only.
  *
  * Before gifts waited to be signed, Gift minted the locked copy on the spot.
@@ -2368,29 +2402,9 @@ export const regiftCardRequest = onCall({ region: 'us-central1' }, async request
     }
     const card = getCardByKey(req.cardKey);
     if (!card) throw new HttpsError('failed-precondition', 'The live game does not have this card');
-    const copiesOfCard = await tx.get(
-      db.collection(`users/${req.uid}/copies`).where('cardKey', '==', req.cardKey)
-    );
-    const indexRef = db.doc(`users/${req.uid}/collection/${req.cardKey}`);
-    const index = (await tx.get(indexRef)).data() ?? {};
-
-    const source = freeAgentSource(ref.id);
-    const removing = copiesOfCard.docs.filter(d => d.data().source === source);
-    const staying = copiesOfCard.docs.filter(d => d.data().source !== source);
-    for (const d of removing) tx.delete(d.ref);
-    if (removing.length > 0) {
-      if (staying.length === 0) {
-        tx.delete(indexRef);
-      } else {
-        tx.set(indexRef, {
-          count: FieldValue.increment(-removing.length),
-          // Still earned only if a copy that stays is.
-          earned: staying.some(d => d.data().state === EARNED) ? true : FieldValue.delete(),
-          ...(removing.some(d => d.id === index.collectedCopyId) ? { collectedCopyId: FieldValue.delete() } : {}),
-        }, { merge: true });
-      }
-      tx.set(db.doc('supply/current'), { counts: { [req.cardKey]: FieldValue.increment(-removing.length) } }, { merge: true });
-    }
+    const minted = await readMintedCopies(tx, ref.id, req);
+    takeBackCopies(tx, req, minted);
+    const { removing } = minted;
 
     const invoice = { ...invoiceFor(card), price: 0, gift: true };
     tx.update(ref, {
@@ -2399,6 +2413,62 @@ export const regiftCardRequest = onCall({ region: 'us-central1' }, async request
       giftedAt: FieldValue.delete(), regiftedAt: FieldValue.serverTimestamp(), removedCopies: removing.length,
     });
     return { id: ref.id, status: REQUEST_STATUS.invoiced, removed: removing.length, invoice };
+  });
+});
+
+/**
+ * SEND A REQUEST TO ANOTHER PLAYER. Admins only. The user, 2026-10-28: "I
+ * just made a Barry Clemens card for my brother, but I requested it to my
+ * account. Can you send it to his?" — and the brother cannot ask for it
+ * himself, since a season with a card is out of the archive.
+ *
+ * The request moves to the player behind a friend code, or to one of the
+ * admin's friends. A card the game has arrives as a 🎁 0-coin gift waiting on
+ * their Free Agents page (signing mints their locked copy, as any gift); one
+ * not built or not deployed yet keeps its place, to be gifted the usual way. A
+ * copy already signed into the old account is taken back first — exactly the
+ * copy this request minted — and the coins paid for it go back.
+ */
+export const sendCardRequest = onCall({ region: 'us-central1' }, async request => {
+  const { uid: adminUid, email } = requireAdmin(request);
+  const id = String(request.data?.id ?? '');
+  const { code: rawCode, friendUid } = request.data ?? {};
+  const mine = (await friendsRef(adminUid).get()).data() ?? {};
+  let to;
+  if (rawCode != null && String(rawCode).trim()) {
+    const code = normalizeCode(rawCode);
+    if (!code) throw new HttpsError('invalid-argument', 'That is not a friend code');
+    const c = await friendCodeRef(code).get();
+    if (!c.exists) throw new HttpsError('not-found', 'No player has that code');
+    to = c.data().uid;
+  } else if (safeUid(friendUid)) {
+    if (!(mine.uids ?? []).includes(friendUid)) throw new HttpsError('permission-denied', 'That player is not one of your friends');
+    to = friendUid;
+  } else {
+    throw new HttpsError('invalid-argument', 'No player given');
+  }
+  return db.runTransaction(async tx => {
+    const { ref, req } = await requestInTx(tx, id);
+    if (req.status === REQUEST_STATUS.rejected) throw new HttpsError('failed-precondition', `That request is ${req.status}`);
+    if (req.uid === to) throw new HttpsError('failed-precondition', 'That request is already theirs');
+    const card = req.cardKey ? getCardByKey(req.cardKey) : null;
+    const signed = req.status === REQUEST_STATUS.signed || req.status === REQUEST_STATUS.gifted;
+    if (signed && !card) throw new HttpsError('failed-precondition', 'The live game does not have this card');
+    const minted = signed ? await readMintedCopies(tx, ref.id, req) : null;
+    // A paid signature is paid back; a gift cost nothing.
+    const refunded = req.status === REQUEST_STATUS.signed && !req.invoice?.gift ? (Number(req.invoice?.price) || 0) : 0;
+
+    if (minted) takeBackCopies(tx, req, minted);
+    if (refunded > 0) tx.update(db.doc(`users/${req.uid}`), { currency: FieldValue.increment(refunded) });
+    const moved = { uid: to, requester: mine.names?.[to] ?? null, sentFrom: req.uid, sentBy: email, sentAt: FieldValue.serverTimestamp() };
+    const asGift = Boolean(card) && req.status !== REQUEST_STATUS.requested;
+    tx.update(ref, asGift
+      ? {
+        ...moved, status: REQUEST_STATUS.invoiced, invoice: { ...invoiceFor(card), price: 0, gift: true },
+        invoicedAt: FieldValue.serverTimestamp(), giftedBy: email, signedAt: FieldValue.delete(), giftedAt: FieldValue.delete(),
+      }
+      : moved);
+    return { id: ref.id, to, status: asGift ? REQUEST_STATUS.invoiced : req.status, removed: minted?.removing.length ?? 0, refunded };
   });
 });
 

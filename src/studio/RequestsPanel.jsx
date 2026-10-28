@@ -6,6 +6,8 @@
 //                 entries I don't want to make or that don't make sense")
 //   Being made  → add its photo, Export face, deploy, then Send invoice or Gift
 //   Invoiced    → the requester signs or declines on the site
+//   Any of them → Send to… another player (2026-10-28: "I requested it to my
+//                 account. Can you send it to his?"), a friend or a code
 //
 // Sign-in is the admin's own Google account, through the same Firebase app
 // the game uses; every change goes through admin-only callables
@@ -21,7 +23,9 @@ import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase/config.js';
 import {
   listCardRequests, rejectCardRequest, markCardRequestBuilt, invoiceCardRequest, giftCardRequest, regiftCardRequest,
+  sendCardRequest,
 } from '../firebase/freeAgents.js';
+import { myFriends } from '../firebase/friends.js';
 import { buildFreeAgentCard, commitFreeAgent, freeAgentFaceExists, exportFreeAgentFace } from './api.js';
 import {
   seasonText, QUICK_REJECT_REASONS, REJECT_REASON_MAX, FREE_AGENT_SETS, REQUEST_STATUS, isGift, signPriceText,
@@ -67,6 +71,8 @@ export default function RequestsPanel({ onClose }) {
   const [confirmResend, setConfirmResend] = useState(null);  // a declined invoice, sent again
   const [busy, setBusy] = useState(null);             // `${action}:${id}`
   const [faces, setFaces] = useState({});             // request id -> face exported?
+  const [sending, setSending] = useState(null);       // request id with the Send to box open
+  const [friends, setFriends] = useState([]);         // the admin's own friends, for Send to
 
   const setStatus = v => { store.set(VIEW_KEY, v); setStatusState(v); };
   useEffect(() => onAuthStateChanged(auth, setUser), []);
@@ -83,6 +89,10 @@ export default function RequestsPanel({ onClose }) {
     }
   }, [user, status]);
   useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    if (!user) return;
+    myFriends().then(out => setFriends(out?.friends ?? [])).catch(() => setFriends([]));
+  }, [user]);
 
   // Being made: which faces are exported already.
   useEffect(() => {
@@ -164,6 +174,21 @@ export default function RequestsPanel({ onClose }) {
       '🎁 0-coin gift. It waits on their Free Agents page to be signed.'
     );
     setConfirmRegift(null);
+    drop(r.id);
+  });
+
+  // To another player: one of your friends, or anyone's friend code.
+  const sendTo = (r, to) => run('send', r.id, async () => {
+    const out = await sendCardRequest({ id: r.id, ...to });
+    const who = out.to && friends.find(f => f.uid === out.to)?.name;
+    const back = [out.removed ? `took back ${out.removed} copy` : '', out.refunded ? `refunded ${coins(out.refunded)}` : ''].filter(Boolean).join(' and ');
+    setNote(
+      `${r.name} is now ${who ?? 'their'} request${back ? ` (${back} from ${r.requester ?? 'the old account'})` : ''}. ` +
+      (out.status === REQUEST_STATUS.invoiced
+        ? 'It waits on their Free Agents page as a 🎁 0-coin gift; signing it gives them one locked copy.'
+        : 'It keeps its place in the queue: gift it once the card is live.')
+    );
+    setSending(null);
     drop(r.id);
   });
 
@@ -354,6 +379,17 @@ export default function RequestsPanel({ onClose }) {
                             ) : (
                               <span className={s.muted}>—</span>
                             )}
+                            {status !== REQUEST_STATUS.rejected && (
+                              <SendTo
+                                open={sending === r.id}
+                                busy={Boolean(busy)}
+                                sendingNow={isBusy('send', r.id)}
+                                friends={friends.filter(f => f.uid !== r.uid)}
+                                onOpen={() => setSending(r.id)}
+                                onCancel={() => setSending(null)}
+                                onSend={to => sendTo(r, to)}
+                              />
+                            )}
                           </td>
                         </tr>
                       );
@@ -365,6 +401,33 @@ export default function RequestsPanel({ onClose }) {
           </>
         )}
       </div>
+    </div>
+  );
+}
+
+/** Send to…: a friend from the list, or a friend code typed in. */
+export function SendTo({ open, busy, sendingNow, friends, onOpen, onCancel, onSend }) {
+  const [friendUid, setFriendUid] = useState('');
+  const [code, setCode] = useState('');
+  if (!open) {
+    return (
+      <div className={s.btnRow}>
+        <button className={s.ghost} disabled={busy} onClick={onOpen}>Send to…</button>
+      </div>
+    );
+  }
+  const to = code.trim() ? { code: code.trim() } : friendUid ? { friendUid } : null;
+  return (
+    <div className={s.customRow}>
+      {friends.length > 0 && (
+        <select className={s.input} value={friendUid} onChange={e => { setFriendUid(e.target.value); setCode(''); }}>
+          <option value="">A friend…</option>
+          {friends.map(f => <option key={f.uid} value={f.uid}>{f.name ?? f.uid.slice(0, 6)}</option>)}
+        </select>
+      )}
+      <input className={s.input} value={code} maxLength={12} placeholder="or their friend code" onChange={e => { setCode(e.target.value); setFriendUid(''); }} />
+      <button className={s.primary} disabled={busy || !to} onClick={() => onSend(to)}>{sendingNow ? 'Sending…' : 'Send'}</button>
+      <button className={s.ghost} onClick={onCancel}>Cancel</button>
     </div>
   );
 }

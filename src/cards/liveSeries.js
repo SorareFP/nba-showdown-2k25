@@ -12,5 +12,6 @@ export const LIVE_SET = 'live';
 // scripts/cardgen/generateLive.js is wired (docs/plans/2026-09-23-live-series-
 // design.md). While off, the set exists in the model — the Studio can preview
 // and export it, the generator can run — but no pack deals it and no
-// collection goal asks for it.
-export const LIVE_SERIES_ON = false;
+// collection goal asks for it. ON since 2026-10-28 (the user: "I think I'm
+// ready to turn live cards on").
+export const LIVE_SERIES_ON = true;

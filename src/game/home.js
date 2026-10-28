@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'live-series', date: '2026-10-28', title: 'The Live Series is here',
+    body: "Blue-trim cards of this season's players whose numbers move every night with the season: Speed, Power, shooting, chart and salary are rebuilt from the season's expected numbers and the games actually played, so the Live card you own can heat up or cool off. This season's rookies and players back in the league join as they get their photos. Find them in boosters and in the 100-coin Live Series Pack, and start on the Live Series collection.",
+    to: 'shop', cta: 'The pack shop',
+  },
+  {
     id: 'climb-boss-packs', date: '2026-10-27', title: "The Climb: the bosses' packs climb with the coach",
     body: "Beating the Climb at a harder coach now pays harder-earned packs. Prince's bosses pay a Booster, a Rare Deluxe and a Super Deluxe; the Mega Deluxe is for King (a Booster, a Rare Deluxe and a Mega Deluxe) and Deity (a Rare Deluxe, a Super Deluxe and a Mega Deluxe), and the easier coaches pay less. The start screen shows every coach's packs under its pay. A climb already under way keeps the packs it started with.",
     to: 'climb', cta: 'The Climb',

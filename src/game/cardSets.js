@@ -86,13 +86,19 @@ const DORMANT_KEY_SET = new Set(dormant.keys ?? []);
 /** The Record Breakers cards, each with its set, dormant ones included (freeAgentQuotes counts them all as carded). */
 export const RECORD_BREAKER_CARDS = (recordBreakers.cards ?? []).map(c => ({ ...c, set: 'record-breakers' }));
 
+/** Does a card carry a chart to roll on (a Live card without one is withheld)? */
+export const hasChart = c => Array.isArray(c?.chart) && c.chart.length > 0;
+
 export const CARD_SETS = Object.fromEntries(
   [
     [BASE_SET, base],
     // The Live Series (2026-09-23): the base cards as the season moves them.
     // Registered so a live card can be owned, shown and played; whether any
-    // pack deals one is LIVE_SERIES_ON (packEngine.js).
-    ['live', live],
+    // pack deals one is LIVE_SERIES_ON (packEngine.js). A card with no chart
+    // is not in the game (2026-10-28, the user: "withhold players who don't
+    // have charts from packs"): the generator never writes one, and this
+    // keeps it so if one ever slips through.
+    ['live', { cards: (live.cards ?? []).filter(hasChart) }],
     ['super-season', superSeason],
     ['rookie', rookie],
     ['summer-standouts', standouts],

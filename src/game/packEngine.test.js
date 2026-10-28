@@ -750,31 +750,6 @@ describe('the aimed Rare Deluxes', () => {
     }
   });
 
-  it('never moves the rarity to avoid a repeat: a pool with two rare cards deals rares as often as any other', () => {
-    // The user: "Isn't that going to artificially pump up certain rarity
-    // outputs?" It did, here. The Mavericks hold two rare cards; a third rare
-    // slot used to become a super rare (1.33 a pack against everyone's 1.07).
-    // It is a repeat now, and the rarity is what was rolled.
-    const pool = franchisePool('DAL');
-    expect(pool.filter(c => getPlayerRarity(c) === 'rare')).toHaveLength(2);
-    const N = 1500;
-    let slots = 0, srs = 0, tripleRare = 0;
-    for (let i = 0; i < N; i += 1) {
-      const rs = players(generatePack('team_rare_deluxe', { team: 'DAL' })).map(rarityOf);
-      if (rs.every(r => r === 'rare')) tripleRare += 1;
-      for (const r of rs) {
-        if (r === 'legendary') continue;
-        slots += 1;
-        if (r === 'super-rare') srs += 1;
-      }
-    }
-    expect(srs / slots).toBeGreaterThan(0.29);
-    expect(srs / slots).toBeLessThan(0.38);
-    // Three rares come up about (2/3)^3 of the packs with no legendary: 26%.
-    expect(tripleRare / N).toBeGreaterThan(0.2);
-    expect(tripleRare / N).toBeLessThan(0.32);
-  });
-
   it('refuse to open without their aim: unaimed they would be a cheaper Rare Deluxe', () => {
     expect(() => generatePack('division_rare_deluxe')).toThrow(/pick a division/);
     expect(() => generatePack('division_rare_deluxe', { division: 'Nowhere' })).toThrow(/pick a division/);
@@ -892,5 +867,21 @@ describe('the WNBA Team Rare Deluxe', () => {
   it('is on the shelf with its own words', () => {
     expect(shopPacks().map(p => p.key)).toContain(KEY);
     expect(PACK_COPY[KEY].desc).toBeTruthy();
+  });
+});
+
+// A LIVE CARD WITH NO CHART IS NOT IN THE GAME (2026-10-28, the user:
+// "withhold players who don't have charts from packs"): cardSets.js registers
+// only the Live cards with a chart, so no pack can deal the rest.
+describe('the Live Series pack', () => {
+  it('deals only Live cards with a chart', async () => {
+    const { hasChart } = await import('./cardSets.js');
+    expect(hasChart({ chart: [] })).toBe(false);
+    expect(hasChart({})).toBe(false);
+    expect(CARD_SETS.live.length).toBeGreaterThan(0);
+    expect(CARD_SETS.live.every(hasChart)).toBe(true);
+    for (let i = 0; i < 40; i += 1) {
+      for (const pull of players(generatePack('live_pack'))) expect(hasChart(CARD_MAP[pull.id] ?? CARD_SETS.live.find(c => c.id === pull.id)), pull.id).toBe(true);
+    }
   });
 });

@@ -35,7 +35,7 @@ describe('the ladder', () => {
     expect(GOALS_BY_ID['nba-set'].league).toBe('NBA');
     expect(GOALS_BY_ID['wnba-set'].league).toBe('WNBA');
     expect(GOALS.filter(g => g.kind === 'set' && g.league === 'NBA').map(g => g.id).sort())
-      .toEqual(['nba-set', 'set-dissonance', 'set-rookie', 'set-summer-standouts', 'set-super-season']);
+      .toEqual(['nba-set', 'set-dissonance', 'set-live', 'set-rookie', 'set-summer-standouts', 'set-super-season']);
     expect(GOALS.filter(g => g.kind === 'set' && g.league === 'WNBA').map(g => g.id).sort())
       .toEqual(['set-wnba-rookie', 'set-wnba-super-season', 'wnba-set']);
   });
@@ -280,9 +280,9 @@ describe('allGoalProgress and collectionSummary', () => {
 
   it('filters by league and kind', () => {
     expect(allGoalProgress(own(), { league: 'WNBA' }).every(r => r.league === 'WNBA')).toBe(true);
-    // Two base-set goals plus a completion goal for each of the six packable
-    // special sets (SPECIAL_SETS).
-    expect(allGoalProgress(own(), { kind: 'set' })).toHaveLength(8);
+    // Two base-set goals plus a completion goal for each of the seven packable
+    // special sets (SPECIAL_SETS; the Live Series' since 2026-10-28).
+    expect(allGoalProgress(own(), { kind: 'set' })).toHaveLength(9);
   });
 
   it('summarises against the whole base set, less its unsigned players', () => {

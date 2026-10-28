@@ -4,8 +4,13 @@ import { CARD_SETS, getCardByKey } from './cardSets.js';
 import { GOALS_BY_ID, REWARD_BY_GOAL, SPECIAL_SETS } from './collections.js';
 
 describe('set rewards', () => {
+  // The Live Series (on 2026-10-28) has no reward card yet: its set moves
+  // every night, so "migrate the strongest" has nothing fixed to move, and
+  // what finishing it pays is the user's call. A goal with no reward still
+  // tracks; it just cannot be claimed (collections.js).
   it('every special-set goal has a reward card that lives in a set-rewards set', () => {
-    for (const { id } of SPECIAL_SETS) {
+    expect(GOALS_BY_ID['set-live']?.reward ?? null).toBeNull();
+    for (const { id } of SPECIAL_SETS.filter(s => s.id !== 'live')) {
       const goal = `set-${id}`;
       const key = REWARD_BY_GOAL[goal];
       expect(key, goal).toBeTruthy();

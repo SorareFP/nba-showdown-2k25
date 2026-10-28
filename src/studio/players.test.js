@@ -1127,3 +1127,20 @@ describe('the Live Series additions (2026-10-25)', () => {
     expect(LIVE_ROOKIES.find(p => p.id === 'Thomas_Sorber')?.badges).toEqual(['rookie']);
   });
 });
+
+// A LIVE ADDITION SHOWS ITS CARD ONCE CARDED (2026-10-28; the user: "I don't
+// see any new charts in the photo studio").
+describe('the Live additions in the studio', () => {
+  it('show the carded card under their own search and look, and the photos-first entry until then', async () => {
+    const { withLiveCard } = await import('./players.js');
+    const entry = { id: 'A_One', name: 'A One', team: 'WAS', pos: 'F', badges: ['rookie'], seasonLabel: '2026-27', liveRookie: true };
+    const card = { id: 'A_One', name: 'A One', team: 'WAS', pos: 'SF', speed: 7, power: 7, salary: 600, chart: [{ lo: 1, hi: 99, pts: 2 }], badges: ['live', 'rookie'], set: 'live' };
+    const shown = withLiveCard(entry, new Map([['A_One', card]]));
+    expect(shown.chart).toEqual(card.chart);
+    expect(shown.salary).toBe(600);
+    expect(shown.pos).toBe('SF');
+    expect(shown.liveRookie).toBe(true);
+    expect(shown.seasonLabel).toBe('2026-27');
+    expect(withLiveCard(entry, new Map())).toBe(entry);
+  });
+});

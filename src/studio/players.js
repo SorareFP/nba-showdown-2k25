@@ -419,7 +419,27 @@ const byName = (a, b) => a.name.localeCompare(b.name);
  * The same photos-first entries as the rookies, in the plain Live look;
  * searched for this season's photos.
  */
-const liveAddition = kind => r => ({
+/**
+ * AN ADDITION AS THE LIVE JOB CARDED IT (2026-10-28; the user: "I don't see any
+ * new charts in the photo studio"). Once generateLive.js cards a player into
+ * cards-live.json, these lists show that card — its chart, its numbers, its
+ * salary — under the Studio's own fields (the search, the rookie look); until
+ * then the photos-first entry, with empty rows.
+ */
+const studioFields = e => Object.fromEntries(
+  ['seasonLabel', 'searchYear', 'liveRookie', 'addition', 'last'].filter(k => e[k] !== undefined).map(k => [k, e[k]])
+);
+/** A photos-first entry with its carded Live card over it (`cards`: id -> card), or as it was. */
+export function withLiveCard(entry, cards) {
+  const card = cards?.get(entry.id);
+  return card ? { ...entry, ...card, ...studioFields(entry) } : entry;
+}
+const carded = new Map((LIVE_FILE?.cards ?? []).map(c => [c.id, c]));
+const withCard = entry => withLiveCard(entry, carded);
+/** How many of a list the Live job has carded so far. */
+const cardedCount = list => list.filter(p => carded.has(p.id)).length;
+
+const liveAddition = kind => r => withCard({
   id: r.id, name: r.name, team: r.team, pos: r.pos, personId: r.personId ?? null, draft: r.draft ?? null,
   seasonLabel: '2026-27', searchYear: '2026', addition: kind, ...(r.last ? { last: r.last } : {}),
 });
@@ -435,7 +455,7 @@ export const LIVE_ADDITIONS = [
  * roster whose first NBA season this is (card-data/live-rookies.json), with
  * the id fixed there. Photos only until the Live job cards them.
  */
-export const LIVE_ROOKIES = (liveRookiesFile?.rookies ?? []).map(r => ({
+export const LIVE_ROOKIES = (liveRookiesFile?.rookies ?? []).map(r => withCard({
   id: r.id, name: r.name, team: r.team, pos: r.pos, personId: r.personId ?? null, draft: r.draft ?? null,
   // A Live card that is a rookie card: the blue with a dash of rookie green, and
   // the dated ROOKIE pill under LIVE (the user, 2026-10-22).
@@ -604,7 +624,7 @@ export const SOURCES = {
     key: 'live-rookies',
     set: LIVE_SET,
     label: `Live Series rookies · ${LIVE_ROOKIES.length} players`,
-    sub: 'on 2026-27 rosters · photos now, numbers once the season gives them',
+    sub: `on 2026-27 rosters · ${cardedCount(LIVE_ROOKIES)} carded by the Live job, the rest photos first`,
     editable: true,
     hint:
       'THE ROOKIES ON 2026-27 ROSTERS, for the Live Series: no 2026-27 base card (their first NBA season is this ' +
@@ -619,7 +639,7 @@ export const SOURCES = {
     key: 'live-additions',
     set: LIVE_SET,
     label: `Live Series additions · ${LIVE_ADDITIONS.length} players`,
-    sub: 'on 2026-27 rosters, no base card: back from a season away, or a short 2025-26 · photos now',
+    sub: `on 2026-27 rosters, no base card: back from a season away, or a short 2025-26 · ${cardedCount(LIVE_ADDITIONS)} carded by the Live job`,
     editable: true,
     hint:
       'PLAYERS ON 2026-27 ROSTERS WITH NO BASE CARD WHO ARE NOT ROOKIES: back after a season out of the NBA ' +

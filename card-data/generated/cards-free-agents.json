@@ -1829,6 +1829,139 @@
    "requested": true,
    "requestId": "yrSuFg0ENSb1TEWhhqkH",
    "builtAt": "2026-10-28T20:05:29.579Z"
+  },
+  {
+   "id": "LeBron_James_2014",
+   "name": "LeBron James",
+   "team": "MIA",
+   "pos": "SF",
+   "speed": 13,
+   "power": 17,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 1650,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2014,
+   "seasonLabel": "2013-14",
+   "age": null,
+   "games": 20,
+   "mpg": 38.2,
+   "bbrefId": "jamesle01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true,
+   "set": "summer-standouts",
+   "requested": true,
+   "requestId": "ivkovZgRvsg8talMplob",
+   "builtAt": "2026-10-30T15:00:50.805Z"
+  },
+  {
+   "id": "Michael_Jordan_1990",
+   "name": "Michael Jordan",
+   "team": "CHI",
+   "pos": "SG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 2090,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 4,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1990,
+   "seasonLabel": "1989-90",
+   "age": 26,
+   "games": 82,
+   "mpg": 39,
+   "bbrefId": "jordami01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11.2,
+    "vorp": 10.6,
+    "ws": 19,
+    "ws48": 0.285,
+    "per": 31.2
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "BK4QaMckJGEL8rC5FQEp",
+   "builtAt": "2026-10-30T15:03:34.252Z"
   }
  ]
 }

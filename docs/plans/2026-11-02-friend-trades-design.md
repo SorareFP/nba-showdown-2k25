@@ -1,7 +1,9 @@
 # Friend trades: design
 
 Phase 2 of Friends (`docs/plans/2026-10-11-friends-design.md`). Status: draft for
-the user's review, 2026-11-02.
+the user's review, 2026-11-02. Their notes on the first draft are folded in:
+counters added; a friend's spares show only where you trade; offered cards are
+not locked.
 
 ## Why
 
@@ -26,12 +28,18 @@ The user: "Start with cards from his collection."
 3. Switch to your own spares and pick up to five for **You give**. A meter shows
    both sides' value and whether the offer is allowed.
 4. **Send offer**. It appears on the friend's Friends page and on their Home.
-5. The friend sees both sides as card art, and accepts or declines. An offer you
-   sent can be cancelled until then. An open offer lapses after three days.
+5. The friend sees both sides as card art, and can **Accept**, **Counter** or
+   **Decline**. An offer you sent can be cancelled until then. An open offer
+   lapses after three days.
 6. On accept the server swaps every card in one transaction.
 
-There is no free-text message and no counter-offer. Declining and sending a new
-offer does the same job.
+**Counter** opens the trade screen with the offer already filled in, from the
+counterer's side. They change what they like and send it back; the offer it
+answers closes as countered, the new one goes to the other player with a fresh
+three days, and it is marked as a counter. It can go back and forth as often as
+they like, and every counter passes the same rules as a first offer.
+
+There is no free-text message.
 
 ## The rules
 
@@ -74,7 +82,8 @@ reason. Holding cards would let one offer freeze a friend's spares.
 inside the transaction. Live cards change rarity nightly, so an offer that was
 fair on Monday may not be on Tuesday; it fails with the reason, and nothing moves.
 
-**Limits.** Five open offers sent per player. A sixth asks you to cancel one.
+**Limits.** Five open offers sent per player. A sixth asks you to cancel one. A
+counter does not count against this, so a player can always answer.
 
 ## What the server does
 
@@ -85,16 +94,21 @@ clients, so **no rules deploy**.
     trades/{id}: { from, to, fromName, toName, give: [cardKey], get: [cardKey],
                    status, createdAt, expiresAt, answeredAt, failedWhy }
 
-`status` is `open`, `accepted`, `declined`, `cancelled` or `failed`. An `open`
-offer past `expiresAt` reads as expired; no scheduled job is needed.
+`status` is `open`, `accepted`, `declined`, `cancelled`, `countered` or `failed`.
+An `open` offer past `expiresAt` reads as expired; no scheduled job is needed. A
+counter also carries `counterOf: id`, the offer it answers.
 
 Callables, in `functions/index.js`:
 
 - `friendSpares({ friendUid })`: the friend's spare player cards as
   `[{ cardKey, count }]`. Refused unless you are friends. This is the first time
   a friend can see more than your needs, and it shows spares only, never the
-  rest of a collection.
-- `sendTrade({ friendUid, give, get })`
+  rest of a collection. The user: "They should sees spares when looking at what
+  cards they can trade for." So only the trade screen calls it: no friend's
+  spares on the Friends page, Home or anywhere else.
+- `sendTrade({ friendUid, give, get, counterOf })`: with `counterOf`, the caller
+  must be the recipient of that open offer, and the send closes it as countered
+  in the same transaction.
 - `answerTrade({ id, accept })`: the recipient only.
 - `cancelTrade({ id })`: the sender only.
 - `myTrades()`: your open offers both ways, and recent results.
@@ -130,16 +144,11 @@ text says they/them.
 ## Not in this version
 
 Gifts and reserved sales (ruled out 2026-10-08), trading with anyone who is not a
-friend, trading coins, counter-offers, and a public trade board.
-
-## Decisions for the user
-
-1. Strategy cards: player cards only, or both? Strategy cards have no market
-   value table, and their quick-sell values sit far below a player's at the same
-   rarity, so including them needs a value of their own. Assumed: player cards
-   only for now.
+friend, trading coins, and a public trade board.
 
 ## Calls made in the design
 
-Three-day expiry, five open offers, no free-text message, no counter-offer, no
-holds on offered cards, and spares-only visibility of a friend's collection.
+Player cards only for now: strategy cards have no market value table, and their
+quick-sell values sit far below a player's at the same rarity, so they would need
+a value of their own first. Three-day expiry, five open offers, no free-text
+message.

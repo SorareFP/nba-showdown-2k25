@@ -16909,8 +16909,107 @@
         0.722
       ],
       "badge": null
+    },
+    "record-breakers/Karl_Malone_2001": {
+      "name": [
+        0.0252,
+        0.1779,
+        0.1253,
+        0.6062
+      ],
+      "badge": null
+    },
+    "record-breakers/Stephen_Curry_2022": {
+      "name": [
+        0.0252,
+        0.126,
+        0.1253,
+        0.7099
+      ],
+      "badge": null
+    },
+    "record-breakers/Hakeem_Olajuwon_1996": {
+      "name": [
+        0.033,
+        0.0975,
+        0.1096,
+        0.767
+      ],
+      "badge": null
+    },
+    "record-breakers/John_Stockton_1991": {
+      "name": [
+        0.0252,
+        0.1247,
+        0.1253,
+        0.7126
+      ],
+      "badge": null
+    },
+    "record-breakers/John_Stockton_1996": {
+      "name": [
+        0.0252,
+        0.1247,
+        0.1253,
+        0.7126
+      ],
+      "badge": null
+    },
+    "record-breakers/Russell_Westbrook_2021": {
+      "name": [
+        0.0395,
+        0.1126,
+        0.0965,
+        0.7367
+      ],
+      "badge": null
+    },
+    "record-breakers/Alvin_Robertson_1986": {
+      "name": [
+        0.0323,
+        0.1265,
+        0.1109,
+        0.7088
+      ],
+      "badge": null
+    },
+    "record-breakers/Ray_Allen_2011": {
+      "name": [
+        0.0252,
+        0.2486,
+        0.1253,
+        0.4646
+      ],
+      "badge": null
+    },
+    "record-breakers/Jose_Calderon_2009": {
+      "name": [
+        0.0252,
+        0.1243,
+        0.1253,
+        0.7132
+      ],
+      "badge": null
+    },
+    "record-breakers/Kyle_Korver_2010": {
+      "name": [
+        0.0252,
+        0.1887,
+        0.1253,
+        0.5845
+      ],
+      "badge": null
+    },
+    "record-breakers/Mark_Eaton_1985": {
+      "name": [
+        0.0252,
+        0.2058,
+        0.1253,
+        0.5502
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-10-28T20:06:53.610Z",
+  "generatedAt": "2026-11-02T15:12:22.004Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

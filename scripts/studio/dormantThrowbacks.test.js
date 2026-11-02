@@ -5,7 +5,7 @@
 // dormant." The photos are local (gitignored), so these read the committed
 // list, not the folders.
 import { describe, it, expect } from 'vitest';
-import { CARD_SETS, DORMANT_CARDS, DORMANT_KEYS, getCardByKey, cardKey } from '../../src/game/cardSets.js';
+import { CARD_SETS, DORMANT_CARDS, DORMANT_KEYS, RECORD_BREAKER_CARDS, getCardByKey, cardKey } from '../../src/game/cardSets.js';
 import { SPECIAL_SETS_IN_PACKS } from '../../src/game/packEngine.js';
 import dormant from '../../card-data/generated/dormant-throwbacks.json';
 import quoteIndex from '../../card-data/generated/quote-index.json';
@@ -68,9 +68,8 @@ describe('a dormant Throwback', () => {
   // A dormant one waits for its photo, not for a Free Agents request.
   it('never offers a Record Breakers season to Free Agents, dormant or not', () => {
     const rows = quoteIndex.rows;
-    const dormantRecords = DORMANT_CARDS.filter(c => c.set === 'record-breakers');
-    expect(dormantRecords.length).toBeGreaterThan(0);
-    for (const card of dormantRecords) {
+    expect(RECORD_BREAKER_CARDS.length).toBeGreaterThan(0);
+    for (const card of RECORD_BREAKER_CARDS) {
       const offered = rows.find(r => r[0] === card.bbrefId && r[2] === card.season && r[3] === 'r');
       expect(offered, `${card.name} ${card.season}`).toBeUndefined();
     }

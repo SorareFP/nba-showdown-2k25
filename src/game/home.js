@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'record-breakers-faces', date: '2026-11-02', title: 'The Record Breakers are in',
+    body: "All twelve Record Breakers now have their platinum faces. Four of them join the boosters today: Hakeem's 3,190 blocks, Stockton's 2,311 steals, Mark Eaton's 456 blocks and Alvin Robertson's 301 steals. The other eight are earned by matching the feat, which is still to come, and never come from a pack.",
+    to: 'shop', cta: 'The pack shop',
+  },
+  {
     id: 'live-table', date: '2026-10-28', title: 'How the Live cards have moved',
     body: "A new Live Series page in Collection lists every Live card with what has changed: the salary night by night, Speed, Power, the shooting numbers and Defense with their moves, the rarity when it crosses a line, and the chart then and now. Compare with the night before, the last 7 or 21 days, or the whole season, and tick Only my cards to see just yours.",
     to: 'live', cta: 'The Live Series',

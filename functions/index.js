@@ -45,7 +45,10 @@ import { goalProgress, goalCoinReward, REWARD_BY_GOAL, collectedKeys } from './s
 import { getCardByKey, applyLiveSalaries } from './shared/src/game/cardSets.js';
 import { liveRefresher } from './liveRefresh.js';
 import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game/rarity.js';
-import { burnValueFor, burnProblem, checkListingPrice } from './shared/src/game/marketRules.js';
+import {
+  burnValueFor, burnProblem, checkListingPrice,
+  tradeProblem, friendsLongEnough, TRADE_OFFER_DAYS, TRADE_OPEN_MAX, TRADE_FRIEND_DAYS,
+} from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox, payFactorOf, AI_PAY } from './shared/src/game/coinRewards.js';
 import { generateMap, travelCost, stopById, potOfRun, runClaimPreview, actOf, ACTS, MAP_VERSION, LEDGER_PERK_KINDS, TRAVEL_DAYS } from './shared/src/game/modes/climbMap.js';
@@ -2619,8 +2622,10 @@ async function ensureFriendCode(uid) {
 
 /** Both sides of a friendship, in the transaction that read both documents. */
 function befriend(tx, me, myName, myDoc, them, theirName, theirDoc) {
-  tx.set(friendsRef(me), { ...(myDoc ?? {}), uids: [...new Set([...(myDoc?.uids ?? []), them])], names: { ...(myDoc?.names ?? {}), [them]: theirName } });
-  tx.set(friendsRef(them), { ...(theirDoc ?? {}), uids: [...new Set([...(theirDoc?.uids ?? []), me])], names: { ...(theirDoc?.names ?? {}), [me]: myName } });
+  // `since`: when it began, for the week a trade waits (2026-11-02).
+  const now = Date.now();
+  tx.set(friendsRef(me), { ...(myDoc ?? {}), uids: [...new Set([...(myDoc?.uids ?? []), them])], names: { ...(myDoc?.names ?? {}), [them]: theirName }, since: { ...(myDoc?.since ?? {}), [them]: now } });
+  tx.set(friendsRef(them), { ...(theirDoc ?? {}), uids: [...new Set([...(theirDoc?.uids ?? []), me])], names: { ...(theirDoc?.names ?? {}), [me]: myName }, since: { ...(theirDoc?.since ?? {}), [me]: now } });
 }
 
 function capCheck(myDoc, theirDoc) {
@@ -2743,9 +2748,211 @@ export const removeFriend = onCall({ region: 'us-central1' }, async request => {
       ...doc,
       uids: (doc.uids ?? []).filter(x => x !== gone),
       names: Object.fromEntries(Object.entries(doc.names ?? {}).filter(([k]) => k !== gone)),
+      since: Object.fromEntries(Object.entries(doc.since ?? {}).filter(([k]) => k !== gone)),
     });
     tx.set(friendsRef(uid), strip(myDoc, other));
     tx.set(friendsRef(other), strip(theirDoc, uid));
     return { removed: true };
   });
+});
+
+/**
+ * TRADES BETWEEN FRIENDS (2026-11-02) — docs/plans/2026-11-02-friend-trades-design.md.
+ *
+ * The user: "card(s) for card(s)", and never a gift: "I want the market to
+ * matter still." `trades/{id}` is server-only, like everything of Friends; the
+ * rules' closing match refuses it, so no rules deploy. The value rule is
+ * tradeProblem (marketRules.js), the screen's own, run again at accept: a Live
+ * card can change rarity overnight. An open offer holds nothing, so its cards
+ * can be sold or burned, and the offer then fails at accept with the reason.
+ * Copies move as a market sale moves them, and the supply does not change.
+ */
+const DAY_MS = 24 * 60 * 60 * 1000;
+const tradeRef = id => db.doc(`trades/${id}`);
+const isOpenOffer = (t, now) => t?.status === 'open' && t.expiresAt > now;
+
+/** The spare copies of these cards, by card, read inside the transaction. */
+async function sparesOf(tx, uid, keys) {
+  const out = new Map();
+  for (const key of new Set(keys)) {
+    const snap = await tx.get(db.collection(`users/${uid}/copies`).where('cardKey', '==', key));
+    out.set(key, snap.docs.filter(d => d.data().state === SPARE));
+  }
+  return out;
+}
+
+const lacksSpares = (spares, keys) => keys.some(key => keys.filter(k => k === key).length > (spares.get(key)?.length ?? 0));
+
+/** One side of an accepted trade, after every read: each copy changes hands as buyListing moves it. */
+function moveCopies(tx, from, to, keys, spares) {
+  for (const key of keys) {
+    const doc = spares.get(key).shift();
+    const copy = doc.data();
+    tx.delete(doc.ref);
+    tx.set(db.collection(`users/${to}/copies`).doc(), {
+      cardKey: key, type: 'player', mintedAt: copy.mintedAt ?? null, source: copy.source ?? null,
+      // A traded card is a spare until its new owner collects it.
+      state: SPARE, acquiredAt: FieldValue.serverTimestamp(), tradedFrom: from,
+    });
+    tx.set(db.doc(`users/${from}/collection/${key}`), { count: FieldValue.increment(-1) }, { merge: true });
+    tx.set(db.doc(`users/${to}/collection/${key}`), { type: 'player', count: FieldValue.increment(1), acquiredAt: FieldValue.serverTimestamp() }, { merge: true });
+  }
+}
+
+/** The caller's friendship with another player, or why it cannot trade. */
+function tradeFriendCheck(myDoc, friendUid, now) {
+  if (!(myDoc.uids ?? []).includes(friendUid)) throw new HttpsError('permission-denied', 'You can only trade with a friend');
+  if (!friendsLongEnough(myDoc, friendUid, now)) throw new HttpsError('failed-precondition', 'You can trade once you have been friends for a week');
+}
+
+/**
+ * Both players' spare player cards, for the trade screen: the only place a
+ * friend's spares show (the user: "They should sees spares when looking at
+ * what cards they can trade for"). `opensAt` is when a new friendship can
+ * trade, or null when it can.
+ */
+export const friendSpares = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const friendUid = request.data?.friendUid;
+  if (!safeUid(friendUid)) throw new HttpsError('invalid-argument', 'No friend given');
+  const myDoc = (await friendsRef(uid).get()).data() ?? {};
+  if (!(myDoc.uids ?? []).includes(friendUid)) throw new HttpsError('permission-denied', 'You can only trade with a friend');
+  const spareCards = async who => {
+    const snap = await db.collection(`users/${who}/copies`).where('state', '==', SPARE).get();
+    const counts = new Map();
+    for (const d of snap.docs) {
+      const key = d.data().cardKey;
+      if (getCardByKey(key)) counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    return [...counts].map(([cardKey, count]) => ({ cardKey, count }));
+  };
+  const [theirs, mine] = await Promise.all([spareCards(friendUid), spareCards(uid)]);
+  const now = Date.now();
+  return { theirs, mine, opensAt: friendsLongEnough(myDoc, friendUid, now) ? null : myDoc.since[friendUid] + TRADE_FRIEND_DAYS * DAY_MS };
+});
+
+/** Send an offer, or with `counterOf` answer one with your own: the old one closes in the same breath. */
+export const sendTrade = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  await refreshLive();
+  const { friendUid, give, get, counterOf = null } = request.data ?? {};
+  if (!safeUid(friendUid) || friendUid === uid) throw new HttpsError('invalid-argument', 'No friend given');
+  const clean = list => Array.isArray(list) && list.every(k => typeof k === 'string');
+  if (!clean(give) || !clean(get)) throw new HttpsError('invalid-argument', 'No cards given');
+  const problem = tradeProblem(give, get);
+  if (problem) throw new HttpsError('failed-precondition', problem);
+  const now = Date.now();
+  const ref = db.collection('trades').doc();
+  return db.runTransaction(async tx => {
+    const myDoc = (await tx.get(friendsRef(uid))).data() ?? {};
+    tradeFriendCheck(myDoc, friendUid, now);
+    if (counterOf) {
+      const old = await tx.get(tradeRef(String(counterOf)));
+      if (!old.exists || old.data().to !== uid || old.data().from !== friendUid || !isOpenOffer(old.data(), now)) {
+        throw new HttpsError('failed-precondition', 'That offer is no longer open');
+      }
+    } else {
+      const open = await tx.get(db.collection('trades').where('from', '==', uid).where('status', '==', 'open'));
+      if (open.docs.filter(d => d.data().expiresAt > now).length >= TRADE_OPEN_MAX) {
+        throw new HttpsError('resource-exhausted', 'You have five open offers. Cancel one first');
+      }
+    }
+    if (lacksSpares(await sparesOf(tx, uid, give), give)) throw new HttpsError('failed-precondition', 'You no longer have a spare of a card in this offer');
+    if (lacksSpares(await sparesOf(tx, friendUid, get), get)) throw new HttpsError('failed-precondition', 'They no longer have a spare of a card in this offer');
+    tx.set(ref, {
+      from: uid, to: friendUid, fromName: nameOf(request), toName: myDoc.names?.[friendUid] ?? 'A friend',
+      give, get, status: 'open', createdAt: now, expiresAt: now + TRADE_OFFER_DAYS * DAY_MS,
+      ...(counterOf ? { counterOf: String(counterOf) } : {}),
+    });
+    if (counterOf) tx.update(tradeRef(String(counterOf)), { status: 'countered', answeredAt: now });
+    return { id: ref.id };
+  });
+});
+
+/**
+ * Accept or decline. Every rule runs again here, and a failure is an answer,
+ * not an error: the transaction commits the failed status and its reason, and
+ * not one card moves.
+ */
+export const answerTrade = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  await refreshLive();
+  const id = String(request.data?.id ?? '');
+  if (!id || id.includes('/')) throw new HttpsError('invalid-argument', 'No offer given');
+  const accept = request.data?.accept === true;
+  const now = Date.now();
+  const ref = tradeRef(id);
+  return db.runTransaction(async tx => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'That offer is gone');
+    const t = snap.data();
+    if (t.to !== uid) throw new HttpsError('permission-denied', 'That offer is not for you');
+    if (!isOpenOffer(t, now)) throw new HttpsError('failed-precondition', 'That offer is no longer open');
+    if (!accept) {
+      tx.update(ref, { status: 'declined', answeredAt: now });
+      return { status: 'declined' };
+    }
+    const myDoc = (await tx.get(friendsRef(uid))).data() ?? {};
+    const theirSpares = await sparesOf(tx, t.from, t.give);
+    const mySpares = await sparesOf(tx, uid, t.get);
+    const why = !(myDoc.uids ?? []).includes(t.from)
+      ? 'You are no longer friends'
+      : tradeProblem(t.give, t.get)
+        ?? (lacksSpares(theirSpares, t.give) || lacksSpares(mySpares, t.get) ? 'A card in this offer is no longer a spare' : null);
+    if (why) {
+      tx.update(ref, { status: 'failed', failedWhy: why, answeredAt: now });
+      return { status: 'failed', why };
+    }
+    moveCopies(tx, t.from, uid, t.give, theirSpares);
+    moveCopies(tx, uid, t.from, t.get, mySpares);
+    tx.update(ref, { status: 'accepted', answeredAt: now });
+    return { status: 'accepted' };
+  });
+});
+
+/** Take back an offer you sent, while it is open. */
+export const cancelTrade = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const id = String(request.data?.id ?? '');
+  if (!id || id.includes('/')) throw new HttpsError('invalid-argument', 'No offer given');
+  const now = Date.now();
+  return db.runTransaction(async tx => {
+    const ref = tradeRef(id);
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'That offer is gone');
+    if (snap.data().from !== uid) throw new HttpsError('permission-denied', 'That offer is not yours');
+    if (!isOpenOffer(snap.data(), now)) throw new HttpsError('failed-precondition', 'That offer is no longer open');
+    tx.update(ref, { status: 'cancelled', answeredAt: now });
+    return { status: 'cancelled' };
+  });
+});
+
+const RECENT_TRADES = 10;
+const RECENT_DAYS = 7;
+
+/** Your open offers both ways, and what happened to the last ones. `give` is what `from` gives. */
+export const myTrades = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const [sent, received] = await Promise.all([
+    db.collection('trades').where('from', '==', uid).get(),
+    db.collection('trades').where('to', '==', uid).get(),
+  ]);
+  const now = Date.now();
+  const rows = [...sent.docs, ...received.docs].map(d => {
+    const t = d.data();
+    return {
+      id: d.id, from: t.from, to: t.to, name: t.from === uid ? t.toName : t.fromName, give: t.give, get: t.get,
+      counter: Boolean(t.counterOf), status: t.status === 'open' && t.expiresAt <= now ? 'expired' : t.status,
+      why: t.failedWhy ?? null, expiresAt: t.expiresAt, closedAt: t.answeredAt ?? t.expiresAt,
+    };
+  });
+  const recent = rows
+    .filter(r => !['open', 'countered'].includes(r.status) && now - r.closedAt < RECENT_DAYS * DAY_MS)
+    .sort((a, b) => b.closedAt - a.closedAt)
+    .slice(0, RECENT_TRADES);
+  return {
+    incoming: rows.filter(r => r.status === 'open' && r.to === uid),
+    outgoing: rows.filter(r => r.status === 'open' && r.from === uid),
+    recent,
+  };
 });

@@ -26,9 +26,10 @@ import ClimbTab from './climb/ClimbTab.jsx';
 import TeamEditor from './TeamEditor.jsx';
 import PlayHub from './PlayHub.jsx';
 import LiveMovers from './LiveMovers.jsx';
+import { RunOver, TrophyWall } from './climb/ClimbScreens.jsx';
 import { packRun, unpackRun, isActiveRun } from '../firebase/climb.js';
 import { potOfRun, MAP_VERSION } from '../game/modes/climbMap.js';
-import { resultFromGame } from '../game/modes/run.js';
+import { newRun, resultFromGame } from '../game/modes/run.js';
 import { simulateGame } from '../game/modes/simulate.js';
 import { CARDS } from '../game/cards.js';
 import { listDynasties, saveDynasty } from '../firebase/dynasties.js';
@@ -46,7 +47,7 @@ const PACKABLE = [BASE_SET, ...SPECIAL_SETS_IN_PACKS].flatMap(id => CARD_SETS[id
 export const demoKind = () => {
   if (!import.meta.env?.DEV || typeof window === 'undefined') return null;
   const kind = new URLSearchParams(window.location.search).get('demo');
-  return ['pack', 'claim', 'collection', 'play', 'dynasty', 'climb', 'team', 'modes', 'live'].includes(kind) ? kind : null;
+  return ['pack', 'claim', 'collection', 'play', 'dynasty', 'climb', 'team', 'modes', 'live', 'climbend'].includes(kind) ? kind : null;
 };
 export const isPackDemo = () => demoKind() !== null;
 
@@ -86,6 +87,30 @@ function TeamDemo() {
   const collection = useMemo(() => Object.fromEntries(PACKABLE.map(c => [cardKey(c), { type: 'player', count: 1, collected: true }])), []);
   const noop = () => {};
   return <TeamEditor team={null} collection={collection} onSaved={noop} onCancel={noop} />;
+}
+
+function ClimbEndDemo() {
+  const show = new URLSearchParams(window.location.search).get('show') ?? 'act';
+  const run = useMemo(() => {
+    const keys = [...CARDS].sort((a, b) => a.salary - b.salary).slice(100, 105).map(cardKey);
+    const line = (i, n) => ({ g: 8, min: 96 - i * 7, pts: n - i * 9, reb: 22 - i * 3, ast: 19 - i * 2 });
+    const stats = Object.fromEntries(keys.map((k, i) => [k, line(i, 74)]));
+    const r = newRun({ id: 'demo', seed: 7, rung: 'prince', rosterKeys: keys });
+    return { ...r, status: 'won', stats: { 1: stats, 2: stats, 3: stats } };
+  }, []);
+  const noop = () => {};
+  if (show === 'wall') {
+    const roster = run.roster;
+    return <TrophyWall banners={{ settler: { wins: 3, at: Date.now(), roster }, warlord: { wins: 1, at: Date.now(), roster }, prince: { wins: 2, at: Date.now(), roster } }} />;
+  }
+  const title = show === 'title' || show === 'banked';
+  const end = {
+    ...run,
+    act: title ? 3 : 1,
+    cleared: title ? ['boss', 'a2:boss', 'a3:boss'] : ['boss'],
+    ...(show === 'banked' ? { banked: { coins: 1484, packs: ['booster', 'deluxe', 'super_deluxe'] } } : {}),
+  };
+  return <RunOver run={end} onBank={noop} onNew={noop} onContinue={noop} />;
 }
 
 function LiveDemo() {
@@ -282,6 +307,8 @@ export default function PackOpeningDemo() {
   if (demoKind() === 'modes') return <PlayHub onGo={() => {}} />;
   // ?demo=live — the Live Series view; the demo "owns" every fifth Live card.
   if (demoKind() === 'live') return <LiveDemo />;
+  // ?demo=climbend&show=act|title|banked|wall — the Climb's win screens on a made-up run.
+  if (demoKind() === 'climbend') return <ClimbEndDemo />;
   return (
     <div style={{ padding: '16px 20px' }}>
       <PackOpening

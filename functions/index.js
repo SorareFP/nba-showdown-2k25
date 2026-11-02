@@ -1229,6 +1229,10 @@ export const climbContinue = onCall({ region: 'us-central1' }, async request => 
   });
 });
 
+const bannerRoster = roster => (Array.isArray(roster) ? roster : [])
+  .filter(k => typeof k === 'string' && getCardByKey(k))
+  .slice(0, 12);
+
 export const climbBank = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
   const runId = safeRunId(request.data?.runId);
@@ -1249,6 +1253,14 @@ export const climbBank = onCall({ region: 'us-central1' }, async request => {
     if (run.status !== 'active' && run.status !== 'won') throw new HttpsError('failed-precondition', 'Nothing to bank');
     const pot = potOfRun(run);
     if (pot.coins > 0) tx.update(userRef, { currency: FieldValue.increment(pot.coins) });
+    // THE TROPHY WALL (2026-11-02; the user: "Great"): a whole climb raises a
+    // banner on the account, kept by rung. The win is the ledger's; the roster
+    // is the browser's word, and only ever shown back to its own player.
+    const banners = userSnap.data()?.climbBanners ?? {};
+    const banner = run.status === 'won' && (run.act ?? 1) >= ACTS
+      ? { wins: (banners[run.rung]?.wins ?? 0) + 1, at: Date.now(), roster: bannerRoster(request.data?.roster), coins: pot.coins }
+      : null;
+    if (banner) tx.set(userRef, { climbBanners: { ...banners, [run.rung]: banner } }, { merge: true });
     // Each beaten boss's pack (by act and, since map version 3, by rung:
     // climbMap.js bossPacksOf): a box of one, opened like any box (openBoxPack).
     for (const packType of pot.packs ?? []) {
@@ -1258,7 +1270,7 @@ export const climbBank = onCall({ region: 'us-central1' }, async request => {
       });
     }
     tx.update(ref, { status: 'banked', bankedAt: FieldValue.serverTimestamp(), paid: pot });
-    return { coins: pot.coins, booster: pot.booster, packs: pot.packs ?? [] };
+    return { coins: pot.coins, booster: pot.booster, packs: pot.packs ?? [], ...(banner ? { banner: { rung: run.rung, ...banner } } : {}) };
   });
 });
 

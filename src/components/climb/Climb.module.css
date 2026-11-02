@@ -253,3 +253,80 @@
 .scout summary { cursor: pointer; list-style: none; }
 /* Cut (2026-10-19): the quiet button under Practice. */
 .screen .cutBtn { margin-top: 4px; border-color: var(--red); color: #FCA5A5; }
+
+/* THE MOMENT (2026-11-02): a won act and a won climb take the whole screen, in
+   columns on a wide monitor, one column on a phone. */
+.winScreen { padding-top: clamp(6px, 2vh, 28px); text-align: left; overflow-x: clip; }
+.winScreen .title { text-align: center; }
+.winGrid { display: grid; grid-template-columns: minmax(240px, 1fr) minmax(460px, 2.1fr) minmax(280px, 1.1fr); gap: clamp(16px, 2.4vw, 56px); align-items: start; width: 100%; }
+.winGridTwo { grid-template-columns: minmax(240px, 1fr) minmax(280px, 1.2fr); max-width: 1100px; margin: 0 auto; }
+.winCol { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.winCol .h3 { margin: 0; }
+.winNext .actions { flex-direction: column; align-items: stretch; }
+.winNext .actions button { width: 100%; }
+@media (max-width: 1099px) { .winGrid, .winGridTwo { grid-template-columns: minmax(0, 1fr); } }
+
+.bossDown { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.bossStamped { position: relative; display: grid; place-items: center; width: 100%; min-height: clamp(150px, 22vh, 280px); }
+.bossDownLogo { width: clamp(150px, 15vw, 280px); height: clamp(150px, 22vh, 280px); object-fit: contain; filter: saturate(0.55) brightness(0.8); }
+.stamp { position: absolute; padding: 6px 18px; border: 5px solid #EF4444; border-radius: 8px; color: #EF4444; background: rgba(10, 22, 40, 0.55);
+  font-size: clamp(26px, 3vw, 54px); font-weight: 900; letter-spacing: 0.08em; transform: rotate(-11deg);
+  animation: stampIn 340ms var(--ease-out, ease-out) 220ms both; }
+@keyframes stampIn { from { opacity: 0; transform: rotate(-11deg) scale(2.2); } 70% { opacity: 1; transform: rotate(-11deg) scale(0.94); } to { opacity: 1; transform: rotate(-11deg) scale(1); } }
+
+.potCount { text-align: center; }
+.potCoins { font-size: clamp(38px, 4.4vw, 84px); font-weight: 800; line-height: 1.05; color: var(--gold); font-variant-numeric: tabular-nums; }
+
+.nextBoss { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.nextBossLogo { width: clamp(110px, 10vw, 190px); height: clamp(110px, 16vh, 190px); object-fit: contain; animation: bossReveal 900ms var(--ease-out, ease-out) 1100ms both; }
+.nextBossName { font-size: clamp(17px, 1.4vw, 26px); font-weight: 700; animation: fadeUp 500ms var(--ease-out, ease-out) 1700ms both; }
+@keyframes bossReveal { from { filter: brightness(0) blur(6px); transform: scale(0.82); opacity: 0.4; } to { filter: none; transform: none; opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.lines { display: grid; grid-template-columns: minmax(150px, 0.62fr) minmax(0, 1.5fr); gap: clamp(12px, 1.4vw, 28px); align-items: start; }
+.actBest { margin: 0; display: flex; flex-direction: column; gap: 6px; animation: fadeUp 500ms var(--ease-out, ease-out) 700ms both; }
+.actBest figcaption { display: flex; flex-direction: column; text-align: center; }
+.actBestFace { display: block; width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5); }
+.statTable { width: 100%; border-collapse: collapse; font-size: clamp(13px, 0.95vw, 17px); font-variant-numeric: tabular-nums; }
+.statTable th { text-align: right; padding: 4px 8px; font-size: 11px; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 600; }
+.statTable th:first-child { text-align: left; }
+.statTable td { text-align: right; padding: 3px 8px; border-bottom: 1px solid var(--border); }
+.statTable .statName { text-align: left; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.statName span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.statFace { width: clamp(30px, 2.4vw, 42px); height: auto; border-radius: 3px; flex: none; }
+
+/* The banners: the wall on the start screen, one large for a won climb. */
+.wall { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: clamp(10px, 1.2vw, 22px); align-items: start; }
+.banner { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
+.bannerCloth { width: 100%; max-width: 210px; padding: 16px 10px 42px; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center;
+  color: #fff; background: linear-gradient(180deg, var(--banner-hi), var(--banner-lo)); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 84%, 0 100%); }
+.bannerCloth[data-rung='settler'] { --banner-hi: #64748B; --banner-lo: #334155; }
+.bannerCloth[data-rung='chieftain'] { --banner-hi: #16A34A; --banner-lo: #14532D; }
+.bannerCloth[data-rung='warlord'] { --banner-hi: #0D9488; --banner-lo: #134E4A; }
+.bannerCloth[data-rung='prince'] { --banner-hi: #2563EB; --banner-lo: #1E3A8A; }
+.bannerCloth[data-rung='king'] { --banner-hi: #7C3AED; --banner-lo: #4C1D95; }
+.bannerCloth[data-rung='deity'] { --banner-hi: #F59E0B; --banner-lo: #92400E; }
+.bannerKicker { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.85; }
+.bannerRung { font-size: clamp(19px, 1.5vw, 26px); }
+.bannerNote { font-size: 13px; font-weight: 600; }
+.bannerDate { font-size: 11px; opacity: 0.85; }
+.bannerEmpty { opacity: 0.32; }
+.bannerRoster { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+.bannerFace { display: block; width: clamp(28px, 2.3vw, 38px); height: auto; border-radius: 3px; }
+.bannerBig .bannerCloth { max-width: 340px; padding: 30px 16px 76px; animation: bannerDrop 800ms var(--ease-out, ease-out) 200ms both; transform-origin: top; }
+.bannerBig .bannerRung { font-size: clamp(34px, 3.4vw, 60px); }
+.bannerBig .bannerKicker { font-size: 13px; }
+.bannerBig .bannerNote { font-size: 19px; }
+.bannerBig .bannerRoster { flex-wrap: nowrap; width: 100%; max-width: 340px; }
+.bannerBig .bannerRoster span { flex: 1 1 0; min-width: 0; max-width: 64px; }
+.bannerBig .bannerFace { width: 100%; }
+@keyframes bannerDrop { from { opacity: 0; transform: scaleY(0.2); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .stamp, .nextBossLogo, .nextBossName, .actBest, .bannerBig .bannerCloth { animation: none; }
+}
+@media (max-width: 768px) {
+  .lines { grid-template-columns: minmax(0, 1fr); }
+  .actBest { width: min(200px, 100%); margin: 0 auto; }
+  .statTable th, .statTable td { padding: 3px 4px; }
+  .statName span { max-width: 110px; }
+}

@@ -75,6 +75,8 @@ vi.mock('./shared/src/game/modes/climbMap.js', () => import('../src/game/modes/c
 
 const { climbStart, climbGame, climbBank, climbContinue, climbPerk, claimGameReward } = await import('./index.js');
 const { generateMap, potOf, potOfRun, stopById, reachableGame, runClaimPreview } = await import('../src/game/modes/climbMap.js');
+const { CARDS } = await import('../src/game/cards.js');
+const { cardKey } = await import('../src/game/cardSets.js');
 
 const UID = 'u1';
 const call = (fn, data) => fn({ auth: { uid: UID }, data });
@@ -340,6 +342,62 @@ describe('three acts', () => {
     expect(ledger(runId).status).toBe('lost');
     await expect(call(climbBank, { runId })).rejects.toThrow(/lost/);
     expect([...docs.keys()].some(k => k.startsWith(`users/${UID}/boxes/`))).toBe(false);
+  });
+
+  // THE TROPHY WALL (2026-11-02; the user: "Great"). A full climb raises a banner
+  // on the account, kept by rung: what the climb took, and who was on it.
+  describe('the banner', () => {
+    const wonClimb = async (rung = 'prince') => {
+      const { runId } = await call(climbStart, { rung });
+      docs.set(`users/${UID}/runLedger/${runId}`, { ...ledger(runId), act: 3, cleared: ['boss', 'a2:boss', 'a3:boss'], status: 'won' });
+      return runId;
+    };
+    const banners = () => docs.get(`users/${UID}`).climbBanners ?? {};
+    const ROSTER = () => CARDS.slice(0, 5).map(cardKey);
+
+    it('goes up when a full climb banks, with the roster and the pot', async () => {
+      const runId = await wonClimb();
+      const pot = potOfRun(ledger(runId));
+      const res = await call(climbBank, { runId, roster: ROSTER() });
+      expect(banners().prince).toMatchObject({ wins: 1, roster: ROSTER(), coins: pot.coins });
+      expect(typeof banners().prince.at).toBe('number');
+      expect(res.banner).toMatchObject({ rung: 'prince', wins: 1 });
+    });
+
+    it('counts the climbs at a rung, and keeps each rung apart', async () => {
+      await call(climbBank, { runId: await wonClimb(), roster: ROSTER() });
+      await call(climbBank, { runId: await wonClimb(), roster: ROSTER().slice(1) });
+      await call(climbBank, { runId: await wonClimb('deity'), roster: ROSTER() });
+      expect(banners().prince).toMatchObject({ wins: 2, roster: ROSTER().slice(1) });
+      expect(banners().deity.wins).toBe(1);
+    });
+
+    it('does not go up twice for one climb', async () => {
+      const runId = await wonClimb();
+      await call(climbBank, { runId, roster: ROSTER() });
+      await call(climbBank, { runId, roster: ROSTER() });
+      expect(banners().prince.wins).toBe(1);
+    });
+
+    it('is for the whole climb: an act banked or a retirement raises nothing', async () => {
+      const runId = await wonAct1();
+      await call(climbBank, { runId, roster: ROSTER() });
+      const { runId: walked } = await started();
+      await call(climbBank, { runId: walked, roster: ROSTER() });
+      expect(banners()).toEqual({});
+    });
+
+    it('takes only real cards, a dozen at most', async () => {
+      const runId = await wonClimb();
+      await call(climbBank, { runId, roster: [...CARDS.slice(0, 14).map(cardKey), 'no:such_card', 7, null] });
+      expect(banners().prince.roster).toEqual(CARDS.slice(0, 12).map(cardKey));
+    });
+
+    it('still pays a climb that sends no roster', async () => {
+      const runId = await wonClimb();
+      await call(climbBank, { runId });
+      expect(banners().prince).toMatchObject({ wins: 1, roster: [] });
+    });
   });
 
   it('banks every act\'s stops at its act\'s rate, and every beaten boss\'s pack', async () => {

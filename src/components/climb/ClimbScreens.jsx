@@ -11,6 +11,7 @@ import { getStrat, isPlus, plusId, baseId, PLUS } from '../../game/strats.js';
 import { fatigueForMinutes } from '../../game/engine.js';
 import { capSal, playerOnRoster, samePlayer, DEFAULT_FILTERS, filterPool, sortPool } from '../../game/teamRules.js';
 import PoolFilters from '../PoolFilters.jsx';
+import { actStats, runStats } from '../../game/modes/run.js';
 import { CLIMB, CLIMB_FIVE, openStops, isTravel, stopOpponent, fullStrengthOffered, eventView, twoWayCard, gameSetup, deckLine, potPreview, rosterCards, fiveProblem, bossTeam, bossScout, MIN_DECK, stopCap, actOfRun, needsRelease, releaseOptions, shownKind } from '../../game/modes/run.js';
 import { logoSrc } from '../../cards/CardTemplate.jsx';
 import { cardKey, getCardByKey } from '../../game/cardSets.js';
@@ -330,7 +331,7 @@ export const bossPackNote = rung => [1, 2, 3].map(act => bossPacksOf(act, rung, 
 // `saved`: your saved teams; the Climb fives among them (made in My Teams,
 // or with "Save these five" here) fill the five in one tap (the user,
 // 2026-10-19). One that no longer works says why.
-export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null, busy = false }) {
+export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null, busy = false, banners = {} }) {
   const [rung, setRung] = useState('prince');
   const [picked, setPicked] = useState([]);
   // THE TEAM BUILDER'S FILTER ROW (the user, 2026-10-20: "We need the same
@@ -428,6 +429,8 @@ export function ClimbStart({ owned = [], saved = [], onStart, onSaveFive = null,
         <button type="button" className={styles.primary} disabled={!ready || busy} onClick={() => onStart({ rung, keys: picked })}>Start the climb</button>
         {onSaveFive && <button type="button" disabled={!ready || busy} onClick={() => onSaveFive(picked)}>Save this team</button>}
       </div>
+      <h3 className={styles.h3}>Trophy wall <span className={styles.muted}>a banner for every coach you climb past</span></h3>
+      <TrophyWall banners={banners} />
     </div>
   );
 }
@@ -882,11 +885,141 @@ export function RestDay({ run, onRest, onPractice, onCut = null, busy = false, f
 
 // ── The end ──────────────────────────────────────────────────────────────────
 
-/** Won, retired or lost: the pot, banked or gone. */
-// THE CHOICE AFTER A BOSS (2026-10-20; the user: "'take what you've earned
-// and quit,' or 'keep going and adding to the pot.' The game gets harder and
-// the rewards get bigger as you go up"). Acts I and II end on both; Act III's
-// boss completes the climb.
+const rungLabel = id => AI_LEVELS.find(l => l.id === id)?.label ?? id;
+const fmtDay = ms => new Date(ms).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
+/** A number that climbs to its value; straight there for a reader who asked for less motion. */
+function useCountUp(target, ms = 900) {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (still || !globalThis.requestAnimationFrame) { setShown(target); return undefined; }
+    let frame;
+    const from = performance.now();
+    const step = t => {
+      const p = Math.min(1, (t - from) / ms);
+      setShown(Math.round(target * (1 - (1 - p) ** 3)));
+      if (p < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [target, ms]);
+  return shown;
+}
+
+function PotCount({ coins, packs = [] }) {
+  const shown = useCountUp(coins);
+  return (
+    <div className={styles.potCount} data-pot-count={coins}>
+      <div className={styles.potCoins}>{shown.toLocaleString('en-US')}</div>
+      <div className={styles.muted}>coins in the pot{packs.length ? `, and ${packWords(packs)}` : ''}</div>
+    </div>
+  );
+}
+
+function BossDefeated({ boss }) {
+  return (
+    <div className={styles.bossDown} data-defeated={boss.abbr}>
+      <div className={styles.bossStamped}>
+        {boss.logo && <img className={styles.bossDownLogo} src={logoSrc(boss.logo)} alt="" />}
+        <span className={styles.stamp}>DEFEATED</span>
+      </div>
+      <div className={styles.muted}>The classic {boss.city} {boss.name}</div>
+    </div>
+  );
+}
+
+function NextBoss({ boss, actName }) {
+  return (
+    <div className={styles.nextBoss} data-next-boss={boss.abbr}>
+      <div className={styles.muted}>{actName}&apos;s boss</div>
+      {boss.logo && <img className={styles.nextBossLogo} src={logoSrc(boss.logo)} alt="" />}
+      <div className={styles.nextBossName}>The classic {boss.city} {boss.name}</div>
+    </div>
+  );
+}
+
+const cardArt = (key, card, className) => (
+  <ZoomImg player={key} className={className} src={getPlayerThumbUrl(key)} onError={fallbackTo(getPlayerImageUrl(key))} alt={card?.name ?? key} loading="lazy" />
+);
+
+/** Your players over an act or the climb: the best of them large, then everyone's totals. */
+function PlayerLines({ rows, best }) {
+  const top = rows[0];
+  const topCard = getCardByKey(top.key);
+  return (
+    <div className={styles.lines}>
+      <figure className={styles.actBest} data-act-best={top.key}>
+        {cardArt(top.key, topCard, styles.actBestFace)}
+        <figcaption><span className={styles.muted}>{best}</span><strong>{topCard?.name}</strong></figcaption>
+      </figure>
+      <table className={styles.statTable}>
+        <thead>
+          <tr><th>Player</th><th>G</th><th>MIN</th><th>PTS</th><th>REB</th><th>AST</th></tr>
+        </thead>
+        <tbody>
+          {rows.map(r => {
+            const card = getCardByKey(r.key);
+            return (
+              <tr key={r.key} data-player-line={r.key}>
+                <td className={styles.statName}>{cardArt(r.key, card, styles.statFace)}<span>{card?.name ?? r.key}</span></td>
+                <td>{r.g}</td><td>{Math.round(r.min)}</td><td>{r.pts}</td><td>{r.reb}</td><td>{r.ast}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/** A banner on the wall, or at the top of a won climb: the coach beaten and who did it. */
+function ClimbBanner({ rung, wins = 0, at = null, roster = [], big = false }) {
+  const won = wins > 0;
+  const keys = roster.filter(k => getCardByKey(k));
+  return (
+    <div className={`${styles.banner} ${big ? styles.bannerBig : ''} ${won ? '' : styles.bannerEmpty}`} data-banner-rung={rung} data-banner-won={won}>
+      <div className={styles.bannerCloth} data-rung={rung}>
+        <span className={styles.bannerKicker}>The Climb</span>
+        <strong className={styles.bannerRung}>{rungLabel(rung)}</strong>
+        {won
+          ? <span className={styles.bannerNote}>Champions{wins > 1 ? ` ×${wins}` : ''}</span>
+          : <span className={styles.bannerNote}>Not yet</span>}
+        {won && at && <span className={styles.bannerDate}>{fmtDay(at)}</span>}
+      </div>
+      {won && keys.length > 0 && (
+        <div className={styles.bannerRoster}>
+          {keys.map(k => <span key={k} data-banner-player={k}>{cardArt(k, getCardByKey(k), styles.bannerFace)}</span>)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** THE TROPHY WALL (2026-11-02; the user: "Great"): every coach, a banner for each climbed past. */
+export function TrophyWall({ banners = {} }) {
+  return (
+    <div className={styles.wall} data-trophy-wall="true">
+      {AI_LEVELS.map(l => <ClimbBanner key={l.id} rung={l.id} wins={banners[l.id]?.wins ?? 0} at={banners[l.id]?.at ?? null} roster={banners[l.id]?.roster ?? []} />)}
+    </div>
+  );
+}
+
+const BANK_FAILED = 'The bank did not go through. Try again; if it keeps failing, giving up the run starts you fresh, but its pot is lost.';
+
+/**
+ * Won, retired or lost: the pot, banked or gone.
+ *
+ * THE CHOICE AFTER A BOSS (2026-10-20; the user: "'take what you've earned and
+ * quit,' or 'keep going and adding to the pot.' The game gets harder and the
+ * rewards get bigger as you go up"). Acts I and II end on both; Act III's boss
+ * completes the climb.
+ *
+ * THE MOMENT (2026-11-02; the user: stamp the boss's logo DEFEATED, count up
+ * the pot, reveal the next boss, "showing stats of your players on that act
+ * would be good. Maybe some photos of the players"). A won act and a won climb
+ * get the whole screen, in columns on the user's wide monitor.
+ */
 export function RunOver({ run, onBank, onNew, onContinue = null, onAbandon = null, busy = false }) {
   const pot = potPreview(run);
   const lost = run.status === 'lost';
@@ -894,40 +1027,96 @@ export function RunOver({ run, onBank, onNew, onContinue = null, onAbandon = nul
   const act = actOfRun(run);
   const won = run.status === 'won';
   const more = won && !banked && act < ACTS && Boolean(onContinue);
+  const champion = won && act >= ACTS;
   const packs = banked ? (banked.packs ?? (banked.booster ? ['booster'] : [])) : pot.packs ?? [];
   const nextPacks = more ? bossPacksOf(act + 1, run.rung, run.mapVersion ?? 1) : [];
   const potWords = `${pot.coins.toLocaleString('en-US')} coins${packs.length ? ` and ${packWords(packs)}` : ''}`;
+  const bankedLine = banked && (
+    <p className={styles.lede}>Banked: {banked.coins.toLocaleString('en-US')} coins{packs.length ? ` and ${packWords(packs)} (open ${packs.length > 1 ? 'them' : 'it'} from Collection, under your boxes)` : ''}.</p>
+  );
+  const giveUp = onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>;
+
+  if (more) {
+    const rows = actStats(run, act);
+    return (
+      <div className={`${styles.screen} ${styles.endScreen} ${styles.winScreen}`}>
+        <h2 className={styles.title}>{ACT_NAMES[act]} complete!</h2>
+        <div className={`${styles.winGrid} ${rows.length ? '' : styles.winGridTwo}`}>
+          <section className={styles.winCol}>
+            <BossDefeated boss={bossTeam(run, act)} />
+            <PotCount coins={pot.coins} packs={packs} />
+          </section>
+          {rows.length > 0 && (
+            <section className={styles.winCol}>
+              <h3 className={styles.h3}>Your players in {ACT_NAMES[act - 1] ?? 'this act'}</h3>
+              <PlayerLines rows={rows} best="Player of the act" />
+            </section>
+          )}
+          <section className={`${styles.winCol} ${styles.winNext}`}>
+            <NextBoss boss={bossTeam(run, act + 1)} actName={ACT_NAMES[act + 1]} />
+            <p className={`${styles.muted} ${styles.nextAct}`} data-next-act="true">
+              {ACT_NAMES[act + 1]} is harder: bigger teams with deeper decks, and its wins add {ACT_POT[act + 1]}× as much to the pot.
+              {nextPacks.length ? ` Its boss adds ${packWords(nextPacks)}.` : ''} Your players start it rested, and the boss pays a card, a player and a perk on the way.
+              One loss from here loses the whole pot.
+            </p>
+            {onAbandon && <p className={styles.muted}>{BANK_FAILED}</p>}
+            <div className={styles.actions}>
+              <button type="button" className={styles.primary} data-continue="true" onClick={onContinue} disabled={busy}>Keep climbing to {ACT_NAMES[act + 1]}</button>
+              <button type="button" data-bank="true" onClick={onBank} disabled={busy}>Take the pot and stop</button>
+              {giveUp}
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+  if (champion) {
+    const rows = runStats(run);
+    return (
+      <div className={`${styles.screen} ${styles.endScreen} ${styles.winScreen}`}>
+        <h2 className={styles.title}>You climbed all three acts!</h2>
+        <div className={`${styles.winGrid} ${rows.length ? '' : styles.winGridTwo}`}>
+          <section className={styles.winCol} data-champion-banner={run.rung}>
+            <ClimbBanner rung={run.rung} wins={1} at={run.bankedAt ?? null} roster={run.roster ?? []} big />
+          </section>
+          {rows.length > 0 && (
+            <section className={styles.winCol}>
+              <h3 className={styles.h3}>Your players, the whole climb</h3>
+              <PlayerLines rows={rows} best="Player of the climb" />
+            </section>
+          )}
+          <section className={`${styles.winCol} ${styles.winNext}`}>
+            <PotCount coins={banked ? banked.coins : pot.coins} packs={packs} />
+            {banked ? bankedLine : <p className={styles.lede}>The climb is won. Bank the pot to collect it and raise your banner: {potWords}.</p>}
+            {banked && <p className={styles.muted}>Your banner is up on the trophy wall, on the Climb&apos;s start screen.</p>}
+            {onAbandon && !banked && <p className={styles.muted}>{BANK_FAILED}</p>}
+            <div className={styles.actions}>
+              {banked
+                ? <button type="button" className={styles.primary} onClick={onNew}>Start a new climb</button>
+                : <button type="button" className={styles.primary} onClick={onBank} disabled={busy}>Bank the pot</button>}
+              {!banked && giveUp}
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`${styles.screen} ${styles.offerScreen} ${styles.endScreen}`}>
-      <h2 className={styles.title}>{won ? (act >= ACTS ? 'You climbed all three acts!' : `${ACT_NAMES[act]} complete!`) : lost ? 'The run is over' : 'Retired'}</h2>
+      <h2 className={styles.title}>{won ? `${ACT_NAMES[act]} complete!` : lost ? 'The run is over' : 'Retired'}</h2>
       {lost ? (
         <p className={styles.lede}>{pot.coins > 0
           ? `One loss ends a climb, and the pot is lost: ${pot.coins.toLocaleString('en-US')} coins this time.`
           : 'One loss ends a climb. Nothing was in the pot yet.'}</p>
-      ) : banked ? (
-        <p className={styles.lede}>Banked: {banked.coins.toLocaleString('en-US')} coins{packs.length ? ` and ${packWords(packs)} (open ${packs.length > 1 ? 'them' : 'it'} from Collection, under your boxes)` : ''}.</p>
-      ) : more ? (
-        <>
-          <p className={styles.lede}>The pot so far: {potWords}.</p>
-          <p className={`${styles.muted} ${styles.nextAct}`} data-next-act="true">
-            {ACT_NAMES[act + 1]} is harder: bigger teams with deeper decks, and its wins add {ACT_POT[act + 1]}× as much to the pot.
-            {nextPacks.length ? `Its boss adds ${packWords(nextPacks)}. ` : ''}Your players start it rested, and the boss pays a card, a player and a perk on the way.
-            One loss from here loses the whole pot.
-          </p>
-          {onAbandon && <p className={styles.muted}>The bank did not go through. Try again; if it keeps failing, giving up the run starts you fresh, but its pot is lost.</p>}
-          <div className={styles.actions}>
-            <button type="button" className={styles.primary} data-continue="true" onClick={onContinue} disabled={busy}>Keep climbing to {ACT_NAMES[act + 1]}</button>
-            <button type="button" data-bank="true" onClick={onBank} disabled={busy}>Take the pot and stop</button>
-            {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}
-          </div>
-        </>
-      ) : (
+      ) : banked ? bankedLine : (
         <>
           <p className={styles.lede}>{won ? 'The climb is won. ' : ''}Bank the pot to collect it: {potWords}.</p>
-          {onAbandon && <p className={styles.muted}>The bank did not go through. Try again; if it keeps failing, giving up the run starts you fresh, but its pot is lost.</p>}
+          {onAbandon && <p className={styles.muted}>{BANK_FAILED}</p>}
           <div className={styles.actions}>
             <button type="button" className={styles.primary} onClick={onBank} disabled={busy}>Bank the pot</button>
-            {onAbandon && <button type="button" onClick={onAbandon} disabled={busy}>Give up this run</button>}
+            {giveUp}
           </div>
         </>
       )}

@@ -1106,8 +1106,11 @@ describe('the Live Series additions (2026-10-25)', () => {
     expect(ids).toContain('Jordan_Poole');
     expect(new Set(ids).size).toBe(ids.length);
     expect(src.players.filter(p => p.addition === 'returning')).toHaveLength(6);
-    expect(src.players.filter(p => p.addition === 'shortSeason')).toHaveLength(43);
-    for (const p of src.players.filter(x => x.addition === 'shortSeason')) {
+    expect(src.players.filter(p => p.addition === 'shortSeason')).toHaveLength(53);
+    // Ten came on this season's minutes, not last season's (2026-11-02: 12+ a
+    // game on the nightly job's uncarded list).
+    const onThisSeason = new Set(['Joan_Beringer', 'Jase_Richardson', 'Moritz_Wagner', 'Jamison_Battle', 'Khaman_Maluach', 'Noa_Essengue', 'Jonathan_Mogbo', 'Tyler_Kolek', 'Mo_Bamba', 'Tyrese_Proctor']);
+    for (const p of src.players.filter(x => x.addition === 'shortSeason' && !onThisSeason.has(x.id))) {
       expect(p.last.games, p.id).toBeLessThan(40);
       expect(p.last.mpg, p.id).toBeGreaterThanOrEqual(12);
     }

@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 vi.mock('../../firebase/CardStatsProvider.jsx', () => ({ useCardStats: () => ({ stats: {} }) }));
 
-import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, practiceTiles, ClimbHud, deckFaces, EventScreen } from './ClimbScreens.jsx';
+import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, practiceTiles, ClimbHud, deckFaces, EventScreen, TrophyWall } from './ClimbScreens.jsx';
 import { baseId } from '../../game/strats.js';
 import { newRun, chooseCamp, chooseStop, recordResult, bossTeam, presetFor, runFromView } from '../../game/modes/run.js';
 import { CARDS } from '../../game/cards.js';
@@ -21,6 +21,32 @@ const fresh = () => newRun({ id: 'r1', seed: 42, rung: 'prince', rosterKeys: FIV
 const camped = () => ({ ...chooseCamp(fresh(), { playbook: 'speed', boon: fresh().camp.boons[0] }), dropOdds: { player: -1, perk: -1 } });
 const won = () => recordResult(chooseStop(camped(), '1-0'), { stopId: '1-0', won: true, margin: 6, endMinutes: { [FIVE[0].id]: 12 } });
 const noop = () => {};
+
+describe('the trophy wall', () => {
+  const banners = { prince: { wins: 2, at: Date.parse('2026-11-02T12:00:00Z'), roster: FIVE.map(cardKey), coins: 900 } };
+
+  it('hangs a banner for each rung won, and holds a place for the rest', () => {
+    const out = html(<TrophyWall banners={banners} />);
+    expect(out).toContain('data-banner-rung="prince"');
+    expect(out).toContain('data-banner-won="true"');
+    expect(out).toContain('×2');
+    expect(out).toContain('data-banner-rung="deity"');
+    expect(out).toContain('data-banner-won="false"');
+    expect(out).toContain(`data-banner-player="${cardKey(FIVE[0])}"`);
+  });
+
+  it('is on the start screen', () => {
+    const out = html(<ClimbStart owned={[]} onStart={noop} banners={banners} />);
+    expect(out).toContain('Trophy wall');
+    expect(out).toContain('data-banner-rung="settler"');
+  });
+
+  it('skips a card no longer in the game', () => {
+    const out = html(<TrophyWall banners={{ king: { wins: 1, at: 1, roster: ['no:such_card', cardKey(FIVE[0])], coins: 1 } }} />);
+    expect(out).not.toContain('no:such_card');
+    expect(out).toContain(`data-banner-player="${cardKey(FIVE[0])}"`);
+  });
+});
 
 describe('the start screen', () => {
   it('offers the rungs and the players who fit a five under the cap, and counts the rest', () => {
@@ -215,6 +241,68 @@ describe('the end of a run', () => {
     const failed = html(<RunOver run={w} onBank={noop} onNew={noop} onAbandon={noop} />);
     expect(failed).toContain('Give up this run');
     expect(failed).toContain('did not go through');
+  });
+
+  // THE ACT WIN (2026-11-02; the user: "stamp the boss's logo DEFEATED, count up
+  // the pot, then reveal the next boss ... showing stats of your players on that
+  // act would be good. Maybe some photos of the players").
+  describe('an act won', () => {
+    const line = (pts, reb, ast) => ({ g: 3, min: 30, pts, reb, ast });
+    const w = () => ({
+      ...camped(), status: 'won', cleared: ['1-0', 'boss'],
+      stats: { 1: { [cardKey(FIVE[0])]: line(20, 4, 3), [cardKey(FIVE[1])]: line(30, 9, 5) } },
+    });
+    const act = () => html(<RunOver run={w()} onBank={noop} onNew={noop} onContinue={noop} />);
+
+    it('stamps the boss DEFEATED', () => {
+      expect(act()).toContain(`data-defeated="${bossTeam(w()).abbr}"`);
+      expect(act()).toContain('DEFEATED');
+    });
+
+    it('counts the pot up to what is in it', () => {
+      const out = act();
+      expect(out).toMatch(/data-pot-count="\d+"/);
+    });
+
+    it('reveals the next boss by name', () => {
+      const next = bossTeam(w(), 2);
+      expect(act()).toContain(`data-next-boss="${next.abbr}"`);
+      expect(act()).toContain(next.name);
+    });
+
+    it('shows your players, best first, with their card art and their totals', () => {
+      const out = act();
+      expect(out.indexOf(`data-player-line="${cardKey(FIVE[1])}"`)).toBeLessThan(out.indexOf(`data-player-line="${cardKey(FIVE[0])}"`));
+      expect(out).toContain(`data-act-best="${cardKey(FIVE[1])}"`);
+      expect(out).toMatch(/<img[^>]*Player|<img/);
+      expect(out).toContain('>30<');
+    });
+
+    it('still reads for a run from before there were totals', () => {
+      const out = html(<RunOver run={{ ...w(), stats: undefined }} onBank={noop} onNew={noop} onContinue={noop} />);
+      expect(out).toContain('Act I complete!');
+      expect(out).not.toContain('data-player-line');
+    });
+  });
+
+  // THE WHOLE CLIMB (2026-11-02; the user: "Great"): a banner with your roster.
+  describe('the whole climb won', () => {
+    const w = (over = {}) => ({ ...camped(), act: 3, status: 'won', cleared: ['boss', 'a2:boss', 'a3:boss'], ...over });
+
+    it('raises a banner with the rung and the roster', () => {
+      const out = html(<RunOver run={w()} onBank={noop} onNew={noop} />);
+      expect(out).toContain('data-champion-banner="prince"');
+      expect(out).toContain('Prince');
+      for (const c of FIVE) expect(out).toContain(`data-banner-player="${cardKey(c)}"`);
+    });
+
+    it('asks for the bank before it says the banner is up, and says so after', () => {
+      const before = html(<RunOver run={w()} onBank={noop} onNew={noop} />);
+      expect(before).toContain('Bank the pot');
+      const after = html(<RunOver run={w({ banked: { coins: 500, packs: ['booster'] } })} onBank={noop} onNew={noop} />);
+      expect(after).toMatch(/trophy wall/i);
+      expect(after).toContain('Start a new climb');
+    });
   });
 
   // THREE ACTS (2026-10-20): "'take what you've earned and quit,' or 'keep

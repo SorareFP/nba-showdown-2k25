@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'climb-banners', date: '2026-11-02', title: 'The Climb: a moment at the top, and a trophy wall',
+    body: "Beating an act's boss now stamps them DEFEATED, counts up your pot, shows how your players did in that act and reveals the next boss. Climb all three acts and a championship banner goes up with your roster on it, kept on a new trophy wall on the Climb's start screen, one banner for each coach. Prince's second boss now pays a Deluxe Booster; a climb already under way keeps what it started with.",
+    to: 'climb', cta: 'The Climb',
+  },
+  {
     id: 'record-breakers-faces', date: '2026-11-02', title: 'The Record Breakers are in',
     body: "All twelve Record Breakers now have their platinum faces. Four of them join the boosters today: Hakeem's 3,190 blocks, Stockton's 2,311 steals, Mark Eaton's 456 blocks and Alvin Robertson's 301 steals. The other eight are earned by matching the feat, which is still to come, and never come from a pack.",
     to: 'shop', cta: 'The pack shop',

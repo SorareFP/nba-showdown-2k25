@@ -24,6 +24,7 @@ import { PERKS } from '../../game/modes/climbPerks.js';
 import { styleLine } from '../../game/modes/climbStyles.js';
 import { packWords, ACT_NAMES } from '../../game/modes/climbMap.js';
 import { ClimbStart, TrainingCamp, ClimbMap, RewardPicker, RestDay, RunOver, ClimbHud, EventScreen } from './ClimbScreens.jsx';
+import { getUserData } from '../../firebase/collection.js';
 import styles from './Climb.module.css';
 
 /**
@@ -37,7 +38,12 @@ export async function oneAtATime(gate, fn) {
   try { await fn(); return true; } finally { gate.current = false; }
 }
 
-export const FIREBASE_STORE = { loadActive: loadActiveRun, save: saveRun };
+export const FIREBASE_STORE = {
+  loadActive: loadActiveRun,
+  save: saveRun,
+  // The trophy wall lives on the account (climbBank writes it).
+  loadBanners: async uid => (await getUserData(uid))?.climbBanners ?? {},
+};
 export const FIREBASE_SERVER = { start: climbStart, openGame: climbGame, bank: climbBank, continueTo: climbContinue, perk: climbPerk };
 /** Saved teams: the Climb fives among them fill the start screen (2026-10-19). */
 export const FIREBASE_TEAMS = { load: loadTeams, save: saveTeam };
@@ -60,6 +66,13 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
   const [bankFailedFor, setBankFailedFor] = useState(null);
   // A look at the map from a Rest Day (2026-10-19); a new step closes it.
   const [peekMap, setPeekMap] = useState(false);
+  const [banners, setBanners] = useState({});
+  useEffect(() => {
+    if (!store.loadBanners || !uid) return undefined;
+    let live = true;
+    store.loadBanners(uid).then(b => { if (live) setBanners(b ?? {}); }).catch(() => {});
+    return () => { live = false; };
+  }, [uid, store]);
   useEffect(() => { setPeekMap(false); }, [run?.status, run?.restAt]);
   const needsAccount = store === FIREBASE_STORE && !uid;
 
@@ -145,9 +158,10 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
 
   const bank = r => act(async () => {
     let res;
-    try { res = await server.bank(uid, r.id); } catch (e) { setBankFailedFor(r.id); throw e; }
+    try { res = await server.bank(uid, r.id, r.roster); } catch (e) { setBankFailedFor(r.id); throw e; }
     const packs = Array.isArray(res?.packs) ? res.packs : res?.booster ? ['booster'] : [];
     await commit({ ...r, banked: { coins: res?.coins ?? 0, booster: Boolean(res?.booster), packs } });
+    if (res?.banner) setBanners(b => ({ ...b, [res.banner.rung]: res.banner }));
     toast(`Banked ${(res?.coins ?? 0).toLocaleString('en-US')} coins${packs.length ? ` and ${packWords(packs)}` : ''}.`);
   });
 
@@ -196,7 +210,7 @@ export default function ClimbTab({ collection = null, pendingResult = null, onRe
 
   if (needsAccount) return <div className={styles.screen}><p className={styles.lede}>Sign in to climb: a run starts with players you own.</p></div>;
   if (run === undefined) return <div className={styles.screen}><p className={styles.muted}>Loading your climb…</p></div>;
-  if (!run) return <ClimbStart owned={owned} saved={saved} onStart={start} onSaveFive={saveFive} busy={busy} />;
+  if (!run) return <ClimbStart banners={banners} owned={owned} saved={saved} onStart={start} onSaveFive={saveFive} busy={busy} />;
 
   // THE CLIMB BAR on every screen of a run (ClimbHud, 2026-10-20).
   return <><ClimbHud run={run} />{screenFor(run)}</>;

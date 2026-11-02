@@ -117,7 +117,7 @@ const server = {
   // The Climb (2026-10-18): the run's ledger lives on the server only.
   climbStart: (uid, payload) => call('climbStart', payload),
   climbGame: (uid, payload) => call('climbGame', payload),
-  climbBank: (uid, runId) => call('climbBank', { runId }),
+  climbBank: (uid, runId, roster) => call('climbBank', { runId, roster }),
   climbContinue: (uid, runId, toAct) => call('climbContinue', { runId, toAct }),
   climbPerk: (uid, runId, perk) => call('climbPerk', { runId, perk }),
   claimDynastyReward: (uid, dynastyId, year) => call('claimDynastyReward', { dynastyId, year }),
@@ -460,7 +460,7 @@ export const climbStart = (uid, payload) => impl.climbStart(uid, payload);
 /** The Climb: open the game at a stop (`{ runId, stopId }`). Returns `{ ok, status }`. */
 export const climbGame = (uid, payload) => impl.climbGame(uid, payload);
 /** The Climb: bank the pot the server prices, once. Returns `{ coins, booster, already?, lost? }`. */
-export const climbBank = (uid, runId) => impl.climbBank(uid, runId);
+export const climbBank = (uid, runId, roster) => impl.climbBank(uid, runId, roster);
 /** The Climb: after an Act I or II boss, move the ledger to `toAct` (the pot rides on). Returns `{ ok, act }`. */
 export const climbContinue = (uid, runId, toAct) => impl.climbContinue(uid, runId, toAct);
 /** The Climb: record a perk the ledger keeps (Sponsorship, Travel Day, Second Chance, Max Contract) before it is taken. */

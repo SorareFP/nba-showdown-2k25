@@ -12,6 +12,7 @@
 //                       ├─chooseStop(Rest Day)→ rest ─restDay→ map
 //                       └─retire→ retired
 import { generateMap, stopById, nextStops, nextFloorStops, potOfRun, climbRng, MAP_VERSION, ACTS, FLOORS, bossIdOf } from './climbMap.js';
+import { boxScoreFor } from '../boxScore.js';
 import { PLAYBOOKS, PLAYBOOK_OF_ARCHETYPE, kitDeck, leanOf, coachDeck } from './climbKits.js';
 import { PERKS, perkOffer, perkProblem, boostsOf, boostedCard, hasPerk, GAME_PERKS, TRAVEL_DAYS, WIN_NOW_CAP } from './climbPerks.js';
 import { styleAt, styledCard, engineFx } from './climbStyles.js';
@@ -377,9 +378,13 @@ function bossFranchise(run, act = actOfRun(run)) {
   return pickFrom(climbRng(run.seed, 'boss', act), fresh.length ? fresh : list);
 }
 
-/** Who waits at the top of the map, known from the start as in StS: the boss's franchise and its logo. */
-export function bossTeam(run) {
-  const abbr = bossFranchise(run);
+/**
+ * Who waits at the top of the map, known from the start as in StS: the boss's
+ * franchise and its logo. `act` names a later act's: the act-win screen
+ * reveals the next boss, the same one that act will field.
+ */
+export function bossTeam(run, act = actOfRun(run)) {
+  const abbr = bossFranchise(run, act);
   const team = TEAMS[abbr] ?? {};
   return { abbr, name: team.name ?? abbr, city: team.city ?? '', logo: team.logo ?? null };
 }
@@ -651,8 +656,10 @@ function playerOffer(run, rng) {
 /** Signature Set's ceiling: +2 grown to +6 (2026-10-20). */
 export const SIGNATURE_MAX = 6;
 
-export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, carryHot = null, iceBath = null, conditioned = false, leaves = [], twoADays = 0, signatureStep = 0 }) {
+export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, carryHot = null, iceBath = null, conditioned = false, leaves = [], twoADays = 0, signatureStep = 0, box = [] }) {
   if (run.status !== 'game' || run.game?.stopId !== stopId) return run;
+  const stats = addGameStats(run.stats, actOfRun(run), box);
+  if (stats) run = { ...run, stats };
   if (!won) {
     // SECOND CHANCE (a boss's perk, 2026-10-22): the game is played again,
     // once a run, under a key of its own (the server took the first one's
@@ -721,6 +728,42 @@ export function recordResult(run, { stopId, won, margin = 0, endMinutes = {}, ca
     extraPicks: Math.max(0, run.extraPicks - 1),
     offers: { stopId, strats: stratOffer(next, stop, rng, climbRng(run.seed, 'climb-only', stopId)), picks, players, perks },
   };
+}
+
+/**
+ * YOUR PLAYERS' TOTALS, act by act (2026-11-02; the user, of the act-win
+ * screen: "showing stats of your players on that act would be good"). `box`
+ * is one game's lines (resultFromGame), keyed by card; a game with none (a win
+ * only the server held) adds nothing. `run.stats` is { act: { key: line } }.
+ */
+export function addGameStats(stats, act, box) {
+  if (!box?.length) return stats;
+  const lines = { ...(stats?.[act] ?? {}) };
+  for (const l of box) {
+    const p = lines[l.key] ?? { g: 0, min: 0, pts: 0, reb: 0, ast: 0 };
+    lines[l.key] = { g: p.g + 1, min: p.min + (l.min ?? 0), pts: p.pts + (l.pts ?? 0), reb: p.reb + (l.reb ?? 0), ast: p.ast + (l.ast ?? 0) };
+  }
+  return { ...(stats ?? {}), [act]: lines };
+}
+
+/** Best first: what a player put up, then their points. */
+const byOutput = (a, b) => (b.pts + b.reb + b.ast) - (a.pts + a.reb + a.ast) || b.pts - a.pts || a.key.localeCompare(b.key);
+
+/** One act's lines, best first; none for a run from before they were kept. */
+export const actStats = (run, act = actOfRun(run)) => Object.entries(run?.stats?.[act] ?? {})
+  .map(([key, line]) => ({ key, ...line }))
+  .sort(byOutput);
+
+/** The whole climb's lines, best first. */
+export function runStats(run) {
+  const totals = {};
+  for (const lines of Object.values(run?.stats ?? {})) {
+    for (const [key, l] of Object.entries(lines)) {
+      const p = totals[key] ?? { key, g: 0, min: 0, pts: 0, reb: 0, ast: 0 };
+      totals[key] = { key, g: p.g + l.g, min: p.min + l.min, pts: p.pts + l.pts, reb: p.reb + l.reb, ast: p.ast + l.ast };
+    }
+  }
+  return Object.values(totals).sort(byOutput);
 }
 
 /**
@@ -1259,11 +1302,13 @@ export function potPreview(run) {
 export function resultFromGame(game, stopId) {
   const margin = (game?.teamA?.score ?? 0) - (game?.teamB?.score ?? 0);
   const buffs = game?.buffs?.A ?? {};
+  const box = boxScoreFor(game, 'A').map(({ key, pts, reb, ast, min }) => ({ key, pts, reb, ast, min }));
   return {
     stopId,
     won: margin > 0,
     margin,
     endMinutes: Object.fromEntries((game?.teamA?.stats ?? []).map(s => [s.id, s.minutes ?? 0])),
+    ...(box.length ? { box } : {}),
     // Stay Hot: the hot markers your players end on, two at most (three for
     // Stay Hot+; 2026-10-19).
     ...(buffs.stay_hot ? { carryHot: Object.fromEntries((game?.teamA?.stats ?? []).filter(s => (s.hot ?? 0) > 0).map(s => [s.id, Math.min(buffNumber(buffs.stay_hot, 2), s.hot)])) } : {}),

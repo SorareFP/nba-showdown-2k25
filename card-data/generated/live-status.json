@@ -1,27 +1,26 @@
 {
  "set": "live",
- "cards": 469,
+ "cards": 479,
  "mode": "season",
- "asOf": "2026-11-01T15:32:04.240Z",
+ "asOf": "2026-11-02T18:55:03.395Z",
  "source": "dunksandthrees.com /epm 2027 (expected) + /epm/actual; Basketball-Reference 2027 games played and game logs",
  "season": 2027,
  "built": 337,
  "mirrored": 11,
  "additions": {
-  "carded": 121,
+  "carded": 131,
   "withheld": []
  },
- "withRealGames": 361,
+ "withRealGames": 371,
  "fullWindows": 0,
  "logs": {
   "countsFrom": "basketball-reference",
-  "current": 431,
+  "current": 442,
   "behind": 1,
-  "fetched": 146,
+  "fetched": 91,
   "failed": [],
   "unmatched": [
    "Jayden Quaintance",
-   "Cameron Carr",
    "Khalifa Diop",
    "Dillon Mitchell",
    "Tyler Bilodeau",
@@ -59,7 +58,243 @@
    "Trey Alexander"
   ]
  },
- "teamEpm": "stale: dunksandthrees team-epm: 401 — the API key was rejected. Check DUNKSANDTHREES_API_KEY in .env.local.",
+ "opponents": "basketball-reference: 30 teams",
+ "uncarded": [
+  {
+   "name": "Carter Bryant",
+   "team": "SAS",
+   "games": 6,
+   "mpg": 9
+  },
+  {
+   "name": "Trayce Jackson-Davis",
+   "team": "TOR",
+   "games": 6,
+   "mpg": 7.8
+  },
+  {
+   "name": "Charles Bassey",
+   "team": "GSW",
+   "games": 5,
+   "mpg": 9.2
+  },
+  {
+   "name": "Jabari Walker",
+   "team": "PHI",
+   "games": 4,
+   "mpg": 9.5
+  },
+  {
+   "name": "Alijah Martin",
+   "team": "TOR",
+   "games": 5,
+   "mpg": 6.6
+  },
+  {
+   "name": "Yang Hansen",
+   "team": "POR",
+   "games": 3,
+   "mpg": 10
+  },
+  {
+   "name": "Isaiah Crawford",
+   "team": "HOU",
+   "games": 5,
+   "mpg": 5.6
+  },
+  {
+   "name": "Asa Newell",
+   "team": "ATL",
+   "games": 3,
+   "mpg": 9.3
+  },
+  {
+   "name": "Cam Christie",
+   "team": "LAC",
+   "games": 4,
+   "mpg": 6.8
+  },
+  {
+   "name": "Brooks Barnhizer",
+   "team": "OKC",
+   "games": 5,
+   "mpg": 5
+  },
+  {
+   "name": "Alex Morales",
+   "team": "ORL",
+   "games": 3,
+   "mpg": 6.3
+  },
+  {
+   "name": "Duop Reath",
+   "team": "PHO",
+   "games": 3,
+   "mpg": 6.3
+  },
+  {
+   "name": "Liam McNeeley",
+   "team": "CHO",
+   "games": 3,
+   "mpg": 6.3
+  },
+  {
+   "name": "Branden Carlson",
+   "team": "POR",
+   "games": 2,
+   "mpg": 8
+  },
+  {
+   "name": "Malevy Leons",
+   "team": "GSW",
+   "games": 4,
+   "mpg": 4
+  },
+  {
+   "name": "Jae'Sean Tate",
+   "team": "HOU",
+   "games": 5,
+   "mpg": 2.8
+  },
+  {
+   "name": "Tolu Smith",
+   "team": "DET",
+   "games": 5,
+   "mpg": 2.8
+  },
+  {
+   "name": "Colin Castleton",
+   "team": "ORL",
+   "games": 2,
+   "mpg": 5.5
+  },
+  {
+   "name": "PJ Hall",
+   "team": "CHO",
+   "games": 2,
+   "mpg": 5.5
+  },
+  {
+   "name": "Jordan McLaughlin",
+   "team": "SAS",
+   "games": 2,
+   "mpg": 5
+  },
+  {
+   "name": "Ron Harper Jr.",
+   "team": "BOS",
+   "games": 2,
+   "mpg": 5
+  },
+  {
+   "name": "Bronny James",
+   "team": "LAL",
+   "games": 3,
+   "mpg": 3.3
+  },
+  {
+   "name": "Blake Wesley",
+   "team": "LAC",
+   "games": 2,
+   "mpg": 4.5
+  },
+  {
+   "name": "Myron Gardner",
+   "team": "MIA",
+   "games": 3,
+   "mpg": 2.7
+  },
+  {
+   "name": "Chris Mañon",
+   "team": "LAL",
+   "games": 2,
+   "mpg": 3.5
+  },
+  {
+   "name": "Chris Youngblood",
+   "team": "POR",
+   "games": 1,
+   "mpg": 7
+  },
+  {
+   "name": "Jayson Kent",
+   "team": "POR",
+   "games": 1,
+   "mpg": 7
+  },
+  {
+   "name": "Isaac Jones",
+   "team": "DET",
+   "games": 2,
+   "mpg": 3
+  },
+  {
+   "name": "Riley Minix",
+   "team": "CLE",
+   "games": 1,
+   "mpg": 6
+  },
+  {
+   "name": "Tony Bradley",
+   "team": "UTA",
+   "games": 1,
+   "mpg": 6
+  },
+  {
+   "name": "Tristan Enaruna",
+   "team": "CLE",
+   "games": 1,
+   "mpg": 6
+  },
+  {
+   "name": "Zyon Pullin",
+   "team": "MIN",
+   "games": 2,
+   "mpg": 3
+  },
+  {
+   "name": "Chaz Lanier",
+   "team": "DET",
+   "games": 2,
+   "mpg": 2.5
+  },
+  {
+   "name": "DaRon Holmes",
+   "team": "DEN",
+   "games": 2,
+   "mpg": 2.5
+  },
+  {
+   "name": "John Tonje",
+   "team": "POR",
+   "games": 1,
+   "mpg": 5
+  },
+  {
+   "name": "AJ Johnson",
+   "team": "NOP",
+   "games": 1,
+   "mpg": 3
+  },
+  {
+   "name": "David Jones García",
+   "team": "SAS",
+   "games": 1,
+   "mpg": 1
+  },
+  {
+   "name": "Mohamed Diawara",
+   "team": "NYK",
+   "games": 1,
+   "mpg": 1
+  },
+  {
+   "name": "Pacôme Dadiet",
+   "team": "NYK",
+   "games": 1,
+   "mpg": 1
+  }
+ ],
  "fillLevel": {
   "basis": "the 2025-26 pool: each player's real last-82 window as realGames.js hands it to computeStatBands (opponent-adjusted, minutes-damped, winsorized), against the per-4-minute rate of dunksandthrees' predicted per-100 line",
   "generatedAt": "2026-10-01T12:46:37.909Z",

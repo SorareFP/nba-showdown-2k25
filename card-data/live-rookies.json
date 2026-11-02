@@ -1503,6 +1503,126 @@
         "games": 10,
         "mpg": 18.4
       }
+    },
+    {
+      "id": "Joan_Beringer",
+      "name": "Joan Beringer",
+      "team": "MIN",
+      "pos": "F",
+      "personId": 1642866,
+      "draft": null,
+      "last": {
+        "games": 40,
+        "mpg": 7.8
+      }
+    },
+    {
+      "id": "Jase_Richardson",
+      "name": "Jase Richardson",
+      "team": "ORL",
+      "pos": "G",
+      "personId": 1642859,
+      "draft": null,
+      "last": {
+        "games": 54,
+        "mpg": 10.9
+      }
+    },
+    {
+      "id": "Moritz_Wagner",
+      "name": "Moritz Wagner",
+      "team": "BKN",
+      "pos": "F-C",
+      "personId": 1629021,
+      "draft": null,
+      "last": {
+        "games": 36,
+        "mpg": 11.9
+      }
+    },
+    {
+      "id": "Jamison_Battle",
+      "name": "Jamison Battle",
+      "team": "TOR",
+      "pos": "F",
+      "personId": 1642419,
+      "draft": null,
+      "last": {
+        "games": 61,
+        "mpg": 8.5
+      }
+    },
+    {
+      "id": "Khaman_Maluach",
+      "name": "Khaman Maluach",
+      "team": "PHX",
+      "pos": "C",
+      "personId": 1642863,
+      "draft": null,
+      "last": {
+        "games": 46,
+        "mpg": 8.9
+      }
+    },
+    {
+      "id": "Noa_Essengue",
+      "name": "Noa Essengue",
+      "team": "CHI",
+      "pos": "F",
+      "personId": 1642855,
+      "draft": null,
+      "last": {
+        "games": 2,
+        "mpg": 3.0
+      }
+    },
+    {
+      "id": "Jonathan_Mogbo",
+      "name": "Jonathan Mogbo",
+      "team": "SAC",
+      "pos": "F",
+      "personId": 1642367,
+      "draft": null,
+      "last": {
+        "games": 40,
+        "mpg": 6.2
+      }
+    },
+    {
+      "id": "Tyler_Kolek",
+      "name": "Tyler Kolek",
+      "team": "NYK",
+      "pos": "G",
+      "personId": 1642278,
+      "draft": null,
+      "last": {
+        "games": 62,
+        "mpg": 11.7
+      }
+    },
+    {
+      "id": "Mo_Bamba",
+      "name": "Mo Bamba",
+      "team": "UTA",
+      "pos": "C",
+      "personId": 1628964,
+      "draft": null,
+      "last": {
+        "games": 4,
+        "mpg": 11.0
+      }
+    },
+    {
+      "id": "Tyrese_Proctor",
+      "name": "Tyrese Proctor",
+      "team": "CLE",
+      "pos": "G",
+      "personId": 1642878,
+      "draft": null,
+      "last": {
+        "games": 50,
+        "mpg": 10.9
+      }
     }
   ]
 }

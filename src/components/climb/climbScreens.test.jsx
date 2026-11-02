@@ -226,7 +226,7 @@ describe('the end of a run', () => {
     expect(one).toMatch(/data-continue="true"[^>]*>Keep climbing to Act II</);
     expect(one).toContain('Take the pot and stop');
     expect(one).toContain('One loss from here loses the whole pot');
-    expect(one).toContain('a Rare Deluxe');
+    expect(one).toContain('a Deluxe Booster');
     const last = html(<RunOver run={{ ...w, act: 3, cleared: [...w.cleared, 'a2:boss', 'a3:boss'] }} onBank={noop} onNew={noop} onContinue={noop} />);
     expect(last).toContain('You climbed all three acts!');
     expect(last).not.toContain('Keep climbing');
@@ -238,7 +238,7 @@ describe('the end of a run', () => {
     const out = html(<ClimbStart owned={[]} onStart={noop} />);
     const line = rung => { const at = out.indexOf(`data-boss-packs="${rung}"`); return out.slice(out.indexOf('>', at) + 1, out.indexOf('</button>', at)).replace(/<[^>]+>/g, ''); };
     expect(line('settler')).toBe('Bosses: — · — · Booster');
-    expect(line('prince')).toBe('Bosses: Booster · Rare Deluxe · Super Deluxe');
+    expect(line('prince')).toBe('Bosses: Booster · Deluxe Booster · Super Deluxe');
     expect(line('deity')).toBe('Bosses: Rare Deluxe · Super Deluxe · Mega Deluxe');
   });
 

@@ -119,7 +119,7 @@ describe('keeping climbing', () => {
     const won = recordResult(chooseStop(atBoss, 'a2:boss'), { stopId: 'a2:boss', won: true, margin: 3 });
     expect(won.status).toBe('won');
     expect(won.cleared.at(-1)).toBe('a2:boss');
-    expect(potPreview(won).packs).toEqual(['booster', 'rare_deluxe']);
+    expect(potPreview(won).packs).toEqual(['booster', 'deluxe']);
   });
 });
 

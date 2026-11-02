@@ -159,15 +159,32 @@ describe('the pot', () => {
   });
 });
 
+// PRINCE'S ACT II (2026-11-02; the user, of a Deluxe there: "Sure, that's fine").
+describe("Prince's boss packs", () => {
+  it('are a Booster, a Deluxe and a Super Deluxe, between Warlord and King', async () => {
+    const { bossPacksOf, MAP_VERSION } = await import('./climbMap.js');
+    expect([1, 2, 3].map(act => bossPacksOf(act, 'prince', MAP_VERSION))).toEqual([['booster'], ['deluxe'], ['super_deluxe']]);
+  });
+
+  it('stay as they were for a run started before the change', async () => {
+    const { bossPacksOf } = await import('./climbMap.js');
+    expect(bossPacksOf(2, 'prince', 3)).toEqual(['rare_deluxe']);
+    expect(bossPacksOf(2, 'nobody', 3)).toEqual(['rare_deluxe']);
+    expect(bossPacksOf(2, 'king', 3)).toEqual(['rare_deluxe']);
+  });
+});
+
 // A RUN KEEPS THE MAP IT STARTED ON (final review, 2026-10-18): the server
 // rebuilds the map from the seed, so a later change to the generator would
 // reshape every run in flight. Each run carries the version it was drawn at.
 describe('the map version', () => {
-  it('is 3, draws the same map named or not, keeps versions 1 and 2 for runs drawn under them, and refuses a version it does not know', async () => {
+  it('is 4, draws the same map named or not, keeps versions 1 and 2 for runs drawn under them, and refuses a version it does not know', async () => {
     const { MAP_VERSION } = await import('./climbMap.js');
-    // 2 since 2026-10-25: ? stops (events); 3 since 2026-10-27: Makeup Games.
-    expect(MAP_VERSION).toBe(3);
-    expect(generateMap(11, 3)).toEqual(generateMap(11));
+    // 2 since 2026-10-25: ? stops (events); 3 since 2026-10-27: Makeup Games
+    // and packs by rung; 4 since 2026-11-02: Prince's Act II pack, no new draw.
+    expect(MAP_VERSION).toBe(4);
+    expect(generateMap(11, 4)).toEqual(generateMap(11));
+    expect(generateMap(11, 3)).toEqual(generateMap(11, 4));
     expect(generateMap(11, 2).floors.flat().some(s => s.makeup)).toBe(false);
     expect(generateMap(11, 1).floors.flat().some(s => s.kind === 'event')).toBe(false);
     expect(() => generateMap(11, 99)).toThrow(/version/);

@@ -269,8 +269,8 @@ describe('a stop the ledger already cleared', () => {
   it('stamps the map version the run was drawn at', async () => {
     const { runId, mapVersion } = await call(climbStart, { rung: 'prince' });
     // 2 since 2026-10-25 (? stops), 3 since 2026-10-27 (Makeup Games); a run keeps its own.
-    expect(mapVersion).toBe(3);
-    expect(ledger(runId).mapVersion).toBe(3);
+    expect(mapVersion).toBe(4);
+    expect(ledger(runId).mapVersion).toBe(4);
   });
 
   // A MAKEUP GAME (map version 3): a ? on the screens, a Game to the ledger.
@@ -347,18 +347,18 @@ describe('three acts', () => {
     const cleared = ['1-0', 'boss', 'a2:1-0', 'a2:boss', 'a3:1-0', 'a3:boss'];
     docs.set(`users/${UID}/runLedger/${runId}`, { ...ledger(runId), act: 3, cleared, status: 'won' });
     const pot = potOfRun({ ...ledger(runId) });
-    // A Prince run since map version 3: the Mega Deluxe is King's and Deity's (bossPacksOf).
-    expect(pot.packs).toEqual(['booster', 'rare_deluxe', 'super_deluxe']);
+    // A Prince run since map version 4: the Mega Deluxe is King's and Deity's (bossPacksOf).
+    expect(pot.packs).toEqual(['booster', 'deluxe', 'super_deluxe']);
     // Act II's floor-1 Game pays half again Act I's, Act III's double.
     const one = potOfRun({ ...ledger(runId), cleared: ['1-0'] }).coins;
     expect(potOfRun({ ...ledger(runId), cleared: ['a2:1-0'] }).coins).toBe(Math.round(one * 1.5));
     expect(potOfRun({ ...ledger(runId), cleared: ['a3:1-0'] }).coins).toBe(one * 2);
     const before = coins();
     const res = await call(climbBank, { runId });
-    expect(res).toMatchObject({ coins: pot.coins, booster: true, packs: ['booster', 'rare_deluxe', 'super_deluxe'] });
+    expect(res).toMatchObject({ coins: pot.coins, booster: true, packs: ['booster', 'deluxe', 'super_deluxe'] });
     expect(coins()).toBe(before + pot.coins);
     const boxes = [...docs.entries()].filter(([k]) => k.startsWith(`users/${UID}/boxes/`)).map(([, v]) => v.packType).sort();
-    expect(boxes).toEqual(['booster', 'rare_deluxe', 'super_deluxe']);
+    expect(boxes).toEqual(['booster', 'deluxe', 'super_deluxe']);
   });
 
   // THE PACKS CLIMB WITH THE RUNG (2026-10-27; the user: "boy there's a lot

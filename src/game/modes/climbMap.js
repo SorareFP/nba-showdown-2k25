@@ -66,19 +66,26 @@ export const BOSS_PACKS = { 1: ['booster'], 2: ['rare_deluxe'], 3: ['mega_deluxe
  * quarters, two-thirds of it the Mega Deluxe Settler got too. The Mega Deluxe
  * is King's and Deity's now. A run keeps the table it started under: the
  * packs ride on the map version, as the server reads it.
+ *
+ * PRINCE'S ACT II IS A DELUXE (map version 4, 2026-11-02): 2,350 of packs down
+ * to 1,800, between Warlord's 1,050 and King's 3,850, and the last boss still
+ * pays the most. A Rare Deluxe at Act III instead would have tied Warlord's.
  */
 export const RUNG_BOSS_PACKS = {
   settler:   { 1: [], 2: [], 3: ['booster'] },
   chieftain: { 1: [], 2: ['booster'], 3: ['deluxe'] },
   warlord:   { 1: ['booster'], 2: ['deluxe'], 3: ['rare_deluxe'] },
-  prince:    { 1: ['booster'], 2: ['rare_deluxe'], 3: ['super_deluxe'] },
+  prince:    { 1: ['booster'], 2: ['deluxe'], 3: ['super_deluxe'] },
   king:      { 1: ['booster'], 2: ['rare_deluxe'], 3: ['mega_deluxe'] },
   deity:     { 1: ['rare_deluxe'], 2: ['super_deluxe'], 3: ['mega_deluxe'] },
 };
 /** What an act's boss adds to the pot, for a run at a rung drawn at a map version (an unknown rung is Prince, as the server reads it). */
 export function bossPacksOf(act, rung, mapVersion = 1) {
   if (mapVersion < 3) return BOSS_PACKS[act] ?? [];
-  return (RUNG_BOSS_PACKS[rung] ?? RUNG_BOSS_PACKS.prince)[act] ?? [];
+  const table = RUNG_BOSS_PACKS[rung] ?? RUNG_BOSS_PACKS.prince;
+  // A Prince run drawn on version 3 keeps the Rare Deluxe it started with.
+  if (mapVersion === 3 && table === RUNG_BOSS_PACKS.prince && act === 2) return ['rare_deluxe'];
+  return table[act] ?? [];
 }
 const PACK_WORDS = { booster: 'a Booster', deluxe: 'a Deluxe Booster', rare_deluxe: 'a Rare Deluxe', super_deluxe: 'a Super Deluxe', mega_deluxe: 'a Mega Deluxe' };
 /** A pack's name as the screens say it, without the article: "Rare Deluxe". */
@@ -120,9 +127,10 @@ const perkAt = (perks, id) => {
  * THE GENERATOR'S VERSION, stamped on every run and ledger (final review,
  * 2026-10-18): the server rebuilds a run's map from its seed, so a change to
  * how maps are drawn would reshape every run in flight. A change bumps this
- * and keeps the old draw for the runs drawn with it.
+ * and keeps the old draw for the runs drawn with it. Version 4 draws as 3 does:
+ * it only moves Prince's Act II pack (bossPacksOf).
  */
-export const MAP_VERSION = 3;
+export const MAP_VERSION = 4;
 /** Set on a map that came from the fixed fallback rather than the seed's draw. */
 export const FALLBACK_SEED_USE = 'fallback';
 const MAX_TRIES = 500;
@@ -298,7 +306,7 @@ function fallbackMap() {
  * at a generator version. Act I draws exactly as it always has.
  */
 export function generateMap(seed, version = MAP_VERSION, act = 1) {
-  if (![1, 2, 3].includes(version)) throw new Error(`No act map version ${version}`);
+  if (![1, 2, 3, 4].includes(version)) throw new Error(`No act map version ${version}`);
   const rng = act > 1 ? climbRng(seed, 'map', 'act', act) : climbRng(seed, 'map');
   for (let i = 0; i < MAX_TRIES; i += 1) {
     const m = draw(rng, version);

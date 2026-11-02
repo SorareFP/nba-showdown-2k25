@@ -565,3 +565,11 @@ describe('hand-entered marks, after REC', () => {
     expect(getAward('REC')).toBeNull();
   });
 });
+
+// The user, 2026-11-02: "Sixth Player of the Year": Season mode's name and the
+// WNBA's, and no gendered word on a card.
+describe('the sixth award', () => {
+  it('says Sixth Player', () => {
+    expect(AWARDS.find(a => a.code === '6MOY').name).toBe('Sixth Player of the Year');
+  });
+});

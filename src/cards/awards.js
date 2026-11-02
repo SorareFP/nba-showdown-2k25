@@ -395,7 +395,7 @@ export const AWARDS = [
   { code: 'DPOY', name: 'Defensive Player of the Year' },
   { code: 'ROY', name: 'Rookie of the Year' },
   { code: 'MIP', name: 'Most Improved Player' },
-  { code: '6MOY', name: 'Sixth Man of the Year' },
+  { code: '6MOY', name: 'Sixth Player of the Year' },
   { code: 'CPOY', name: 'Clutch Player of the Year' },
   { code: 'CHAMP', name: 'NBA Champion', file: 'LarryOBrien', external: true },
   { code: 'AS', name: 'All-Star', selection: true },

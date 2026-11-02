@@ -24,10 +24,12 @@ import {
   readAdditions,
   cardPosition,
   buildAdditions,
+  readOpponents,
+  uncardedPlayers,
 } from './generateLive.js';
 import os from 'node:os';
 import path from 'node:path';
-import { liveRowsFromLog, WINDOW_GAMES } from './realGames.js';
+import { liveRowsFromLog, WINDOW_GAMES, teamDefenseFromRatings, DEFENSE_PRIOR_GAMES } from './realGames.js';
 import { indexByName } from './generateCards.js';
 import { LIVE_SET, CURRENT_SET, setBadge, setTreatment } from '../../src/cards/sets.js';
 import { LIVE_BADGE } from '../../src/cards/badges.js';
@@ -145,7 +147,7 @@ describe('a season build', () => {
     expected: [expectedRow()],
     actual: [{ name: 'Test Live', personId: 1, games: 3, minutes: 98, mpg: 32.7, starts: 3, playoffGames: 0 }],
     defense: new Map(),
-    teamEpm: 'cached',
+    opponents: 'test',
     logs: new Map([['Test_Live', { playerId: 'testli01', known: 3, have: 3 }]]),
     logStatus: { current: 1, behind: 0, fetched: 0, failed: [], unmatched: ['Test Mirror'] },
   };
@@ -342,5 +344,84 @@ describe('the additions', () => {
       { id: 'A_One', name: 'A One', kind: 'rookie', why: 'no expected EPM yet' },
       { id: 'B_Two', name: 'B Two', kind: 'returning', why: 'no expected EPM yet' },
     ]);
+  });
+});
+
+
+// THE OPPONENT TABLE, FREE (2026-11-02; the user: "Let's do it"). The keyed
+// team EPM has been dead since 10-22, which left real games unadjusted for who
+// they came against. League DRtg less a team's reads on the old table's own
+// scale: on 2025-26 r 0.94, slope 1.00, intercept 0.
+describe('the opponent table from Basketball-Reference', () => {
+  const team = (abbr, defRtg, games = 82) => ({ abbr, name: abbr, games, defRtg });
+
+  it("is points per 100 better than the league, under the game logs' keys", () => {
+    const d = teamDefenseFromRatings(2027, [team('DET', 105), team('BRK', 115), team('PHO', 125)]);
+    const trust = 82 / (82 + DEFENSE_PRIOR_GAMES);
+    expect(d.get('2027|DET')).toBeCloseTo(10 * trust);
+    expect(d.get('2027|BKN')).toBeCloseTo(0);
+    expect(d.get('2027|PHX')).toBeCloseTo(-10 * trust);
+  });
+
+  // Six games in, the spread is 5.5 points against 3.4 over a full season:
+  // mostly noise, so a team's number earns its way in with its games.
+  it('trusts a team more as its games pile up', () => {
+    const early = teamDefenseFromRatings(2027, [team('DET', 105, 6), team('PHO', 125, 6)]).get('2027|DET');
+    const late = teamDefenseFromRatings(2027, [team('DET', 105, 60), team('PHO', 125, 60)]).get('2027|DET');
+    expect(early).toBeLessThan(5);
+    expect(late).toBeGreaterThan(8);
+  });
+
+  it('is empty with no teams', () => {
+    expect(teamDefenseFromRatings(2027, []).size).toBe(0);
+  });
+
+  it("reads the night's table, and goes on unadjusted when the page fails", async () => {
+    const good = await readOpponents(2027, { fetchTeams: async () => [team('DET', 105), team('PHO', 125)], log: () => {} });
+    expect(good.defense.size).toBe(2);
+    expect(good.opponents).toMatch(/basketball-reference.*2 teams/);
+    const bad = await readOpponents(2099, { fetchTeams: async () => { throw new Error('429'); }, log: () => {} });
+    expect(bad.defense.size).toBe(0);
+    expect(bad.opponents).toMatch(/429/);
+  });
+});
+
+// A WAIVED ADDITION (2026-11-02; the user: "got waived if you want to remove
+// them"). Marked FA in live-rookies.json it is the same as a base Free Agent:
+// out of packs and goals, held copies stay. dunksandthrees keeps a waived
+// player on their last club, so its team must not win.
+describe("an addition's team", () => {
+  it('stays FA when the file says so, and otherwise follows dunksandthrees', () => {
+    expect(liveTeam({ team: 'FA' }, { team: 'LAL' })).toBe('FA');
+    expect(liveTeam({ team: 'GSW' }, { team: 'DAL' })).toBe('DAL');
+    expect(liveTeam({ team: 'GSW' }, { team: '' })).toBe('GSW');
+  });
+});
+
+// WHO HAS PLAYED WITH NO CARD (2026-11-02; the user: "Perfect"). The additions
+// are a hand-kept list, so a signing or a late call-up is missed unless the
+// job says so.
+describe('the uncarded list', () => {
+  const row = (playerId, name, games, mpg, team = 'MIN') => ({ playerId, name, team, games, mpg });
+  const cards = [{ id: 'A_One', name: 'A One' }, { id: 'Nicolas_Claxton', name: 'Nicolas Claxton' }];
+
+  it('lists who has played with no Live card, the most minutes first', () => {
+    const out = uncardedPlayers({ cards, rows: [row('a', 'A One', 5, 30), row('b', 'Joan Beringer', 7, 18.7), row('c', 'Khaman Maluach', 4, 21.8, 'PHO'), row('d', 'Tolu Smith', 5, 2.8, 'DET')] });
+    expect(out.map(p => p.name)).toEqual(['Joan Beringer', 'Khaman Maluach', 'Tolu Smith']);
+    expect(out[1]).toEqual({ name: 'Khaman Maluach', team: 'PHO', games: 4, mpg: 21.8 });
+  });
+
+  it('knows a card by its Basketball-Reference id when the names differ', () => {
+    const out = uncardedPlayers({ cards, rows: [row('claxtni01', 'Nic Claxton', 6, 30)], index: { Nicolas_Claxton: { playerId: 'claxtni01' } } });
+    expect(out).toEqual([]);
+  });
+
+  it('leaves out who was left out on purpose, and the never-card names', () => {
+    const out = uncardedPlayers({ cards, rows: [row('o', 'Otega Oweh', 2, 10), row('k', 'Enes Kanter', 2, 10), row('w', 'Royce White', 2, 10)], leftOut: [{ name: 'Otega Oweh' }] });
+    expect(out).toEqual([]);
+  });
+
+  it('reads with nothing to read', () => {
+    expect(uncardedPlayers({ cards, rows: null })).toEqual([]);
   });
 });

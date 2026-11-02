@@ -119,6 +119,14 @@ describe('the stored record', () => {
 });
 
 describe('flaggedPhotos', () => {
+  // A college photo on a rookie who has not played waits for their first game.
+  it('leaves out a Live rookie who has not played', () => {
+    const sources = { r: { key: 'r', set: 'S', players: [{ id: 'A_One', name: 'A One', liveRookie: true }, { id: 'B_Two', name: 'B Two', liveRookie: true }] } };
+    const allPhotoFlags = { S: { A_One: { at: 10, note: 'college photo', kind: 'college' }, B_Two: { at: 10, note: 'college photo', kind: 'college' } } };
+    const out = flaggedPhotos({ allPhotoFlags, allPhotoTimes: {}, sources, notPlayed: new Set(['A One']) });
+    expect(out.map(f => f.id)).toEqual(['B_Two']);
+  });
+
   const allPhotoFlags = { '2026-27': {
     Stephen_Curry: { at: NOW, note: 'Hornets jersey, now GSW' },
     Luka_Doncic: { at: NOW, note: 'Mavericks jersey, now LAL' },

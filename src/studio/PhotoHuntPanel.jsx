@@ -8,7 +8,8 @@
 // Drop an image on a row and it is saved into that card's set on the spot;
 // Open jumps to the card in its set for cropping.
 import { useMemo, useState } from 'react';
-import { photoState, needsPhoto } from './photoNeeds.js';
+import { photoState, needsPhoto, huntable } from './photoNeeds.js';
+import { LIVE_NOT_PLAYED } from './players.js';
 import { huntTarget, stratSearchUrl } from './photoSearch.js';
 import { uploadPhoto, isImageFile } from './api.js';
 import { DORMANT_KEYS, PHOTO_WANTED_KEYS } from '../game/cardSets.js';
@@ -18,7 +19,7 @@ import s from './PhotoHuntPanel.module.css';
  * The owed cards, grouped by source: every editable, primary source in
  * SOURCES order, each card once per set (two sources can share a folder).
  */
-export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dormantKeys = DORMANT_KEYS, wantedKeys = PHOTO_WANTED_KEYS } = {}) {
+export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dormantKeys = DORMANT_KEYS, wantedKeys = PHOTO_WANTED_KEYS, notPlayed = LIVE_NOT_PLAYED } = {}) {
   const seen = new Set();
   const groups = [];
   for (const src of Object.values(sources)) {
@@ -28,7 +29,7 @@ export function huntRows(sources, { allPhotos = {}, allPlaceholders = {}, dorman
     const rows = [];
     for (const p of src.players) {
       const key = `${src.set}:${p.id}`;
-      if (seen.has(key)) continue;
+      if (seen.has(key) || !huntable(p, notPlayed)) continue;
       const state = photoState(src.set, p.id, { photoIds, placeholders, dormantKeys, wantedKeys });
       if (!needsPhoto(state)) continue;
       seen.add(key);

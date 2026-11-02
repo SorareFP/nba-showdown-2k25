@@ -524,3 +524,35 @@ export async function fetchTeamRoster(abbr, season, { fetchImpl = fetch } = {}) 
   if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status}`);
   return parseRosterHtml(await res.text());
 }
+
+/**
+ * THE TEAMS' DEFENSE, from the season summary page (2026-11-02). The Live
+ * Series' opponent table once came from dunksandthrees' keyed team-EPM API,
+ * dead since 10-22 and a non-starter by the user's call, which left real games
+ * unadjusted for who they came against. This is the free replacement:
+ * `advanced-team` carries every team's defensive rating and record. The team
+ * cell's link is single-quoted, and the abbreviation is the site's own (BRK,
+ * CHO, PHO), which is what its game logs print.
+ */
+export function parseTeamAdvancedHtml(html) {
+  const out = [];
+  for (const row of extractRows(isolateTableBody(html, 'advanced-team'))) {
+    const link = /href=['"]\/teams\/([A-Z]{3})\//.exec(row);
+    if (!link) continue;
+    const cells = parseRowCells(row);
+    const defRtg = Number(cells.def_rtg);
+    if (!cells.def_rtg || !Number.isFinite(defRtg)) continue;
+    out.push({ abbr: link[1], name: cells.team, games: (Number(cells.wins) || 0) + (Number(cells.losses) || 0), defRtg });
+  }
+  return out;
+}
+
+/** One season's team table. `season` is the END year (2027 = 2026-27). */
+export async function fetchTeamAdvanced(season, { fetchImpl = fetch } = {}) {
+  const res = await fetchImpl(
+    `https://www.basketball-reference.com/leagues/NBA_${season}.html`,
+    { headers: { 'User-Agent': 'Mozilla/5.0' } }
+  );
+  if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status}`);
+  return parseTeamAdvancedHtml(await res.text());
+}

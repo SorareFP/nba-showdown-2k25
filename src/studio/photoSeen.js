@@ -19,6 +19,8 @@
 // Nothing recorded when a card was opened before this existed, and the photos
 // worth a nudge are the recent ones.
 
+import { huntable } from './photoNeeds.js';
+
 export const SEEN_KEY = 'studio.photoSeen';
 export const FIRST_RUN_LOOKBACK_MS = 2 * 24 * 60 * 60 * 1000;
 
@@ -131,7 +133,7 @@ export function unseenPhotos({ allPhotoTimes = {}, allPlaceholders = {}, record,
  *
  * Alphabetical, because this list is worked through, not reacted to.
  */
-export function flaggedPhotos({ allPhotoFlags = {}, allPhotoTimes = {}, sources }) {
+export function flaggedPhotos({ allPhotoFlags = {}, allPhotoTimes = {}, sources, notPlayed = null }) {
   const out = [];
   const listed = new Set();
   for (const src of Object.values(sources)) {
@@ -141,7 +143,7 @@ export function flaggedPhotos({ allPhotoFlags = {}, allPhotoTimes = {}, sources 
     for (const p of src.players) {
       const flag = flags[p.id];
       const key = seenKey(src.set, p.id);
-      if (!flag || !Number.isFinite(flag.at) || listed.has(key)) continue;
+      if (!flag || !Number.isFinite(flag.at) || listed.has(key) || !huntable(p, notPlayed)) continue;
       if (Number.isFinite(times[p.id]) && times[p.id] > flag.at) continue;
       listed.add(key);
       out.push({

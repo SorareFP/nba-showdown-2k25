@@ -1,7 +1,7 @@
 // The one rule the Photo Hunt and the Card Studio read (2026-09-24, the user:
 // "Photo hunt and card studio aren't matching").
 import { describe, it, expect } from 'vitest';
-import { photoState, needsPhoto } from './photoNeeds.js';
+import { photoState, needsPhoto, notPlayedNames, huntable } from './photoNeeds.js';
 import { photoProgress, filterPlayers } from './players.js';
 
 const opts = {
@@ -56,5 +56,26 @@ describe('a dormant card whose photo is wanted', () => {
     expect(DORMANT_KEYS.has('record-breakers:LeBron_James_2023')).toBe(false);
     expect(PHOTO_WANTED_KEYS.has('throwbacks:LeBron_James_2023')).toBe(false);
     expect(getCardByKey('record-breakers:LeBron_James_2023')?.record?.number).toBe('38,388');
+  });
+});
+
+// The user, 2026-11-02: "remove any live-series rookies from the photo hunt if
+// they have not played any regular season minutes yet."
+describe('a Live rookie who has not played', () => {
+  const liveFile = { live: { logs: { unmatched: ['Tyler Nickel', 'Ben Simmons'] } } };
+
+  it('reads the names off the nightly job, and nothing with no file', () => {
+    expect([...notPlayedNames(liveFile)]).toEqual(['Tyler Nickel', 'Ben Simmons']);
+    expect(notPlayedNames(null).size).toBe(0);
+  });
+
+  it('is not hunted until they play', () => {
+    const notPlayed = notPlayedNames(liveFile);
+    expect(huntable({ name: 'Tyler Nickel', liveRookie: true }, notPlayed)).toBe(false);
+    expect(huntable({ name: 'AJ Dybantsa', liveRookie: true }, notPlayed)).toBe(true);
+  });
+
+  it('is only a rookie: a veteran who has not played is still owed a photo', () => {
+    expect(huntable({ name: 'Ben Simmons' }, notPlayedNames(liveFile))).toBe(true);
   });
 });

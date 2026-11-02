@@ -206,6 +206,15 @@ export async function fetchSeasonTableCached(season, kind, { force = false } = {
   );
 }
 
+/** The season's team ratings (the Live Series' opponent table, realGames.teamDefenseFromRatings). */
+export async function fetchTeamAdvancedCached(season, { force = false } = {}) {
+  return cached(
+    `bbref-${season}-teamAdvanced`,
+    () => bbref.fetchTeamAdvanced(season),
+    { force, meta: { source: 'basketball-reference.com', season, kind: 'teamAdvanced' } }
+  );
+}
+
 /**
  * Picks the players whose real game logs get fetched.
  *

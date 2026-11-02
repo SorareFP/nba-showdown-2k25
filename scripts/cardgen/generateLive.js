@@ -74,8 +74,8 @@
 // WHAT THE RUNNER NEEDS, and nothing else: the committed generated files
 // (calibration, biometrics, positional shares, the EPM archive, the pool's
 // game-log index for Basketball-Reference ids), two page reads from
-// dunksandthrees, one keyed API call for the opponent table, Basketball-
-// Reference's per-game page (who has played how many games) and this season's
+// dunksandthrees, Basketball-Reference's team page (the opponent table) and
+// per-game page (who has played how many games) and this season's
 // game-log pages — fetched only for players whose game count has moved past
 // the cached log, at the polite spacing, capped per night and cached between
 // nights (actions/cache). No 325 MB cache, no
@@ -91,10 +91,9 @@ import { LIVE_BADGE, ROOKIE_BADGE } from '../../src/cards/badges.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { FREE_AGENT } from '../../src/cards/teams.js';
 import * as dt from './sources/dunksAndThrees.js';
-import * as dtApi from './sources/dunksAndThreesApi.js';
 import { fetchGameLogFull } from './sources/basketballReference.js';
 import { poolActualSeasons } from './poolSeasons.js';
-import { liveSeasonRows, seasonTeamDefense, WINDOW_GAMES } from './realGames.js';
+import { liveSeasonRows, seasonTeamDefense, teamDefenseFromRatings, WINDOW_GAMES } from './realGames.js';
 import { buildSpeedPowerTotals } from './speedPower.js';
 import { generateCards, indexByName, STAT_NAME_ALIASES } from './generateCards.js';
 import { computePlayValue, priceSet } from './playValue.js';
@@ -103,7 +102,8 @@ import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { OUTPUT_FILE as LIVE_FILL_FILE } from './calibrateLiveFill.js';
-import { CURRENT_STATS_SEASON, fetchSeasonTableCached } from './fetchCalibrationData.js';
+import { CURRENT_STATS_SEASON, fetchSeasonTableCached, fetchTeamAdvancedCached } from './fetchCalibrationData.js';
+import { isNeverCard } from '../../src/game/neverCard.js';
 import { normalizeName } from './resolveTeams.js';
 import { HISTORY_FILE, updateHistory } from './liveHistory.js';
 
@@ -184,7 +184,7 @@ export const LIVE_ROW_FIELDS = ['epm', 'epmOff', 'epmDef', 'pts100', 'ast100', '
  */
 export function liveTeam(card, expectedRow) {
   if (card?.team === FREE_AGENT) return FREE_AGENT;
-  return expectedRow?.team ?? card?.team;
+  return expectedRow?.team || card?.team;
 }
 export const isLiveRow = row => Boolean(row) && LIVE_ROW_FIELDS.every(f => Number.isFinite(row[f]));
 
@@ -271,6 +271,53 @@ export const gamesPlayed = (playerId, name, counts, actualIndex) =>
   Math.max(counts?.get(playerId) ?? 0, lookup(actualIndex, name)?.games ?? 0);
 
 /**
+ * THE OPPONENT TABLE, tonight's (2026-11-02). From Basketball-Reference's team
+ * ratings: the keyed team EPM went dead on 10-22, and the user calls that API a
+ * non-starter. Without the page the run goes on, on whatever dunksandthrees
+ * table is cached for the season (a dry run on an old one) or unadjusted.
+ */
+export async function readOpponents(season, {
+  offline = false,
+  fetchTeams = s => fetchTeamAdvancedCached(s, { force: true }),
+  log = console.log,
+} = {}) {
+  try {
+    const teams = (offline ? readCache(`bbref-${season}-teamAdvanced`) : await fetchTeams(season)) ?? [];
+    if (teams.length) {
+      return { defense: teamDefenseFromRatings(season, teams), opponents: `basketball-reference: ${teams.length} teams` };
+    }
+    return { defense: seasonTeamDefense(season), opponents: 'no team table: games unadjusted unless one is cached' };
+  } catch (e) {
+    const why = String(e.message).split('\n')[0];
+    log(`  no Basketball-Reference team page: ${why}`);
+    return { defense: seasonTeamDefense(season), opponents: `unavailable (${why}): games unadjusted unless one is cached` };
+  }
+}
+
+/**
+ * WHO HAS PLAYED WITH NO LIVE CARD (2026-11-02; the user: "Perfect"). The
+ * additions are a hand-kept list, so a signing or a late call-up is missed
+ * unless the job says so. `rows` is Basketball-Reference's per-game page: a card
+ * is known by its id there (`index`, the names can differ) or by name. Whoever
+ * was left out on purpose and the never-card names are not listed. The most
+ * minutes played come first, so the rotation players lead.
+ */
+export function uncardedPlayers({ cards, rows, index = {}, leftOut = [] }) {
+  const ids = new Set(cards.map(c => index[c.id]?.playerId).filter(Boolean));
+  const names = new Set([...cards, ...leftOut].map(c => normalizeName(c.name)));
+  return (rows ?? [])
+    .filter(r => r?.playerId && !ids.has(r.playerId) && !names.has(normalizeName(r.name)) && !isNeverCard(r.name))
+    .map(r => ({ name: r.name, team: r.team ?? null, games: r.games ?? 0, mpg: r.mpg ?? 0 }))
+    .sort((a, b) => (b.games * b.mpg) - (a.games * a.mpg) || a.name.localeCompare(b.name));
+}
+
+/** Who live-rookies.json leaves out on purpose. */
+function readLeftOut(file = ADDITIONS_FILE) {
+  if (!fs.existsSync(file)) return [];
+  return JSON.parse(fs.readFileSync(file, 'utf8')).leftOut ?? [];
+}
+
+/**
  * Tonight's inputs: the two dunksandthrees pages, the opponent table and
  * this season's game logs for the pool. `offline` reads the cache alone (a
  * dry run on a finished season); otherwise every page is re-read and the logs
@@ -307,6 +354,7 @@ export async function fetchLiveInputs({
   additions = readAdditions(),
   fetchLog = fetchGameLogFull,
   fetchCounts = s => fetchSeasonTableCached(s, 'perGame', { force: true }),
+  fetchTeams = s => fetchTeamAdvancedCached(s, { force: true }),
   log = console.log,
 } = {}) {
   const force = !offline;
@@ -331,31 +379,6 @@ export async function fetchLiveInputs({
   const actual = poolActualSeasons(regular, playoffs);
   log(`dunksandthrees ${season}: ${expected.length} expected rows, ${regular.length} actual, ${playoffs.length} playoff`);
 
-  // The opponent table, refreshed through the keyed API when there is a key.
-  let teamEpm = 'cached';
-  if (!offline) {
-    let hasKey = true;
-    try {
-      dtApi.apiKey();
-    } catch {
-      hasKey = false;
-    }
-    if (!hasKey) {
-      teamEpm = 'no key — games unadjusted for the opponent';
-      log(`  ${dtApi.API_KEY_ENV} not set: the opponent table stays as cached (or empty)`);
-    } else {
-      try {
-        await dtApi.fetchTeamEpm(season, { force });
-        teamEpm = 'refreshed';
-      } catch (e) {
-        teamEpm = `stale: ${String(e.message).split('\n')[0]}`;
-        log(`  team-epm not refreshed: ${e.message}`);
-      }
-    }
-  }
-  const defense = seasonTeamDefense(season);
-  log(`  opponent table: ${defense.size} teams (${teamEpm})`);
-
   // The games each player has played, from Basketball-Reference's per-game
   // page; without it, dunksandthrees' count alone (the run goes on).
   let counts = new Map();
@@ -370,6 +393,10 @@ export async function fetchLiveInputs({
     countsFrom = `dunksandthrees only (${String(e.message).split('\n')[0]})`;
     log(`  no Basketball-Reference games-played page: ${e.message}`);
   }
+
+  const { defense, opponents } = await readOpponents(season, { offline, fetchTeams, log });
+  log(`  opponent table: ${defense.size} teams (${opponents})`);
+  if (!offline) await politeDelay(spacingMs);
 
   // A player's row on that page by name: the Basketball-Reference id and
   // position an addition has no index entry for.
@@ -415,7 +442,9 @@ export async function fetchLiveInputs({
     `Game logs: ${current} current, ${behind} behind the games played, ${fetched} fetched tonight, ` +
       `${failed.length} failed, ${unmatched.length} unmatched`
   );
-  return { season, expected, actual, defense, teamEpm, logs, logStatus, additions, bbrefByName };
+  const uncarded = uncardedPlayers({ cards: [...base.cards, ...additions], rows: countRows, index, leftOut: readLeftOut() });
+  if (uncarded.length) log(`  ${uncarded.length} played with no Live card: ${uncarded.slice(0, 5).map(p => p.name).join(', ')}…`);
+  return { season, expected, actual, defense, opponents, logs, logStatus, additions, bbrefByName, uncarded };
 }
 
 const statusFor = real =>
@@ -527,7 +556,8 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
       withRealGames: real,
       fullWindows: full,
       logs: inputs.logStatus,
-      teamEpm: inputs.teamEpm,
+      opponents: inputs.opponents,
+      uncarded: inputs.uncarded ?? [],
       fillLevel: { basis: fill.basis, generatedAt: fill.generatedAt, players: fill.players },
     },
     note:
@@ -556,7 +586,7 @@ export function buildAdditions({ additions, inputs, expectedIndex, actualIndex, 
     const e = lookup(expectedIndex, a.name);
     if (!isLiveRow(e)) { withheld.push({ id: a.id, name: a.name, kind: a.kind, why: 'no expected EPM yet' }); continue; }
     const pos = cardPosition(e.position || a.pos, e, inputs.bbrefByName?.get(normalizeName(a.name))?.pos);
-    const team = e.team || a.team;
+    const team = liveTeam(a, e);
     rows.push(liveActualRow(e, lookup(actualIndex, a.name)));
     pool.push({ name: a.name, team, pos, games: FULL_SEASON_GAMES, mpg: e.minutesPer48 });
     teams.push({ name: a.name, team, pos });

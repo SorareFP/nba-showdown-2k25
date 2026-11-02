@@ -13,9 +13,10 @@
 # refuses until dunksandthrees serves the 2026-27 season; a manual run
 # defaults to a MIRROR of the base set, the same set the repo already has.
 #
-# Secrets it reads: DUNKSANDTHREES_API_KEY (the keyed API, for what the public
-# page cannot serve). The push and the Pages deploy use the workflow's own
-# GITHUB_TOKEN (contents: write).
+# It reads no secrets of its own: dunksandthrees' public pages and Basketball-
+# Reference need no key (the keyed team EPM went dead 2026-10-22, and the
+# opponent table comes from Basketball-Reference since 2026-11-02). The push and
+# the Pages deploy use the workflow's own GITHUB_TOKEN (contents: write).
 #
 # THE FACES ARE NEVER COMMITTED. One set's faces are ~230 MB and every one of
 # them changes every night, so they go straight from the runner to Pages
@@ -50,7 +51,6 @@ jobs:
     permissions:
       contents: write
     env:
-      DUNKSANDTHREES_API_KEY: ${{ secrets.DUNKSANDTHREES_API_KEY }}
       STUDIO_URL: http://localhost:5173/nba-showdown-2k25
     steps:
       - uses: actions/checkout@v4

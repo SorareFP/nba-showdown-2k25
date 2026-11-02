@@ -36,6 +36,22 @@ describe('the live Photo Hunt', () => {
   });
 });
 
+describe('a Live rookie who has not played', () => {
+  const sources = {
+    rookies: {
+      key: 'rookies', set: '2026-27', label: 'Live rookies',
+      players: [{ id: 'A_One', name: 'A One', team: 'WAS', liveRookie: true }, { id: 'B_Two', name: 'B Two', team: 'HOU', liveRookie: true }],
+    },
+  };
+
+  it('is not listed, and comes back with their first game', () => {
+    const before = huntRows(sources, { allPhotos: { '2026-27': [] }, notPlayed: new Set(['A One']) });
+    expect(before[0].rows.map(r => r.id)).toEqual(['B_Two']);
+    const after = huntRows(sources, { allPhotos: { '2026-27': [] }, notPlayed: new Set() });
+    expect(after[0].rows.map(r => r.id)).toEqual(['A_One', 'B_Two']);
+  });
+});
+
 describe('a photo to replace', () => {
   const pool = { key: 'pool', set: '2026-27', label: '2026-27 set · 2 players', players: [
     { id: 'Aaron_Wiggins', name: 'Aaron Wiggins', team: 'ATL', pos: 'SG' },

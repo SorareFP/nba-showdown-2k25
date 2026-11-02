@@ -35,3 +35,14 @@ export function photoState(setId, id, { photoIds = new Set(), placeholders = new
 
 /** Owed a photo: the hunt lists it and the studio counts it as to go. */
 export const needsPhoto = state => state === 'missing' || state === 'placeholder';
+
+/**
+ * NO HUNT FOR A ROOKIE WHO HAS NOT PLAYED (2026-11-02; the user: "remove any
+ * live-series rookies from the photo hunt if they have not played any regular
+ * season minutes yet"). Whoever is not on Basketball-Reference's regular-season
+ * page is on the nightly job's `logs.unmatched` in cards-live.json, so a rookie
+ * comes back to the hunt the morning after their first game. Rookies only: a
+ * veteran who has not played yet is still a card worth a photo.
+ */
+export const notPlayedNames = liveFile => new Set(liveFile?.live?.logs?.unmatched ?? []);
+export const huntable = (card, notPlayed) => !(card?.liveRookie && notPlayed?.has(card.name));

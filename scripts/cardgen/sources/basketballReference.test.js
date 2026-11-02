@@ -7,6 +7,7 @@ import {
   parseSeasonTableHtml,
   POSITION_ESTIMATE_STATS,
   SEASON_TABLES,
+  parseTeamAdvancedHtml,
 } from './basketballReference.js';
 
 describe('parseGameLogHtml', () => {
@@ -302,5 +303,32 @@ describe('parseRosterHtml', () => {
       'brunsja01',
       'townska01',
     ]);
+  });
+});
+
+// THE OPPONENT TABLE, free (2026-11-02; the user on replacing the keyed team
+// EPM: "Let's do it"). The team table on the season page, whose links are
+// single-quoted and whose abbreviations are the site's own.
+describe('parseTeamAdvancedHtml', () => {
+  const row = (abbr, name, w, l, drtg) => `<tr ><th scope="row" class="right " data-stat="ranker" >1</th><td class="left " data-stat="team" ><a href='/teams/${abbr}/2027.html'>${name}</a></td><td class="right " data-stat="wins" >${w}</td><td class="right iz" data-stat="losses" >${l}</td><td class="right " data-stat="def_rtg" >${drtg}</td></tr>`;
+  const page = rows => `<table id="misc"><tbody><tr><td data-stat="def_rtg">1</td></tr></tbody></table>
+    <table id="advanced-team"><thead><tr><th data-stat="team">Team</th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td class="left " data-stat="team" >League Average</td><td data-stat="def_rtg">114.9</td></tr></tfoot></table>`;
+
+  it('reads each team, its games and its defensive rating', () => {
+    const out = parseTeamAdvancedHtml(page(row('MEM', 'Memphis Grizzlies', 6, 0, '105.4') + row('BRK', 'Brooklyn Nets', 1, 6, '121.0')));
+    expect(out).toEqual([
+      { abbr: 'MEM', name: 'Memphis Grizzlies', games: 6, defRtg: 105.4 },
+      { abbr: 'BRK', name: 'Brooklyn Nets', games: 7, defRtg: 121 },
+    ]);
+  });
+
+  it('skips a row with no team link, or no rating yet', () => {
+    const out = parseTeamAdvancedHtml(page(`<tr class="thead"><th>Rk</th></tr>${row('MEM', 'Memphis Grizzlies', 0, 0, '')}`));
+    expect(out).toEqual([]);
+  });
+
+  it('says so when the page has no such table', () => {
+    expect(() => parseTeamAdvancedHtml('<html></html>')).toThrow(/advanced-team/);
   });
 });

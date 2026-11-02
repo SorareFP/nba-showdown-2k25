@@ -1147,4 +1147,12 @@ describe('the Live additions in the studio', () => {
     expect(withLiveCard(plain, new Map([['A_One', card]])).badges).toBeUndefined();
     expect(withLiveCard(entry, new Map())).toBe(entry);
   });
+
+  // The nightly job's list of who has played with no Live card (2026-11-02).
+  it('say who has played with no card, and how much', async () => {
+    const { uncardedLine, UNCARDED_LIVE } = await import('./players.js');
+    expect(uncardedLine({ name: 'Khaman Maluach', team: 'PHO', games: 4, mpg: 21.8 })).toBe('PHO · 4g · 21.8 mpg');
+    expect(uncardedLine({ name: 'A One', team: null, games: 1, mpg: 3 })).toBe('1g · 3 mpg');
+    expect(Array.isArray(UNCARDED_LIVE)).toBe(true);
+  });
 });

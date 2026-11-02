@@ -58,7 +58,7 @@ import {
 } from '../cards/sets.js';
 import { playerIdFromName } from '../cards/playerId.js';
 import { hasMigratedOut } from '../game/cardSets.js';
-import { needsPhoto } from './photoNeeds.js';
+import { needsPhoto, notPlayedNames } from './photoNeeds.js';
 import { ROOKIE_BADGE } from '../cards/badges.js';
 
 /**
@@ -394,6 +394,11 @@ export const REQUEST_ONLY_SETS = ['throwbacks', 'wnba-throwbacks'];
 export const SUPER_SEASON_FILE = loadSpecialSet(SUPER_SEASON_SET);
 export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
 export const LIVE_FILE = loadSpecialSet(LIVE_SET);
+/** Who has played this season with no Live card, the nightly job's list (generateLive.js uncardedPlayers). */
+export const UNCARDED_LIVE = LIVE_FILE?.live?.uncarded ?? [];
+export const uncardedLine = p => [p.team, `${p.games}g`, `${p.mpg} mpg`].filter(Boolean).join(' · ');
+/** Who has played no regular-season minutes yet: a rookie among them is left out of the hunt (photoNeeds.js). */
+export const LIVE_NOT_PLAYED = notPlayedNames(LIVE_FILE);
 export const SUMMER_STANDOUTS_FILE = loadSpecialSet(SUMMER_STANDOUTS_SET);
 export const DISSONANCE_FILE = loadSpecialSet(DISSONANCE_SET);
 export const RECORD_BREAKERS_FILE = loadSpecialSet(RECORD_BREAKERS_SET);

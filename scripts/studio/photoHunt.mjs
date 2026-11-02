@@ -25,7 +25,7 @@ import { CARD_SETS, DORMANT_CARDS, DORMANT_KEYS, PHOTO_WANTED_KEYS } from '../..
 import { IMAGE_EXTENSIONS } from '../../src/cards/sets.js';
 // The one rule the studio reads too (2026-09-24: "Photo hunt and card studio
 // aren't matching"): a placeholder is owed a photo, a dormant Throwback is not.
-import { photoState, needsPhoto } from '../../src/studio/photoNeeds.js';
+import { photoState, needsPhoto, notPlayedNames, huntable } from '../../src/studio/photoNeeds.js';
 // The search and the uniform, shared with the studio's live Photo Hunt panel.
 import { huntTarget, stratSearchUrl } from '../../src/studio/photoSearch.js';
 import { STRATS } from '../../src/game/strats.js';
@@ -144,8 +144,10 @@ function stratRows() {
 // (the user: "add to the photo hunt rookies who have college pictures but not
 // pics with their NBA teams"); a photo newer than its flag is the replacement,
 // and the row goes. Their photos live in the base set's folder, as every Live
-// card's does.
+// card's does. A rookie who has played no regular-season minutes is left out
+// until they do (photoNeeds.js huntable, the Studio's rule too).
 const LIVE_FILE = path.join(ROOT, 'card-data', 'live-rookies.json');
+const LIVE_CARDS_FILE = path.join(ROOT, 'card-data', 'generated', 'cards-live.json');
 const LIVE_PHOTOS = '2026-27';
 
 function liveAdditions() {
@@ -157,7 +159,9 @@ function liveAdditions() {
     // Searched as the Studio searches them (players.js): this season's, a rookie as one.
     seasonLabel: '2026-27', searchYear: '2026', liveRookie: kind === 'rookie',
   }));
-  return [...of(body.rookies, 'rookie'), ...of(body.returning, 'returning'), ...of(body.shortSeason, 'short season')];
+  const notPlayed = notPlayedNames(fs.existsSync(LIVE_CARDS_FILE) ? JSON.parse(fs.readFileSync(LIVE_CARDS_FILE, 'utf8')) : null);
+  return [...of(body.rookies, 'rookie'), ...of(body.returning, 'returning'), ...of(body.shortSeason, 'short season')]
+    .filter(c => huntable(c, notPlayed));
 }
 
 const KIND_LABEL = { rookie: 'Rookie', returning: 'Returning', 'short season': 'Short season' };

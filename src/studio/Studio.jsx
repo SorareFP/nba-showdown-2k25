@@ -35,6 +35,9 @@ import {
   filterPlayers,
   stepSelection,
   visibleSources,
+  UNCARDED_LIVE,
+  uncardedLine,
+  LIVE_NOT_PLAYED,
 } from './players.js';
 import { pruneCrops, resetCrop } from './crop.js';
 import { pruneTeamOverrides } from './teamTheme.js';
@@ -132,6 +135,7 @@ export default function Studio() {
   // every set, read from this state, so it never drifts the way the published
   // page does the moment a photo is dropped.
   const [showHunt, setShowHunt] = useState(false);
+  const [allUncarded, setAllUncarded] = useState(false);
   // The suggestion box's inbox (SuggestionsPanel.jsx); the count is known once it has been opened.
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [newSuggestions, setNewSuggestions] = useState(null);
@@ -349,7 +353,7 @@ export default function Studio() {
   // PHOTOS TO REPLACE: flagged, and no newer file yet. Opening one does not
   // clear it; the replacement does, or "keep this photo" in the hunt.
   const flagged = useMemo(
-    () => flaggedPhotos({ allPhotoFlags, allPhotoTimes, sources: SOURCES }),
+    () => flaggedPhotos({ allPhotoFlags, allPhotoTimes, sources: SOURCES, notPlayed: LIVE_NOT_PLAYED }),
     [allPhotoFlags, allPhotoTimes]
   );
   const flaggedHere = useMemo(
@@ -894,6 +898,25 @@ export default function Studio() {
           {wantAction.length > UNSEEN_SHOWN && (
             <button type="button" className={styles.noticeDismiss} onClick={() => setShowHunt(true)}>
               +{wantAction.length - UNSEEN_SHOWN} more — see all
+            </button>
+          )}
+        </div>
+      )}
+
+      {UNCARDED_LIVE.length > 0 && (
+        <div className={styles.unseenBar} role="status" data-testid="uncarded-live">
+          <span className={styles.unseenLead}>
+            🆕 {UNCARDED_LIVE.length} player{UNCARDED_LIVE.length === 1 ? ' has' : 's have'} played with no Live card:
+          </span>
+          {(allUncarded ? UNCARDED_LIVE : UNCARDED_LIVE.slice(0, UNSEEN_SHOWN)).map(p => (
+            <span key={p.name} className={styles.unseenChip} data-uncarded={p.name} title={`${p.name}: on the nightly job's list, added to card-data/live-rookies.json by hand`}>
+              {p.name}
+              <span className={styles.unseenSet}>{uncardedLine(p)}</span>
+            </span>
+          ))}
+          {!allUncarded && UNCARDED_LIVE.length > UNSEEN_SHOWN && (
+            <button type="button" className={styles.noticeDismiss} onClick={() => setAllUncarded(true)}>
+              +{UNCARDED_LIVE.length - UNSEEN_SHOWN} more — see all
             </button>
           )}
         </div>

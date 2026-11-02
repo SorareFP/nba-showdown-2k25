@@ -308,3 +308,29 @@ export function seasonTeamDefense(season) {
   for (const [alias, r] of latest) out.set(`${season}|${alias}`, r.team_depm ?? 0);
   return out;
 }
+
+/**
+ * THE GAMES A TEAM'S DEFENSE MUST PLAY TO COUNT FOR HALF (2026-11-02). Six games
+ * into 2026-27 the teams' defensive ratings spread 5.5 points, against 3.4 over
+ * the whole of 2025-26: most of the early spread is noise. The real share of it,
+ * 3.4² / 5.5² ≈ 0.38, is games / (games + 10) at six games.
+ */
+export const DEFENSE_PRIOR_GAMES = 10;
+
+/**
+ * The opponent table from Basketball-Reference's team ratings (parseTeamAdvancedHtml),
+ * the free replacement for the keyed team EPM. League DRtg less a team's is the
+ * old table's own scale: on 2025-26 r 0.94, slope 1.00, intercept 0 against
+ * team_depm as seasonTeamDefense read it, so no conversion. Each team is drawn
+ * toward the league by its games so far (DEFENSE_PRIOR_GAMES).
+ */
+export function teamDefenseFromRatings(season, teams) {
+  const out = new Map();
+  if (!teams?.length) return out;
+  const league = teams.reduce((sum, t) => sum + t.defRtg, 0) / teams.length;
+  for (const t of teams) {
+    const trust = t.games / (t.games + DEFENSE_PRIOR_GAMES);
+    out.set(`${season}|${TEAM_ALIAS[t.abbr] ?? t.abbr}`, (league - t.defRtg) * trust);
+  }
+  return out;
+}

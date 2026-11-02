@@ -765,7 +765,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         />
       )}
 
-      {view === 'friends' && <FriendsPanel />}
+      {view === 'friends' && <FriendsPanel needKeys={myNeedKeys} onTraded={() => { refresh(); onCollectionChange?.(); }} />}
 
       {view === 'freeagents' && (
         <FreeAgentsPanel uid={user.uid} onChanged={() => { refresh(); onCollectionChange?.(); }} />

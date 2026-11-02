@@ -348,6 +348,7 @@ describe('your trades', () => {
     expect(mine.outgoing[0].name).toBe('Alex Example');
     expect(theirs.incoming[0]).toMatchObject({ id, from: 'sam', name: 'Sam Example', give: [R1], get: [R2], counter: false });
     expect(theirs.outgoing).toEqual([]);
+    expect([mine.outgoing[0].mine, theirs.incoming[0].mine]).toEqual([true, false]);
   });
 
   it('marks a counter', async () => {

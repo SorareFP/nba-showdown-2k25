@@ -7,6 +7,8 @@
 //                                                              locally, with its recover list and board
 //   http://localhost:5173/nba-showdown-2k25/?demo=dynasty      Dynasty and Play wired as App wires them,
 //                                                              signed out: a fixture's save, left and reloaded
+//   http://localhost:5173/nba-showdown-2k25/?demo=trade        the trade screen and offers, with made-up spares
+//                                                              (&show=young: a friendship under a week old)
 //
 // Mounted by App.jsx in place of the app, in development builds only, when
 // the query string asks for it. The pack is a real booster from the engine
@@ -26,6 +28,8 @@ import ClimbTab from './climb/ClimbTab.jsx';
 import TeamEditor from './TeamEditor.jsx';
 import PlayHub from './PlayHub.jsx';
 import LiveMovers from './LiveMovers.jsx';
+import TradeScreen from './TradeScreen.jsx';
+import TradeOffers from './TradeOffers.jsx';
 import { RunOver, TrophyWall } from './climb/ClimbScreens.jsx';
 import { packRun, unpackRun, isActiveRun } from '../firebase/climb.js';
 import { potOfRun, MAP_VERSION } from '../game/modes/climbMap.js';
@@ -36,7 +40,7 @@ import { listDynasties, saveDynasty } from '../firebase/dynasties.js';
 import { createDynasty, startSeason, fillRoster, HUMAN_ID, DPHASE } from '../game/modes/dynasty.js';
 import { buildAiLeague } from '../game/modes/aiTeams.js';
 import { generatePack, SPECIAL_SETS_IN_PACKS } from '../game/packEngine.js';
-import { CARD_SETS, BASE_SET, cardKey, getCardByKey } from '../game/cardSets.js';
+import { CARD_SETS, BASE_SET, cardKey, canonicalKey, getCardByKey } from '../game/cardSets.js';
 import { getPlayerRarity } from '../game/rarity.js';
 import { allGoalProgress } from '../game/collections.js';
 
@@ -47,7 +51,7 @@ const PACKABLE = [BASE_SET, ...SPECIAL_SETS_IN_PACKS].flatMap(id => CARD_SETS[id
 export const demoKind = () => {
   if (!import.meta.env?.DEV || typeof window === 'undefined') return null;
   const kind = new URLSearchParams(window.location.search).get('demo');
-  return ['pack', 'claim', 'collection', 'play', 'dynasty', 'climb', 'team', 'modes', 'live', 'climbend'].includes(kind) ? kind : null;
+  return ['pack', 'claim', 'collection', 'play', 'dynasty', 'climb', 'team', 'modes', 'live', 'climbend', 'trade'].includes(kind) ? kind : null;
 };
 export const isPackDemo = () => demoKind() !== null;
 
@@ -117,6 +121,43 @@ function LiveDemo() {
   const collection = useMemo(() => Object.fromEntries((CARD_SETS.live ?? [])
     .filter((_, i) => i % 5 === 0).map(c => [cardKey(c), { type: 'player', count: 1 }])), []);
   return <LiveMovers collection={collection} />;
+}
+
+/** The trade screen over made-up spares, with an offer of each kind under it. Sending does nothing. */
+function TradeDemo() {
+  const young = new URLSearchParams(window.location.search).get('show') === 'young';
+  const data = useMemo(() => {
+    const pool = (CARD_SETS[BASE_SET] ?? []).filter(c => c.team !== 'FA');
+    const cards = (rarity, from, n) => pool.filter(c => getPlayerRarity(c) === rarity).slice(from, from + n).map(cardKey);
+    const rows = keys => keys.map((key, i) => ({ cardKey: key, count: i % 5 === 1 ? 2 : 1 }));
+    const theirs = [...cards('legendary', 3, 1), ...cards('super-rare', 4, 2), ...cards('rare', 6, 5), ...cards('uncommon', 12, 4), ...cards('common', 20, 3)];
+    const mine = [...cards('super-rare', 10, 1), ...cards('rare', 14, 6), ...cards('uncommon', 30, 5), ...cards('common', 40, 3)];
+    const row = over => ({ from: 'demo', to: 'me', name: 'Sam', counter: false, status: 'open', mine: false, why: null, expiresAt: Date.now() + 2.2 * 86400000, ...over });
+    return {
+      spares: { theirs: rows(theirs), mine: rows(mine), opensAt: young ? Date.now() + 4 * 86400000 : null },
+      needKeys: new Set(theirs.slice(1, 4).map(canonicalKey)),
+      trades: {
+        incoming: [
+          row({ id: 'a', give: [theirs[3], theirs[12]], get: [mine[1]] }),
+          row({ id: 'b', counter: true, give: [theirs[0]], get: mine.slice(1, 6) }),
+        ],
+        outgoing: [row({ id: 'c', from: 'me', to: 'demo', mine: true, give: [mine[0]], get: [theirs[1]] })],
+        recent: [
+          row({ id: 'd', status: 'accepted', mine: true, give: [mine[2]], get: [theirs[4]] }),
+          row({ id: 'e', status: 'failed', why: 'A card in this offer is no longer a spare', give: [theirs[5]], get: [mine[3]] }),
+        ],
+      },
+    };
+  }, [young]);
+  const [counter, setCounter] = useState(null);
+  const load = useMemo(() => async () => data.spares, [data]);
+  const noop = () => {};
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+      <TradeScreen key={counter?.id ?? 'offer'} friend={{ uid: 'demo', name: 'Sam', needs: [] }} needKeys={data.needKeys} counter={counter} load={load} send={async () => ({ id: 'demo' })} onClose={noop} onSent={noop} />
+      <TradeOffers trades={data.trades} onAnswer={noop} onCancel={noop} onCounter={t => setCounter({ id: t.id, give: t.get, get: t.give })} />
+    </div>
+  );
 }
 
 function CollectionDemo() {
@@ -309,6 +350,7 @@ export default function PackOpeningDemo() {
   if (demoKind() === 'live') return <LiveDemo />;
   // ?demo=climbend&show=act|title|banked|wall — the Climb's win screens on a made-up run.
   if (demoKind() === 'climbend') return <ClimbEndDemo />;
+  if (demoKind() === 'trade') return <TradeDemo />;
   return (
     <div style={{ padding: '16px 20px' }}>
       <PackOpening

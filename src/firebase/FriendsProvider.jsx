@@ -1,15 +1,17 @@
 // FRIENDS, loaded once per sign-in (2026-10-11). The overview comes from the
 // myFriends callable — friends, their needs, requests, people you've played —
 // and `wants` maps each card a friend needs to who needs it (wantsByCard).
+// `trades` is the trade offers, loaded alongside (2026-11-02).
 // A failure leaves everything empty: My Collection, the reveal, the market and
 // Home all read this, and none of them may break because Friends is down.
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthProvider.jsx';
-import { myFriends, publishNeeds, loadPublishedNeeds } from './friends.js';
+import { myFriends, myTrades, publishNeeds, loadPublishedNeeds } from './friends.js';
 import { loadClaims } from './collection.js';
 import { syncNeeds, wantsByCard } from '../game/friends.js';
 
-const EMPTY = { overview: null, wants: new Map(), friendNames: new Map(), refresh: () => {}, error: null };
+const NO_TRADES = { incoming: [], outgoing: [], recent: [] };
+const EMPTY = { overview: null, wants: new Map(), friendNames: new Map(), trades: NO_TRADES, refresh: () => {}, error: null };
 const Ctx = createContext(EMPTY);
 export const useFriends = () => useContext(Ctx);
 
@@ -18,13 +20,16 @@ const REFRESH_EVERY_MS = 60_000;
 export function FriendsProvider({ children }) {
   const { user } = useAuth();
   const [overview, setOverview] = useState(null);
+  const [trades, setTrades] = useState(NO_TRADES);
   const [error, setError] = useState(null);
   const lastAt = useRef(0);
   const refresh = useCallback(async () => {
-    if (!user) { setOverview(null); return; }
+    if (!user) { setOverview(null); setTrades(NO_TRADES); return; }
     lastAt.current = Date.now();
     try {
-      setOverview(await myFriends());
+      const [next, offers] = await Promise.all([myFriends(), myTrades().catch(() => NO_TRADES)]);
+      setOverview(next);
+      setTrades(offers);
       setError(null);
     } catch (e) {
       setError(e?.message ?? String(e));
@@ -41,9 +46,10 @@ export function FriendsProvider({ children }) {
     overview,
     wants: wantsByCard(overview?.friends ?? []),
     friendNames: new Map((overview?.friends ?? []).map(f => [f.uid, f.name])),
+    trades,
     refresh,
     error,
-  }), [overview, refresh, error]);
+  }), [overview, trades, refresh, error]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

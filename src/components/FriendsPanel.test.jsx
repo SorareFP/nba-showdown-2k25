@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 let state;
 vi.mock('../firebase/FriendsProvider.jsx', () => ({ useFriends: () => state }));
-vi.mock('../firebase/friends.js', () => ({ requestFriend: vi.fn(), answerFriendRequest: vi.fn(), removeFriend: vi.fn() }));
+vi.mock('../firebase/friends.js', () => ({ requestFriend: vi.fn(), answerFriendRequest: vi.fn(), removeFriend: vi.fn(), answerTrade: vi.fn(), cancelTrade: vi.fn(), friendSpares: vi.fn(), sendTrade: vi.fn() }));
 vi.mock('../ui/dialogs.jsx', () => ({ useDialogs: () => ({ ask: async () => true, toast: () => {} }) }));
 const { default: FriendsPanel } = await import('./FriendsPanel.jsx');
 
@@ -17,6 +17,14 @@ const overview = {
 };
 
 describe('the Friends page', () => {
+  it('offers a trade with each friend, and shows offers above the page', () => {
+    state = { overview, error: null, refresh: () => {}, trades: { incoming: [{ id: 't1', from: 'alex', to: 'me', name: 'Alex Example', give: [], get: [], expiresAt: Date.now() + 1000, status: 'open' }], outgoing: [], recent: [] } };
+    const html = renderToStaticMarkup(<FriendsPanel />);
+    expect(html).toContain('data-trade-with="alex"');
+    expect(html).toContain('data-offer="t1"');
+    expect(html.indexOf('data-offer="t1"')).toBeLessThan(html.indexOf('Your friend code'));
+  });
+
   it('shows your code, requests both ways, friends with what they need, and people you have played', () => {
     state = { overview, error: null, refresh: () => {} };
     const html = renderToStaticMarkup(<FriendsPanel />);

@@ -25,6 +25,16 @@ export const requestFriend = call('requestFriend');
 export const answerFriendRequest = call('answerFriendRequest');
 /** `{ uid }`. */
 export const removeFriend = call('removeFriend');
+/** `{ friendUid }` → `{ theirs, mine, opensAt }`: both players' spare player cards. */
+export const friendSpares = call('friendSpares');
+/** `{ friendUid, give, get, counterOf? }` → `{ id }`. */
+export const sendTrade = call('sendTrade');
+/** `{ id, accept }` → `{ status, why? }`. A trade that cannot go through answers `failed`, it does not throw. */
+export const answerTrade = call('answerTrade');
+/** `{ id }` → `{ status }`. */
+export const cancelTrade = call('cancelTrade');
+/** `{ incoming, outgoing, recent }`. In a row, `give` is what `from` gives. */
+export const myTrades = call('myTrades');
 
 const profileRef = uid => doc(db, 'profiles', uid);
 

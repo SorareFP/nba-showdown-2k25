@@ -1,10 +1,13 @@
 // THE FRIENDS PAGE (2026-10-11) — docs/plans/2026-10-11-friends-design.md.
 // Your code to give out, a box for a friend's, requests both ways, your
 // friends and how close they are, and the people you've played (one tap).
+// Trade offers sit above it all, and Trade opens the trade screen (2026-11-02).
 import { useState } from 'react';
 import { useFriends } from '../firebase/FriendsProvider.jsx';
-import { requestFriend, answerFriendRequest, removeFriend } from '../firebase/friends.js';
+import { requestFriend, answerFriendRequest, removeFriend, answerTrade, cancelTrade } from '../firebase/friends.js';
 import { useDialogs } from '../ui/dialogs.jsx';
+import TradeScreen from './TradeScreen.jsx';
+import TradeOffers from './TradeOffers.jsx';
 import s from './FriendsPanel.module.css';
 
 const plural = (n, one) => `${n} ${one}${n === 1 ? '' : 's'}`;
@@ -12,11 +15,13 @@ const plural = (n, one) => `${n} ${one}${n === 1 ? '' : 's'}`;
 // set, so the page says what the server knows.
 const VIA = { code: 'used your friend code', league: 'played you in a league', pvp: 'played you head to head' };
 
-export default function FriendsPanel() {
-  const { overview, error, refresh } = useFriends();
+export default function FriendsPanel({ needKeys, onTraded }) {
+  const { overview, trades, error, refresh } = useFriends();
   const { ask, toast } = useDialogs();
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(null);
+  // `{ friend, counter }` while the trade screen is open.
+  const [trading, setTrading] = useState(null);
 
   const run = async (key, fn, done) => {
     setBusy(key);
@@ -31,12 +36,52 @@ export default function FriendsPanel() {
     }
   };
 
+  // An answer can find the offer gone or failed, and the list moves on either way.
+  const answer = async (t, accept) => {
+    setBusy(t.id);
+    try {
+      const r = await answerTrade({ id: t.id, accept });
+      if (r.status === 'failed') toast(`That trade did not go through: ${r.why}`, { tone: 'error' });
+      if (r.status === 'accepted') {
+        toast('Traded. The cards are in your spares', { tone: 'success' });
+        onTraded?.();
+      }
+    } catch (e) {
+      toast(e?.message ?? String(e), { tone: 'error' });
+    } finally {
+      await refresh();
+      setBusy(null);
+    }
+  };
+
   if (!overview) {
     return <div className={s.wrap}><p className={s.muted}>{error ?? 'Loading your friends…'}</p></div>;
   }
   const { friends, incoming, outgoing, playedWith } = overview;
+  const friendOf = (uid, name) => friends.find(f => f.uid === uid) ?? { uid, name };
+
+  if (trading) {
+    return (
+      <TradeScreen
+        friend={trading.friend}
+        counter={trading.counter}
+        needKeys={needKeys}
+        onClose={() => setTrading(null)}
+        onSent={() => { setTrading(null); refresh(); }}
+      />
+    );
+  }
 
   return (
+    <div className={s.page}>
+    <TradeOffers
+      trades={trades}
+      busy={busy}
+      onAnswer={answer}
+      // From the counterer's side: what the offer gives them, they get.
+      onCounter={t => setTrading({ friend: friendOf(t.from, t.name), counter: { id: t.id, give: t.get, get: t.give } })}
+      onCancel={t => run(t.id, () => cancelTrade({ id: t.id }), () => 'Offer cancelled')}
+    />
     <div className={s.wrap}>
       <section className={s.block}>
         <h3 className={s.title}>Your friend code</h3>
@@ -71,6 +116,7 @@ export default function FriendsPanel() {
           <div key={f.uid} className={s.row} data-friend={f.uid}>
             <span className={s.name}>{f.name}</span>
             <span className={s.muted}>{f.needs.length ? `needs ${plural(new Set(f.needs.map(n => n.cardKey)).size, 'card')} to finish a collection` : 'nothing close'}</span>
+            <button className={s.primary} data-trade-with={f.uid} onClick={() => setTrading({ friend: f, counter: null })}>Trade</button>
             <button className={s.danger} disabled={busy === f.uid} onClick={async () => {
               if (!await ask({ title: `Remove ${f.name}?`, body: 'You stop seeing what each other needs.', confirmLabel: 'Remove', tone: 'danger' })) return;
               run(f.uid, () => removeFriend({ uid: f.uid }));
@@ -98,6 +144,7 @@ export default function FriendsPanel() {
           ))}
         </section>
       )}
+    </div>
     </div>
   );
 }

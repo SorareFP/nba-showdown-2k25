@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'friend-trades', date: '2026-11-02', title: 'Trade cards with your friends',
+    body: "Open Collection → Friends and press Trade next to a friend to see both of your spares, with the cards you need for a collection first. Offer up to five cards for up to five of theirs. The lower side has to be worth at least 60% of the higher by market value, so five uncommons can land a rare but five commons cannot. Your friend can accept, decline or send back a counter, and an offer lasts three days. You can trade once you have been friends for a week.",
+    to: 'friends', cta: 'Friends',
+  },
+  {
     id: 'climb-banners', date: '2026-11-02', title: 'The Climb: a moment at the top, and a trophy wall',
     body: "Beating an act's boss now stamps them DEFEATED, counts up your pot, shows how your players did in that act and reveals the next boss. Climb all three acts and a championship banner goes up with your roster on it, kept on a new trophy wall on the Climb's start screen, one banner for each coach. Prince's second boss now pays a Deluxe Booster; a climb already under way keeps what it started with.",
     to: 'climb', cta: 'The Climb',

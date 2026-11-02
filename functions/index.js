@@ -2943,7 +2943,7 @@ export const myTrades = onCall({ region: 'us-central1' }, async request => {
     return {
       id: d.id, from: t.from, to: t.to, name: t.from === uid ? t.toName : t.fromName, give: t.give, get: t.get,
       counter: Boolean(t.counterOf), status: t.status === 'open' && t.expiresAt <= now ? 'expired' : t.status,
-      why: t.failedWhy ?? null, expiresAt: t.expiresAt, closedAt: t.answeredAt ?? t.expiresAt,
+      why: t.failedWhy ?? null, expiresAt: t.expiresAt, closedAt: t.answeredAt ?? t.expiresAt, mine: t.from === uid,
     };
   });
   const recent = rows

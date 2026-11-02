@@ -1,3 +1,4 @@
+.page { display: flex; flex-direction: column; gap: 18px; }
 .wrap { display: flex; flex-direction: column; gap: 18px; max-width: 720px; }
 .block { background: var(--navy-light, #1e293b); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
 .title { font-size: 14px; font-weight: 700; margin: 0; }

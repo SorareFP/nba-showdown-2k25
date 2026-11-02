@@ -83,7 +83,8 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
   }, [uid]);
 
   const owned = useMemo(() => collectedKeys(collection), [collection]);
-  const { overview: friendsOverview, friendNames } = useFriends();
+  const { overview: friendsOverview, friendNames, trades } = useFriends();
+  const tradeOffers = trades?.incoming ?? [];
   const [fromFriends, setFromFriends] = useState([]);
   useEffect(() => {
     const uids = (friendsOverview?.friends ?? []).map(f => f.uid);
@@ -237,12 +238,18 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
         {/* ── Closest collections ── */}
         {/* FROM YOUR FRIENDS (2026-10-11): a friend listed a card you need. A
             public listing like any other — the tag just tells you it is there. */}
-        {fromFriends.length > 0 && (
+        {(fromFriends.length > 0 || tradeOffers.length > 0) && (
           <section className={s.panel} aria-labelledby="home-friends">
             <div className={s.panelHead}>
               <h2 id="home-friends" className={s.panelTitle}>From your friends</h2>
             </div>
             <ul className={s.list}>
+              {tradeOffers.map(t => (
+                <li key={t.id} className={s.goal} data-trade-offer={t.id}>
+                  <span>{t.name} {t.counter ? 'countered your trade offer' : 'sent you a trade offer'}</span>{' '}
+                  <button className={s.inlineLink} onClick={() => onGo('friends')}>View →</button>
+                </li>
+              ))}
               {fromFriends.map(({ listing, friendName, goalLabel }) => {
                 const card = getCardByKey(listing.cardKey);
                 return (

@@ -31,6 +31,7 @@ card-art/photo-hunt.html
 # a local export before `npm run deploy`, or the deploy overwrites the night's
 # faces with stale ones — gh-pages keeps whatever a deploy does not touch.
 public/cards/live
+public/live-salaries.json
 public/cards/thumbs/live
 
 # Saved copies of card-data/generated taken before a chart-method change (the user, 2026-09-29:

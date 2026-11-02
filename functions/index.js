@@ -42,7 +42,8 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
 import { generatePack, PACK_TYPES, favoriteTeamOptions, normalizeFavoriteTeam, nextBoxPack } from './shared/src/game/packEngine.js';
 import { goalProgress, goalCoinReward, REWARD_BY_GOAL, collectedKeys } from './shared/src/game/collections.js';
-import { getCardByKey } from './shared/src/game/cardSets.js';
+import { getCardByKey, applyLiveSalaries } from './shared/src/game/cardSets.js';
+import { liveRefresher } from './liveRefresh.js';
 import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game/rarity.js';
 import { burnValueFor, burnProblem, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
@@ -194,8 +195,13 @@ async function heldStrats(tx, uid, cards) {
   return held;
 }
 
+// The night's Live numbers (liveRefresh.js), read before anything prices a Live
+// card: a pack's bands, a burn, a listing floor, a goal's coins.
+const refreshLive = liveRefresher({ apply: applyLiveSalaries });
+
 export const openPack = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
+  await refreshLive();
   const { packType, options = {} } = request.data ?? {};
 
   const def = PACK_TYPES[packType];
@@ -318,6 +324,7 @@ export const openPack = onCall({ region: 'us-central1' }, async request => {
  */
 export const openBoxPack = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
+  await refreshLive();
   const { boxId } = request.data ?? {};
   if (!boxId) throw new HttpsError('invalid-argument', 'No box given');
 
@@ -455,6 +462,7 @@ export const buyListing = onCall({ region: 'us-central1' }, async request => {
  */
 export const claimGoal = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
+  await refreshLive();
   const { goalId } = request.data ?? {};
   if (!goalId) throw new HttpsError('invalid-argument', 'No goal given');
 
@@ -574,6 +582,7 @@ async function findSpare(tx, uid, cardKey) {
  */
 export const listCard = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
+  await refreshLive();
   const { cardKey, price, qty = 1 } = request.data ?? {};
   if (!cardKey) throw new HttpsError('invalid-argument', 'No card given');
   if (!validPrice(price)) {
@@ -649,6 +658,7 @@ export const delistCard = onCall({ region: 'us-central1' }, async request => {
  */
 export const burnCard = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
+  await refreshLive();
   const { cardKey } = request.data ?? {};
   if (!cardKey) throw new HttpsError('invalid-argument', 'No card given');
 

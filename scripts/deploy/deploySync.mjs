@@ -41,6 +41,9 @@ export const LIVE_BOT_FILES = [
 /** The Live faces and thumbs a build copies from public/, which the bot owns on the site. */
 export const LIVE_FACE_DIRS = ['cards/live', 'cards/thumbs/live'];
 
+/** The site files only the bot's build should publish: the salaries the server reads (liveRefresh.js). */
+export const LIVE_SITE_FILES = ['live-salaries.json'];
+
 const BUILD_ROOTS = ['src/', 'public/', 'card-data/'];
 const BUILD_FILES = ['index.html', 'vite.config.js', 'package.json', 'package-lock.json'];
 
@@ -118,6 +121,7 @@ export function strip({ dist, log = console.log, env = process.env }) {
       log(`deploy: left ${d} to the nightly job.`);
     }
   }
+  for (const f of LIVE_SITE_FILES) fs.rmSync(path.join(dist, f), { force: true });
   return 0;
 }
 

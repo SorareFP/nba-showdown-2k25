@@ -114,6 +114,13 @@ export const STATUS_FILE = path.join(GEN_DIR, 'live-status.json');
 /** The pool's Basketball-Reference ids, written by fetchPoolGameLogs.mjs. */
 export const INDEX_FILE = path.join(GEN_DIR, 'pool-gamelogs-index.json');
 export const MODES = ['mirror', 'season'];
+/**
+ * The night's salaries, a public file published with the site for the Cloud
+ * Functions to read (functions/liveRefresh.js). Gitignored: only the nightly
+ * job's build carries it, and a local deploy leaves the site's copy be
+ * (deploySync.mjs strip).
+ */
+export const SALARIES_FILE = path.join(REPO_ROOT, 'public', 'live-salaries.json');
 /** The Live Series' additions: on a 2026-27 roster with no base card (see the header). */
 export const ADDITIONS_FILE = path.join(REPO_ROOT, 'card-data', 'live-rookies.json');
 /** The season a carded rookie's pill is dated (the base set's name). */
@@ -633,6 +640,11 @@ export function buildAdditions({ additions, inputs, expectedIndex, actualIndex, 
   return { cards, withheld, stamps };
 }
 
+/** All the server needs of a Live card: what prices it and whether it is signed. */
+export function liveSalariesBody(cards, asOf) {
+  return { asOf, cards: Object.fromEntries(cards.map(c => [c.id, [c.salary, c.team]])) };
+}
+
 function mirrorBody(base, asOf) {
   const source = `cards-${CURRENT_SET}.json`;
   const stamp = { mode: 'mirror', asOf, source };
@@ -657,6 +669,7 @@ export async function main({
   out = OUTPUT_FILE,
   statusFile = STATUS_FILE,
   historyFile = HISTORY_FILE,
+  salariesFile = SALARIES_FILE,
   log = console.log,
 } = {}) {
   if (!MODES.includes(mode)) throw new Error(`generateLive: no such mode ${mode} (${MODES.join(', ')})`);
@@ -672,6 +685,10 @@ export async function main({
   fs.writeFileSync(out, `${JSON.stringify(body, null, 1)}\n`);
   if (statusFile) {
     fs.writeFileSync(statusFile, `${JSON.stringify({ set: LIVE_SET, cards: body.cards.length, ...body.live }, null, 1)}\n`);
+  }
+  if (salariesFile) {
+    fs.mkdirSync(path.dirname(salariesFile), { recursive: true });
+    fs.writeFileSync(salariesFile, `${JSON.stringify(liveSalariesBody(body.cards, asOf))}\n`);
   }
   log(`Live Series: ${body.cards.length} cards, mode ${mode}, as of ${asOf}.\n  ${out}`);
   // The night by night the Live Series view reads (liveHistory.js): the
@@ -696,6 +713,7 @@ function parseArgs(argv) {
     // A dry run written elsewhere leaves the committed status alone too, and the history.
     statusFile: flag('--out') ? null : STATUS_FILE,
     historyFile: flag('--out') ? null : HISTORY_FILE,
+    salariesFile: flag('--out') ? null : SALARIES_FILE,
   };
 }
 

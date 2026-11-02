@@ -19,6 +19,20 @@ function fakeGit(answers = {}, { fail = [] } = {}) {
 const LOCAL = { CI: '' };
 const quiet = () => {};
 
+// The salaries the server reads go up with the nightly job's site (2026-11-02):
+// a local deploy must not lay an older copy over them, the same as the faces.
+describe('the Live salaries file', () => {
+  it('is left to the nightly job, off a local build', () => {
+    const dist = fs.mkdtempSync(path.join(os.tmpdir(), 'dist-'));
+    fs.writeFileSync(path.join(dist, 'live-salaries.json'), '{}');
+    fs.writeFileSync(path.join(dist, 'index.html'), '');
+    strip({ dist, log: () => {}, env: {} });
+    expect(fs.existsSync(path.join(dist, 'live-salaries.json'))).toBe(false);
+    expect(fs.existsSync(path.join(dist, 'index.html'))).toBe(true);
+    fs.rmSync(dist, { recursive: true, force: true });
+  });
+});
+
 describe('what the build reads', () => {
   it('is src, public and card-data and the build files, never the Live faces or untracked files', () => {
     expect(isBuildInput('src/game/engine.js')).toBe(true);

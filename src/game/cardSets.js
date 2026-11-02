@@ -171,6 +171,28 @@ export const DORMANT_CARDS = [...GENERATED_THROWBACKS, ...RECORD_BREAKER_CARDS]
   .map(c => ({ ...c }));
 joinFreeAgents(CARD_SETS, GENERATED_THROWBACKS.filter(c => !DORMANT_KEYS.has(`${c.set}:${c.id}`)));
 
+/**
+ * THE NIGHT'S LIVE NUMBERS, for the server (2026-11-02; functions/liveRefresh.js).
+ * `file` is the job's published { cards: { id: [salary, team] } }. In place, on
+ * the one object each Live card is, so every reader of its rarity (the burn
+ * value, the listing floor, the pack bands, the goal's price) follows. The
+ * site's cards are rebuilt every night and never need this. Returns how many
+ * cards it moved.
+ */
+export function applyLiveSalaries(file, cards = CARD_SETS.live ?? []) {
+  const night = file?.cards;
+  if (!night || typeof night !== 'object') return 0;
+  let moved = 0;
+  for (const card of cards) {
+    const [salary, team] = night[card.id] ?? [];
+    if (!Number.isFinite(salary) || salary < 0) continue;
+    if (card.salary !== salary || (team && card.team !== team)) moved += 1;
+    card.salary = salary;
+    if (team) card.team = team;
+  }
+  return moved;
+}
+
 /** The collection key for a card (or for a bare set+id pair). */
 export function cardKey(card) {
   return card.set === BASE_SET || !card.set ? card.id : `${card.set}:${card.id}`;

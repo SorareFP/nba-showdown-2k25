@@ -24,6 +24,7 @@ import {
   readAdditions,
   cardPosition,
   buildAdditions,
+  liveSalariesBody,
   readOpponents,
   uncardedPlayers,
 } from './generateLive.js';
@@ -227,9 +228,27 @@ describe('the committed file', () => {
   it('keeps no history for a mirror build', async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'live-mirror-'));
     const historyFile = path.join(dir, 'live-history.json');
-    await main({ mode: 'mirror', out: path.join(dir, 'cards-live.json'), statusFile: null, historyFile, log: () => {} });
+    await main({ mode: 'mirror', out: path.join(dir, 'cards-live.json'), statusFile: null, historyFile, salariesFile: null, log: () => {} });
     expect(fs.existsSync(historyFile)).toBe(false);
     fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  // What the Cloud Functions read (functions/liveRefresh.js): a small public
+  // file published with the site, so the server sees the rarity the player does.
+  it('writes the salaries the server reads', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'live-salaries-'));
+    const salariesFile = path.join(dir, 'public', 'live-salaries.json');
+    await main({ mode: 'mirror', out: path.join(dir, 'cards-live.json'), statusFile: null, historyFile: null, salariesFile, log: () => {} });
+    const file = JSON.parse(fs.readFileSync(salariesFile, 'utf8'));
+    const [first] = base.cards;
+    expect(file.cards[first.id]).toEqual([first.salary, first.team]);
+    expect(Object.keys(file.cards).length).toBe(base.cards.length);
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('keeps the file to a salary and a team a card', () => {
+    const cards = [{ id: 'A_One', salary: 900, team: 'BOS', chart: [{ lo: 1 }], speed: 9 }];
+    expect(liveSalariesBody(cards, '2026-11-02T09:00:00.000Z')).toEqual({ asOf: '2026-11-02T09:00:00.000Z', cards: { A_One: [900, 'BOS'] } });
   });
 
   it('names its modes and refuses any other', async () => {

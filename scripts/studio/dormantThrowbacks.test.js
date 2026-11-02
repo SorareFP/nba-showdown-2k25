@@ -8,11 +8,19 @@ import { describe, it, expect } from 'vitest';
 import { CARD_SETS, DORMANT_CARDS, DORMANT_KEYS, RECORD_BREAKER_CARDS, getCardByKey, cardKey } from '../../src/game/cardSets.js';
 import { SPECIAL_SETS_IN_PACKS } from '../../src/game/packEngine.js';
 import dormant from '../../card-data/generated/dormant-throwbacks.json';
+import freeAgents from '../../card-data/generated/cards-free-agents.json';
 import quoteIndex from '../../card-data/generated/quote-index.json';
 
 const live = new Set(Object.values(CARD_SETS).flat().map(cardKey));
 
 describe('a dormant Throwback', () => {
+  // Michael Jordan 1989-90 (2026-11-02; the user: "Where are these in photo
+  // hunt? I can't find them"): built as a request, the season stayed on the
+  // dormant list until the next export, and the hunt skips a dormant card.
+  it('stops being one the moment its season is built as a request', () => {
+    for (const c of freeAgents.cards) expect(DORMANT_KEYS.has(`${c.set}:${c.id}`), c.id).toBe(false);
+  });
+
   it('is the vacated seasons: the Super Season of the same logo era holds the photo', () => {
     // Maya Moore's 2013 Super Season and her 2014 Throwback are both Lynx
     // (MIN11): the photo went back to the Super Season and 2014 sleeps.

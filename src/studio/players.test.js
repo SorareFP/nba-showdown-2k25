@@ -1133,6 +1133,19 @@ describe('the Live Series additions (2026-10-25)', () => {
 
 // A LIVE ADDITION SHOWS ITS CARD ONCE CARDED (2026-10-28; the user: "I don't
 // see any new charts in the photo studio").
+describe('a season built as a request', () => {
+  // The request is the card from then on (cardSets.js), so the Studio shows one.
+  it('is listed once, as the request', async () => {
+    const { FREE_AGENT_CARDS } = await import('./players.js');
+    for (const src of Object.values(SOURCES)) {
+      const ids = (src.players ?? []).map(p => p.id);
+      for (const c of FREE_AGENT_CARDS.filter(x => x.set === src.set)) {
+        expect(ids.filter(id => id === c.id).length, `${src.key} ${c.id}`).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+});
+
 describe('the Live additions in the studio', () => {
   it('show the carded card under their own search and look, and the photos-first entry until then', async () => {
     const { withLiveCard } = await import('./players.js');

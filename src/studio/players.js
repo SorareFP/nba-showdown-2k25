@@ -363,7 +363,7 @@ const specialModules = import.meta.glob(
 
 // Requested cards (Free Agents) join the set each was classified into, here
 // as in src/game/cardSets.js, so a built request shows up for its photo.
-const FREE_AGENT_CARDS = Object.values(specialModules)
+export const FREE_AGENT_CARDS = Object.values(specialModules)
   .map(mod => mod?.default)
   .find(file => file?.set === 'free-agents')?.cards ?? [];
 
@@ -372,7 +372,9 @@ function loadSpecialSet(id) {
     const file = mod?.default;
     if (file?.set === id && Array.isArray(file.cards)) {
       const joining = FREE_AGENT_CARDS.filter(c => c.set === id);
-      return joining.length ? { ...file, cards: [...file.cards, ...joining] } : file;
+      // A request takes over its season's generated card, as in the game (cardSets.js).
+      const taken = new Set(joining.map(c => c.id));
+      return joining.length ? { ...file, cards: [...file.cards.filter(c => !taken.has(c.id)), ...joining] } : file;
     }
   }
   // A set made ONLY of requested cards has no generated file of its own: its

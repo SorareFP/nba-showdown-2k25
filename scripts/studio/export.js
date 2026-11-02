@@ -101,7 +101,9 @@ async function cardsFor(set) {
   // A set made ONLY of requests (Throwbacks) has no generated file: its cards
   // are the requests built into it.
   if (!existsSync(file)) return joining.length ? joining : null;
-  const cards = [...(JSON.parse(readFileSync(file, 'utf8')).cards ?? []), ...joining];
+  // A request takes over its season's generated card, as in the game (cardSets.js).
+  const taken = new Set(joining.map(c => c.id));
+  const cards = [...(JSON.parse(readFileSync(file, 'utf8')).cards ?? []).filter(c => !taken.has(c.id)), ...joining];
   // MIGRATED CARDS ARE NOT IN THIS SET ANY MORE. The generated file still holds
   // them — the reward generator copies rather than deletes, so the origin file
   // stays a complete record — but the game and the studio both filter on

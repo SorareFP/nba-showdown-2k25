@@ -158,7 +158,10 @@ joinFreeAgents(CARD_SETS, freeAgents.cards);
 const REQUESTED = new Set((freeAgents.cards ?? []).map(c => `${c.set}:${c.id}`));
 const GENERATED_THROWBACKS = [...(throwbacks.cards ?? []), ...(wnbaThrowbacks.cards ?? [])]
   .filter(c => c?.set && !REQUESTED.has(`${c.set}:${c.id}`));
-export const DORMANT_KEYS = DORMANT_KEY_SET;
+// Dropped from the dormant list here, not only at the next export: the Photo
+// Hunt skips a dormant card, so a built season vanished from it (Michael Jordan
+// 1989-90, 2026-11-02).
+export const DORMANT_KEYS = new Set([...DORMANT_KEY_SET].filter(key => !REQUESTED.has(key)));
 /**
  * Generator Throwbacks whose photo is WANTED (`photoWanted` on the curated
  * entry, 2026-10-14: LeBron James' 2022-23). Dormant all the same until the

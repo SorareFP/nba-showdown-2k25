@@ -2,7 +2,7 @@
  "set": "live",
  "cards": 479,
  "mode": "season",
- "asOf": "2026-11-03T16:41:14.375Z",
+ "asOf": "2026-11-04T16:41:09.239Z",
  "source": "dunksandthrees.com /epm 2027 (expected) + /epm/actual; Basketball-Reference 2027 games played and game logs",
  "season": 2027,
  "built": 337,
@@ -11,13 +11,13 @@
   "carded": 131,
   "withheld": []
  },
- "withRealGames": 373,
+ "withRealGames": 375,
  "fullWindows": 0,
  "logs": {
   "countsFrom": "basketball-reference",
-  "current": 353,
-  "behind": 93,
-  "fetched": 220,
+  "current": 445,
+  "behind": 1,
+  "fetched": 93,
   "failed": [],
   "unmatched": [
    "Jayden Quaintance",

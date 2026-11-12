@@ -1,7 +1,11 @@
 // THE LIVE SERIES — card-data/generated/cards-live.json.
 //
 //   node scripts/cardgen/generateLive.js                       # mirror the base set (before the season)
-//   node scripts/cardgen/generateLive.js --mode season         # the season's numbers, fetched tonight
+//   node scripts/cardgen/generateLive.js --mode season         # the season's numbers, on the saved dunksandthrees table
+//   node scripts/cardgen/generateLive.js --mode season --expected-file <file>
+//                                                              # that table (the nightly job: dtTable.js open)
+//   node scripts/cardgen/generateLive.js --mode season --expected-from basketball-reference
+//                                                              # the expected rows made from Basketball-Reference
 //   node scripts/cardgen/generateLive.js --mode season --offline --season 2026 --as-of 2025-12-01 --out /tmp/x.json
 //                                                              # a dry run on the cached 2025-26 pages and logs
 //
@@ -20,10 +24,11 @@
 // SEASON (the nightly job, .github/workflows/live-series.yml): the same
 // cards re-allocated from the season as it happens. Everything moves daily,
 // as the user chose, and every layer reads THE EXPECTED PAGE: dunksandthrees'
-// own until 2026-11-04, and since 2026-11-12 one made the same shape from
-// Basketball-Reference (liveExpected.js), when their site began refusing
-// every scripted read. What follows describes their page; liveExpected.js
-// says how ours stands in for it.
+// own. Their site refused every scripted read from 2026-11-05, so since
+// 2026-11-12 the user saves the page in a browser and `npm run live:dt`
+// pushes it, encrypted, for the job to open (dtTable.js). liveExpected.js
+// makes the same shape from Basketball-Reference, built the same day and
+// kept as --expected-from basketball-reference; the user wants theirs.
 //
 //   Speed / Power / Def Boost   dunksandthrees' EXPECTED EPM (/epm — a
 //                               stabilised, predictive figure, not the actual
@@ -96,6 +101,7 @@ import { playerIdFromName } from '../../src/cards/playerId.js';
 import { FREE_AGENT } from '../../src/cards/teams.js';
 import { fetchGameLogFull } from './sources/basketballReference.js';
 import { seasonRows, expectedTable, actualTable, fetchSeason, readImpactPrior, impactPriorFile } from './liveExpected.js';
+import { DT_DATA_LINK, daysOld, localTableFile } from './dtTable.js';
 import { liveSeasonRows, seasonTeamDefense, teamDefenseFromRatings, WINDOW_GAMES } from './realGames.js';
 import { buildSpeedPowerTotals } from './speedPower.js';
 import { generateCards, indexByName, STAT_NAME_ALIASES } from './generateCards.js';
@@ -117,6 +123,8 @@ export const STATUS_FILE = path.join(GEN_DIR, 'live-status.json');
 /** The pool's Basketball-Reference ids, written by fetchPoolGameLogs.mjs. */
 export const INDEX_FILE = path.join(GEN_DIR, 'pool-gamelogs-index.json');
 export const MODES = ['mirror', 'season'];
+/** Where a season build's expected rows come from: the saved dunksandthrees table (the default), or made from Basketball-Reference. */
+export const EXPECTED_SOURCES = ['dunksandthrees', 'basketball-reference'];
 /**
  * The night's salaries, a public file published with the site for the Cloud
  * Functions to read (functions/liveRefresh.js). Gitignored: only the nightly
@@ -328,8 +336,10 @@ function readLeftOut(file = ADDITIONS_FILE) {
 }
 
 /**
- * Tonight's inputs: the two dunksandthrees pages, the opponent table and
- * this season's game logs for the pool. `offline` reads the cache alone (a
+ * Tonight's inputs: the expected rows (the saved dunksandthrees table, or
+ * made from Basketball-Reference), this season's Basketball-Reference tables
+ * for the games and minutes, the opponent table and this season's game logs
+ * for the pool. `offline` reads the cache alone (a
  * dry run on a finished season); otherwise every page is re-read and the logs
  * are fetched for whoever has played since the cached page, up to
  * `maxFetches` a night. A log that cannot be fetched is not fatal — that
@@ -345,28 +355,66 @@ export async function fetchLiveInputs({
   fetchLog = fetchGameLogFull,
   fetchTables = fetchSeason,
   fetchTeams = s => fetchTeamAdvancedCached(s, { force: true }),
-  impactPrior = readImpactPrior(impactPriorFile(season - 1)),
+  impactPrior = null,
+  dtTable = null,
+  expectedSource = EXPECTED_SOURCES[0],
+  now = new Date(),
   log = console.log,
 } = {}) {
-  // THE EXPECTED TABLE (2026-11-12), made from Basketball-Reference: this
-  // season's four tables read afresh, the three before from the cache after
-  // their first night, last season's impact dunksandthrees' own (liveExpected.js).
+  if (!EXPECTED_SOURCES.includes(expectedSource)) {
+    throw new Error(`generateLive: no such expected source ${expectedSource} (${EXPECTED_SOURCES.join(', ')})`);
+  }
+  // This season's four Basketball-Reference tables, read afresh: the games
+  // and minutes every night, and the expected rows themselves when they are
+  // made here.
   const between = () => politeDelay(spacingMs);
   const nowTables = await fetchTables(season, { force: !offline, offline, between });
   if (!nowTables.advanced?.length) {
     throw new Error(`generateLive: no Basketball-Reference ${season} tables${offline ? ' cached — run without --offline' : ''}.`);
   }
   const thisSeason = seasonRows(nowTables);
-  const priors = [];
-  for (const s of [season - 1, season - 2, season - 3]) {
-    priors.push(seasonRows(await fetchTables(s, { offline, between }), s === season - 1 ? impactPrior : new Map()));
-  }
-  const expected = expectedTable({ current: thisSeason, priors });
   const actual = actualTable(thisSeason);
-  log(
-    `Basketball-Reference ${season}: ${expected.length} expected rows, ${thisSeason.size} players this season; ` +
-      `priors ${priors.map(p => p.size).join('/')}, ${impactPrior.size} on dunksandthrees' own ${season - 1} impact`
-  );
+  let expected;
+  let expectedFrom;
+  if (expectedSource === 'dunksandthrees') {
+    // THE EXPECTED TABLE (2026-11-12): dunksandthrees' own, saved by hand in
+    // a browser since their site refuses scripts (dtTable.js). No table, no
+    // run: the cards stand still rather than switch source for a night.
+    if (!dtTable) {
+      throw new Error(
+        `generateLive: no saved dunksandthrees table. Open ${DT_DATA_LINK} in a browser, save it, and run ` +
+          '`npm run live:dt` (scripts/cardgen/dtTable.js); --expected-from basketball-reference builds without one.'
+      );
+    }
+    if (dtTable.season !== season) {
+      throw new Error(`generateLive: the saved dunksandthrees table is ${dtTable.season}'s, not ${season}'s.`);
+    }
+    expected = dtTable.rows;
+    const age = daysOld(dtTable.asOf, now);
+    expectedFrom = { source: 'dunksandthrees', asOf: dtTable.asOf, savedAt: dtTable.savedAt ?? null, daysOld: age, rows: expected.length };
+    log(`dunksandthrees ${season}: ${expected.length} expected rows as of ${dtTable.asOf} (${age} days old), saved ${dtTable.savedAt ?? 'at an unknown time'}`);
+    if (age > 2) log(`  the saved table is ${age} days old: save the page again (npm run live:dt)`);
+  } else {
+    // MADE FROM BASKETBALL-REFERENCE (liveExpected.js): the three seasons
+    // before from the cache after their first night, last season's impact
+    // dunksandthrees' own.
+    const prior = impactPrior ?? readImpactPrior(impactPriorFile(season - 1));
+    const priors = [];
+    for (const s of [season - 1, season - 2, season - 3]) {
+      priors.push(seasonRows(await fetchTables(s, { offline, between }), s === season - 1 ? prior : new Map()));
+    }
+    expected = expectedTable({ current: thisSeason, priors });
+    expectedFrom = {
+      source: 'basketball-reference',
+      rows: expected.length,
+      withGames: expected.filter(r => r.basis.currentMinutes > 0).length,
+      impactPrior: prior.size,
+    };
+    log(
+      `Basketball-Reference ${season}: ${expected.length} expected rows, ${thisSeason.size} players this season; ` +
+        `priors ${priors.map(p => p.size).join('/')}, ${prior.size} on dunksandthrees' own ${season - 1} impact`
+    );
+  }
 
   // The games each player has played, from the same per-game page.
   const countRows = dedupeByMaxGames(nowTables.perGame ?? []);
@@ -424,12 +472,6 @@ export async function fetchLiveInputs({
   );
   const uncarded = uncardedPlayers({ cards: [...base.cards, ...additions], rows: countRows, index, leftOut: readLeftOut() });
   if (uncarded.length) log(`  ${uncarded.length} played with no Live card: ${uncarded.slice(0, 5).map(p => p.name).join(', ')}…`);
-  const expectedFrom = {
-    source: 'basketball-reference',
-    rows: expected.length,
-    withGames: expected.filter(r => r.basis.currentMinutes > 0).length,
-    impactPrior: impactPrior.size,
-  };
   return { season, expected, actual, defense, opponents, logs, logStatus, additions, bbrefByName, uncarded, expectedFrom };
 }
 
@@ -542,7 +584,10 @@ export function buildSeason({ base, inputs, asOf, previous = [], log = console.l
   }
 
   const byId = new Map(built.cards.map(c => [c.id, c]));
-  const source = `Basketball-Reference ${season}: expected numbers made from the last three seasons and this one (liveExpected.js), games played and game logs`;
+  const from = inputs.expectedFrom ?? {};
+  const source = from.source === 'basketball-reference'
+    ? `Basketball-Reference ${season}: expected numbers made from the last three seasons and this one (liveExpected.js), games played and game logs`
+    : `dunksandthrees ${season}: the expected page as of ${from.asOf ?? 'an unknown date'} (saved by hand, dtTable.js); games played and game logs from Basketball-Reference`;
   const cards = base.cards.map(card => {
     const b = byId.get(card.id);
     if (!b) throw new Error(`generateLive: ${card.id} fell out of the build`);
@@ -582,7 +627,8 @@ export function buildSeason({ base, inputs, asOf, previous = [], log = console.l
     note:
       'THE LIVE SERIES (scripts/cardgen/generateLive.js): the 2026-27 base cards as the season moves them. ' +
       `Season mode as of ${asOfDate}: Speed/Power/Def Boost and the shooting layer from the expected numbers ` +
-      'made from Basketball-Reference (liveExpected.js), the chart from this season\'s real games topped up to 82 with synthetic games from ' +
+      `${from.source === 'basketball-reference' ? 'made from Basketball-Reference (liveExpected.js)' : `on dunksandthrees' expected page as of ${from.asOf}`}, ` +
+      'the chart from this season\'s real games topped up to 82 with synthetic games from ' +
       'the expected per-100 rates, salary priced against the live field. Faces: node scripts/studio/export.js --set live.',
     cards,
   };
@@ -695,6 +741,8 @@ export async function main({
   historyFile = HISTORY_FILE,
   salariesFile = SALARIES_FILE,
   previousFile = OUTPUT_FILE,
+  expectedFile = null,
+  expectedSource = EXPECTED_SOURCES[0],
   log = console.log,
 } = {}) {
   if (!MODES.includes(mode)) throw new Error(`generateLive: no such mode ${mode} (${MODES.join(', ')})`);
@@ -703,7 +751,8 @@ export async function main({
   if (mode === 'mirror') {
     body = mirrorBody(base, asOf);
   } else {
-    const inputs = await fetchLiveInputs({ season, offline, maxFetches, base, log });
+    const dtTable = expectedSource === 'dunksandthrees' ? readTableFile(expectedFile ?? localTableFile(season)) : null;
+    const inputs = await fetchLiveInputs({ season, offline, maxFetches, base, dtTable, expectedSource, now: new Date(asOf), log });
     // The committed set, so a card no row reaches tonight keeps its numbers.
     const previous = fs.existsSync(previousFile) ? JSON.parse(fs.readFileSync(previousFile, 'utf8')).cards ?? [] : [];
     body = buildSeason({ base, inputs, asOf, previous, log });
@@ -724,6 +773,12 @@ export async function main({
   return body;
 }
 
+/** A saved table (dtTable.js), or null when there is none at that path. */
+export function readTableFile(file) {
+  if (!file || !fs.existsSync(file)) return null;
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
 function parseArgs(argv) {
   const flag = name => {
     const i = argv.indexOf(name);
@@ -741,6 +796,8 @@ function parseArgs(argv) {
     statusFile: flag('--out') ? null : STATUS_FILE,
     historyFile: flag('--out') ? null : HISTORY_FILE,
     salariesFile: flag('--out') ? null : SALARIES_FILE,
+    expectedFile: flag('--expected-file') ? path.resolve(flag('--expected-file')) : null,
+    expectedSource: flag('--expected-from') ?? EXPECTED_SOURCES[0],
   };
 }
 

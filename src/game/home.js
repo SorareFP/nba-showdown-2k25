@@ -30,7 +30,7 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 export const NEWS = [
   {
     id: 'live-moving-again', date: '2026-11-12', title: 'Live cards are moving again',
-    body: "The Live Series stopped updating on November 5, when the stats site it read began blocking automated reads. Live cards now come from Basketball-Reference: each player's expected numbers blend the last three seasons with this one, leaning on this season more as the minutes come in. Every Live card was rebuilt once on the new numbers, so expect a bigger move than a usual night, and the cards update nightly again from here.",
+    body: "The Live Series stopped updating on November 5, when the stats site it reads began blocking automated reads. It's moving again on the same numbers as before: dunksandthrees' expected ratings and this season's games. Every Live card catches up on the missed week at once, so expect a bigger move than a usual night, and the cards update nightly again from here.",
     to: 'live', cta: 'The Live Series',
   },
   {

@@ -7,16 +7,16 @@
 #
 # GATED by the repository variable LIVE_SERIES (Settings → Variables → Actions):
 # it runs only when that is "on", so it can exist — and be run by hand — long
-# before the season. A scheduled run is the SEASON mode of
-# scripts/cardgen/generateLive.js (expected numbers made from Basketball-
-# Reference's season tables, scripts/cardgen/liveExpected.js, and this season's
-# game logs; see docs/plans/2026-09-23-live-series-design.md). dunksandthrees'
-# expected page fed it until 2026-11-04; from 11-05 their site refused every
-# scripted read. A manual run defaults to a MIRROR of the base set, the same
-# set the repo already has.
+# before the season. A run is the SEASON mode of scripts/cardgen/generateLive.js
+# (dunksandthrees' expected page and this season's game logs; see
+# docs/plans/2026-09-23-live-series-design.md); a manual run can still pick a
+# MIRROR of the base set.
 #
-# It reads no secrets of its own: Basketball-Reference needs no key. The push
-# and the Pages deploy use the workflow's own GITHUB_TOKEN (contents: write).
+# dunksandthrees' site has refused every scripted read since 2026-11-05, so the
+# user saves their expected page in a browser and `npm run live:dt` pushes it,
+# encrypted, to the live-dt branch (scripts/cardgen/dtTable.js). It reads ONE
+# secret, LIVE_DT_KEY, to open that table. The push and the Pages deploy use
+# the workflow's own GITHUB_TOKEN (contents: write).
 #
 # THE FACES ARE NEVER COMMITTED. One set's faces are ~230 MB and every one of
 # them changes every night, so they go straight from the runner to Pages
@@ -29,13 +29,14 @@ name: Live Series
 
 on:
   schedule:
-    # 09:00 UTC — after the previous night's games are in dunksandthrees' tables.
+    # 09:00 UTC — after the previous night's games are in the tables. It reads
+    # whatever dunksandthrees table was saved last (npm run live:dt).
     - cron: '0 9 * * *'
   workflow_dispatch:
     inputs:
       mode:
-        description: 'generateLive mode (mirror until the season mode is wired)'
-        default: mirror
+        description: 'generateLive mode (season: tonight''s numbers; mirror: the base set again)'
+        default: season
         type: choice
         options: [mirror, season]
 
@@ -100,8 +101,19 @@ jobs:
           git archive FETCH_HEAD | tar -x -C card-art/sets/2026-27/photos
           echo "$(ls card-art/sets/2026-27/photos | wc -l) photos unpacked"
 
+      # THE SAVED DUNKSANDTHREES TABLE (2026-11-12): the newest one
+      # `npm run live:dt` pushed (a night with no new save reads the last),
+      # opened into the runner's temp folder, NOT card-data/cache, so the stat
+      # cache above never carries their table. No table or no key stops the
+      # run here, and the cards stand still.
+      - name: Open the saved dunksandthrees table
+        if: ${{ (github.event.inputs.mode || 'season') == 'season' }}
+        env:
+          LIVE_DT_KEY: ${{ secrets.LIVE_DT_KEY }}
+        run: node scripts/cardgen/dtTable.js open --out "$RUNNER_TEMP/dt-expected.json"
+
       - name: Regenerate the Live Series
-        run: node scripts/cardgen/generateLive.js --mode ${{ github.event.inputs.mode || 'season' }}
+        run: node scripts/cardgen/generateLive.js --mode ${{ github.event.inputs.mode || 'season' }} --expected-file "$RUNNER_TEMP/dt-expected.json"
       - name: Start the Studio
         run: |
           npx vite --port 5173 --strictPort > studio.log 2>&1 &

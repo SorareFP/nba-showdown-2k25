@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "export:cards": "node scripts/studio/export.js",
     "live:photos": "node scripts/live/pushLivePhotos.mjs",
+    "live:dt": "node --env-file=.env.local scripts/cardgen/dtTable.js save",
     "thumbs": "python scripts/studio/thumbs.py"
   },
   "dependencies": {

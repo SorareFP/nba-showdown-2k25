@@ -6,7 +6,10 @@
 // GitHub's runner and to the user's own machine alike, while the page still
 // opens in a browser. Seven nightly runs failed on it. Its keyed API was ruled
 // out on price on 2026-10-28 ("a non-starter"), and asked where the numbers
-// should come from now, the user chose Basketball-Reference.
+// should come from now, the user chose Basketball-Reference; the same day,
+// they chose dunksandthrees' own numbers after all, saved by hand in a
+// browser (dtTable.js). This is kept, tested, as the other source:
+// generateLive.js --expected-from basketball-reference.
 //
 // So the expected row is made here, in dunksandthrees' shape (toSeasonRate in
 // sources/dunksAndThrees.js), from Basketball-Reference's season tables:

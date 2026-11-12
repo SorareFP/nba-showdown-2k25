@@ -1,8 +1,9 @@
 // The Live Series generator (2026-09-23): in mirror mode every base card
 // again, the same id and numbers, in the live set with the LIVE pill and a
 // stamp saying what it is; in season mode the same cards re-allocated from
-// the expected page (dunksandthrees' until 2026-11-04, Basketball-Reference's
-// since: liveExpected.js) and this season's game logs.
+// the expected page (dunksandthrees', saved by hand since 2026-11-12:
+// dtTable.js; or made from Basketball-Reference, liveExpected.js) and this
+// season's game logs.
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import {
@@ -28,6 +29,8 @@ import {
   liveSalariesBody,
   readOpponents,
   uncardedPlayers,
+  fetchLiveInputs,
+  EXPECTED_SOURCES,
 } from './generateLive.js';
 import os from 'node:os';
 import path from 'node:path';
@@ -462,5 +465,45 @@ describe('the uncarded list', () => {
 
   it('reads with nothing to read', () => {
     expect(uncardedPlayers({ cards, rows: null })).toEqual([]);
+  });
+});
+
+describe("where tonight's expected rows come from", () => {
+  const tables = () => ({
+    advanced: [{ playerId: 'wembavi01', name: 'Victor Wembanyama', team: 'SAS', games: 10, minutes: 300, usgPct: 30, tsPct: 0.6, obpm: 6, dbpm: 4 }],
+    perPoss: [], shooting: [],
+    perGame: [{ playerId: 'wembavi01', name: 'Victor Wembanyama', team: 'SAS', pos: 'C', games: 10, mpg: 30 }],
+  });
+  const asked = [];
+  const quiet = {
+    base: { cards: [] }, additions: [], spacingMs: 0, log: () => {}, impactPrior: new Map(),
+    fetchTeams: async () => [],
+    fetchTables: async s => { asked.push(s); return tables(); },
+    now: new Date('2026-11-12T09:00:00Z'),
+  };
+  const dtTable = { season: LIVE_SEASON, asOf: '2026-11-11', savedAt: '2026-11-11T23:00:00Z', rows: [{ name: 'Victor Wembanyama', epmOff: 3.8 }] };
+
+  it('is the saved dunksandthrees table by default, its date and age stamped', async () => {
+    asked.length = 0;
+    const got = await fetchLiveInputs({ ...quiet, dtTable });
+    expect(EXPECTED_SOURCES[0]).toBe('dunksandthrees');
+    expect(got.expected).toBe(dtTable.rows);
+    expect(got.expectedFrom).toEqual({ source: 'dunksandthrees', asOf: '2026-11-11', savedAt: dtTable.savedAt, daysOld: 1, rows: 1 });
+    expect(asked).toEqual([LIVE_SEASON]);
+    expect(got.actual[0]).toMatchObject({ name: 'Victor Wembanyama', games: 10 });
+  });
+
+  it("stops with no saved table, or last season's, rather than switch source for a night", async () => {
+    await expect(fetchLiveInputs(quiet)).rejects.toThrow(/no saved dunksandthrees table/);
+    await expect(fetchLiveInputs({ ...quiet, dtTable: { ...dtTable, season: LIVE_SEASON - 1 } })).rejects.toThrow(/not \d+'s/);
+    await expect(fetchLiveInputs({ ...quiet, expectedSource: 'somewhere' })).rejects.toThrow(/no such expected source/);
+  });
+
+  it('is made from Basketball-Reference when asked, from this season and the three before', async () => {
+    asked.length = 0;
+    const got = await fetchLiveInputs({ ...quiet, expectedSource: 'basketball-reference' });
+    expect(got.expectedFrom.source).toBe('basketball-reference');
+    expect(asked).toEqual([LIVE_SEASON, LIVE_SEASON - 1, LIVE_SEASON - 2, LIVE_SEASON - 3]);
+    expect(got.expected.find(r => r.name === 'Victor Wembanyama')).toBeTruthy();
   });
 });

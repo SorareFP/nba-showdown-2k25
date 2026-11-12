@@ -620,8 +620,8 @@ export const SOURCES = {
   [LIVE_SET]: specialSource(LIVE_SET, LIVE_FILE, {
     sub: `the 2026-27 cards as the season moves them · ${LIVE_FILE?.live?.mode ?? 'mirror'} mode`,
     hint:
-      'EVERY 2026-27 BASE CARD AGAIN, in the blue trim, re-allocated from an expected EPM made from ' +
-      'Basketball-Reference (liveExpected.js) and the season\'s game logs by a nightly job (generateLive.js, ' +
+      'EVERY 2026-27 BASE CARD AGAIN, in the blue trim, re-allocated from dunksandthrees\' expected EPM ' +
+      '(saved by hand: npm run live:dt) and the season\'s game logs by a nightly job (generateLive.js, ' +
       '.github/workflows/live-series.yml). Until then a MIRROR of the base set. Photos and crops are the ' +
       'base set\'s: curate them there. Re-export with `node scripts/studio/export.js --set live`.',
   }),

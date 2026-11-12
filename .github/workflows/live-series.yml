@@ -8,15 +8,15 @@
 # GATED by the repository variable LIVE_SERIES (Settings → Variables → Actions):
 # it runs only when that is "on", so it can exist — and be run by hand — long
 # before the season. A scheduled run is the SEASON mode of
-# scripts/cardgen/generateLive.js (dunksandthrees' expected page, this
-# season's game logs; see docs/plans/2026-09-23-live-series-design.md), which
-# refuses until dunksandthrees serves the 2026-27 season; a manual run
-# defaults to a MIRROR of the base set, the same set the repo already has.
+# scripts/cardgen/generateLive.js (expected numbers made from Basketball-
+# Reference's season tables, scripts/cardgen/liveExpected.js, and this season's
+# game logs; see docs/plans/2026-09-23-live-series-design.md). dunksandthrees'
+# expected page fed it until 2026-11-04; from 11-05 their site refused every
+# scripted read. A manual run defaults to a MIRROR of the base set, the same
+# set the repo already has.
 #
-# It reads no secrets of its own: dunksandthrees' public pages and Basketball-
-# Reference need no key (the keyed team EPM went dead 2026-10-22, and the
-# opponent table comes from Basketball-Reference since 2026-11-02). The push and
-# the Pages deploy use the workflow's own GITHUB_TOKEN (contents: write).
+# It reads no secrets of its own: Basketball-Reference needs no key. The push
+# and the Pages deploy use the workflow's own GITHUB_TOKEN (contents: write).
 #
 # THE FACES ARE NEVER COMMITTED. One set's faces are ~230 MB and every one of
 # them changes every night, so they go straight from the runner to Pages
@@ -74,7 +74,8 @@ jobs:
 
       # The stat cache between nights: this season's game-log pages (fetched
       # only for players who have played since the cached page, at the polite
-      # spacing, capped per night) and the two dunksandthrees pages. The key
+      # spacing, capped per night) and the season tables: this season's read
+      # again every night, the three before kept after their first. The key
       # is unique per run so every night saves; restore-keys picks up the
       # newest previous night.
       - uses: actions/cache@v4

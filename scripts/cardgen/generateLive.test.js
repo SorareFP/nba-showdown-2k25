@@ -1,7 +1,8 @@
 // The Live Series generator (2026-09-23): in mirror mode every base card
 // again, the same id and numbers, in the live set with the LIVE pill and a
 // stamp saying what it is; in season mode the same cards re-allocated from
-// dunksandthrees' expected page and this season's game logs.
+// the expected page (dunksandthrees' until 2026-11-04, Basketball-Reference's
+// since: liveExpected.js) and this season's game logs.
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import {
@@ -17,7 +18,7 @@ import {
   liveActualRow,
   liveCard,
   main,
-  actualOrNone,
+  keptCard,
   liveTeam,
   gamesByPlayer,
   gamesPlayed,
@@ -183,6 +184,15 @@ describe('a season build', () => {
     expect(live.chart.some(t => t.pts > 0)).toBe(true);
   });
 
+  it('keeps last night\'s numbers for a base card no row reaches, repriced', () => {
+    const night = { ...base.cards[1], speed: 3, power: 4, salary: 150, set: LIVE_SET, badges: [LIVE_BADGE], live: { mode: 'season', asOf: '2026-11-04T16:41:09.239Z', games: { real: 1, synthetic: 81 } } };
+    const again = buildSeason({ base, inputs, asOf, previous: [night], log: () => {}, loadRows: () => null });
+    const kept = again.cards.find(c => c.id === 'Test_Mirror');
+    expect([kept.speed, kept.power]).toEqual([3, 4]);
+    expect(kept.live).toMatchObject({ keptFrom: '2026-11-04T16:41:09.239Z', games: { real: 1, synthetic: 81 } });
+    expect(again.live.kept).toBe(1);
+  });
+
   it('mirrors a base card whose player is not on the table, and says so', () => {
     expect(mirror.set).toBe(LIVE_SET);
     expect(mirror.badges).toEqual([LIVE_BADGE]);
@@ -265,21 +275,31 @@ describe('a live card\'s team', () => {
   });
 });
 
-// THE OPENING WEEK (2026-10-21): the nightly job stopped two mornings running
-// on "dunksandthrees served season 2026, not 2027" — the EPM page had turned
-// to 2026-27, the actual page had not. Last season's table is "no games yet";
-// anything else still stops the run.
-describe('the actual table in the opening week', () => {
-  const served = n => Object.assign(new Error(`dunksandthrees served season ${n}, not 2027.`), { servedSeason: n });
-  it('reads the previous season table as no real games yet, and says so', async () => {
-    const lines = [];
-    expect(await actualOrNone(async () => { throw served(2026); }, 2027, l => lines.push(l))).toEqual([]);
-    expect(lines.join(' ')).toMatch(/still shows 2026's actual table/);
+// LAST NIGHT'S CARD, KEPT (2026-11-12): a card in the set stays in it, since
+// someone may own it. A player no row reaches tonight keeps their card.
+describe("a card no row reaches tonight", () => {
+  const prev = { id: 'A_One', name: 'A One', speed: 9, power: 7, salary: 240, live: { mode: 'season', asOf: '2026-11-04T16:41:09.239Z', games: { real: 0, synthetic: 82 } } };
+
+  it('keeps its numbers and says since when', () => {
+    const card = keptCard(prev, '2026-11-12T16:00:00.000Z');
+    expect(card).toMatchObject({ id: 'A_One', speed: 9, power: 7, salary: 240 });
+    expect(card.live).toMatchObject({ asOf: '2026-11-12T16:00:00.000Z', keptFrom: '2026-11-04T16:41:09.239Z', status: "kept from 2026-11-04: not on tonight's table" });
+    // Kept again the next night, it still dates from the night it was built.
+    expect(keptCard(card, '2026-11-13T16:00:00.000Z').live.keptFrom).toBe('2026-11-04T16:41:09.239Z');
   });
-  it('passes a served table through, and stops on any other season or failure', async () => {
-    expect(await actualOrNone(async () => [{ id: 1 }], 2027)).toEqual([{ id: 1 }]);
-    await expect(actualOrNone(async () => { throw served(2025); }, 2027)).rejects.toThrow(/2025/);
-    await expect(actualOrNone(async () => { throw new Error('dunksandthrees fetch failed: 503'); }, 2027)).rejects.toThrow(/503/);
+
+  it('keeps an addition carded on an earlier night instead of withholding it', () => {
+    const out = buildAdditions({
+      additions: [{ id: 'A_One', name: 'A One', team: 'WAS', pos: 'F', kind: 'rookie' }, { id: 'B_Two', name: 'B Two', team: 'HOU', pos: 'G', kind: 'returning' }],
+      inputs: { logs: new Map(), bbrefByName: new Map() },
+      expectedIndex: new Map(),
+      actualIndex: new Map(),
+      field: [],
+      asOf: '2026-11-12T16:00:00.000Z',
+      previousById: new Map([['A_One', prev]]),
+    });
+    expect(out.cards.map(c => [c.id, c.speed, c.live.keptFrom])).toEqual([['A_One', 9, '2026-11-04T16:41:09.239Z']]);
+    expect(out.withheld.map(w => w.id)).toEqual(['B_Two']);
   });
 });
 

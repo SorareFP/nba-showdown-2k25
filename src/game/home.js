@@ -29,6 +29,11 @@ export const HOME_SECTIONS = { shop: 'shop', goals: 'goals', mycards: 'collectio
 
 export const NEWS = [
   {
+    id: 'live-moving-again', date: '2026-11-12', title: 'Live cards are moving again',
+    body: "The Live Series stopped updating on November 5, when the stats site it read began blocking automated reads. Live cards now come from Basketball-Reference: each player's expected numbers blend the last three seasons with this one, leaning on this season more as the minutes come in. Every Live card was rebuilt once on the new numbers, so expect a bigger move than a usual night, and the cards update nightly again from here.",
+    to: 'live', cta: 'The Live Series',
+  },
+  {
     id: 'friend-trades', date: '2026-11-02', title: 'Trade cards with your friends',
     body: "Open Collection → Friends and press Trade next to a friend to see both of your spares, with the cards you need for a collection first. Offer up to five cards for up to five of theirs. The lower side has to be worth at least 60% of the higher by market value, so five uncommons can land a rare but five commons cannot. Your friend can accept, decline or send back a counter, and an offer lasts three days. You can trade once you have been friends for a week.",
     to: 'friends', cta: 'Friends',

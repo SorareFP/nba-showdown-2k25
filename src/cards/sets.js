@@ -214,8 +214,9 @@ export const SETS = [
   {
     // THE LIVE SERIES (the user, 2026-09-23): the 2026-27 base cards again,
     // "with an electric blue trim like the green of the rookie cards", whose
-    // numbers are re-allocated every day of the season from dunksandthrees'
-    // current-season EPM and the season's game logs, and whose faces are
+    // numbers are re-allocated every day of the season from an expected EPM
+    // (dunksandthrees' until 2026-11-04, made from Basketball-Reference since:
+    // scripts/cardgen/liveExpected.js) and the season's game logs, and whose faces are
     // re-exported by a nightly job. One card per base card, the same id, its
     // photo the base set's (setPaths). Until the season, a mirror of the base
     // set — and out of the packs and the collection goals (LIVE_SERIES_ON).

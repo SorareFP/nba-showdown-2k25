@@ -19,7 +19,11 @@
 //
 // SEASON (the nightly job, .github/workflows/live-series.yml): the same
 // cards re-allocated from the season as it happens. Everything moves daily,
-// as the user chose, and every layer reads THE EXPECTED PAGE:
+// as the user chose, and every layer reads THE EXPECTED PAGE: dunksandthrees'
+// own until 2026-11-04, and since 2026-11-12 one made the same shape from
+// Basketball-Reference (liveExpected.js), when their site began refusing
+// every scripted read. What follows describes their page; liveExpected.js
+// says how ours stands in for it.
 //
 //   Speed / Power / Def Boost   dunksandthrees' EXPECTED EPM (/epm — a
 //                               stabilised, predictive figure, not the actual
@@ -90,9 +94,8 @@ import { CURRENT_SET, LIVE_SET } from '../../src/cards/sets.js';
 import { LIVE_BADGE, ROOKIE_BADGE } from '../../src/cards/badges.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { FREE_AGENT } from '../../src/cards/teams.js';
-import * as dt from './sources/dunksAndThrees.js';
 import { fetchGameLogFull } from './sources/basketballReference.js';
-import { poolActualSeasons } from './poolSeasons.js';
+import { seasonRows, expectedTable, actualTable, fetchSeason, readImpactPrior, impactPriorFile } from './liveExpected.js';
 import { liveSeasonRows, seasonTeamDefense, teamDefenseFromRatings, WINDOW_GAMES } from './realGames.js';
 import { buildSpeedPowerTotals } from './speedPower.js';
 import { generateCards, indexByName, STAT_NAME_ALIASES } from './generateCards.js';
@@ -102,7 +105,7 @@ import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { OUTPUT_FILE as LIVE_FILL_FILE } from './calibrateLiveFill.js';
-import { CURRENT_STATS_SEASON, fetchSeasonTableCached, fetchTeamAdvancedCached } from './fetchCalibrationData.js';
+import { CURRENT_STATS_SEASON, dedupeByMaxGames, fetchTeamAdvancedCached } from './fetchCalibrationData.js';
 import { isNeverCard } from '../../src/game/neverCard.js';
 import { normalizeName } from './resolveTeams.js';
 import { HISTORY_FILE, updateHistory } from './liveHistory.js';
@@ -332,26 +335,6 @@ function readLeftOut(file = ADDITIONS_FILE) {
  * `maxFetches` a night. A log that cannot be fetched is not fatal — that
  * player's chart stays on the expected rates tonight — but it is counted.
  */
-/**
- * THE OPENING WEEK (2026-10-21). dunksandthrees turns its EPM page to the new
- * season before its ACTUAL page: on 2026-10-20 and 10-21 the EPM page served
- * 2027 while the actual page still showed 2025-26's finished season, so the
- * nightly job stopped on "served season 2026, not 2027" two mornings running.
- * Last season's table means no game of this one is on it yet: the run goes on
- * with no real games (every game filled from the expected rates, the season
- * mode's own design). Any other season still stops the run — last season's
- * games must never be read as this season's.
- */
-export async function actualOrNone(load, season, log = console.log) {
-  try {
-    return await load();
-  } catch (e) {
-    if (e?.servedSeason !== season - 1) throw e;
-    log(`  dunksandthrees still shows ${season - 1}'s actual table: no ${season} games on it yet, so every game is filled from the expected rates`);
-    return [];
-  }
-}
-
 export async function fetchLiveInputs({
   season = LIVE_SEASON,
   offline = false,
@@ -360,46 +343,36 @@ export async function fetchLiveInputs({
   base = readBase(),
   additions = readAdditions(),
   fetchLog = fetchGameLogFull,
-  fetchCounts = s => fetchSeasonTableCached(s, 'perGame', { force: true }),
+  fetchTables = fetchSeason,
   fetchTeams = s => fetchTeamAdvancedCached(s, { force: true }),
+  impactPrior = readImpactPrior(impactPriorFile(season - 1)),
   log = console.log,
 } = {}) {
-  const force = !offline;
-  const expected = offline
-    ? readCache(`dunksandthrees-epm-${season}`)
-    : await dt.fetchSeasonRates(season, { force });
-  if (!expected) throw new Error(`generateLive: no cached dunksandthrees expected rates for ${season} — run without --offline.`);
-  const regular = offline
-    ? readCache(`dunksandthrees-actual-${season}`)
-    : await actualOrNone(() => dt.fetchActualSeasonRates(season, { force }), season, log);
-  if (!regular) throw new Error(`generateLive: no cached dunksandthrees actual rates for ${season} — run without --offline.`);
-  let playoffs = [];
-  if (offline) {
-    playoffs = readCache(`dunksandthrees-actual-${season}-st${dt.SEASON_TYPE_PLAYOFFS}`) ?? [];
-  } else {
-    try {
-      playoffs = await dt.fetchActualSeasonRates(season, { force, seasonType: dt.SEASON_TYPE_PLAYOFFS });
-    } catch (e) {
-      log(`  no playoff table yet (${String(e.message).split('\n')[0]})`);
-    }
+  // THE EXPECTED TABLE (2026-11-12), made from Basketball-Reference: this
+  // season's four tables read afresh, the three before from the cache after
+  // their first night, last season's impact dunksandthrees' own (liveExpected.js).
+  const between = () => politeDelay(spacingMs);
+  const nowTables = await fetchTables(season, { force: !offline, offline, between });
+  if (!nowTables.advanced?.length) {
+    throw new Error(`generateLive: no Basketball-Reference ${season} tables${offline ? ' cached — run without --offline' : ''}.`);
   }
-  const actual = poolActualSeasons(regular, playoffs);
-  log(`dunksandthrees ${season}: ${expected.length} expected rows, ${regular.length} actual, ${playoffs.length} playoff`);
+  const thisSeason = seasonRows(nowTables);
+  const priors = [];
+  for (const s of [season - 1, season - 2, season - 3]) {
+    priors.push(seasonRows(await fetchTables(s, { offline, between }), s === season - 1 ? impactPrior : new Map()));
+  }
+  const expected = expectedTable({ current: thisSeason, priors });
+  const actual = actualTable(thisSeason);
+  log(
+    `Basketball-Reference ${season}: ${expected.length} expected rows, ${thisSeason.size} players this season; ` +
+      `priors ${priors.map(p => p.size).join('/')}, ${impactPrior.size} on dunksandthrees' own ${season - 1} impact`
+  );
 
-  // The games each player has played, from Basketball-Reference's per-game
-  // page; without it, dunksandthrees' count alone (the run goes on).
-  let counts = new Map();
-  let countRows = [];
-  let countsFrom = 'basketball-reference';
-  try {
-    countRows = (offline ? readCache(`bbref-${season}-perGame`) : await fetchCounts(season)) ?? [];
-    counts = gamesByPlayer(countRows);
-    log(`  games played: ${counts.size} players on Basketball-Reference's ${season} per-game page`);
-    if (!offline) await politeDelay(spacingMs);
-  } catch (e) {
-    countsFrom = `dunksandthrees only (${String(e.message).split('\n')[0]})`;
-    log(`  no Basketball-Reference games-played page: ${e.message}`);
-  }
+  // The games each player has played, from the same per-game page.
+  const countRows = dedupeByMaxGames(nowTables.perGame ?? []);
+  const counts = gamesByPlayer(countRows);
+  const countsFrom = 'basketball-reference';
+  log(`  games played: ${counts.size} players on Basketball-Reference's ${season} per-game page`);
 
   const { defense, opponents } = await readOpponents(season, { offline, fetchTeams, log });
   log(`  opponent table: ${defense.size} teams (${opponents})`);
@@ -451,7 +424,33 @@ export async function fetchLiveInputs({
   );
   const uncarded = uncardedPlayers({ cards: [...base.cards, ...additions], rows: countRows, index, leftOut: readLeftOut() });
   if (uncarded.length) log(`  ${uncarded.length} played with no Live card: ${uncarded.slice(0, 5).map(p => p.name).join(', ')}…`);
-  return { season, expected, actual, defense, opponents, logs, logStatus, additions, bbrefByName, uncarded };
+  const expectedFrom = {
+    source: 'basketball-reference',
+    rows: expected.length,
+    withGames: expected.filter(r => r.basis.currentMinutes > 0).length,
+    impactPrior: impactPrior.size,
+  };
+  return { season, expected, actual, defense, opponents, logs, logStatus, additions, bbrefByName, uncarded, expectedFrom };
+}
+
+/**
+ * LAST NIGHT'S CARD, KEPT (2026-11-12). A card in the set stays in it: someone
+ * may own it. A player with no row tonight (a rookie yet to play, carded from
+ * dunksandthrees' draft-based row before the block; a page that failed to
+ * parse) keeps the card they had, stamped with when it was built.
+ */
+export function keptCard(prev, asOf) {
+  const from = prev.live?.keptFrom ?? prev.live?.asOf ?? null;
+  return {
+    ...prev,
+    live: {
+      ...prev.live,
+      asOf,
+      keptFrom: from,
+      status: `kept from ${String(from ?? 'an earlier build').slice(0, 10)}: not on tonight's table`,
+      games: prev.live?.games ?? { real: 0, synthetic: 0 },
+    },
+  };
 }
 
 const statusFor = real =>
@@ -465,8 +464,9 @@ const statusFor = real =>
  * The season's cards from tonight's inputs, in base-set order. `loadRows` is
  * realGames.js's cached-log reader, injectable so a test can hand in a log.
  */
-export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = liveSeasonRows } = {}) {
+export function buildSeason({ base, inputs, asOf, previous = [], log = console.log, loadRows = liveSeasonRows } = {}) {
   const { season, expected, actual, defense, logs } = inputs;
+  const previousById = new Map(previous.map(c => [c.id, c]));
   const asOfDate = String(asOf).slice(0, 10);
   const expectedIndex = indexByName(expected);
   const actualIndex = indexByName(actual);
@@ -488,6 +488,15 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
   for (const card of base.cards) {
     const e = lookup(expectedIndex, card.name);
     if (!isLiveRow(e)) {
+      // Last night's numbers if there were any, the base card's if not;
+      // either way repriced against tonight's field.
+      const prev = previousById.get(card.id);
+      if (prev?.live?.mode === 'season') {
+        const { live, set, badges, ...numbers } = keptCard(prev, asOf);
+        mirrors.push({ ...card, ...numbers, id: card.id, name: card.name });
+        stamps.set(card.id, { status: live.status, keptFrom: live.keptFrom, games: live.games });
+        continue;
+      }
       mirrors.push({ ...card });
       stamps.set(card.id, {
         status: e ? 'awaiting an expected EPM' : "not on this season's table",
@@ -533,7 +542,7 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
   }
 
   const byId = new Map(built.cards.map(c => [c.id, c]));
-  const source = `dunksandthrees.com /epm ${season} (expected) + /epm/actual; Basketball-Reference ${season} games played and game logs`;
+  const source = `Basketball-Reference ${season}: expected numbers made from the last three seasons and this one (liveExpected.js), games played and game logs`;
   const cards = base.cards.map(card => {
     const b = byId.get(card.id);
     if (!b) throw new Error(`generateLive: ${card.id} fell out of the build`);
@@ -541,13 +550,14 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
   });
   const added = buildAdditions({
     additions: inputs.additions ?? [], inputs, expectedIndex, actualIndex, asOf, asOfDate, source,
-    calibration, fill, field: built.cards, loadRows,
+    calibration, fill, field: built.cards, loadRows, previousById,
   });
   for (const [id, s] of added.stamps) stamps.set(id, s);
   cards.push(...added.cards);
   const real = [...stamps.values()].filter(s => s.games.real > 0).length;
   const full = [...stamps.values()].filter(s => s.games.real >= WINDOW_GAMES).length;
-  log(`Live Series ${season}: ${rows.length} built from the expected page, ${mirrors.length} mirrored; ${real} with real games, ${full} on a full window`);
+  const kept = [...stamps.values()].filter(s => s.keptFrom).length;
+  log(`Live Series ${season}: ${rows.length} built from the expected page, ${mirrors.length} mirrored or kept (${kept} kept from an earlier night); ${real} with real games, ${full} on a full window`);
   log(`  additions: ${added.cards.length} carded, ${added.withheld.length} withheld (${[...new Set(added.withheld.map(w => w.why))].join('; ') || 'none'})`);
   return {
     set: LIVE_SET,
@@ -559,6 +569,8 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
       season,
       built: rows.length,
       mirrored: mirrors.length,
+      kept,
+      expectedFrom: inputs.expectedFrom ?? null,
       additions: { carded: added.cards.length, withheld: added.withheld },
       withRealGames: real,
       fullWindows: full,
@@ -569,8 +581,8 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
     },
     note:
       'THE LIVE SERIES (scripts/cardgen/generateLive.js): the 2026-27 base cards as the season moves them. ' +
-      `Season mode as of ${asOfDate}: Speed/Power/Def Boost and the shooting layer from dunksandthrees' ` +
-      'EXPECTED page, the chart from this season\'s real games topped up to 82 with synthetic games from ' +
+      `Season mode as of ${asOfDate}: Speed/Power/Def Boost and the shooting layer from the expected numbers ` +
+      'made from Basketball-Reference (liveExpected.js), the chart from this season\'s real games topped up to 82 with synthetic games from ' +
       'the expected per-100 rates, salary priced against the live field. Faces: node scripts/studio/export.js --set live.',
     cards,
   };
@@ -581,8 +593,9 @@ export function buildSeason({ base, inputs, asOf, log = console.log, loadRows = 
  * against the base cards' field and priced on its values. The rest come back
  * as `withheld`, with why.
  */
-export function buildAdditions({ additions, inputs, expectedIndex, actualIndex, asOf, asOfDate, source, calibration, fill, field, loadRows }) {
+export function buildAdditions({ additions, inputs, expectedIndex, actualIndex, asOf, asOfDate, source, calibration, fill, field, loadRows, previousById = new Map() }) {
   const withheld = [];
+  const kept = new Map();
   const pool = [];
   const teams = [];
   const rows = [];
@@ -591,7 +604,17 @@ export function buildAdditions({ additions, inputs, expectedIndex, actualIndex, 
   const picked = [];
   for (const a of additions) {
     const e = lookup(expectedIndex, a.name);
-    if (!isLiveRow(e)) { withheld.push({ id: a.id, name: a.name, kind: a.kind, why: 'no expected EPM yet' }); continue; }
+    if (!isLiveRow(e)) {
+      const prev = previousById.get(a.id);
+      if (prev) {
+        const card = keptCard(prev, asOf);
+        kept.set(a.id, card);
+        stamps.set(a.id, { status: card.live.status, keptFrom: card.live.keptFrom, games: card.live.games, addition: a.kind });
+      } else {
+        withheld.push({ id: a.id, name: a.name, kind: a.kind, why: 'no expected EPM yet' });
+      }
+      continue;
+    }
     const pos = cardPosition(e.position || a.pos, e, inputs.bbrefByName?.get(normalizeName(a.name))?.pos);
     const team = liveTeam(a, e);
     rows.push(liveActualRow(e, lookup(actualIndex, a.name)));
@@ -606,7 +629,8 @@ export function buildAdditions({ additions, inputs, expectedIndex, actualIndex, 
     stamps.set(a.id, { status: statusFor(n), games: { real: n, synthetic: Math.max(0, WINDOW_GAMES - n) }, addition: a.kind });
     picked.push({ a, genId });
   }
-  if (!picked.length) return { cards: [], withheld, stamps };
+  const inOrder = carded => additions.map(a => carded.get(a.id) ?? kept.get(a.id)).filter(Boolean);
+  if (!picked.length) return { cards: inOrder(new Map()), withheld, stamps };
 
   const speedPower = buildSpeedPowerTotals({ pool, actual: rows });
   const built = generateCards({
@@ -631,13 +655,13 @@ export function buildAdditions({ additions, inputs, expectedIndex, actualIndex, 
   const { value: basis } = computePlayValue(field, { field });
   const salaries = priceSet(built.cards, { field, basis, roundSalary, min: SALARY_MIN, max: SALARY_MAX });
   const byGen = new Map(built.cards.map((c, i) => [c.id, { ...c, salary: salaries[i] }]));
-  const cards = picked.map(({ a, genId }) => {
+  const carded = new Map(picked.map(({ a, genId }) => {
     const b = byGen.get(genId);
     if (!b) throw new Error(`generateLive: the addition ${a.id} fell out of the build`);
     const look = a.kind === 'rookie' ? { badges: [LIVE_BADGE, ROOKIE_BADGE], seasonLabel: ROOKIE_SEASON_LABEL } : {};
-    return liveCard({ ...b, id: a.id, name: a.name, ...look }, { mode: 'season', asOf, source, season: inputs.season, ...stamps.get(a.id) });
-  });
-  return { cards, withheld, stamps };
+    return [a.id, liveCard({ ...b, id: a.id, name: a.name, ...look }, { mode: 'season', asOf, source, season: inputs.season, ...stamps.get(a.id) })];
+  }));
+  return { cards: inOrder(carded), withheld, stamps };
 }
 
 /** All the server needs of a Live card: what prices it and whether it is signed. */
@@ -670,6 +694,7 @@ export async function main({
   statusFile = STATUS_FILE,
   historyFile = HISTORY_FILE,
   salariesFile = SALARIES_FILE,
+  previousFile = OUTPUT_FILE,
   log = console.log,
 } = {}) {
   if (!MODES.includes(mode)) throw new Error(`generateLive: no such mode ${mode} (${MODES.join(', ')})`);
@@ -679,7 +704,9 @@ export async function main({
     body = mirrorBody(base, asOf);
   } else {
     const inputs = await fetchLiveInputs({ season, offline, maxFetches, base, log });
-    body = buildSeason({ base, inputs, asOf, log });
+    // The committed set, so a card no row reaches tonight keeps its numbers.
+    const previous = fs.existsSync(previousFile) ? JSON.parse(fs.readFileSync(previousFile, 'utf8')).cards ?? [] : [];
+    body = buildSeason({ base, inputs, asOf, previous, log });
   }
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, `${JSON.stringify(body, null, 1)}\n`);

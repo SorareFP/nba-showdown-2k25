@@ -2,7 +2,7 @@
  "set": "live",
  "cards": 479,
  "mode": "season",
- "asOf": "2026-11-12T21:38:36.398Z",
+ "asOf": "2026-11-13T16:50:19.598Z",
  "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
  "season": 2027,
  "built": 337,
@@ -12,19 +12,19 @@
   "source": "dunksandthrees",
   "asOf": "2026-11-12",
   "savedAt": "2026-11-12T21:30:31.602Z",
-  "daysOld": 0,
+  "daysOld": 1,
   "rows": 531
  },
  "additions": {
   "carded": 131,
   "withheld": []
  },
- "withRealGames": 381,
+ "withRealGames": 393,
  "fullWindows": 0,
  "logs": {
   "countsFrom": "basketball-reference",
-  "current": 287,
-  "behind": 162,
+  "current": 450,
+  "behind": 0,
   "fetched": 220,
   "failed": [],
   "unmatched": [
@@ -51,7 +51,6 @@
    "Cormac Ryan",
    "Dereck Lively II",
    "Devin Carter",
-   "Grant Williams",
    "Johnny Furphy",
    "Kam Jones",
    "Keshon Gilbert",
@@ -62,6 +61,12 @@
  },
  "opponents": "basketball-reference: 30 teams",
  "uncarded": [
+  {
+   "name": "Alijah Martin",
+   "team": "TOR",
+   "games": 11,
+   "mpg": 12.3
+  },
   {
    "name": "Charles Bassey",
    "team": "GSW",
@@ -75,22 +80,16 @@
    "mpg": 10.9
   },
   {
-   "name": "Alijah Martin",
-   "team": "TOR",
-   "games": 10,
-   "mpg": 11.6
+   "name": "Jabari Walker",
+   "team": "PHI",
+   "games": 9,
+   "mpg": 11.9
   },
   {
    "name": "Alex Morales",
    "team": "ORL",
    "games": 8,
    "mpg": 12.5
-  },
-  {
-   "name": "Jabari Walker",
-   "team": "PHI",
-   "games": 8,
-   "mpg": 11.4
   },
   {
    "name": "Chris Youngblood",

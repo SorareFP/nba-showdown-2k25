@@ -2,7 +2,7 @@
  "set": "live",
  "cards": 479,
  "mode": "season",
- "asOf": "2026-11-14T15:24:20.162Z",
+ "asOf": "2026-11-15T15:57:11.168Z",
  "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
  "season": 2027,
  "built": 337,
@@ -12,7 +12,7 @@
   "source": "dunksandthrees",
   "asOf": "2026-11-12",
   "savedAt": "2026-11-12T21:30:31.602Z",
-  "daysOld": 2,
+  "daysOld": 3,
   "rows": 531
  },
  "additions": {
@@ -23,9 +23,9 @@
  "fullWindows": 0,
  "logs": {
   "countsFrom": "basketball-reference",
-  "current": 452,
+  "current": 453,
   "behind": 0,
-  "fetched": 183,
+  "fetched": 101,
   "failed": [],
   "unmatched": [
    "Jayden Quaintance",
@@ -43,7 +43,6 @@
    "Michael Ajayi",
    "Nate Bittle",
    "Quadir Copeland",
-   "Tre Donaldson",
    "Thomas Sorber",
    "Ben Simmons",
    "Bradley Beal",
@@ -114,6 +113,12 @@
    "mpg": 8.3
   },
   {
+   "name": "Myron Gardner",
+   "team": "MIA",
+   "games": 8,
+   "mpg": 8.3
+  },
+  {
    "name": "Yang Hansen",
    "team": "POR",
    "games": 7,
@@ -130,6 +135,12 @@
    "team": "POR",
    "games": 7,
    "mpg": 8.1
+  },
+  {
+   "name": "Riley Minix",
+   "team": "CLE",
+   "games": 4,
+   "mpg": 13.8
   },
   {
    "name": "Asa Newell",
@@ -150,16 +161,16 @@
    "mpg": 5.4
   },
   {
+   "name": "Norchad Omier",
+   "team": "CLE",
+   "games": 3,
+   "mpg": 14
+  },
+  {
    "name": "Tony Bradley",
    "team": "UTA",
    "games": 6,
    "mpg": 7
-  },
-  {
-   "name": "Myron Gardner",
-   "team": "MIA",
-   "games": 7,
-   "mpg": 5.7
   },
   {
    "name": "Adou Thiero",
@@ -178,12 +189,6 @@
    "team": "PHO",
    "games": 6,
    "mpg": 5.5
-  },
-  {
-   "name": "Riley Minix",
-   "team": "CLE",
-   "games": 3,
-   "mpg": 11
   },
   {
    "name": "Isaiah Crawford",
@@ -224,8 +229,8 @@
   {
    "name": "Tolu Smith",
    "team": "DET",
-   "games": 7,
-   "mpg": 3.9
+   "games": 8,
+   "mpg": 3.6
   },
   {
    "name": "Pacôme Dadiet",
@@ -246,10 +251,10 @@
    "mpg": 2.8
   },
   {
-   "name": "Norchad Omier",
-   "team": "CLE",
-   "games": 2,
-   "mpg": 7.5
+   "name": "Isaac Jones",
+   "team": "DET",
+   "games": 5,
+   "mpg": 3
   },
   {
    "name": "David Jones García",
@@ -266,12 +271,6 @@
   {
    "name": "Colin Castleton",
    "team": "ORL",
-   "games": 4,
-   "mpg": 3.3
-  },
-  {
-   "name": "Isaac Jones",
-   "team": "DET",
    "games": 4,
    "mpg": 3.3
   },
@@ -328,6 +327,12 @@
    "team": "MIN",
    "games": 1,
    "mpg": 2
+  },
+  {
+   "name": "Keshad Johnson",
+   "team": "MIA",
+   "games": 1,
+   "mpg": 1
   }
  ],
  "fillLevel": {

@@ -2,7 +2,7 @@
  "set": "live",
  "cards": 479,
  "mode": "season",
- "asOf": "2026-11-17T17:59:38.209Z",
+ "asOf": "2026-11-17T22:19:24.981Z",
  "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
  "season": 2027,
  "built": 337,
@@ -25,7 +25,7 @@
   "countsFrom": "basketball-reference",
   "current": 454,
   "behind": 0,
-  "fetched": 172,
+  "fetched": 0,
   "failed": [],
   "unmatched": [
    "Jayden Quaintance",

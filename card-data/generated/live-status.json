@@ -2,7 +2,7 @@
  "set": "live",
  "cards": 479,
  "mode": "season",
- "asOf": "2026-11-17T22:19:24.981Z",
+ "asOf": "2026-11-18T17:39:59.678Z",
  "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
  "season": 2027,
  "built": 337,
@@ -12,20 +12,20 @@
   "source": "dunksandthrees",
   "asOf": "2026-11-12",
   "savedAt": "2026-11-12T21:30:31.602Z",
-  "daysOld": 5,
+  "daysOld": 6,
   "rows": 531
  },
  "additions": {
   "carded": 131,
   "withheld": []
  },
- "withRealGames": 398,
+ "withRealGames": 399,
  "fullWindows": 0,
  "logs": {
   "countsFrom": "basketball-reference",
   "current": 454,
   "behind": 0,
-  "fetched": 0,
+  "fetched": 94,
   "failed": [],
   "unmatched": [
    "Jayden Quaintance",
@@ -64,22 +64,22 @@
    "mpg": 13.5
   },
   {
+   "name": "Alijah Martin",
+   "team": "TOR",
+   "games": 13,
+   "mpg": 11.9
+  },
+  {
    "name": "Jabari Walker",
    "team": "PHI",
    "games": 11,
    "mpg": 13.5
   },
   {
-   "name": "Alijah Martin",
-   "team": "TOR",
-   "games": 12,
-   "mpg": 12.2
-  },
-  {
    "name": "Carter Bryant",
    "team": "SAS",
-   "games": 13,
-   "mpg": 11.1
+   "games": 14,
+   "mpg": 10.4
   },
   {
    "name": "Alex Morales",
@@ -92,6 +92,12 @@
    "team": "MIA",
    "games": 9,
    "mpg": 10
+  },
+  {
+   "name": "Branden Carlson",
+   "team": "POR",
+   "games": 9,
+   "mpg": 9.6
   },
   {
    "name": "Jordan McLaughlin",
@@ -118,10 +124,16 @@
    "mpg": 12
   },
   {
-   "name": "Branden Carlson",
-   "team": "POR",
+   "name": "Tony Bradley",
+   "team": "UTA",
    "games": 8,
-   "mpg": 8.9
+   "mpg": 9
+  },
+  {
+   "name": "Jayson Kent",
+   "team": "POR",
+   "games": 5,
+   "mpg": 13.6
   },
   {
    "name": "Trayce Jackson-Davis",
@@ -132,8 +144,8 @@
   {
    "name": "Liam McNeeley",
    "team": "CHO",
-   "games": 7,
-   "mpg": 9.1
+   "games": 8,
+   "mpg": 8.1
   },
   {
    "name": "Isaiah Crawford",
@@ -160,12 +172,6 @@
    "mpg": 11
   },
   {
-   "name": "Tony Bradley",
-   "team": "UTA",
-   "games": 7,
-   "mpg": 7.7
-  },
-  {
    "name": "Malevy Leons",
    "team": "GSW",
    "games": 9,
@@ -184,16 +190,16 @@
    "mpg": 5.2
   },
   {
-   "name": "Jayson Kent",
-   "team": "POR",
-   "games": 4,
-   "mpg": 10.3
-  },
-  {
    "name": "Adou Thiero",
    "team": "LAL",
-   "games": 4,
-   "mpg": 9.3
+   "games": 5,
+   "mpg": 8.6
+  },
+  {
+   "name": "Chaz Lanier",
+   "team": "DET",
+   "games": 5,
+   "mpg": 7.6
   },
   {
    "name": "Jae'Sean Tate",
@@ -208,16 +214,16 @@
    "mpg": 5.8
   },
   {
+   "name": "Cam Christie",
+   "team": "LAC",
+   "games": 6,
+   "mpg": 5.7
+  },
+  {
    "name": "Duop Reath",
    "team": "PHO",
    "games": 6,
    "mpg": 5.5
-  },
-  {
-   "name": "Cam Christie",
-   "team": "LAC",
-   "games": 5,
-   "mpg": 6
   },
   {
    "name": "Tristan Enaruna",
@@ -260,12 +266,6 @@
    "team": "SAS",
    "games": 4,
    "mpg": 3.5
-  },
-  {
-   "name": "Chaz Lanier",
-   "team": "DET",
-   "games": 4,
-   "mpg": 3.3
   },
   {
    "name": "Colin Castleton",

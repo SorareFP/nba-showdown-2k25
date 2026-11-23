@@ -2,7 +2,7 @@
  "set": "live",
  "cards": 479,
  "mode": "season",
- "asOf": "2026-11-22T16:45:59.816Z",
+ "asOf": "2026-11-23T20:40:26.261Z",
  "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
  "season": 2027,
  "built": 337,
@@ -12,7 +12,7 @@
   "source": "dunksandthrees",
   "asOf": "2026-11-12",
   "savedAt": "2026-11-12T21:30:31.602Z",
-  "daysOld": 10,
+  "daysOld": 11,
   "rows": 531
  },
  "additions": {
@@ -23,9 +23,9 @@
  "fullWindows": 0,
  "logs": {
   "countsFrom": "basketball-reference",
-  "current": 401,
-  "behind": 53,
-  "fetched": 220,
+  "current": 454,
+  "behind": 0,
+  "fetched": 180,
   "failed": [],
   "unmatched": [
    "Jayden Quaintance",
@@ -60,8 +60,8 @@
   {
    "name": "Charles Bassey",
    "team": "GSW",
-   "games": 14,
-   "mpg": 14.9
+   "games": 15,
+   "mpg": 15.6
   },
   {
    "name": "Alijah Martin",
@@ -88,28 +88,28 @@
    "mpg": 10.4
   },
   {
+   "name": "Alex Morales",
+   "team": "ORL",
+   "games": 9,
+   "mpg": 11.7
+  },
+  {
    "name": "Branden Carlson",
    "team": "POR",
    "games": 11,
    "mpg": 9.5
   },
   {
+   "name": "Myron Gardner",
+   "team": "MIA",
+   "games": 10,
+   "mpg": 10.1
+  },
+  {
    "name": "Trayce Jackson-Davis",
    "team": "TOR",
    "games": 11,
    "mpg": 9.1
-  },
-  {
-   "name": "Alex Morales",
-   "team": "ORL",
-   "games": 8,
-   "mpg": 12.5
-  },
-  {
-   "name": "Myron Gardner",
-   "team": "MIA",
-   "games": 9,
-   "mpg": 10
   },
   {
    "name": "Jayson Kent",
@@ -124,10 +124,22 @@
    "mpg": 9.4
   },
   {
+   "name": "Tony Bradley",
+   "team": "UTA",
+   "games": 9,
+   "mpg": 9.3
+  },
+  {
    "name": "Chris Youngblood",
    "team": "POR",
    "games": 6,
    "mpg": 13.3
+  },
+  {
+   "name": "Mohamed Diawara",
+   "team": "NYK",
+   "games": 7,
+   "mpg": 11.4
   },
   {
    "name": "Norchad Omier",
@@ -142,16 +154,16 @@
    "mpg": 8
   },
   {
-   "name": "Mohamed Diawara",
-   "team": "NYK",
-   "games": 6,
-   "mpg": 12
+   "name": "Brooks Barnhizer",
+   "team": "OKC",
+   "games": 10,
+   "mpg": 6.6
   },
   {
-   "name": "Tony Bradley",
-   "team": "UTA",
-   "games": 8,
-   "mpg": 9
+   "name": "Ron Harper Jr.",
+   "team": "BOS",
+   "games": 9,
+   "mpg": 7.3
   },
   {
    "name": "Isaiah Crawford",
@@ -172,12 +184,6 @@
    "mpg": 8.6
   },
   {
-   "name": "Ron Harper Jr.",
-   "team": "BOS",
-   "games": 8,
-   "mpg": 7.5
-  },
-  {
    "name": "Riley Minix",
    "team": "CLE",
    "games": 4,
@@ -196,10 +202,10 @@
    "mpg": 8.2
   },
   {
-   "name": "Brooks Barnhizer",
-   "team": "OKC",
-   "games": 9,
-   "mpg": 5.2
+   "name": "Pacôme Dadiet",
+   "team": "NYK",
+   "games": 6,
+   "mpg": 7.5
   },
   {
    "name": "AJ Johnson",
@@ -242,12 +248,6 @@
    "team": "CLE",
    "games": 3,
    "mpg": 10
-  },
-  {
-   "name": "Pacôme Dadiet",
-   "team": "NYK",
-   "games": 5,
-   "mpg": 5.6
   },
   {
    "name": "Yanic Konan Niederhäuser",

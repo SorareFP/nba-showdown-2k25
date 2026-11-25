@@ -2,7 +2,7 @@
  "set": "live",
  "cards": 479,
  "mode": "season",
- "asOf": "2026-11-24T19:47:39.872Z",
+ "asOf": "2026-11-25T18:53:43.217Z",
  "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
  "season": 2027,
  "built": 337,
@@ -12,7 +12,7 @@
   "source": "dunksandthrees",
   "asOf": "2026-11-12",
   "savedAt": "2026-11-12T21:30:31.602Z",
-  "daysOld": 12,
+  "daysOld": 13,
   "rows": 531
  },
  "additions": {
@@ -25,7 +25,7 @@
   "countsFrom": "basketball-reference",
   "current": 454,
   "behind": 0,
-  "fetched": 207,
+  "fetched": 66,
   "failed": [],
   "unmatched": [
    "Jayden Quaintance",
@@ -96,8 +96,8 @@
   {
    "name": "Alex Morales",
    "team": "ORL",
-   "games": 9,
-   "mpg": 11.7
+   "games": 10,
+   "mpg": 10.6
   },
   {
    "name": "Trayce Jackson-Davis",
@@ -162,8 +162,14 @@
   {
    "name": "Ron Harper Jr.",
    "team": "BOS",
-   "games": 9,
-   "mpg": 7.3
+   "games": 10,
+   "mpg": 7.4
+  },
+  {
+   "name": "Chaz Lanier",
+   "team": "DET",
+   "games": 8,
+   "mpg": 8.3
   },
   {
    "name": "Isaiah Crawford",
@@ -176,12 +182,6 @@
    "team": "GSW",
    "games": 11,
    "mpg": 5.8
-  },
-  {
-   "name": "Chaz Lanier",
-   "team": "DET",
-   "games": 7,
-   "mpg": 8.6
   },
   {
    "name": "Riley Minix",
@@ -286,6 +286,12 @@
    "mpg": 3.3
   },
   {
+   "name": "DaRon Holmes",
+   "team": "DEN",
+   "games": 5,
+   "mpg": 2.6
+  },
+  {
    "name": "Zyon Pullin",
    "team": "MIN",
    "games": 4,
@@ -302,12 +308,6 @@
    "team": "CHO",
    "games": 2,
    "mpg": 5.5
-  },
-  {
-   "name": "DaRon Holmes",
-   "team": "DEN",
-   "games": 4,
-   "mpg": 2.5
   },
   {
    "name": "Blake Wesley",

@@ -1,9 +1,9 @@
 {
  "set": "live",
- "generatedAt": "2026-11-26T18:42:15.751Z",
+ "generatedAt": "2026-11-27T18:33:20.215Z",
  "live": {
   "mode": "season",
-  "asOf": "2026-11-26T18:42:15.751Z",
+  "asOf": "2026-11-27T18:33:20.215Z",
   "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
   "season": 2027,
   "built": 337,
@@ -13,7 +13,7 @@
    "source": "dunksandthrees",
    "asOf": "2026-11-12",
    "savedAt": "2026-11-12T21:30:31.602Z",
-   "daysOld": 14,
+   "daysOld": 15,
    "rows": 531
   },
   "additions": {
@@ -26,7 +26,7 @@
    "countsFrom": "basketball-reference",
    "current": 455,
    "behind": 0,
-   "fetched": 178,
+   "fetched": 0,
    "failed": [],
    "unmatched": [
     "Jayden Quaintance",
@@ -382,7 +382,7 @@
    "players": 343
   }
  },
- "note": "THE LIVE SERIES (scripts/cardgen/generateLive.js): the 2026-27 base cards as the season moves them. Season mode as of 2026-11-26: Speed/Power/Def Boost and the shooting layer from the expected numbers on dunksandthrees' expected page as of 2026-11-12, the chart from this season's real games topped up to 82 with synthetic games from the expected per-100 rates, salary priced against the live field. Faces: node scripts/studio/export.js --set live.",
+ "note": "THE LIVE SERIES (scripts/cardgen/generateLive.js): the 2026-27 base cards as the season moves them. Season mode as of 2026-11-27: Speed/Power/Def Boost and the shooting layer from the expected numbers on dunksandthrees' expected page as of 2026-11-12, the chart from this season's real games topped up to 82 with synthetic games from the expected per-100 rates, salary priced against the live field. Faces: node scripts/studio/export.js --set live.",
  "cards": [
   {
    "id": "Tyrese_Maxey",
@@ -433,7 +433,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -499,7 +499,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -565,7 +565,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -624,7 +624,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -683,7 +683,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -749,7 +749,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -808,7 +808,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -874,7 +874,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -940,7 +940,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -1006,7 +1006,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -1065,7 +1065,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -1124,7 +1124,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -1183,7 +1183,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -1242,7 +1242,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -1308,7 +1308,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -1374,7 +1374,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -1440,7 +1440,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -1499,7 +1499,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "8 real games, 74 from the expected rates",
@@ -1558,7 +1558,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -1617,7 +1617,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -1676,7 +1676,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -1742,7 +1742,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -1801,7 +1801,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -1860,7 +1860,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -1919,7 +1919,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -1978,7 +1978,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -2037,7 +2037,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -2096,7 +2096,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -2155,7 +2155,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -2221,7 +2221,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -2280,7 +2280,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -2346,7 +2346,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -2405,7 +2405,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -2471,7 +2471,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -2530,7 +2530,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -2589,7 +2589,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -2648,7 +2648,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -2707,7 +2707,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -2766,7 +2766,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -2825,7 +2825,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -2884,7 +2884,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -2943,7 +2943,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -3002,7 +3002,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -3061,7 +3061,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -3120,7 +3120,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -3179,7 +3179,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -3245,7 +3245,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -3311,7 +3311,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -3370,7 +3370,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -3429,7 +3429,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -3495,7 +3495,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -3554,7 +3554,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -3620,7 +3620,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -3686,7 +3686,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -3752,7 +3752,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -3818,7 +3818,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -3884,7 +3884,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -3943,7 +3943,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -4002,7 +4002,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -4061,7 +4061,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -4120,7 +4120,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -4179,7 +4179,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -4238,7 +4238,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -4297,7 +4297,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -4356,7 +4356,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -4415,7 +4415,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -4474,7 +4474,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -4533,7 +4533,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -4592,7 +4592,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -4658,7 +4658,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -4717,7 +4717,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -4783,7 +4783,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -4842,7 +4842,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -4908,7 +4908,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -4974,7 +4974,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -5033,7 +5033,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -5099,7 +5099,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -5158,7 +5158,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -5217,7 +5217,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -5276,7 +5276,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -5335,7 +5335,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -5394,7 +5394,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -5453,7 +5453,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -5519,7 +5519,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -5578,7 +5578,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -5637,7 +5637,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -5703,7 +5703,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -5769,7 +5769,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -5835,7 +5835,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -5894,7 +5894,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -5960,7 +5960,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -6019,7 +6019,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -6078,7 +6078,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -6137,7 +6137,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -6203,7 +6203,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -6269,7 +6269,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -6342,7 +6342,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -6408,7 +6408,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -6467,7 +6467,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -6533,7 +6533,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -6599,7 +6599,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -6658,7 +6658,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -6717,7 +6717,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -6783,7 +6783,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -6842,7 +6842,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -6901,7 +6901,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -6960,7 +6960,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -7026,7 +7026,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -7085,7 +7085,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -7151,7 +7151,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -7217,7 +7217,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -7283,7 +7283,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -7342,7 +7342,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -7401,7 +7401,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -7460,7 +7460,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -7519,7 +7519,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -7578,7 +7578,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -7644,7 +7644,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -7703,7 +7703,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "8 real games, 74 from the expected rates",
@@ -7769,7 +7769,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -7842,7 +7842,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -7901,7 +7901,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -7960,7 +7960,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -8019,7 +8019,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -8078,7 +8078,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -8144,7 +8144,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -8203,7 +8203,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -8262,7 +8262,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -8321,7 +8321,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -8387,7 +8387,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -8453,7 +8453,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -8526,7 +8526,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -8585,7 +8585,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -8644,7 +8644,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -8710,7 +8710,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -8783,7 +8783,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -8849,7 +8849,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -8908,7 +8908,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -8974,7 +8974,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -9040,7 +9040,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -9106,7 +9106,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -9172,7 +9172,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -9238,7 +9238,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -9304,7 +9304,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -9363,7 +9363,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -9422,7 +9422,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -9481,7 +9481,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -9547,7 +9547,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -9606,7 +9606,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -9665,7 +9665,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -9731,7 +9731,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -9790,7 +9790,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -9856,7 +9856,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -9922,7 +9922,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -9988,7 +9988,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -10054,7 +10054,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -10120,7 +10120,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -10186,7 +10186,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -10252,7 +10252,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -10311,7 +10311,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -10370,7 +10370,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -10429,7 +10429,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -10495,7 +10495,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -10554,7 +10554,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -10620,7 +10620,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -10686,7 +10686,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -10752,7 +10752,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -10811,7 +10811,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -10870,7 +10870,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -10936,7 +10936,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -10995,7 +10995,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -11061,7 +11061,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -11120,7 +11120,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -11179,7 +11179,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -11245,7 +11245,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -11318,7 +11318,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -11384,7 +11384,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -11451,7 +11451,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -11510,7 +11510,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "7 real games, 75 from the expected rates",
@@ -11576,7 +11576,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -11635,7 +11635,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -11701,7 +11701,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -11767,7 +11767,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -11833,7 +11833,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -11892,7 +11892,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -11951,7 +11951,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -12017,7 +12017,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -12076,7 +12076,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -12142,7 +12142,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -12208,7 +12208,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -12267,7 +12267,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -12326,7 +12326,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -12392,7 +12392,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -12465,7 +12465,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -12524,7 +12524,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -12583,7 +12583,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -12649,7 +12649,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -12715,7 +12715,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -12781,7 +12781,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -12840,7 +12840,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -12906,7 +12906,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -12965,7 +12965,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -13031,7 +13031,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -13090,7 +13090,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -13156,7 +13156,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -13222,7 +13222,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -13281,7 +13281,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -13347,7 +13347,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -13413,7 +13413,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -13472,7 +13472,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "8 real games, 74 from the expected rates",
@@ -13545,7 +13545,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "7 real games, 75 from the expected rates",
@@ -13611,7 +13611,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -13677,7 +13677,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -13736,7 +13736,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -13795,7 +13795,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -13854,7 +13854,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -13913,7 +13913,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -13972,7 +13972,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -14038,7 +14038,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -14097,7 +14097,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -14156,7 +14156,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -14215,7 +14215,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -14281,7 +14281,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -14347,7 +14347,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -14406,7 +14406,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -14472,7 +14472,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -14531,7 +14531,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -14597,7 +14597,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -14663,7 +14663,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "6 real games, 76 from the expected rates",
@@ -14729,7 +14729,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "6 real games, 76 from the expected rates",
@@ -14788,7 +14788,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -14847,7 +14847,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -14913,7 +14913,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -14972,7 +14972,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -15038,7 +15038,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -15104,7 +15104,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -15170,7 +15170,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -15229,7 +15229,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -15295,7 +15295,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -15361,7 +15361,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -15420,7 +15420,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -15486,7 +15486,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -15552,7 +15552,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -15618,7 +15618,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -15677,7 +15677,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -15743,7 +15743,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -15802,7 +15802,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -15861,7 +15861,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -15927,7 +15927,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -15993,7 +15993,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -16059,7 +16059,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -16118,7 +16118,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -16177,7 +16177,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -16236,7 +16236,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -16295,7 +16295,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "8 real games, 74 from the expected rates",
@@ -16354,7 +16354,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -16413,7 +16413,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "8 real games, 74 from the expected rates",
@@ -16472,7 +16472,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -16538,7 +16538,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -16604,7 +16604,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -16663,7 +16663,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -16729,7 +16729,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -16795,7 +16795,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "6 real games, 76 from the expected rates",
@@ -16861,7 +16861,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -16927,7 +16927,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -16993,7 +16993,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -17059,7 +17059,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -17125,7 +17125,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -17191,7 +17191,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "8 real games, 74 from the expected rates",
@@ -17257,7 +17257,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -17323,7 +17323,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -17389,7 +17389,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -17448,7 +17448,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -17514,7 +17514,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -17580,7 +17580,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -17646,7 +17646,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -17705,7 +17705,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -17764,7 +17764,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -17823,7 +17823,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -17889,7 +17889,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -17955,7 +17955,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -18015,7 +18015,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -18088,7 +18088,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -18154,7 +18154,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -18220,7 +18220,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -18286,7 +18286,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -18345,7 +18345,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -18404,7 +18404,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "7 real games, 75 from the expected rates",
@@ -18463,7 +18463,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -18536,7 +18536,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -18596,7 +18596,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -18655,7 +18655,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -18721,7 +18721,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -18781,7 +18781,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "7 real games, 75 from the expected rates",
@@ -18847,7 +18847,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -18906,7 +18906,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -18972,7 +18972,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -19039,7 +19039,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -19105,7 +19105,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -19171,7 +19171,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "6 real games, 76 from the expected rates",
@@ -19230,7 +19230,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -19296,7 +19296,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -19369,7 +19369,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -19428,7 +19428,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -19494,7 +19494,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -19553,7 +19553,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -19619,7 +19619,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -19685,7 +19685,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -19751,7 +19751,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -19810,7 +19810,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -19876,7 +19876,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -19942,7 +19942,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -20001,7 +20001,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -20060,7 +20060,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -20126,7 +20126,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -20185,7 +20185,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -20251,7 +20251,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -20310,7 +20310,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -20376,7 +20376,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -20443,7 +20443,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -20509,7 +20509,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -20575,7 +20575,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -20634,7 +20634,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -20693,7 +20693,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -20752,7 +20752,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -20812,7 +20812,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -20878,7 +20878,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -20944,7 +20944,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -21010,7 +21010,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -21077,7 +21077,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -21143,7 +21143,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -21210,7 +21210,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "7 real games, 75 from the expected rates",
@@ -21276,7 +21276,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -21350,7 +21350,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "kept from 2026-11-04: not on tonight's table",
@@ -21417,7 +21417,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "8 real games, 74 from the expected rates",
@@ -21476,7 +21476,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -21535,7 +21535,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -21594,7 +21594,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -21653,7 +21653,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -21712,7 +21712,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -21771,7 +21771,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -21830,7 +21830,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -21896,7 +21896,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -21962,7 +21962,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -22037,7 +22037,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -22112,7 +22112,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -22187,7 +22187,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -22262,7 +22262,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -22330,7 +22330,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -22392,7 +22392,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -22454,7 +22454,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -22516,7 +22516,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -22578,7 +22578,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -22640,7 +22640,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -22702,7 +22702,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -22764,7 +22764,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -22833,7 +22833,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -22902,7 +22902,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -22971,7 +22971,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -23040,7 +23040,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -23109,7 +23109,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -23171,7 +23171,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -23233,7 +23233,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -23295,7 +23295,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -23364,7 +23364,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -23433,7 +23433,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -23495,7 +23495,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -23564,7 +23564,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -23633,7 +23633,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -23702,7 +23702,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -23771,7 +23771,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -23840,7 +23840,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -23909,7 +23909,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -23978,7 +23978,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "7 real games, 75 from the expected rates",
@@ -24047,7 +24047,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -24116,7 +24116,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -24178,7 +24178,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -24247,7 +24247,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -24316,7 +24316,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -24378,7 +24378,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -24440,7 +24440,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -24502,7 +24502,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -24564,7 +24564,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "7 real games, 75 from the expected rates",
@@ -24633,7 +24633,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -24702,7 +24702,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -24764,7 +24764,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -24826,7 +24826,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -24895,7 +24895,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -24964,7 +24964,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -25026,7 +25026,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -25095,7 +25095,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -25164,7 +25164,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -25226,7 +25226,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -25295,7 +25295,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -25364,7 +25364,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -25433,7 +25433,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -25495,7 +25495,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -25564,7 +25564,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -25633,7 +25633,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -25695,7 +25695,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -25764,7 +25764,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -25833,7 +25833,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -25902,7 +25902,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -25971,7 +25971,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -26033,7 +26033,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -26102,7 +26102,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -26171,7 +26171,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -26233,7 +26233,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -26302,7 +26302,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "8 real games, 74 from the expected rates",
@@ -26371,7 +26371,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -26433,7 +26433,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -26495,7 +26495,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -26564,7 +26564,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -26633,7 +26633,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -26702,7 +26702,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -26764,7 +26764,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -26833,7 +26833,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -26909,7 +26909,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -26978,7 +26978,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -27047,7 +27047,7 @@
    "set": "live",
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -27114,7 +27114,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -27181,7 +27181,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -27248,7 +27248,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -27315,7 +27315,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -27382,7 +27382,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -27456,7 +27456,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -27523,7 +27523,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -27590,7 +27590,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -27650,7 +27650,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -27710,7 +27710,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -27770,7 +27770,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -27837,7 +27837,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "6 real games, 76 from the expected rates",
@@ -27897,7 +27897,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -27957,7 +27957,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -28017,7 +28017,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -28077,7 +28077,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -28144,7 +28144,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -28211,7 +28211,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -28278,7 +28278,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -28352,7 +28352,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -28419,7 +28419,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -28493,7 +28493,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -28553,7 +28553,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -28620,7 +28620,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -28687,7 +28687,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -28747,7 +28747,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -28814,7 +28814,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -28874,7 +28874,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -28941,7 +28941,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -29001,7 +29001,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "13 real games, 69 from the expected rates",
@@ -29075,7 +29075,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -29135,7 +29135,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "9 real games, 73 from the expected rates",
@@ -29195,7 +29195,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "1 real games, 81 from the expected rates",
@@ -29255,7 +29255,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -29322,7 +29322,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -29382,7 +29382,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "11 real games, 71 from the expected rates",
@@ -29442,7 +29442,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -29509,7 +29509,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "2 real games, 80 from the expected rates",
@@ -29576,7 +29576,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -29636,7 +29636,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "6 real games, 76 from the expected rates",
@@ -29703,7 +29703,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -29763,7 +29763,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "18 real games, 64 from the expected rates",
@@ -29823,7 +29823,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "5 real games, 77 from the expected rates",
@@ -29890,7 +29890,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "6 real games, 76 from the expected rates",
@@ -29950,7 +29950,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "3 real games, 79 from the expected rates",
@@ -30010,7 +30010,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "14 real games, 68 from the expected rates",
@@ -30077,7 +30077,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "the expected rates alone",
@@ -30137,7 +30137,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -30204,7 +30204,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "10 real games, 72 from the expected rates",
@@ -30271,7 +30271,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "19 real games, 63 from the expected rates",
@@ -30331,7 +30331,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "12 real games, 70 from the expected rates",
@@ -30391,7 +30391,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -30458,7 +30458,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -30518,7 +30518,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
@@ -30585,7 +30585,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "16 real games, 66 from the expected rates",
@@ -30645,7 +30645,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "4 real games, 78 from the expected rates",
@@ -30712,7 +30712,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -30779,7 +30779,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "15 real games, 67 from the expected rates",
@@ -30846,7 +30846,7 @@
    ],
    "live": {
     "mode": "season",
-    "asOf": "2026-11-26T18:42:15.751Z",
+    "asOf": "2026-11-27T18:33:20.215Z",
     "source": "dunksandthrees 2027: the expected page as of 2026-11-12 (saved by hand, dtTable.js); games played and game logs from Basketball-Reference",
     "season": 2027,
     "status": "17 real games, 65 from the expected rates",
